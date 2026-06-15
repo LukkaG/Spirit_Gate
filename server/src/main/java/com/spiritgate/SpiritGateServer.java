@@ -1,7 +1,8 @@
 package com.spiritgate;
 
-import com.esotericsoftware.kryonet.Server;
 import java.io.IOException;
+
+import com.esotericsoftware.kryonet.Server;
 
 public class SpiritGateServer {
     public static void main(String[] args) throws IOException {
