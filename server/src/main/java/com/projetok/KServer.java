@@ -1,4 +1,4 @@
-package com.spiritgate;
+package com.projetok;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -9,7 +9,7 @@ import com.esotericsoftware.kryonet.Connection; // Importante: Importar Connecti
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 
-public class SpiritGateServer {
+public class KServer {
 
     public static void main(String[] args) throws IOException {
         // Teste de conexão com banco

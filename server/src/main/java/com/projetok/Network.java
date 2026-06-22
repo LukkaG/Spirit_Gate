@@ -1,4 +1,4 @@
-package com.spiritgate;
+package com.projetok;
 
 import com.esotericsoftware.kryonet.EndPoint;
 
@@ -10,26 +10,37 @@ public class Network {
         endPoint.getKryo().register(LoginFailed.class);
         endPoint.getKryo().register(PlayerMovement.class);
         endPoint.getKryo().register(ChatMessage.class);
-    }   
+    }
 
     public static class LoginRequest {
+
         public String username;
         public String password;
     }
 
     public static class PlayerMovement {
+
         public float x, y;
     }
 
     public static class ChatMessage {
+
         public String text;
     }
 
-    public static class LoginSuccess { }
-    public static class LoginFailed { 
-    public String motivo;
-    public LoginFailed() {}
-    public LoginFailed(String motivo) { this.motivo = motivo; }
-}
-    
+    public static class LoginSuccess {
+    }
+
+    public static class LoginFailed {
+
+        public String motivo;
+
+        public LoginFailed() {
+        }
+
+        public LoginFailed(String motivo) {
+            this.motivo = motivo;
+        }
+    }
+
 }

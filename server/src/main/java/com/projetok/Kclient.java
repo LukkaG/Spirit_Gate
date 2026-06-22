@@ -1,11 +1,12 @@
-package com.spiritgate;
+package com.projetok;
 
 import java.io.IOException;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Listener;
 
-public class SpiritGateClient {
+public class Kclient {
+
     public static void main(String[] args) throws IOException {
         Client client = new Client();
         client.start();
