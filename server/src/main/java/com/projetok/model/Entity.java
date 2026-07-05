@@ -1,6 +1,6 @@
 package com.projetok.model;
 
-public abstract class Entity {
+public abstract class Entity implements Playable {
 
     private int strength;
     private int inteligency;
@@ -25,6 +25,10 @@ public abstract class Entity {
         this.agility = agility;
         this.level = level;
         updateStats();
+    }
+
+    public int getDefense() {
+        return this.currentDefense();
     }
 
     public void levelUp(PlayerConfiguration config) {

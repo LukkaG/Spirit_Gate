@@ -1,16 +1,14 @@
 package com.projetok.model;
 
-public class Player implements Playable {
+public abstract class Player implements Playable {
 
     private String username;
-    private Entity race; // Aqui está o segredo: o Player tem uma raça (Humano, Oni, etc.)
+    private Entity race;
 
-    public Player(String username, Entity race) {
+    public Player(String username) {
         this.username = username;
-        this.race = race;
     }
 
-    // Agora, métodos como 'getDefense' seriam delegados à raça:
     public int getDefense() {
         return race.currentDefense();
     }
