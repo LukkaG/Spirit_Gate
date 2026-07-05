@@ -29,6 +29,14 @@ public class Human extends Entity {
         return this.getHealth() * 10;
     }
 
+    @Override
+    public int getWeaponDamage() {
+        if (this.sword != null) {
+            return this.sword.getDamage();
+        }
+        return 0;
+    }
+
     public SwordStyle getStyle() {
         return style;
     }

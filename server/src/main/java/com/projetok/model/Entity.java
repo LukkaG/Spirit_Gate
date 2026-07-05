@@ -11,6 +11,7 @@ public abstract class Entity {
     private int level;
     private int points;
     private int maxHealth;
+    private int bonusDefense;
     private int maxStamina;
     private int currentHealth;
     private int currentStamina;
@@ -81,8 +82,22 @@ public abstract class Entity {
 
     protected abstract int calculateMaxStamina();
 
-    public void takeDamage() {
+    public void takeDamage(int amount) {
+        this.currentHealth -= amount;
 
+        if (this.currentHealth <= 0) {
+            this.currentHealth = 0;
+            System.out.println(this.name + " foi derrotado!");
+        }
+    }
+
+    public int currentDefense() {
+        int baseDefense = (this.level * 2) + 5;
+        return baseDefense + this.bonusDefense;
+    }
+
+    public int getWeaponDamage() {
+        return 0;
     }
 
     public int getId() {
