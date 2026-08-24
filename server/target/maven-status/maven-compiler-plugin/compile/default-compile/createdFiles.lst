@@ -1,8 +1,8 @@
-com\projetok\Network$ChatMessage.class
 com\projetok\Network.class
+com\projetok\DatabaseManager.class
+com\projetok\Main.class
+com\projetok\Network$ChatMessage.class
 com\projetok\Network$LoginRequest.class
 com\projetok\Network$LoginSuccess.class
 com\projetok\Network$LoginFailed.class
-com\projetok\DatabaseManager.class
 com\projetok\Network$PlayerMovement.class
-com\projetok\Main.class
