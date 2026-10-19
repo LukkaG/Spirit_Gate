@@ -1,0 +1,137 @@
+--- /dev/null
++++ b/docs/TASK-048-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 256,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-048.md
+@@ -0,0 +1,5 @@
++# TASK-048 - Arquetipos e habilidades
++
++Guardian: 140 HP/18 ataque, Investida de 120 unidades usando varredura continua existente, custo 25, recarga 90 ticks. Mystic: 100 HP/24 ataque, Restauracao de 35 HP, custo 35, recarga 120 ticks. Parametros em archetypes.properties. Vigor maximo 100, regeneracao de 0,5/tick. Recursos e recarga persistentes.
++
++Habilidades RPG sao distintas das habilidades historicas; Passo Relampago/Criostase nao foram reparametrizados. Validacao recusa morte, transicao, recarga, vigor insuficiente e cura sem necessidade. Testes comprovam diferenca funcional, custo, repeticao e save.
+--- /dev/null
++++ b/server/src/main/java/com/projetok/rpg/Archetypes.java
+@@ -0,0 +1,17 @@
++package com.projetok.rpg;
++import java.io.*;
++import java.util.*;
++public final class Archetypes {
++    public record Definition(String id,int hp,int attack,String ability,int cost,int cooldown,int effect) {
++        public Definition { if(hp<1||hp>1000||attack<1||attack>100||!Set.of("dash","mend").contains(ability)||cost<1||cost>100||cooldown<1||cooldown>900||effect<1||effect>200)throw new IllegalArgumentException("Arquetipo invalido"); }
++    }
++    private Archetypes() { }
++    public static Definition get(String id) {
++        if(!Set.of("guardian","mystic").contains(id))throw new IllegalArgumentException("Arquetipo desconhecido");
++        try(InputStream in=Archetypes.class.getResourceAsStream("/rpg/archetypes.properties")) {
++            if(in==null)throw new IOException("Arquetipos ausentes"); Properties p=new Properties();p.load(in);
++            String[] v=p.getProperty(id).split("\\|");
++            return new Definition(id,Integer.parseInt(v[0]),Integer.parseInt(v[1]),v[2],Integer.parseInt(v[3]),Integer.parseInt(v[4]),Integer.parseInt(v[5]));
++        }catch(IOException e){throw new IllegalStateException(e);}
++    }
++}
+--- a/server/src/main/java/com/projetok/rpg/CharacterIdentity.java
++++ b/server/src/main/java/com/projetok/rpg/CharacterIdentity.java
+@@ -16,7 +16,7 @@
+                 || baseHp < 1 || baseHp > 1000 || baseAttack < 1 || baseAttack > 100) throw new IllegalArgumentException("Identidade invalida");
+     }
+     public static CharacterIdentity create(String name, String archetype, String appearance) {
+-        return new CharacterIdentity(UUID.randomUUID(), name, archetype, appearance, "village",
+-                archetype.equals("guardian") ? 140 : 100, archetype.equals("guardian") ? 18 : 24);
++        var definition=Archetypes.get(archetype);
++        return new CharacterIdentity(UUID.randomUUID(), name, archetype, appearance, "village",definition.hp(),definition.attack());
+     }
+ }
+--- a/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -21,6 +21,18 @@
+     private final java.util.Set<String> flags=new java.util.TreeSet<>();
+     private long potionReadyTick;
+     private boolean transitioning;
++    private int stamina=1000;
++    private long abilityReadyTick;
++    private float facingX=1,facingY;
++    public boolean castAbility() {
++        var ability=Archetypes.get(identity.archetype());
++        if(hp==0||transitioning||ticks<abilityReadyTick||stamina<ability.cost()*10||ability.ability().equals("mend")&&hp==maxHp())return false;
++        if(ability.ability().equals("dash")) movement.moveContinuous(body,facingX*ability.effect(),facingY*ability.effect(),18,space);
++        else hp=Math.min(maxHp(),hp+ability.effect());
++        stamina-=ability.cost()*10;abilityReadyTick=ticks+ability.cooldown();
++        flags.removeIf(f->f.startsWith("ability-until:"));flags.add("ability-until:"+abilityReadyTick);
++        message=ability.ability().equals("dash")?"Investida!":"Restauracao!";return true;
++    }
+     private String message="Bem-vindo a Aurora";
+     public int level() { return progression.level(xp); }
+     public int maxHp() { return identity.baseHp()+(level()-1)*progression.hpPerLevel(); }
+@@ -64,7 +76,10 @@
+     private final CollisionService.Space space = new CollisionService.Space(960, 640,
+             List.of(new CollisionService.Obstacle(380, 180, 120, 120)), List.of());
+     private long ticks;
+-    public RpgSave save() { return new RpgSave(identity,region,body.getPosition().x(),body.getPosition().y(),hp,xp,coins,inventory.snapshot(),equipment,quests,flags,ticks); }
++    public RpgSave save() {
++        var persistent=new java.util.TreeSet<>(flags);persistent.removeIf(f->f.startsWith("stamina:"));persistent.add("stamina:"+stamina);
++        return new RpgSave(identity,region,body.getPosition().x(),body.getPosition().y(),hp,xp,coins,inventory.snapshot(),equipment,quests,persistent,ticks);
++    }
+     public static RpgWorld restore(RpgSave state) {
+         RpgWorld world=new RpgWorld(state.identity());
+         if(!new CollisionService().isFree(world.body,state.x(),state.y(),18,world.space)) throw new IllegalArgumentException("Posicao de save obstruida");
+@@ -74,11 +89,21 @@
+         for(var entry:state.equipment().entrySet()) if(!world.items.get(entry.getValue()).slot().equals(entry.getKey())) throw new IllegalArgumentException("Equipamento incompativel no save");
+         world.equipment.putAll(state.equipment()); world.quests.putAll(state.quests()); world.flags.addAll(state.flags());
+         for(String flag:world.flags) if(flag.startsWith("potion-until:")) world.potionReadyTick=Long.parseLong(flag.substring(13));
++        for(String flag:world.flags) {
++            if(flag.startsWith("ability-until:"))world.abilityReadyTick=Long.parseLong(flag.substring(14));
++            if(flag.startsWith("stamina:"))world.stamina=Integer.parseInt(flag.substring(8));
++        }
++        if(world.stamina<0||world.stamina>1000)throw new IllegalArgumentException("Vigor invalido");
+         if(world.hp>world.maxHp()) throw new IllegalArgumentException("HP acima do maximo"); return world;
+     }
+     public record View(float x, float y, long ticks, CharacterIdentity identity, RpgSave state, int attack, int defense, String message, int maxHp, int level) { }
+     public void tick(float x, float y) {
+-        movement.moveDirected(body, movement.direction(x, y), 215, 1f / 30, 18, space);
++        Position direction=movement.direction(x,y);
++        if(hp>0) {
++            movement.moveDirected(body,direction,215,1f/30,18,space);
++            if(x!=0||y!=0){facingX=direction.x();facingY=direction.y();}
++            stamina=Math.min(1000,stamina+5);
++        }
+         ticks++;
+     }
+     public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message,maxHp(),level()); }
+--- /dev/null
++++ b/server/src/main/resources/rpg/archetypes.properties
+@@ -0,0 +1,2 @@
++guardian=140|18|dash|25|90|120
++mystic=100|24|mend|35|120|35
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/ArchetypesTest.java
+@@ -0,0 +1,10 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class ArchetypesTest {
++    @Test void guardianMovesMysticHealsAndCostsSurviveSave() {
++        var g=new RpgWorld(CharacterIdentity.create("Guardiao","guardian","amber"));float x=g.snapshot().x();assertTrue(g.castAbility());assertTrue(g.snapshot().x()>x);assertFalse(g.castAbility());
++        var m=new RpgWorld(CharacterIdentity.create("Mistico","mystic","azure"));assertFalse(m.castAbility());m.receiveDamage(60);assertTrue(m.castAbility());assertEquals(75,m.save().hp());
++        assertFalse(RpgWorld.restore(m.save()).castAbility());assertEquals(m.save(),RpgWorld.restore(m.save()).save());
++    }
++}

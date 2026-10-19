@@ -1,0 +1,152 @@
+--- /dev/null
++++ b/docs/TASK-054-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 263,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-054.md
+@@ -0,0 +1,5 @@
++# TASK-054 - Diario e ciclo de missoes
++
++Estados UNAVAILABLE, AVAILABLE, ACTIVE, READY e COMPLETED. Ancia permite aceitar/entregar explicitamente; progresso de combate e persistente, conclusao irrepetivel. Diario Swing mostra estado, objetivo e contagem reais. Dialogos filtram entregas por condicoes; segunda missao depende da primeira.
++
++Primeira versao conta duas derrotas do bosque e uma do chefe. Objetivos multiplos, identidade de eventos e recompensas atomicas serao ampliados na TASK-055 antes do marco integrado. Testes de ciclo, dependencia, repeticao e save; suite completa.
+--- a/server/src/main/java/com/projetok/prototype/rpg/RpgHud.java
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgHud.java
+@@ -5,11 +5,13 @@
+ /** Widgets consomem snapshots; botoes apenas enfileiram intencoes. */
+ final class RpgHud extends JPanel {
+     private final JLabel status=new JLabel();
++    private final JTextArea journal=new JTextArea(3,80);
+     private final JPanel dialogue=new JPanel(new FlowLayout(FlowLayout.LEFT));
+     private DialogueService.Node last;
+     private final RpgRuntime runtime;
+-    RpgHud(RpgRuntime runtime) {super(new BorderLayout());this.runtime=runtime;add(status,BorderLayout.NORTH);add(dialogue,BorderLayout.CENTER);}
++    RpgHud(RpgRuntime runtime) {super(new BorderLayout());this.runtime=runtime;add(status,BorderLayout.NORTH);add(dialogue,BorderLayout.CENTER);journal.setEditable(false);add(journal,BorderLayout.SOUTH);}
+     void update(RpgWorld.View view) {
++        journal.setText(view.journal().stream().map(q->q.name()+" | "+q.state()+" | "+q.progress()+"/"+q.required()+" - "+q.objective()).collect(java.util.stream.Collectors.joining("\n")));
+         status.setText("  "+view.identity().name()+" | Nivel "+view.level()+" | XP "+view.state().xp()+" | Moedas "+view.state().coins()+" | Ataque "+view.attack()+" | Defesa "+view.defense()+" | "+view.state().region()+" | F: conversar  SPACE: atacar  Q: habilidade  1: pocao  F5: salvar");
+         if(!java.util.Objects.equals(last,view.dialogue())) {
+             last=view.dialogue();dialogue.removeAll();
+--- a/server/src/main/java/com/projetok/rpg/DialogueService.java
++++ b/server/src/main/java/com/projetok/rpg/DialogueService.java
+@@ -11,7 +11,7 @@
+             if(in==null)throw new IOException("Dialogos ausentes"); Properties p=new Properties();p.load(in);Map<String,Node> map=new TreeMap<>();
+             if(p.size()>64)throw new IllegalArgumentException("Dialogos excessivos");
+             for(String key:p.stringPropertyNames()) {
+-                String[] parts=p.getProperty(key).split("\\|",-1);if(parts.length<2||parts.length>6||parts[0].length()>300)throw new IllegalArgumentException("No invalido");
++                String[] parts=p.getProperty(key).split("\\|",-1);if(parts.length<2||parts.length>8||parts[0].length()>300)throw new IllegalArgumentException("No invalido");
+                 List<Choice> choices=new ArrayList<>();
+                 for(int i=1;i<parts.length;i++) {
+                     String[] c=parts[i].split(">",-1);if(c.length!=4||c[0].isBlank()||c[0].length()>80||!Set.of("none","accept_first","claim_first","accept_boss","claim_boss","shop").contains(c[2])||!Set.of("always","first_ready","first_done","boss_ready").contains(c[3]))throw new IllegalArgumentException("Escolha invalida");
+--- /dev/null
++++ b/server/src/main/java/com/projetok/rpg/QuestService.java
+@@ -0,0 +1,24 @@
++package com.projetok.rpg;
++import java.util.*;
++/** Ciclo de vida persistente; flags de conclusao nunca sao removidas. */
++public final class QuestService {
++    public enum State { UNAVAILABLE, AVAILABLE, ACTIVE, READY, COMPLETED }
++    public record View(String id,String name,State state,int progress,int required,String objective) { }
++    private final RpgContent content;
++    public QuestService(RpgContent content){this.content=content;}
++    public int required(String id){content.get("quest",id);return id.equals("first_steps")?2:1;}
++    public State state(String id,Map<String,Integer> progress,Set<String> flags) {
++        content.get("quest",id);
++        if(flags.contains("quest-done:"+id))return State.COMPLETED;
++        if(id.equals("sanctuary")&&!flags.contains("quest-done:first_steps"))return State.UNAVAILABLE;
++        if(!progress.containsKey(id))return State.AVAILABLE;
++        return progress.get(id)>=required(id)?State.READY:State.ACTIVE;
++    }
++    public boolean accept(String id,Map<String,Integer> progress,Set<String> flags){if(state(id,progress,flags)!=State.AVAILABLE)return false;progress.put(id,0);return true;}
++    public boolean complete(String id,Map<String,Integer> progress,Set<String> flags){if(state(id,progress,flags)!=State.READY)return false;flags.add("quest-done:"+id);return true;}
++    public void defeat(String enemy,Map<String,Integer> progress,Set<String> flags) {
++        String id=enemy.equals("warden")?"sanctuary":"first_steps";
++        if(state(id,progress,flags)==State.ACTIVE)progress.put(id,Math.min(required(id),progress.get(id)+1));
++    }
++    public List<View> views(Map<String,Integer> progress,Set<String> flags){return content.all("quest").stream().sorted(Comparator.comparing(RpgContent.Definition::id)).map(q->new View(q.id(),q.name(),state(q.id(),progress,flags),progress.getOrDefault(q.id(),0),required(q.id()),q.id().equals("first_steps")?"Derrotar ecos no bosque":"Derrotar o Guardiao do Santuario")).toList();}
++}
+--- a/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -82,13 +82,20 @@
+     private final NpcService npcs=new NpcService(content);
+     private String activeNpc="";
+     private final DialogueService dialogues=new DialogueService();
++    private final QuestService questService=new QuestService(content);
++    public boolean acceptQuest(String id){if(!canTalkElder())return false;return questService.accept(id,quests,flags);}
++    public boolean completeQuest(String id){if(!canTalkElder())return false;return questService.complete(id,quests,flags);}
++    private boolean canTalkElder(){return hp>0&&activeNpc.equals("elder")&&npcs.nearest(region,body.getPosition()).filter(n->n.id().equals("elder")).isPresent();}
++    private boolean dialogueCondition(String condition){return switch(condition){case "always"->true;case "first_ready"->questService.state("first_steps",quests,flags)==QuestService.State.READY;case "first_done"->flags.contains("quest-done:first_steps");case "boss_ready"->questService.state("sanctuary",quests,flags)==QuestService.State.READY;default->false;};}
+     private String dialogueNode="";
+-    public DialogueService.Node dialogue() { return dialogueNode.isEmpty()?null:dialogues.node(dialogueNode,c->c.equals("always")); }
++    public DialogueService.Node dialogue() { return dialogueNode.isEmpty()?null:dialogues.node(dialogueNode,this::dialogueCondition); }
+     public void closeDialogue(){dialogueNode="";activeNpc="";}
+     public boolean choose(int choice) {
+         var node=dialogue();if(node==null||choice<0||choice>=node.choices().size()||hp==0)return false;
+         if(npcs.nearest(region,body.getPosition()).filter(n->n.id().equals(activeNpc)).isEmpty()){closeDialogue();return false;}
+         var selected=node.choices().get(choice);
++        boolean accepted=switch(selected.action()){case "accept_first"->acceptQuest("first_steps");case "claim_first"->completeQuest("first_steps");case "accept_boss"->acceptQuest("sanctuary");case "claim_boss"->completeQuest("sanctuary");default->true;};
++        if(!accepted){message="Missao indisponivel ou ja registrada";return false;}
+         if(selected.target().equals("close"))closeDialogue();else dialogueNode=selected.target();return true;
+     }
+     public boolean interact() {
+@@ -108,6 +115,7 @@
+         if(target.hp==0) {
+             target.readyTick=ticks+target.definition.respawn();
+             if(loot.award(target.spawn,target.generation,target.definition.id(),inventory,flags,random)) {
++                questService.defeat(target.definition.id(),quests,flags);
+                 awardExperience(content.get("enemy",target.definition.id()).value());coins=Math.min(1_000_000,coins+5);
+                 message="Derrotado: +XP, loot e moedas";
+                 if(target.definition.id().equals("warden")){flags.add("boss-defeated");message="Guardiao derrotado! Reliquia conquistada.";}
+@@ -145,7 +153,7 @@
+         world.enemies.restore(state.flags(),world.space);
+         if(world.hp>world.maxHp()) throw new IllegalArgumentException("HP acima do maximo"); return world;
+     }
+-    public record View(float x, float y, long ticks, CharacterIdentity identity, RpgSave state, int attack, int defense, String message, int maxHp, int level,List<EnemyService.View> enemies,List<NpcService.View> npcs,String activeNpc,DialogueService.Node dialogue) { public View { enemies=List.copyOf(enemies);npcs=List.copyOf(npcs); } }
++    public record View(float x, float y, long ticks, CharacterIdentity identity, RpgSave state, int attack, int defense, String message, int maxHp, int level,List<EnemyService.View> enemies,List<NpcService.View> npcs,String activeNpc,DialogueService.Node dialogue,List<QuestService.View> journal) { public View { enemies=List.copyOf(enemies);npcs=List.copyOf(npcs);journal=List.copyOf(journal); } }
+     public void tick(float x, float y) {
+         Position direction=movement.direction(x,y);
+         if(hp>0) {
+@@ -157,5 +165,5 @@
+         enemies.respawn(ticks,region);
+         enemies.update(region,ticks,body.getPosition(),hp>0,movement,space,n->receiveDamage(Math.max(1,n-defense())),p->lineClear(body.getPosition(),p));
+     }
+-    public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message,maxHp(),level(),enemies.views(region),npcs.views(region),activeNpc,dialogue()); }
++    public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message,maxHp(),level(),enemies.views(region),npcs.views(region),activeNpc,dialogue(),questService.views(quests,flags)); }
+ }
+--- a/server/src/main/resources/rpg/dialogues.properties
++++ b/server/src/main/resources/rpg/dialogues.properties
+@@ -1,4 +1,4 @@
+-elder.start=Aurora esta cercada por ecos. Preciso da sua ajuda.|Como posso ajudar?>elder.help>none>always|Ate logo>close>none>always
++elder.start=Aurora esta cercada por ecos. Preciso da sua ajuda.|Como posso ajudar?>elder.help>none>always|Aceitar Ecos no bosque>close>accept_first>always|Entregar Ecos>close>claim_first>first_ready|Aceitar Santuario>close>accept_boss>first_done|Entregar Santuario>close>claim_boss>boss_ready|Ate logo>close>none>always
+ elder.help=Explore o bosque a leste. Prepare equipamento antes de entrar no santuario.|Entendi>close>none>always|Voltar>elder.start>none>always
+ trader.start=Sou Nilo. Negocio pocoes, espadas e mantos.|Ver mercadorias>trader.shop>none>always|Ate logo>close>none>always
+ trader.shop=Os precos estarao disponiveis no painel de comercio.|Voltar>trader.start>none>always
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/QuestLifecycleTest.java
+@@ -0,0 +1,7 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++class QuestLifecycleTest {
++    @Test void lifecycleAndPersistencePreventRepeatedCompletion(){var service=new QuestService(RpgContent.builtin());Map<String,Integer> p=new TreeMap<>();Set<String> f=new TreeSet<>();assertEquals(QuestService.State.UNAVAILABLE,service.state("sanctuary",p,f));assertTrue(service.accept("first_steps",p,f));assertFalse(service.complete("first_steps",p,f));service.defeat("slime",p,f);service.defeat("slime",p,f);assertTrue(service.complete("first_steps",p,f));assertFalse(service.complete("first_steps",p,f));assertEquals(QuestService.State.AVAILABLE,service.state("sanctuary",p,f));var w=new RpgWorld();w.interact();assertTrue(w.acceptQuest("first_steps"));assertEquals(w.save(),RpgWorld.restore(w.save()).save());}
++}

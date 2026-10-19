@@ -1,0 +1,144 @@
+--- /dev/null
++++ b/docs/TASK-068-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 285,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-068.md
+@@ -0,0 +1,5 @@
++# TASK-068 - Servidor local headless
++
++LocalSimulationServer usa TCP JDK ligado somente a loopback por padrao (porta 54557 ou efemera em testes). Thread proprietaria a 30 Hz, fila limitada 64, duas sessoes, snapshots 10 Hz e caixa de saida de uma posicao por cliente. Leitura/escrita de socket em threads separadas. Jogadores usam PlayerFactory, MovementService e CollisionService existentes; nenhum Swing/PostgreSQL.
++
++Handshake em 2 s, ociosidade em 5 s, 120 mensagens/s por conexao e sessao maxima 30 min. Comandos de sessao encerrada/sequencias antigas rejeitados; movimento expira apos 15 ticks sem renovacao. Teste abre socket real em localhost, envia intencao, observa posicao autoritativa e encerra servidor. Nao abre porta publica nem altera firewall.
+--- /dev/null
++++ b/server/src/main/java/com/projetok/multiplayer/CoopWorld.java
+@@ -0,0 +1,40 @@
++package com.projetok.multiplayer;
++import com.projetok.domain.entity.*;
++import com.projetok.domain.entity.component.*;
++import com.projetok.domain.factory.*;
++import com.projetok.domain.progression.VitalityService;
++import com.projetok.domain.race.RaceRegistry;
++import com.projetok.domain.network.PlayerConnection;
++import com.projetok.domain.movement.*;
++import java.util.*;
++/** Simulacao experimental transitoria. Nunca importa ou escreve saves offline. */
++public final class CoopWorld {
++    static final class Session {
++        final Player player;long sequence,inputTick,commandTick=-1;int commands,coins;float dx,dy;
++        Session(Player player){this.player=player;}
++    }
++    private final Map<Integer,Session> sessions=new TreeMap<>();
++    private final CollisionService collisions=new CollisionService();
++    private final MovementService movement=new MovementService(collisions);
++    private final List<CollisionService.Obstacle> obstacles=List.of(new CollisionService.Obstacle(380,180,120,120));
++    private long tick;
++    public boolean join(int id,String name){
++        new Protocol.Hello(1,name);if(id<1||sessions.containsKey(id)||sessions.size()>=2)return false;
++        Position spawn=new Position(140,sessions.values().stream().anyMatch(s->s.player.getPosition().y()<350)?410:300);
++        var player=new PlayerFactory(new VitalityService()).create(id,name,new PlayerArchetype(RaceRegistry.withDefaults().get("human"),30,8,14,null,null),spawn,new PlayerConnection(){public void send(Object ignored){}public void disconnect(){}});
++        if(!collisions.isFree(player,spawn.x(),spawn.y(),18,space()))return false;sessions.put(id,new Session(player));return true;
++    }
++    public void leave(int id){sessions.remove(id);}
++    public boolean accept(int id,Protocol.Intent intent){
++        Session s=sessions.get(id);if(s==null||intent.sequence()<=s.sequence||s.player.isDead())return false;
++        if(intent.action()!=Protocol.Action.MOVE||Math.abs(intent.x())>1||Math.abs(intent.y())>1)return false;
++        if(s.commandTick!=tick){s.commandTick=tick;s.commands=0;}if(++s.commands>8)return false;
++        s.sequence=intent.sequence();s.dx=intent.x();s.dy=intent.y();s.inputTick=tick;return true;
++    }
++    private CollisionService.Space space(){return new CollisionService.Space(960,640,obstacles,sessions.values().stream().map(s->new CollisionService.Body(s.player,18)).toList());}
++    public void step(){
++        tick++;var space=space();
++        for(Session s:sessions.values())if(!s.player.isDead()&&tick-s.inputTick<=15){var d=movement.direction(s.dx,s.dy);movement.moveContinuous(s.player,d.x()*215/30,d.y()*215/30,18,space);}
++    }
++    public Protocol.State snapshot(){return new Protocol.State(tick,sessions.values().stream().map(s->{var p=s.player;var hp=p.require(HealthComponent.class);return new Protocol.Actor(p.getId(),p.getName(),p.getPosition().x(),p.getPosition().y(),hp.current(),hp.max(),p.require(StaminaComponent.class).current(),s.coins,false);}).toList());}
++}
+--- /dev/null
++++ b/server/src/main/java/com/projetok/multiplayer/LocalSimulationServer.java
+@@ -0,0 +1,54 @@
++package com.projetok.multiplayer;
++import java.net.*;
++import java.io.*;
++import java.util.*;
++import java.util.concurrent.*;
++import java.util.concurrent.atomic.*;
++/** TCP local, duas sessoes, nenhuma operacao de socket na thread proprietaria do mundo. */
++public final class LocalSimulationServer implements AutoCloseable {
++    private final InetAddress bind;private final int requestedPort;private ServerSocket listener;private Thread acceptThread;
++    private final AtomicBoolean running=new AtomicBoolean();private final AtomicInteger ids=new AtomicInteger();private final Semaphore capacity=new Semaphore(2);
++    private final ConcurrentMap<Integer,Peer> peers=new ConcurrentHashMap<>();private final Set<Integer> departures=ConcurrentHashMap.newKeySet();
++    private final ArrayBlockingQueue<Runnable> commands=new ArrayBlockingQueue<>(64);private final CoopWorld world=new CoopWorld();
++    private final ScheduledExecutorService owner=Executors.newSingleThreadScheduledExecutor(r->{Thread t=new Thread(r,"coop-world");t.setDaemon(true);return t;});
++    private volatile Protocol.State state=world.snapshot();private volatile Throwable failure;
++    public LocalSimulationServer(InetAddress bind,int port){if(!bind.isLoopbackAddress()||port<0||port>65535)throw new IllegalArgumentException("Somente loopback neste servidor local");this.bind=bind;requestedPort=port;}
++    public synchronized void start()throws IOException{
++        if(!running.compareAndSet(false,true))throw new IllegalStateException("Servidor ja iniciado");
++        try{listener=new ServerSocket();listener.bind(new InetSocketAddress(bind,requestedPort));}catch(IOException error){running.set(false);throw error;}
++        owner.scheduleAtFixedRate(()->{try{
++            for(int id:departures)if(departures.remove(id))world.leave(id);
++            for(int i=0;i<64;i++){var command=commands.poll();if(command==null)break;command.run();}
++            world.step();state=world.snapshot();if(state.tick()%3==0)for(Peer peer:peers.values()){peer.outgoing.poll();peer.outgoing.offer(state);}
++        }catch(RuntimeException error){failure=error;close();}},0,33_333_333,TimeUnit.NANOSECONDS);
++        acceptThread=new Thread(()->{while(running.get())try{Socket socket=listener.accept();if(!capacity.tryAcquire()){socket.close();continue;}new Peer(ids.incrementAndGet(),socket).start();}catch(IOException error){if(running.get())failure=error;}},"coop-accept");acceptThread.setDaemon(true);acceptThread.start();
++    }
++    public int port(){if(listener==null)throw new IllegalStateException("Nao iniciado");return listener.getLocalPort();}
++    public Protocol.State snapshot(){return state;}public Throwable failure(){return failure;}public boolean running(){return running.get();}
++    private final class Peer {
++        final int id;final Socket socket;final ArrayBlockingQueue<Protocol.State> outgoing=new ArrayBlockingQueue<>(1);final AtomicBoolean closed=new AtomicBoolean();
++        Thread reader,writer;
++        Peer(int id,Socket socket){this.id=id;this.socket=socket;}
++        void start(){reader=new Thread(this::read,"coop-reader-"+id);reader.setDaemon(true);reader.start();}
++        void read(){try{
++            socket.setSoTimeout(2000);socket.setTcpNoDelay(true);
++            var hello=Protocol.read(socket.getInputStream());if(!(hello instanceof Protocol.Hello h)||h.version()!=Protocol.VERSION){Protocol.write(socket.getOutputStream(),new Protocol.Error("Protocolo incompativel"));return;}
++            var admitted=new CompletableFuture<Boolean>();if(!commands.offer(()->admitted.complete(world.join(id,h.name()))))return;
++            if(!admitted.get(2,TimeUnit.SECONDS)){Protocol.write(socket.getOutputStream(),new Protocol.Error("Servidor cheio"));return;}
++            Protocol.write(socket.getOutputStream(),new Protocol.Welcome(id));peers.put(id,this);socket.setSoTimeout(5000);
++            writer=new Thread(()->{try{while(!closed.get())Protocol.write(socket.getOutputStream(),outgoing.take());}catch(IOException|InterruptedException ignored){}finally{closePeer();}},"coop-writer-"+id);writer.setDaemon(true);writer.start();
++            long window=System.nanoTime(),deadline=window+TimeUnit.MINUTES.toNanos(30);int count=0;
++            while(running.get()&&!closed.get()){
++                var message=Protocol.read(socket.getInputStream());long now=System.nanoTime();if(now>deadline)break;if(now-window>1_000_000_000L){window=now;count=0;}if(++count>120)break;
++                if(message instanceof Protocol.Bye)break;
++                if(!(message instanceof Protocol.Intent intent)||!commands.offer(()->world.accept(id,intent)))break;
++            }
++        }catch(IOException|InterruptedException|ExecutionException|TimeoutException ignored){}finally{closePeer();}}
++        void closePeer(){if(!closed.compareAndSet(false,true))return;peers.remove(id,this);departures.add(id);try{socket.close();}catch(IOException ignored){}if(writer!=null)writer.interrupt();capacity.release();}
++    }
++    public synchronized void close(){if(!running.getAndSet(false))return;try{listener.close();}catch(IOException ignored){}for(Peer peer:peers.values())peer.closePeer();owner.shutdownNow();if(acceptThread!=null)acceptThread.interrupt();}
++    public static void main(String[] args)throws Exception{
++        int port=args.length==2&&args[0].equals("--port")?Integer.parseInt(args[1]):54557;if(args.length!=0&&args.length!=2)throw new IllegalArgumentException("Uso: --port numero");
++        var server=new LocalSimulationServer(InetAddress.getLoopbackAddress(),port);server.start();Runtime.getRuntime().addShutdownHook(new Thread(server::close));System.out.println("Spirit Gate experimental em localhost:"+server.port()+"; sem autenticacao de contas");new CountDownLatch(1).await();
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/multiplayer/LocalServerTest.java
+@@ -0,0 +1,10 @@
++package com.projetok.multiplayer;
++import org.junit.jupiter.api.Test;
++import java.net.*;
++import static org.junit.jupiter.api.Assertions.*;
++class LocalServerTest {
++    @Test void realLoopbackHandshakeMovementAndShutdown()throws Exception{
++        try(var server=new LocalSimulationServer(InetAddress.getLoopbackAddress(),0)){server.start();try(var socket=new Socket(InetAddress.getLoopbackAddress(),server.port())){socket.setSoTimeout(2500);Protocol.write(socket.getOutputStream(),new Protocol.Hello(1,"Jogador Um"));int id=((Protocol.Welcome)Protocol.read(socket.getInputStream())).id();Protocol.write(socket.getOutputStream(),new Protocol.Intent(1,Protocol.Action.MOVE,1,0));Protocol.State state;do{state=(Protocol.State)Protocol.read(socket.getInputStream());}while(state.actors().stream().noneMatch(a->a.id()==id&&a.x()>140));assertNull(server.failure());}server.close();assertFalse(server.running());}
++    }
++    @Test void rejectsPublicBindAndStaleCommands()throws Exception{assertThrows(IllegalArgumentException.class,()->new LocalSimulationServer(InetAddress.getByName("0.0.0.0"),0));var world=new CoopWorld();assertTrue(world.join(1,"Jogador Um"));assertTrue(world.accept(1,new Protocol.Intent(2,Protocol.Action.MOVE,1,0)));assertFalse(world.accept(1,new Protocol.Intent(1,Protocol.Action.MOVE,-1,0)));world.leave(1);assertFalse(world.accept(1,new Protocol.Intent(3,Protocol.Action.MOVE,1,0)));}
++}

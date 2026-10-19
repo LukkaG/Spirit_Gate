@@ -1,0 +1,230 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R 10 0 R] /Count 4 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3623 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# Spirit Gate - Relatorio final TASK-012 a TASK-016) Tj T*
+() Tj T*
+(18/10/2026, America/Sao_Paulo. Trabalho aplicado em Projeto-K do workspace recebido.) Tj T*
+(Documentos do pacote foram usados como especificacoes das cinco tarefas autorizadas;) Tj T*
+(nenhuma publicacao, trabalho remoto ou expansao de escopo foi executada.) Tj T*
+() Tj T*
+(**AUTOMATIZADA APROVADA. HOMOLOGACAO HUMANA PENDENTE.**) Tj T*
+() Tj T*
+(## Indice de tarefas e checkpoints) Tj T*
+() Tj T*
+(| Etapa | Resultado local | JUnit final | Entregas |) Tj T*
+(| --- | --- | --- | --- |) Tj T*
+(| TASK-012 | APROVADA | 202, 0 falhas/erros/ignorados | [Relatorio]\(TASK-012.md\),) Tj T*
+([PDF]\(Spirit_Gate_TASK-012.pdf\), [diff]\(TASK-012.diff\), [suite]\(TASK-012-testes.txt\) |) Tj T*
+(| TASK-013 | APROVADA | 202, 0 falhas/erros/ignorados | [Relatorio]\(TASK-013.md\),) Tj T*
+([PDF]\(Spirit_Gate_TASK-013.pdf\), [diff]\(TASK-013.diff\), [suite]\(TASK-013-testes.txt\) |) Tj T*
+(| TASK-014 | APROVADA | 210, 0 falhas/erros/ignorados | [Relatorio]\(TASK-014.md\),) Tj T*
+([PDF]\(Spirit_Gate_TASK-014.pdf\), [diff]\(TASK-014.diff\), [suite]\(TASK-014-testes.txt\) |) Tj T*
+(| TASK-015 | APROVADA | 216, 0 falhas/erros/ignorados | [Relatorio]\(TASK-015.md\),) Tj T*
+([PDF]\(Spirit_Gate_TASK-015.pdf\), [diff]\(TASK-015.diff\), [suite]\(TASK-015-testes.txt\) |) Tj T*
+(| TASK-016 | APROVADA | 216, 0 falhas/erros/ignorados | [Relatorio]\(TASK-016.md\),) Tj T*
+([PDF]\(Spirit_Gate_TASK-016.pdf\), [diff]\(TASK-016.diff\), [suite]\(TASK-016-testes.txt\) |) Tj T*
+() Tj T*
+(Checkout recebido sem repositorio Git: nao foram inventados commits. Para cada numero) Tj T*
+(NNN, .task-checkpoints/TASK-NNN-before.json conserva a base exata e TASK-NNN-after.json) Tj T*
+(lista alteracoes/hashes; docs/TASK-NNN.diff fornece o checkpoint revisavel. Logs TASK-) Tj T*
+(NNN-inicial.log e TASK-NNN-final.log, com repeticoes/falhas preservadas onde aplicavel.) Tj T*
+(PDF individual por etapa e este consolidado. [Hashes de todas as) Tj T*
+(evidencias]\(TASK-012_016-integridade.json\).) Tj T*
+() Tj T*
+(## O que foi feito e ajustado) Tj T*
+() Tj T*
+(1. TASK-012: trocada a origem do ZIP que usava barras do Windows por nomes POSIX) Tj T*
+(explicitos. Auditor usa orig_filename e smoke verifica FullName antes de substituicoes.) Tj T*
+(Rejeicao de traversal, paths absolutos, streams, duplicatas sem diferenciar caixa,) Tj T*
+(dispositivos Windows e symlinks. Manifest, runtime, PE, JAR, inventarios e hashes) Tj T*
+(preservados. Novo pacote interno 0.12.0-task012 passou diretamente; historico 0.11.0-rc1) Tj T*
+(nao foi sobrescrito.) Tj T*
+(2. TASK-013: pipeline PNG sem bibliotecas externas, inventario deterministico,) Tj T*
+(dimensoes/grade/alfa/hashes/origem/camada/pivot/offset/recortes, revisao vinculada ao) Tj T*
+(SHA e contrato de 59 frames de personagem 64x64. Exporta atlas e ponte Properties) Tj T*
+(somente para aprovados. Inspecionados 228 PNGs: todos fora da grade declarada de 32,) Tj T*
+(zero validados. Isso reprova integracao como tiles prontos, nao descarta fontes) Tj T*
+(artisticas. Originais PNG/Aseprite preservados. Checklist Aseprite no relatorio da) Tj T*
+(tarefa.) Tj T*
+(3. TASK-014: estados/direcoes e frames deterministas por dt na simulacao, publicacao) Tj T*
+(visual atomica/imutavel, sinais reais de ataque e dano, KO por morte real, pausa por) Tj T*
+(Freeze e reset por R. RUN nunca e produzido sem corrida real. Renderer por manifest) Tj T*
+(verificado e SHA, nearest-neighbor, pivot constante e fallback geometrico. Nenhuma arte) Tj T*
+() Tj T*
+(Spirit Gate - TASK-012 a TASK-016 - p·gina 1/4) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 3257 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(final integrada.) Tj T*
+(4. TASK-015: mapa local Properties, aparencia separada do descritor de colisao, limites) Tj T*
+(WORLD_BOUNDARY e obstaculos SOLID/SOFT explicitos. Valida limites, schema, IDs/chaves,) Tj T*
+(contagens, spawn e sobreposicoes. Variante sintetica opcional --map com reinicio) Tj T*
+(deterministico; demo e arena padrao preservados. Corrigida a amostragem visual do spawn) Tj T*
+(apos R, detectada pelo novo teste.) Tj T*
+(5. TASK-016: revisao, cache Maven local configuravel, auditoria obrigatoria no build,) Tj T*
+(kit atualizado com mapa opcional, reforcos dos validadores, suites normal/offline, novo) Tj T*
+(RC e smoke EXE real padrao/mapa. Todas as mudancas foram locais.) Tj T*
+() Tj T*
+(## Evidencias executadas) Tj T*
+() Tj T*
+(- Maven inicial da rodada: 202 testes. Final: 216, zero falhas, erros ou ignorados. Sao) Tj T*
+(14 testes JUnit adicionais, sem editar testes/baselines historicos. Tres replays) Tj T*
+(historicos continuam verdes; nova comparacao da variante com demo por tick tambem) Tj T*
+(passou.) Tj T*
+(- Suite final normal no build e repeticao offline registradas em [log) Tj T*
+(final]\(TASK-016-final.log\) e [offline]\(TASK-016-offline.log\). [Resumo por) Tj T*
+(classe]\(TASK-016-testes.txt\).) Tj T*
+(- Ferramentas: 12 testes Python aprovados \(7 de assets, 5 de ZIP\).) Tj T*
+([Log]\(TASK-016-python.log\). Inclui fixtures validas/negativas, CRC, contrato/exportacao) Tj T*
+(de frames e pivot.) Tj T*
+(- Inventario final: [integridade de assets]\(TASK-016-assets.json\) e [repeticao) Tj T*
+(deterministica]\(TASK-016-determinismo.json\). Zero atlas de producao gerados; fixtures) Tj T*
+(sinteticas de testes nao entram no JAR.) Tj T*
+(- Auditoria oficial no proprio ZIP: [PASS]\(TASK-016-auditoria.json\), seis controles, 150) Tj T*
+(arquivos, 149 entradas no manifest, 148 no inventario textual, 138 classes JAR) Tj T*
+(comparadas byte a byte com classes atuais. [Controle negativo]\(TASK-016-auditoria-) Tj T*
+(negativa.json\) recusou copia adulterada.) Tj T*
+(- EXE fora de Projeto-K, em caminho com espacos e PATH sem Java/Maven: [smoke) Tj T*
+(padrao]\(TASK-016-portable-smoke.json\) e [mapa]\(TASK-016-map-smoke.json\). Ambos) Tj T*
+(comprovaram JVM integrada e fechamento com codigo 0, sem fechamento forcado. [Captura) Tj T*
+(real padrao]\(TASK-016-exe.png\), [captura real mapa sintetico]\(TASK-016-mapa-exe.png\).) Tj T*
+(- Capturas de testes: [personagem sintetico magenta]\(TASK-014-sintetico.png\) e [mapa) Tj T*
+(placeholder]\(TASK-015-placeholders.png\). Identificadas como sinteticas; nao sao) Tj T*
+(aprovacao artistica.) Tj T*
+() Tj T*
+(## Pacote local para testes) Tj T*
+() Tj T*
+([ZIP Windows x64) Tj T*
+(0.16.0-rc1]\(../dist/SpiritGate-0.16.0-rc1-20261018T230252Z-a6150a66-portable.zip\)) Tj T*
+() Tj T*
+(Tamanho: 29.386.343 bytes. SHA-256:) Tj T*
+(9bc425107d23ccfd9a4d36279be4da23c7f016a74c92fe03a9bb1f0d36eb79c1) Tj T*
+() Tj T*
+([Sidecar) Tj T*
+(SHA]\(../dist/SpiritGate-0.16.0-rc1-20261018T230252Z-a6150a66-portable.zip.sha256\),) Tj T*
+([manifest externo]\(../dist/SpiritGate-0.16.0-rc1-20261018T230252Z-a6150a66-) Tj T*
+(portable.zip.manifest.json\) e [auditoria gerada pelo) Tj T*
+() Tj T*
+(Spirit Gate - TASK-012 a TASK-016 - p·gina 2/4) Tj T*
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 3407 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(build]\(../dist/SpiritGate-0.16.0-rc1-20261018T230252Z-a6150a66-portable.zip.audit.json\).) Tj T*
+() Tj T*
+(Extrair inteiro e abrir SpiritGate/SpiritGate.exe. Para a variante sintetica, abrir) Tj T*
+(PowerShell na pasta SpiritGate e executar .\\SpiritGate.exe --map mapa-demo.properties.) Tj T*
+(Sem argumentos abre o padrao. O pacote contem runtime Java 17 integrado, roteiro por) Tj T*
+(task, changelog, modelo de bug e mapa demonstrativo opcional. Nao requer) Tj T*
+(Java/Maven/Python no PC do tester.) Tj T*
+() Tj T*
+(Historico 0.11.0-rc1 preservado com SHA) Tj T*
+(7484f90f5de5ca0475c8d73a918a8868b20a089d5a3fb3a12dd2e40f5fc19d01. Ele conserva a) Tj T*
+(incompatibilidade original de nomes; nao foi renomeado nem falsamente declarado aprovado) Tj T*
+(no Linux. Candidato intermediario 0.12.0-task012 tem SHA) Tj T*
+(befe84b9d22eb19b7e2b8b2986ccd028da881a34fbee71af3e7d64a16caa6b63.) Tj T*
+() Tj T*
+(## Falhas intermediarias e ajustes) Tj T*
+() Tj T*
+(Primeiro Maven tentou cache C:/.m2 sem acesso; copiado cache existente para .maven-) Tj T*
+(repository do workspace, sem trocar dependencias. Primeiro build TASK-012 exigiu) Tj T*
+(carregar assembly Compression explicitamente; tentativa vazia sem sidecars nao e release) Tj T*
+(valido. Testes de ZIP precisaram simular nome cru porque o escritor Windows normaliza) Tj T*
+(barras/NUL. TASK-014 teve erro de compilacao em fixture lambda, corrigido. TASK-015) Tj T*
+(detectou um negativo com spawn valido e diferenca visual no primeiro tick apos R;) Tj T*
+(corrigidos e suite repetida verde. Smoke final direto encontrou ExecutionPolicy) Tj T*
+(restrita; repetido com Bypass somente no processo, sem alterar politica global. Logs de) Tj T*
+(falha que continham resultados foram preservados; erros operacionais sem log constam) Tj T*
+(aqui.) Tj T*
+() Tj T*
+(## O QUE FOI REALMENTE EXECUTADO) Tj T*
+() Tj T*
+(Implementacao local das cinco tarefas em ordem, baselines antes das etapas, testes) Tj T*
+(completos apos mudancas, validadores e controles negativos, inventarios/determinismo,) Tj T*
+(capturas sinteticas, rebuild atual, auditoria do ZIP original, execucao Windows local de) Tj T*
+(padrao e mapa com JVM integrada e encerramento normal,) Tj T*
+(documentacao/PDFs/diffs/checkpoints/hashes e kit de homologacao. Mecanicas de movimento,) Tj T*
+(colisao seletiva, vigor, Criostase, Freeze, dano, FIFO e replays preservadas pelos) Tj T*
+(testes. Sem banco, rede, autenticacao, migracoes, protocolo, instalacao de servicos,) Tj T*
+(alteracao de credenciais, push ou publicacao.) Tj T*
+() Tj T*
+(## O QUE AINDA EXIGE O USUARIO) Tj T*
+() Tj T*
+(- Jogar e homologar em outro Windows x64 sem Java/Maven; conferir usabilidade e roteiro) Tj T*
+(do kit. Smoke local nao substitui esse teste independente.) Tj T*
+(- Revisar fontes no Aseprite, corrigir grades/recortes, produzir personagem 64x64 com 59) Tj T*
+(frames, aprovar visualmente e registrar SHA. Nenhum visual final de Karakura/personagem) Tj T*
+(foi integrado.) Tj T*
+(- Auditoria Linux independente nao executada: tentativa de consultar WSL retornou ajuda,) Tj T*
+(sem ambiente Linux utilizavel nesta sessao. Verificacao Python do ZIP original foi) Tj T*
+(executada no Windows, inclusive orig_filename.) Tj T*
+(- EXE continua sem assinatura e sem multiplayer. Espera de pouso com rota totalmente) Tj T*
+() Tj T*
+(Spirit Gate - TASK-012 a TASK-016 - p·gina 3/4) Tj T*
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 11 0 R >>
+endobj
+11 0 obj
+<< /Length 401 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(ocupada permanece comportamento conhecido. Busca de segredos por padroes nao comprova) Tj T*
+(ausencia absoluta; hashes nao autenticam origem.) Tj T*
+() Tj T*
+([Kit/roteiro completo]\(kit-homologacao-012-016/ROTEIRO-HOMOLOGACAO.md\). Rodada encerrada) Tj T*
+(na TASK-016, sem iniciar outra tarefa.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-012 a TASK-016 - p·gina 4/4) Tj T*
+ET
+endstream
+endobj
+xref
+0 12
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000140 00000 n 
+0000000237 00000 n 
+0000000363 00000 n 
+0000004038 00000 n 
+0000004164 00000 n 
+0000007473 00000 n 
+0000007599 00000 n 
+0000011058 00000 n 
+0000011186 00000 n 
+trailer
+<< /Size 12 /Root 1 0 R >>
+startxref
+11639
+%%EOF

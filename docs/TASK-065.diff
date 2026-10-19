@@ -1,0 +1,168 @@
+--- /dev/null
++++ b/docs/TASK-065-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 274,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-065.md
+@@ -0,0 +1,5 @@
++# TASK-065 - Hotbar e controles
++
++Barra clicavel usa IDs rpg.attack, rpg.ability e item.potion, mesmas operacoes do dominio. Atalhos editaveis por acao, persistidos separadamente em controls.properties com escrita temporaria/atomica. Rebinding aplicado na sessao; WASD, F4 e combinacoes de sistema reservados. Duplicatas recusadas.
++
++Entradas press/release impedem repeticao do SO; perder foco limpa teclas mantidas. Arena conserva Q/Shift e demais controles originais. Testes de conflito, persistencia, equivalencia hotbar/dominio e repeticao/foco. Textos gerais de ajuda mostram padrao; dialogo Atalhos informa configuracao efetiva.
+--- /dev/null
++++ b/server/src/main/java/com/projetok/prototype/rpg/ControlsDialog.java
+@@ -0,0 +1,16 @@
++package com.projetok.prototype.rpg;
++import com.projetok.rpg.RpgControls;
++import javax.swing.*;
++import java.awt.*;
++import java.nio.file.Path;
++import java.util.*;
++final class ControlsDialog {
++    static void open(JFrame owner,RpgControls current,Path file,java.util.function.Consumer<RpgControls> apply){
++        JPanel form=new JPanel(new GridLayout(0,2,6,6));Map<String,JTextField> fields=new TreeMap<>();
++        for(String action:new TreeSet<>(current.keys().keySet())){form.add(new JLabel(action));JTextField text=new JTextField(current.key(action),8);fields.put(action,text);form.add(text);}
++        if(JOptionPane.showConfirmDialog(owner,form,"Atalhos RPG (WASD reservado)",JOptionPane.OK_CANCEL_OPTION)!=JOptionPane.OK_OPTION)return;
++        try{Map<String,String> map=new TreeMap<>();fields.forEach((id,field)->map.put(id,field.getText().strip().toUpperCase(Locale.ROOT)));RpgControls controls=new RpgControls(map);
++            new SwingWorker<Void,Void>(){protected Void doInBackground()throws Exception{controls.save(file);return null;}protected void done(){try{get();apply.accept(controls);}catch(Exception error){JOptionPane.showMessageDialog(owner,"Falha ao salvar atalhos: "+error.getMessage());}}}.execute();
++        }catch(IllegalArgumentException error){JOptionPane.showMessageDialog(owner,error.getMessage());}
++    }
++}
+--- a/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
+@@ -30,22 +30,25 @@
+         JFrame frame = new JFrame("Spirit Gate | RPG offline");
+         JPanel root=new JPanel(new java.awt.BorderLayout());RpgHud hud=new RpgHud(runtime);root.add(panel,java.awt.BorderLayout.CENTER);root.add(hud,java.awt.BorderLayout.SOUTH);
+         frame.setContentPane(root); frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+-        InventoryWindow inventory=new InventoryWindow(frame,runtime);bind(panel,"I",()->{inventory.setVisible(!inventory.isVisible());});
+-        ExplorationWindow exploration=new ExplorationWindow(frame,runtime);bind(panel,"J",()->exploration.showTab(0));bind(panel,"M",()->exploration.showTab(1));
++        InventoryWindow inventory=new InventoryWindow(frame,runtime);
++        ExplorationWindow exploration=new ExplorationWindow(frame,runtime);
++        java.nio.file.Path controlsFile=RpgMenu.home().resolve("saves/controls.properties");
++        com.projetok.rpg.RpgControls[] controls={new com.projetok.rpg.RpgControls(com.projetok.rpg.RpgControls.DEFAULTS)};
++        try{controls[0]=com.projetok.rpg.RpgControls.load(controlsFile);}catch(Exception error){JOptionPane.showMessageDialog(frame,"Atalhos invalidos preservados; usando padrao: "+error.getMessage());}
++        java.util.Map<String,Runnable> actions=new java.util.TreeMap<>();
++        actions.put("attack",()->runtime.command(w->w.activate("rpg.attack")));actions.put("ability",()->runtime.command(w->w.activate("rpg.ability")));actions.put("potion",()->runtime.command(w->w.activate("item.potion")));actions.put("interact",()->runtime.command(w->w.interact()));actions.put("revive",()->runtime.command(w->w.returnHome()));
++        actions.put("inventory",()->inventory.setVisible(!inventory.isVisible()));actions.put("journal",()->exploration.showTab(0));actions.put("map",()->exploration.showTab(1));actions.put("save",()->runtime.save(store).whenComplete((unused,error)->SwingUtilities.invokeLater(()->JOptionPane.showMessageDialog(frame,error==null?"Progresso salvo":"Falha ao salvar: "+error.getMessage()))));
++        Runnable bindActions=()->actions.forEach((id,action)->bind(panel,controls[0].key(id),action));bindActions.run();
+         boolean amber=runtime.snapshot().identity().appearance().equals("amber");
+         panel.setActorPalette(id->id==1?(amber?new java.awt.Color(230,177,65):new java.awt.Color(65,190,220)):id>=500?new java.awt.Color(90,200,160):null);
+-        JButton menuButton=new JButton("Salvar e voltar ao menu");menuButton.addActionListener(e->frame.dispatchEvent(new WindowEvent(frame,WindowEvent.WINDOW_CLOSING)));root.add(menuButton,java.awt.BorderLayout.NORTH);
++        JButton menuButton=new JButton("Salvar e voltar ao menu");menuButton.addActionListener(e->frame.dispatchEvent(new WindowEvent(frame,WindowEvent.WINDOW_CLOSING)));JPanel toolbar=new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));toolbar.add(menuButton);root.add(toolbar,java.awt.BorderLayout.NORTH);
++        for(String action:new String[]{"attack","ability","potion","inventory"}){JButton button=new JButton(action+" ["+controls[0].key(action)+"]");button.addActionListener(e->actions.get(action).run());toolbar.add(button);}
++        JButton configure=new JButton("Atalhos");configure.addActionListener(e->ControlsDialog.open(frame,controls[0],controlsFile,next->{for(String key:controls[0].keys().values())for(boolean down:new boolean[]{true,false}){panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(KeyStroke.getKeyStroke((down?"pressed ":"released ")+key));panel.getActionMap().remove(key+down);}resetHeld(panel);controls[0]=next;bindActions.run();}));toolbar.add(configure);
+         frame.addWindowListener(new WindowAdapter(){public void windowClosing(WindowEvent e){runtime.input(0,0);frame.setEnabled(false);runtime.save(store).whenComplete((unused,error)->SwingUtilities.invokeLater(()->{if(error!=null){frame.setEnabled(true);JOptionPane.showMessageDialog(frame,"Falha ao salvar; sessao preservada: "+error.getMessage());}else frame.dispose();}));}});
+         frame.pack(); frame.setLocationRelativeTo(null);
+         var screen=java.awt.Toolkit.getDefaultToolkit().getScreenSize();frame.setSize(Math.min(1260,screen.width-60),Math.min(900,screen.height-80));frame.setLocationRelativeTo(null);
+         boolean[] held = new boolean[4];
+-        bind(panel,"F",()->runtime.command(w->w.interact()));
+-        bind(panel,"SPACE",()->runtime.command(w->w.attack()));
+-        bind(panel,"Q",()->runtime.command(w->w.castAbility()));
+         bind(panel,"ESCAPE",()->runtime.command(w->w.closeDialogue()));
+-        bind(panel,"R",()->runtime.command(w->w.returnHome()));
+-        bind(panel,"1",()->runtime.command(w->w.use("potion")));
+-        bind(panel,"F5",()->runtime.save(store).whenComplete((unused,error)->SwingUtilities.invokeLater(()->JOptionPane.showMessageDialog(frame,error==null?"Progresso salvo":"Falha ao salvar: "+error.getMessage()))));
+         String[] keys = {"W", "S", "A", "D"};
+         for (int i = 0; i < keys.length; i++) {
+             final int key = i;
+@@ -60,7 +63,7 @@
+         String[] displayedRegion={"village"};
+         Timer timer = new Timer(33, e -> {var view=runtime.snapshot();panel.setCustomHud(java.util.List.of("SPIRIT GATE | RPG OFFLINE",view.identity().name(),"Nivel "+view.level()+" | XP "+view.state().xp(),"HP "+view.state().hp()+" / "+view.maxHp(),"Ataque "+view.attack()+" | Defesa "+view.defense(),"Moedas "+view.state().coins(),"Regiao: "+view.state().region(),"[F] NPC / portal / objeto","[SPACE] Ataque basico","[Q] Habilidade do arquetipo","[1] Pocao de vida","[I] Inventario / equipamentos","[J] Diario | [M] Mapa","[F5] Salvar progresso","[R] Recuperar se morto"));panel.setAmbientLight(com.projetok.rpg.EnvironmentCycle.light(view.ticks(),true));if(!displayedRegion[0].equals(view.state().region())){displayedRegion[0]=view.state().region();panel.setLocalMap(RpgMaps.region(displayedRegion[0]));}panel.repaint();hud.update(view);});
+         frame.addWindowListener(new WindowAdapter() { public void windowClosed(WindowEvent e) { timer.stop(); runtime.close();if(System.getProperty("spiritgate.smoke.output")==null)RpgMenu.open(); } });
+-        frame.addWindowFocusListener(new WindowAdapter() { public void windowLostFocus(WindowEvent e) { java.util.Arrays.fill(held, false); runtime.input(0, 0); } });
++        frame.addWindowFocusListener(new WindowAdapter() { public void windowLostFocus(WindowEvent e) { java.util.Arrays.fill(held, false);resetHeld(panel); runtime.input(0, 0); } });
+         runtime.start(); timer.start(); frame.setVisible(true);
+         if(System.getProperty("spiritgate.smoke.output")!=null){Timer capture=new Timer(2000,e->{
+             java.awt.Rectangle bounds=frame.getBounds();String output=System.getProperty("spiritgate.smoke.output");
+@@ -82,11 +85,13 @@
+             100,100,0,warnings,List.of(),false,0,0,List.of(),false,List.of(),t.cryostasisHud(),t.lightningStepHud());
+     }
+     static void bind(JComponent component,String key,Runnable action) {
+-        boolean[] held={false};
++        @SuppressWarnings("unchecked") java.util.Set<String> existing=(java.util.Set<String>)component.getClientProperty("rpg.held");
++        if(existing==null){existing=new java.util.HashSet<>();component.putClientProperty("rpg.held",existing);}final java.util.Set<String> held=existing;
+         for(boolean down:new boolean[]{true,false}) {
+             String id=key+down;
+             component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke((down?"pressed ":"released ")+key),id);
+-            component.getActionMap().put(id,new AbstractAction(){public void actionPerformed(ActionEvent e){if(down&&!held[0])action.run();held[0]=down;}});
++            component.getActionMap().put(id,new AbstractAction(){public void actionPerformed(ActionEvent e){if(down){if(held.add(key))action.run();}else held.remove(key);}});
+         }
+     }
++    static void resetHeld(JComponent component){Object held=component.getClientProperty("rpg.held");if(held instanceof java.util.Set<?> keys)keys.clear();}
+ }
+--- /dev/null
++++ b/server/src/main/java/com/projetok/rpg/RpgControls.java
+@@ -0,0 +1,19 @@
++package com.projetok.rpg;
++import java.util.*;
++import java.nio.file.*;
++import java.io.*;
++/** Atalhos locais por ID estavel; WASD e teclas de sistema reservadas. */
++public record RpgControls(Map<String,String> keys) {
++    public static final Map<String,String> DEFAULTS=Map.of("attack","SPACE","ability","Q","potion","1","interact","F","inventory","I","journal","J","map","M","save","F5","revive","R");
++    public RpgControls {
++        keys=Map.copyOf(keys);if(!keys.keySet().equals(DEFAULTS.keySet()))throw new IllegalArgumentException("Acoes de controle invalidas");Set<String> used=new HashSet<>();
++        for(String key:keys.values())if(!key.matches("[A-Z0-9]|F[1-9]|F1[0-2]|SPACE")||Set.of("W","A","S","D","F4").contains(key)||!used.add(key))throw new IllegalArgumentException("Atalho reservado, invalido ou repetido: "+key);
++    }
++    public String key(String action){return keys.get(action);}
++    public static RpgControls load(Path file)throws IOException {
++        if(!Files.exists(file))return new RpgControls(DEFAULTS);if(Files.size(file)>8192)throw new IOException("Atalhos excessivos");Properties p=new Properties();try(var in=Files.newInputStream(file)){p.load(in);}if(!"1".equals(p.remove("schema")))throw new IOException("Schema de controles invalido");Map<String,String> keys=new TreeMap<>();p.forEach((k,v)->keys.put(k.toString(),v.toString()));return new RpgControls(keys);
++    }
++    public void save(Path file)throws IOException {
++        Path target=file.toAbsolutePath();Files.createDirectories(target.getParent());Properties p=new Properties();p.setProperty("schema","1");keys.forEach(p::setProperty);Path temp=Files.createTempFile(target.getParent(),"controls-",".tmp");try{try(var out=Files.newOutputStream(temp)){p.store(out,"Spirit Gate controls");}load(temp);try{Files.move(temp,target,StandardCopyOption.ATOMIC_MOVE,StandardCopyOption.REPLACE_EXISTING);}catch(AtomicMoveNotSupportedException e){Files.move(temp,target,StandardCopyOption.REPLACE_EXISTING);}}finally{Files.deleteIfExists(temp);}
++    }
++}
+--- a/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -49,6 +49,7 @@
+         message=item.name()+": vida recuperada"; return true;
+     }
+     public InventoryService inventory() { return inventory; }
++    public boolean activate(String action){return switch(action){case "rpg.attack"->attack();case "rpg.ability"->castAbility();case "item.potion"->use("potion");default->throw new IllegalArgumentException("Acao de hotbar desconhecida");};}
+     public int attackPower() { return identity.baseAttack()+(level()-1)*progression.attackPerLevel()+equipmentPower("weapon"); }
+     public int defense() { return equipmentPower("torso")+equipmentPower("legs")+equipmentPower("accessory"); }
+     private int equipmentPower(String slot) { return equipment.containsKey(slot)?items.get(equipment.get(slot)).power():0; }
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/rpg/RpgBindingTest.java
+@@ -0,0 +1,8 @@
++package com.projetok.prototype.rpg;
++import org.junit.jupiter.api.Test;
++import javax.swing.JPanel;
++import java.util.concurrent.atomic.AtomicInteger;
++import static org.junit.jupiter.api.Assertions.*;
++class RpgBindingTest {
++    @Test void heldKeyDoesNotRepeatAndFocusResetReleases(){var panel=new JPanel();var count=new AtomicInteger();RpgLauncher.bind(panel,"Q",count::incrementAndGet);var press=panel.getActionMap().get("Qtrue");press.actionPerformed(null);press.actionPerformed(null);assertEquals(1,count.get());panel.getActionMap().get("Qfalse").actionPerformed(null);press.actionPerformed(null);assertEquals(2,count.get());RpgLauncher.resetHeld(panel);press.actionPerformed(null);assertEquals(3,count.get());}
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/RpgControlsTest.java
+@@ -0,0 +1,10 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import java.nio.file.Path;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++class RpgControlsTest {
++    @TempDir Path folder;
++    @Test void rejectsConflictsPersistsAndHotbarMatchesDomain()throws Exception{var map=new TreeMap<>(RpgControls.DEFAULTS);map.put("ability","W");assertThrows(IllegalArgumentException.class,()->new RpgControls(map));map.put("ability","SPACE");assertThrows(IllegalArgumentException.class,()->new RpgControls(map));map.put("ability","E");var c=new RpgControls(map);Path file=folder.resolve("controls.properties");c.save(file);assertEquals(c,RpgControls.load(file));var a=new RpgWorld();var b=RpgWorld.restore(a.save());assertEquals(a.castAbility(),b.activate("rpg.ability"));assertEquals(a.save(),b.save());}
++}

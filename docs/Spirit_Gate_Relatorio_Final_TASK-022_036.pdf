@@ -1,0 +1,189 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R] /Count 3 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3181 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# Relatório final - TASK-022 a TASK-036) Tj T*
+() Tj T*
+(Spirit Gate, 19/10/2026 \(America/Sao_Paulo\). Base: 0.21.0-rc1.) Tj T*
+(As quinze tarefas foram concluídas na validação automatizada local, em sequência) Tj T*
+(com checkpoint inicial, suíte completa e documentação por etapa. Nenhuma tarefa) Tj T*
+(fica bloqueada na implementação. Aprovação artística e homologação humana em outro) Tj T*
+(computador Windows permanecem pendentes; não são declaradas executadas.) Tj T*
+() Tj T*
+(## Entrega) Tj T*
+() Tj T*
+(Candidata local: dist/SpiritGate-0.36.0-rc1-20261019T042237Z-a006aab1-portable.zip) Tj T*
+(Tamanho: 29401846 bytes.) Tj T*
+(SHA-256: 511d59412598be73395391e21a6cfb2315f4855c714059086abc4d02e46cff31) Tj T*
+(Auditoria: docs/TASK-036-auditoria.json. Smokes: TASK-036-smoke.json e) Tj T*
+(TASK-036-map-smoke.json. Java 17 integrado, EXE PE x64, novo JAR de build limpo.) Tj T*
+(Último release anterior preservado:) Tj T*
+(SpiritGate-0.21.0-rc1-20261019T001737Z-546ce1c5-portable.zip.) Tj T*
+(Não houve publicação, upload ou operação Git de commit/push.) Tj T*
+() Tj T*
+(## Evolução real dos testes) Tj T*
+() Tj T*
+(| TASK | Entrega | Situação | JUnit | Python |) Tj T*
+(|---|---|---|---:|---:|) Tj T*
+(| 022 | Auditoria e baseline | Concluída na automação local | 223 | 18 |) Tj T*
+(| 023 | Orquestrador de qualidade | Concluída na automação local | 223 | 22 |) Tj T*
+(| 024 | Mapas V2 ampliados | Concluída na automação local | 226 | 22 |) Tj T*
+(| 025 | Culling conservador | Concluída na automação local | 228 | 22 |) Tj T*
+(| 026 | Camadas de cenário | Concluída na automação local | 230 | 22 |) Tj T*
+(| 027 | Autoria offline de mapas | Concluída na automação local | 230 | 24 |) Tj T*
+(| 028 | Prévia e comparação de sprites | Concluída na automação local | 230 | 25 |) Tj T*
+(| 029 | Robustez de pacotes visuais | Concluída na automação local | 231 | 25 |) Tj T*
+(| 030 | Regressões de animação | Concluída na automação local | 233 | 25 |) Tj T*
+(| 031 | Foco e mira | Concluída na automação local | 235 | 25 |) Tj T*
+(| 032 | Ajuda F1 e HUD | Concluída na automação local | 236 | 25 |) Tj T*
+(| 033 | Feedback de combate | Concluída na automação local | 237 | 25 |) Tj T*
+(| 034 | Diagnóstico local F2 | Concluída na automação local | 239 | 25 |) Tj T*
+(| 035 | Estresse determinístico | Concluída na automação local | 241 | 25 |) Tj T*
+(| 036 | Release portátil | Concluída na automação local | 241 | 25 |) Tj T*
+() Tj T*
+(Evolução: 223 para 241 JUnit \(+18\), 18 para 25 Python \(+7\).) Tj T*
+(Todos os resultados finais: zero falhas/erros/ignorados em JUnit; Python OK.) Tj T*
+(TASK-035 teve um erro inicial de sintaxe no teste novo, corrigido sem alterar) Tj T*
+(asserções. O log da tentativa recusada foi preservado. A primeira invocação Maven) Tj T*
+(da baseline falhou ao selecionar o cache; a repetição com argumento completo) Tj T*
+(entre aspas usou o cache do projeto e passou. Não se ocultaram falhas de gameplay.) Tj T*
+() Tj T*
+(## Alterações e decisões) Tj T*
+() Tj T*
+(- Mapas: Properties V1 960x640 compatível; V2 reservado a mapas ampliados,) Tj T*
+() Tj T*
+(Spirit Gate - TASK-022 a TASK-036 - página 1/3) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 3587 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(  960x640 até 8192x8192, máximo 4096 elementos por lista, validações físicas) Tj T*
+(  preservadas. Mundo, Criostase, câmera e clipping usam as dimensões reais.) Tj T*
+(- Render: culling conservador por clipping Java2D e comparação de pixels;) Tj T*
+(  camadas 0-4 traseiras e 5-10 frontais, ordenação estável. Sem índice paralelo.) Tj T*
+(- Autoria: CLI Python gera exportação determinística e reutiliza o validador) Tj T*
+(  Java autoritativo. Revisão de sprites inclui prévias direcionais e comparação) Tj T*
+(  de dimensões, alfa e SHA, preservando contrato de 59 frames e revisão humana.) Tj T*
+(- Assets: carregador único com fallback, limites de arquivo/dimensões, rejeição) Tj T*
+(  de chave duplicada, caminho externo e offset extremo. Sem IO por frame.) Tj T*
+(- Entrada/animação: prioridades históricas mantidas, deltas inválidos recusados,) Tj T*
+(  testes de transição; perda de foco limpa held/mira sem apagar casts FIFO.) Tj T*
+(- Apresentação: F1 mostra ajuda e valores publicados; impactos/derrotas usam) Tj T*
+(  efeitos reais com expiração da simulação; listas do snapshot são copiadas.) Tj T*
+(- Diagnóstico: F2 salva ZIP local explícito com um JSON e campos por whitelist;) Tj T*
+(  sem nome pessoal, caminho completo, mensagens livres ou transmissão externa.) Tj T*
+(- Qualidade: comando único offline, logs individuais, JSON/TXT e códigos de) Tj T*
+(  ambiente/teste/build, sem instalação de dependências ou mudanças globais.) Tj T*
+() Tj T*
+(## Preservação e estresse) Tj T*
+() Tj T*
+(82 arquivos históricos de domínio e seus testes comparados com) Tj T*
+(checkpoint inicial: nenhuma alteração. 228 PNGs conferidos contra) Tj T*
+(inventário histórico: nenhum alterado. ZIP 0.21 original com hash preservado.) Tj T*
+(Fórmulas, vigor, cooldowns, Freeze/Criostase, SOLID/SOFT, dash seletivo,) Tj T*
+(recuperação de posição, FIFO e três replays históricos preservados pela suíte.) Tj T*
+(Estresse: dois runtimes, 6000 ticks cada e 6000 comparações completas, dez R por) Tj T*
+(runtime, 780 ticks com Freeze, 3000 com gelo e 80 com dash; 4096 visuais em mapa) Tj T*
+(8192x8192, câmera extrema e 32 repetições de dash sólido. Métricas observadas,) Tj T*
+(sem limiar temporal para aprovar gameplay. Ver TASK-035-estresse.json.) Tj T*
+() Tj T*
+(## Inventário e recuperação) Tj T*
+() Tj T*
+(Cada tarefa tem docs/TASK-NNN.md, Spirit_Gate_TASK-NNN.pdf, TASK-NNN-testes.txt,) Tj T*
+(TASK-NNN.diff e logs. Checkpoints em .task-checkpoints/TASK-NNN-before.json) Tj T*
+(\(conteúdo textual recuperável\) e TASK-NNN-after.json \(hashes/arquivos alterados\).) Tj T*
+(O diff reconstrói o estado posterior a partir do snapshot anterior. Não existe Git) Tj T*
+(neste checkout e não foi criado repositório. Inventário completo com hashes em) Tj T*
+(    docs/INVENTARIO-TASK-022_036.json \(fontes locais\); o consolidado JSON lista) Tj T*
+(alterações por tarefa.) Tj T*
+(Snapshots locais conservam fontes; pacote documental inclui metadados e evidências,) Tj T*
+(separado do ZIP do jogo. Os logs textuais exportados têm caminhos pessoais redigidos.) Tj T*
+(Continuar por docs/CONTINUIDADE-TASK-022_036.md, sem repetir tarefas aprovadas.) Tj T*
+() Tj T*
+(## Reprodução) Tj T*
+() Tj T*
+(Na raiz Projeto-K: python tools/qualidade.py --offline --task local) Tj T*
+(Requer Java 17, Maven, Python e cache .maven-repository existente.) Tj T*
+(Somente Python: python -m unittest discover -s tools -p "test_*.py" -v) Tj T*
+(\(os testes de autoria de mapas requerem classes Java compiladas\).) Tj T*
+() Tj T*
+(Spirit Gate - TASK-022 a TASK-036 - página 2/3) Tj T*
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 1954 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(Mapa: python tools/mapas.py create nome-novo.properties; depois validate nome-) Tj T*
+(novo.properties.) Tj T*
+(Build: powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-windows-) Tj T*
+(portable.ps1) Tj T*
+(-Version 0.36.0-rc1 -MavenRepository .maven-repository) Tj T*
+(-TesterKitDirectory docs/kit-homologacao-022-036) Tj T*
+(O build cria outra saída única, preservando releases anteriores.) Tj T*
+(Auditar ZIP: python tools/auditar_rc.py --zip) Tj T*
+(dist/SpiritGate-0.36.0-rc1-20261019T042237Z-a006aab1-portable.zip --report docs/re-) Tj T*
+(auditoria.json) Tj T*
+(Executável opcional: SpiritGate.exe --map mapa-demo.properties) Tj T*
+() Tj T*
+(## Limitações e roteiro humano por tarefa) Tj T*
+() Tj T*
+(Roteiro separado por TASK em docs/kit-homologacao-022-036/ROTEIRO-HOMOLOGACAO.md,) Tj T*
+(incluído também no jogo. Revisar F1/F2, foco, colisões seletivas, mapa ampliado,) Tj T*
+(R, camadas e sessão prolongada; em outro Windows sem Java, conferir abertura e SHA.) Tj T*
+(Capturas do EXE na TASK-036 são reais. Template/autoria e cenários de teste são) Tj T*
+(sintéticos identificados, sem aprovação artística. Não há sprites definitivos.) Tj T*
+(EXE não assinado; sem teste Linux ou homologação em outro computador. Inspeção) Tj T*
+(de sockets por CIM é indisponível neste ambiente; não se declarou medição negativa.) Tj T*
+(Não há multiplayer, autenticação, migração de banco ou mudança de protocolo.) Tj T*
+(Zoom inteiro continua API de integração; não foi inventado atalho novo.) Tj T*
+(Fonte escala com janela e precisa de revisão humana de legibilidade em tamanhos) Tj T*
+(muito pequenos. Culling conserva efeitos/atlas com offsets e ainda percorre fundo;) Tj T*
+(não foi alegada eliminação de todo custo fora da viewport. Estresse sintético não) Tj T*
+(prova ausência de todo vazamento e não substitui sessão humana longa.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-022 a TASK-036 - página 3/3) Tj T*
+ET
+endstream
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000133 00000 n 
+0000000230 00000 n 
+0000000356 00000 n 
+0000003589 00000 n 
+0000003715 00000 n 
+0000007354 00000 n 
+0000007480 00000 n 
+trailer
+<< /Size 10 /Root 1 0 R >>
+startxref
+9486
+%%EOF

@@ -1,0 +1,99 @@
+--- /dev/null
++++ b/docs/TASK-045-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 253,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-045.md
+@@ -0,0 +1,5 @@
++# TASK-045 - Consumiveis
++
++Pocao recupera ate 50 HP, com recarga de 60 ticks (2 segundos), persistida no save. Consumo somente apos validar categoria, vida, HP maximo, quantidade, recarga e ausencia de transicao. Feedback publicado no snapshot e exibido no HUD reutilizado. Dano e cura acontecem exclusivamente no dominio.
++
++Testes de HP cheio, morte, uso repetido, espera deterministica e save durante recarga. Flag de transicao bloqueia uso e sera acionada pelo servico de portais. Nenhuma alteracao de vigor ou habilidades legadas.
+--- a/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
+@@ -39,8 +39,8 @@
+         runtime.start(); timer.start(); frame.setVisible(true);
+     }
+     static DebugSnapshot adapt(com.projetok.rpg.RpgWorld.View v, DebugSnapshot t) {
+-        return new DebugSnapshot(List.of(new DebugSnapshot.ActorView(1,v.identity().name(),v.x(),v.y(),18,v.identity().baseHp(),v.identity().baseHp(),true,true)),
+-            List.of(new DebugSnapshot.Obstacle(380,180,120,120)),List.of(),100,100,0,false,v.ticks(),"RPG offline | WASD: explorar",1,0,0,null,
++        return new DebugSnapshot(List.of(new DebugSnapshot.ActorView(1,v.identity().name(),v.x(),v.y(),18,v.state().hp(),v.identity().baseHp(),true,v.state().hp()>0)),
++            List.of(new DebugSnapshot.Obstacle(380,180,120,120)),List.of(),v.state().hp(),v.identity().baseHp(),0,v.state().hp()==0,v.ticks(),v.message(),1,0,0,null,
+             100,100,0,List.of(),List.of(),false,0,0,List.of(),false,List.of(),t.cryostasisHud(),t.lightningStepHud());
+     }
+ }
+--- a/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -18,6 +18,18 @@
+     private final java.util.Map<String,String> equipment=new java.util.TreeMap<>();
+     private final java.util.Map<String,Integer> quests=new java.util.TreeMap<>();
+     private final java.util.Set<String> flags=new java.util.TreeSet<>();
++    private long potionReadyTick;
++    private boolean transitioning;
++    private String message="Bem-vindo a Aurora";
++    public int maxHp() { return identity.baseHp(); }
++    public void receiveDamage(int amount) { if(amount<0||amount>10000) throw new IllegalArgumentException("Dano invalido"); hp=Math.max(0,hp-amount); }
++    public boolean use(String id) {
++        ItemCatalog.Item item=items.get(id);
++        if(item.category()!=ItemCatalog.Category.CONSUMABLE || hp==0 || hp==maxHp() || transitioning || ticks<potionReadyTick || inventory.count(id)==0) return false;
++        inventory.remove(id,1); hp=Math.min(maxHp(),hp+item.healing()); potionReadyTick=ticks+60;
++        flags.removeIf(f->f.startsWith("potion-until:")); flags.add("potion-until:"+potionReadyTick);
++        message=item.name()+": vida recuperada"; return true;
++    }
+     public InventoryService inventory() { return inventory; }
+     public int attackPower() { return identity.baseAttack()+equipmentPower("weapon"); }
+     public int defense() { return equipmentPower("torso")+equipmentPower("legs")+equipmentPower("accessory"); }
+@@ -54,12 +66,14 @@
+         world.inventory.replace(InventoryService.restore(world.items,20,state.inventory()));
+         world.hp=state.hp(); world.xp=state.xp(); world.coins=state.coins(); world.region=state.region();
+         for(var entry:state.equipment().entrySet()) if(!world.items.get(entry.getValue()).slot().equals(entry.getKey())) throw new IllegalArgumentException("Equipamento incompativel no save");
+-        world.equipment.putAll(state.equipment()); world.quests.putAll(state.quests()); world.flags.addAll(state.flags()); return world;
++        world.equipment.putAll(state.equipment()); world.quests.putAll(state.quests()); world.flags.addAll(state.flags());
++        for(String flag:world.flags) if(flag.startsWith("potion-until:")) world.potionReadyTick=Long.parseLong(flag.substring(13));
++        if(world.hp>world.maxHp()) throw new IllegalArgumentException("HP acima do maximo"); return world;
+     }
+-    public record View(float x, float y, long ticks, CharacterIdentity identity) { }
++    public record View(float x, float y, long ticks, CharacterIdentity identity, RpgSave state, int attack, int defense, String message) { }
+     public void tick(float x, float y) {
+         movement.moveDirected(body, movement.direction(x, y), 215, 1f / 30, 18, space);
+         ticks++;
+     }
+-    public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity); }
++    public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message); }
+ }
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/ConsumableTest.java
+@@ -0,0 +1,13 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class ConsumableTest {
++    @Test void invalidUsesNeverConsumeAndCooldownSurvivesReload() {
++        var w=new RpgWorld(); assertFalse(w.use("potion")); assertEquals(3,w.inventory().count("potion"));
++        w.receiveDamage(60); assertTrue(w.use("potion")); assertEquals(2,w.inventory().count("potion"));
++        var loaded=RpgWorld.restore(w.save()); assertFalse(loaded.use("potion"));
++        for(int i=0;i<60;i++) loaded.tick(0,0);
++        assertTrue(loaded.use("potion")); assertEquals(loaded.maxHp(),loaded.save().hp());
++        loaded.receiveDamage(10000); var before=loaded.save(); assertFalse(loaded.use("potion")); assertEquals(before,loaded.save());
++    }
++}

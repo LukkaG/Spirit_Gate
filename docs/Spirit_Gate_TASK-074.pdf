@@ -1,0 +1,53 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1258 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-074 - Robustez e limites) Tj T*
+() Tj T*
+(Testes deterministas simulam perda, atraso, duplicacao e reordenacao de intencoes por) Tj T*
+(2500 ticks, incluindo desconexao/reconexao durante habilidades. Comparacao integral com) Tj T*
+(seed fixa. Entrada ausente expira; sessoes fechadas nao movimentam/atacam. Payload) Tj T*
+(<=4096, fila mundial64, cliente32, saida1, conexoes2, 120 mensagens/s e 30 min por) Tj T*
+(sessao.) Tj T*
+() Tj T*
+(Corrigido fechamento de conexoes ainda no handshake: sockets pendentes agora sao) Tj T*
+(rastreados, fechados e leitores interrompidos. Servidor nao pode ser reiniciado apos) Tj T*
+(close. IDs de jogadores limitados/reservados para nao colidir com chefe. Teste real) Tj T*
+(injeta frame excessivo e encerra servidor com handshake incompleto sem falha fatal.) Tj T*
+() Tj T*
+(Escopo parcial explicitado: experimento online tem um mapa/encontro; transicoes de) Tj T*
+(regioes em rede nao foram implementadas, portanto desconexao durante transicao ONLINE) Tj T*
+(nao foi homologada. Transicoes e save offline continuam cobertos pela campanha. Isso nao) Tj T*
+(e multiplayer completo nem auditoria de seguranca de producao.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-074 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1654
+%%EOF

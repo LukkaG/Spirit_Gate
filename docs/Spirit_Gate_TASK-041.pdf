@@ -1,0 +1,52 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1192 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-041 - Save local V1) Tj T*
+() Tj T*
+(Snapshot imutavel RpgSave inclui identidade, localizacao, HP, experiencia, moedas,) Tj T*
+(inventario, equipamento, missoes, flags e tick. Formato Properties legivel, schema=1;) Tj T*
+(sem ObjectInputStream. Colecoes copiadas, IDs e limites validados. Rejeita) Tj T*
+(duplicatas/campos desconhecidos, NaN, posicoes invalidas e versoes incompatÌveis.) Tj T*
+() Tj T*
+(LocalSaveStore grava temporario no mesmo diretorio, valida releitura e substitui) Tj T*
+(atomicamente quando suportado. Backup validado antes da substituicao; arquivo atual) Tj T*
+(corrompido exige recuperacao explicita. Falha de escrita preserva ultimo save. API de IO) Tj T*
+(separada do tick; integracao assincrona com UI sera ampliada no menu.) Tj T*
+() Tj T*
+(Testes reais em diretorio temporario: salvar/carregar/continuar, save ausente, escrita) Tj T*
+(interrompida, backup, corrupcao e versao. Estado de futuros sistemas tem contrato) Tj T*
+(persistente, comportamento sera integrado conforme suas tarefas. Nao alegar persistencia) Tj T*
+(funcional de sistemas ainda inexistentes.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-041 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1588
+%%EOF

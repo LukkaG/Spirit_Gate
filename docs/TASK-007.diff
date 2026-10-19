@@ -1,0 +1,793 @@
+--- a/.gitignore
++++ b/.gitignore
+@@ -17,3 +17,7 @@
+ !.env.example
+ *.jks
+ *.keystore
++
++# Pacotes e checkpoints locais da rodada de desenvolvimento
++dist/
++.task-checkpoints/
+--- a/docs/HISTORICO-TECNICO.md
++++ b/docs/HISTORICO-TECNICO.md
+@@ -1,4 +1,18 @@
+ # Histórico técnico
++
++## 18/10/2026 - TASK-007: pacote Windows portátil
++
++Base local TASK-006.1 confirmada com teste de parede do usuário e 170 testes.
++Build jpackage app-image x64 com runtime Java 17 reduzido e jdk.random explícito.
++JAR restrito a domain/prototype, sem bibliotecas do servidor/banco; manifest,
++inventário e SHA-256. Scripts não removem saídas nem sobrescrevem versões.
++
++`mvn clean test`: 171 testes, zero falhas/erros/ignorados. EXE extraído em pasta
++com espaços fora dos fontes abriu com PATH sem Java/Maven, foi capturado e fechou
++normalmente. Smoke acompanha o processo filho do launcher. Observação de sockets
++indisponível no ambiente; outro Windows sem Java permanece pendente de homologação.
++
++Entrega: [TASK-007](TASK-007.md), PDF, testes, log, diff e evidências JSON/PNG.
+ 
+ ## 18/10/2026 - TASK-006.1: colisão seletiva preparada para revisão
+ 
+--- /dev/null
++++ b/docs/RELATORIO-FINAL-RODADA.md
+@@ -0,0 +1,13 @@
++# Rodada autônoma Spirit Gate - TASK-007 a TASK-011
++
++Planejamento fornecido pelo usuário em 18/10/2026. Fonte de verdade: checkout local, base TASK-006.1 com 170 testes aprovados e teste de parede presente. Windows 10 amd64, Java/jpackage Temurin 17.0.20.1, Maven 3.10.0. Sem Git nesta pasta; checkpoints locais e diffs isolados em cada etapa. Sem push, publicação, banco ou integração de rede.
++
++## TASK-007 - Pacote Windows portátil
++
++Status: IMPLEMENTADA. AUTOMATIZADO APROVADO; EXECUCAO LOCAL CONFERIDA. EXE abriu e fechou normalmente fora dos fontes, em pasta com espaços, sem Java/Maven no PATH. Captura e JSON de evidência disponíveis. Inspeção de sockets indisponível por restrição do ambiente; nenhuma homologação externa foi declarada.
++
++Testes: inicial 170; final 171, zero falhas/erros/ignorados. Mudanças: build com jpackage/jlink, staging por lista permitida, runtime integrado com jdk.random, manifest/inventário/SHA-256 e teste de entrada sem JFrame.
++
++Artefatos: [relatório](TASK-007.md), [PDF](Spirit_Gate_TASK-007.pdf), [testes](TASK-007-testes.txt), [log](TASK-007-final.log), [diff](TASK-007.diff). ZIP 0.7.0-task007 em dist; candidato consolidado será gerado na TASK-011.
++
++Pendências manuais: outro Windows sem Java/Maven, controles e sensação de jogo. Nenhuma implementação foi reservada ao usuário nesta rodada.
+--- /dev/null
++++ b/docs/RODADA-inicial.txt
+@@ -0,0 +1,4 @@
++Base TASK-006.1 confirmada: mvn clean test, BUILD SUCCESS, 170 tests, 0 failures/errors/skipped.
++Windows 10 amd64; Temurin 17.0.20.1+1; Maven 3.10.0; jpackage 17.0.20.1.
++Teste devePreservarBloqueioDeParedeNoDashSeletivo presente e aprovado.
++Sem repositorio Git: checkpoints locais e diffs por etapa.
+--- /dev/null
++++ b/docs/TASK-007-testes.txt
+@@ -0,0 +1,29 @@
++TASK-007 - mvn clean test - BUILD SUCCESS
++{'tests': 171, 'failures': 0, 'errors': 0, 'skipped': 0}
++Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.
++
++com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugLauncherEntrypointTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
+--- /dev/null
++++ b/docs/TASK-007.md
+@@ -0,0 +1,33 @@
++# TASK-007 - Windows portátil com Java integrado
++
++18/10/2026. Base: checkout local TASK-006.1, incluindo o teste de parede do usuário. Nenhum ZIP anterior foi usado como fonte. Windows 10 amd64, Temurin JDK 17.0.20.1+1, Maven 3.10.0 e jpackage 17.0.20.1.
++
++## Implementação
++
++tools/build-windows-portable.cmd encaminha os argumentos ao script PowerShell. O wrapper usa política de execução restrita ao seu processo; não modifica a configuração permanente do Windows. O script confere JDK 17 x64, executa mvn clean test por padrão, gera um JAR com as classes de produção domain/prototype e confirma a dependência apenas do JDK com jdeps. Não é um fat JAR e não precisa das bibliotecas externas declaradas no POM para o servidor legado. Não houve alteração do POM nem novas dependências.
++
++jlink gera o runtime reduzido e jpackage --type app-image cria SpiritGate.exe, app/ e runtime/. O módulo jdk.random é incluído explicitamente: seus provedores RandomGenerator são carregados por serviço e não aparecem na análise estática de jdeps. O staging é uma lista permitida de pacotes, sem classes legadas de banco/servidor, recursos privados, JUnit ou arquivos de teste. A arena atual não carrega assets externos. Recursos novos fazem o script falhar até revisão explícita da lista permitida.
++
++O pacote inclui LEIA-ME-TESTER.txt, VERSION.txt, INVENTARIO-SHA256.txt e manifest.json com hashes individuais. O manifest exclui a si próprio; o inventário exclui a si próprio e o manifest para evitar referências circulares. Um arquivo .sha256 externo cobre o ZIP inteiro. O script cria saídas únicas, não remove diretórios e não sobrescreve distribuições anteriores; -SkipMaven exige uma compilação/teste anterior.
++
++Reconstrução, na pasta Projeto-K: tools\build-windows-portable.cmd -Version 0.7.0-task007. O argumento -JavaHome permite selecionar um JDK 17. A execução real desta entrega usou -SkipMaven depois do teste limpo registrado abaixo.
++
++## Testes e evidências
++
++AUTOMATIZADO APROVADO: mvn clean test inicial com 170 testes e final com 171, zero falhas/erros/ignorados. DebugLauncherEntrypointTest verifica por reflexão public static void main(String[]) sem abrir JFrame. Os 170 testes e baselines anteriores foram preservados. Log integral: TASK-007-final.log. Resumo: TASK-007-testes.txt.
++
++O script tools/test-windows-portable.ps1 valida ZIP, manifest, hashes, PE x64, runtime Java 17 com jdk.random e configuração de main. Extrai em uma pasta com espaços fora de Projeto-K, remove Java/Maven do PATH somente no processo de verificação, aponta JAVA_HOME para um caminho inexistente e executa o EXE. Captura sua janela e fecha apenas esse processo por WM_CLOSE. A observação de sockets pertence ao intervalo do teste e não substitui auditoria de tráfego histórico.
++
++Pacote aprovado da etapa: dist/SpiritGate-0.7.0-task007-20261018T212519Z-bccb553f-portable.zip, 29.341.071 bytes. SHA-256: c786f095445747111270ae7dccff791944a58cc3b689d4e40898f358824326b2.
++
++EXECUCAO LOCAL CONFERIDA: EXE extraído fora dos fontes em caminho com espaços, PATH sem Java/Maven e JAVA_HOME inexistente. Janela real capturada em TASK-007-exe.png e processos encerrados normalmente. Evidência: TASK-007-portable-smoke.json. O launcher nativo usa processo filho; o validador foi corrigido para acompanhar essa árvore e manter o handle antes do encerramento. As tentativas de validação anteriores foram guardadas, sem atribuir a falha do harness ao jogo. A inspeção de sockets ficou indisponível por restrição do ambiente e não é declarada como aprovada; o staging e o código do launcher foram inspecionados sem inicialização de banco/rede.
++
++Uma primeira construção, anterior à inclusão de jdk.random, foi identificada antes da homologação local e movida para dist/rascunhos-nao-entregar. Ela não é o pacote aprovado nem a candidata final. A versão da TASK-011 será reconstruída com o código consolidado, sem substituir esta versão.
++
++A limpeza inicial da etapa seguinte detectou arquivos somente leitura criados por jpackage em server/target. Atributos foram normalizados somente nas pastas de saída deste build, e o script passou a fazê-lo após empacotar; o JDK instalado não é alterado. A falha e a repetição do clean estão registradas na evidência da TASK-008. Isso não alterou o código ou os hashes do pacote aprovado.
++
++## Limitações e roteiro manual
++
++HOMOLOGACAO HUMANA PENDENTE: extrair tudo em outro Windows x64 sem Java/Maven, abrir SpiritGate.exe e conferir WASD, Espaço, E, Q, Shift, H e R. Manter app/ e runtime/ ao lado do EXE. Não há instalador, WiX, assinatura, auto-update, login ou multiplayer. O EXE não é assinado; não é recomendado desativar proteções do Windows.
++
++Arquivos: scripts de build/smoke, teste de entrada, .gitignore para dist/checkpoints, ferramenta local de checkpoints, este relatório/PDF, resumo/log, diff e evidência JSON/PNG. Checkpoints usam snapshots e patches porque esta pasta não é um repositório Git. Nada foi enviado ou publicado.
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/DebugLauncherEntrypointTest.java
+@@ -0,0 +1,16 @@
++package com.projetok.prototype;
++
++import java.lang.reflect.Modifier;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Verifica o contrato usado pelo launcher nativo sem abrir uma janela. */
++class DebugLauncherEntrypointTest {
++    /** jpackage precisa encontrar um main público, estático e com retorno void. */
++    @Test void disponibilizaEntradaCompativelComLauncherNativo() throws Exception {
++        var main = DebugLauncher.class.getDeclaredMethod("main", String[].class);
++        assertEquals(void.class, main.getReturnType());
++        assertTrue(Modifier.isPublic(main.getModifiers()));
++        assertTrue(Modifier.isStatic(main.getModifiers()));
++    }
++}
+--- /dev/null
++++ b/tools/build-windows-portable.cmd
+@@ -0,0 +1,5 @@
++@echo off
++setlocal
++rem Encaminha os argumentos ao build PowerShell e preserva o codigo de erro.
++powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0build-windows-portable.ps1" %*
++exit /b %ERRORLEVEL%
+--- /dev/null
++++ b/tools/build-windows-portable.ps1
+@@ -0,0 +1,259 @@
++<#
++.SYNOPSIS
++Gera a arena portatil Windows x64 com Java 17 integrado, sem instalador.
++.DESCRIPTION
++Executa os testes por padrao. O JAR e montado apenas com domain e prototype:
++as entradas legadas de servidor, banco e Kryonet nao pertencem a arena local.
++Nao apaga diretorios e nunca sobrescreve uma distribuicao anterior.
++.EXAMPLE
++.\tools\build-windows-portable.cmd -Version 0.7.0-task007
++.EXAMPLE
++.\tools\build-windows-portable.ps1 -Version 0.11.0-rc1 -SkipMaven
++#>
++[CmdletBinding()]
++param(
++    [ValidatePattern('^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$')]
++    [string] $Version = '0.7.0-task007',
++    [string] $JavaHome = '',
++    [switch] $SkipMaven
++)
++
++Set-StrictMode -Version Latest
++$ErrorActionPreference = 'Stop'
++$transcriptStarted = $false
++
++# --- Ferramentas e caminhos: somente entradas locais explicitamente permitidas. ---
++
++function Invoke-CheckedTool {
++    param(
++        [Parameter(Mandatory = $true)][string] $Program,
++        [string[]] $Arguments = @(),
++        [switch] $Capture
++    )
++    $previousPreference = $ErrorActionPreference
++    $ErrorActionPreference = 'Continue'
++    try {
++        $lines = @(& $Program @Arguments 2>&1)
++        $toolExitCode = $LASTEXITCODE
++    }
++    finally {
++        $ErrorActionPreference = $previousPreference
++    }
++    foreach ($line in $lines) { Write-Host $line.ToString() }
++    if ($toolExitCode -ne 0) {
++        throw "Ferramenta terminou com codigo ${toolExitCode}: $Program"
++    }
++    if ($Capture) { return @($lines | ForEach-Object { $_.ToString() }) }
++}
++
++function Assert-ChildPath {
++    param([string] $Path, [string] $Parent)
++    $absolute = [IO.Path]::GetFullPath($Path)
++    $prefix = [IO.Path]::GetFullPath($Parent).TrimEnd('\') + '\'
++    if (-not $absolute.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase)) {
++        throw "Caminho de saida fora da pasta permitida: $absolute"
++    }
++    return $absolute
++}
++
++function Write-Utf8File {
++    param([string] $Path, [string] $Content)
++    [IO.File]::WriteAllText($Path, $Content, (New-Object Text.UTF8Encoding($false)))
++}
++
++function Get-PortableInventory {
++    param([string] $Directory)
++    $prefix = [IO.Path]::GetFullPath($Directory).TrimEnd('\') + '\'
++    return @(Get-ChildItem -LiteralPath $Directory -Recurse -File |
++        Sort-Object FullName | ForEach-Object {
++            [ordered]@{
++                path = $_.FullName.Substring($prefix.Length).Replace('\', '/')
++                sizeBytes = $_.Length
++                sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
++            }
++        })
++}
++
++try {
++    if ($env:OS -ne 'Windows_NT' -or -not [Environment]::Is64BitOperatingSystem) {
++        throw 'O app-image exige uma maquina de build Windows x64.'
++    }
++    $projectDirectory = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
++    $serverDirectory = Join-Path $projectDirectory 'server'
++    $distributionDirectory = Join-Path $projectDirectory 'dist'
++    if (-not $JavaHome) { $JavaHome = $env:JAVA_HOME }
++    if (-not $JavaHome) {
++        $JavaHome = Split-Path -Parent (Split-Path -Parent (Get-Command java.exe -ErrorAction Stop).Source)
++    }
++    $JavaHome = (Resolve-Path -LiteralPath $JavaHome).Path
++    $releaseFile = Join-Path $JavaHome 'release'
++    $release = Get-Content -LiteralPath $releaseFile -Raw
++    if ($release -notmatch '(?m)^JAVA_VERSION="(17\.[^"]+)"') {
++        throw 'Selecione um JDK 17 completo pelo parametro -JavaHome ou JAVA_HOME.'
++    }
++    $javaVersion = $Matches[1]
++    if ($release -notmatch '(?m)^OS_ARCH="(x86_64|amd64)"') {
++        throw 'O JDK selecionado deve ser Windows x64.'
++    }
++    $jdkBin = Join-Path $JavaHome 'bin'
++    foreach ($name in @('java.exe', 'jar.exe', 'jdeps.exe', 'jlink.exe', 'jpackage.exe')) {
++        if (-not (Test-Path -LiteralPath (Join-Path $jdkBin $name) -PathType Leaf)) {
++            throw "Ferramenta ausente no JDK 17: $name"
++        }
++    }
++    $env:JAVA_HOME = $JavaHome
++    $env:PATH = $jdkBin + ';' + $env:PATH
++    $maven = (Get-Command mvn.cmd -ErrorAction Stop).Source
++
++    # A versao completa identifica o ZIP; o recurso PE do Windows usa x.y.z.
++    if ($Version -notmatch '^(\d+)\.(\d+)\.(\d+)') {
++        throw 'A versao deve comecar com tres numeros, por exemplo 0.7.0-task007.'
++    }
++    $windowsVersion = '{0}.{1}.{2}' -f $Matches[1], $Matches[2], $Matches[3]
++    $buildId = $Version + '-' + [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssZ') + '-' +
++        [Guid]::NewGuid().ToString('N').Substring(0, 8)
++    $artifactName = 'SpiritGate-' + $buildId + '-portable'
++    New-Item -ItemType Directory -Path $distributionDirectory -Force | Out-Null
++    $logPath = Assert-ChildPath (Join-Path $distributionDirectory ($artifactName + '-build.log')) $distributionDirectory
++    Start-Transcript -LiteralPath $logPath -NoClobber | Out-Null
++    $transcriptStarted = $true
++    Write-Host "Spirit Gate $Version | Windows x64 | Java $javaVersion"
++    Write-Host "JDK: $JavaHome"
++    $mavenInformation = @(Invoke-CheckedTool $maven @('--version') -Capture)
++    $jpackageVersion = @(Invoke-CheckedTool (Join-Path $jdkBin 'jpackage.exe') @('--version') -Capture)
++
++    # --- Compilacao/testes e staging restrito da arena independente. ---
++
++    Push-Location -LiteralPath $serverDirectory
++    try {
++        if (-not $SkipMaven) {
++            Invoke-CheckedTool $maven @('clean', 'test')
++        }
++        else {
++            Write-Host 'SkipMaven: reutilizando classes locais; execute mvn clean test antes deste modo.'
++        }
++    }
++    finally { Pop-Location }
++    $classesDirectory = Join-Path $serverDirectory 'target\classes'
++    foreach ($package in @('domain', 'prototype')) {
++        if (-not (Test-Path -LiteralPath (Join-Path $classesDirectory ('com\projetok\' + $package)) -PathType Container)) {
++            throw "Classes da arena ausentes: $package. Execute mvn clean test."
++        }
++    }
++    # A arena atual desenha em Java2D e nao carrega recursos externos. Um recurso
++    # futuro exige whitelist explicita; evita omissao silenciosa ou copia de config.
++    $resourcesDirectory = Join-Path $serverDirectory 'src\main\resources'
++    if ((Test-Path -LiteralPath $resourcesDirectory) -and
++        @(Get-ChildItem -LiteralPath $resourcesDirectory -Recurse -File).Count -gt 0) {
++        throw 'Foram encontrados recursos novos. Revise a whitelist de staging antes de distribuir.'
++    }
++    $buildRoot = Assert-ChildPath (Join-Path $serverDirectory ('target\portable-build-' + $buildId)) (Join-Path $serverDirectory 'target')
++    if (Test-Path -LiteralPath $buildRoot) { throw "Saida ja existe: $buildRoot" }
++    $jarInput = Join-Path $buildRoot 'input'
++    $packageOutput = Join-Path $buildRoot 'app-image'
++    $runtimeImage = Join-Path $buildRoot 'runtime-image'
++    New-Item -ItemType Directory -Path $jarInput -Force | Out-Null
++    New-Item -ItemType Directory -Path $packageOutput -Force | Out-Null
++    $jarName = 'spirit-gate-arena.jar'
++    $jarPath = Join-Path $jarInput $jarName
++    Invoke-CheckedTool (Join-Path $jdkBin 'jar.exe') @('--create', '--file', $jarPath,
++        '--main-class', 'com.projetok.prototype.DebugLauncher',
++        '-C', $classesDirectory, 'com/projetok/domain',
++        '-C', $classesDirectory, 'com/projetok/prototype')
++    # jdeps falha caso uma classe incluida passe a exigir biblioteca externa.
++    $dependencyArguments = @('--multi-release', '17', '--print-module-deps', $jarPath)
++    $dependencyLines = @(Invoke-CheckedTool (Join-Path $jdkBin 'jdeps.exe') $dependencyArguments -Capture)
++    $modules = @($dependencyLines | Where-Object { $_ -match '^(java|jdk)\.[a-z.,]+$' })
++    if ($modules.Count -ne 1) { throw 'Nao foi possivel determinar os modulos Java da arena.' }
++    # RandomGenerator.getDefault usa um provedor de servico de jdk.random;
++    # jdeps nao o descobre por referencias estaticas a classes de java.base.
++    $runtimeModules = @($modules[0].Split(',') + 'jdk.random' | Sort-Object -Unique) -join ','
++    Invoke-CheckedTool (Join-Path $jdkBin 'jlink.exe') @('--add-modules', $runtimeModules,
++        '--strip-debug', '--no-man-pages', '--no-header-files', '--compress=2', '--output', $runtimeImage)
++    Invoke-CheckedTool (Join-Path $jdkBin 'jpackage.exe') @('--type', 'app-image',
++        '--dest', $packageOutput, '--name', 'SpiritGate', '--input', $jarInput,
++        '--main-jar', $jarName, '--main-class', 'com.projetok.prototype.DebugLauncher',
++        '--runtime-image', $runtimeImage, '--app-version', $windowsVersion,
++        '--vendor', 'Spirit Gate', '--description', 'Spirit Gate - arena local de testes')
++    $appImage = Join-Path $packageOutput 'SpiritGate'
++    # jpackage marca arquivos como somente leitura no Windows. Normaliza apenas
++    # a saida criada por este build para que um futuro mvn clean possa remove-la.
++    foreach ($generatedFile in Get-ChildItem -LiteralPath $buildRoot -Recurse -File) {
++        $null = Assert-ChildPath $generatedFile.FullName $buildRoot
++        if ($generatedFile.IsReadOnly) { $generatedFile.IsReadOnly = $false }
++    }
++    foreach ($required in @('SpiritGate.exe', 'app\SpiritGate.cfg', ('app\' + $jarName), 'runtime\release')) {
++        if (-not (Test-Path -LiteralPath (Join-Path $appImage $required) -PathType Leaf)) {
++            throw "App-image incompleto: $required"
++        }
++    }
++
++    # --- Kit do tester, inventario verificavel e distribuicao sem sobrescrita. ---
++
++    $readme = @"
++SPIRIT GATE - ARENA LOCAL PORTATIL
++Versao: $Version | Windows x64
++
++1. Extraia o ZIP inteiro para uma pasta gravavel.
++2. Abra SpiritGate.exe dentro da pasta SpiritGate. Nao mova somente o EXE.
++3. Nao e necessario instalar Java, Maven, PostgreSQL ou conectar a um servidor.
++
++Controles: WASD mover; Espaco atacar; E esforco (20 vigor);
++Q Criostase (55 vigor); Shift Passo Relampago (35 vigor), mirando com mouse;
++H mostrar hitboxes; R reiniciar. Feche a janela para sair.
++
++Mantenha app/ e runtime/ junto ao EXE. O runtime Java 17 esta integrado.
++O executavel nao e assinado; avisos do Windows podem ocorrer. Nao desative
++protecoes. Confira a origem e o SHA-256 fornecido com a distribuicao.
++
++Ao relatar um problema, informe versao, Windows, passos para reproduzir,
++resultado esperado/obtido e captura se possivel. Nao envie credenciais.
++Este pacote e candidato a testes locais, sem multiplayer e sem instalador.
++Teste em outro Windows sem Java/Maven: PENDENTE DE HOMOLOGACAO HUMANA.
++"@
++    Write-Utf8File (Join-Path $appImage 'LEIA-ME-TESTER.txt') $readme
++    Write-Utf8File (Join-Path $appImage 'VERSION.txt') ($Version + "`r`n")
++    $payloadInventory = @(Get-PortableInventory $appImage)
++    $inventoryText = @($payloadInventory | ForEach-Object { $_.sha256 + '  ' + $_.path }) -join "`r`n"
++    Write-Utf8File (Join-Path $appImage 'INVENTARIO-SHA256.txt') ($inventoryText + "`r`n")
++    $manifest = [ordered]@{
++        schemaVersion = 1
++        application = 'Spirit Gate - arena local'
++        version = $Version
++        windowsAppVersion = $windowsVersion
++        builtAtUtc = [DateTime]::UtcNow.ToString('o')
++        platform = 'windows-x64'
++        javaVersion = $javaVersion
++        jpackageVersion = ($jpackageVersion -join ' ')
++        mavenVersion = $mavenInformation[0]
++        entrypoint = 'com.projetok.prototype.DebugLauncher'
++        mainJar = 'app/' + $jarName
++        javaModules = @($runtimeModules.Split(','))
++        runtimeLibraries = @()
++        stagingPolicy = 'Somente com/projetok/domain e com/projetok/prototype; sem classes legadas de banco/rede, testes ou configuracoes privadas.'
++        inventoryPolicy = 'Manifest lista todos os arquivos exceto si mesmo; INVENTARIO-SHA256.txt exclui si mesmo e manifest.json para evitar circularidade.'
++        testsExecutedByBuild = (-not $SkipMaven.IsPresent)
++        cleanWindowsValidation = 'PENDENTE DE HOMOLOGACAO HUMANA'
++        files = @(Get-PortableInventory $appImage)
++    }
++    $manifestPath = Join-Path $appImage 'manifest.json'
++    Write-Utf8File $manifestPath ($manifest | ConvertTo-Json -Depth 8)
++    $zipPath = Assert-ChildPath (Join-Path $distributionDirectory ($artifactName + '.zip')) $distributionDirectory
++    if (Test-Path -LiteralPath $zipPath) { throw "ZIP ja existente; nada foi sobrescrito: $zipPath" }
++    Compress-Archive -LiteralPath $appImage -DestinationPath $zipPath -CompressionLevel Optimal
++    $zipHash = (Get-FileHash -LiteralPath $zipPath -Algorithm SHA256).Hash.ToLowerInvariant()
++    Write-Utf8File ($zipPath + '.sha256') ($zipHash + '  ' + [IO.Path]::GetFileName($zipPath) + "`r`n")
++    Copy-Item -LiteralPath $manifestPath -Destination ($zipPath + '.manifest.json') -ErrorAction Stop
++    Write-Host "Pacote gerado: $zipPath"
++    Write-Host ('Tamanho: ' + (Get-Item -LiteralPath $zipPath).Length + ' bytes')
++    Write-Output "ZIP_PATH=$zipPath"
++    Write-Output "APP_IMAGE_PATH=$appImage"
++    Write-Output "SHA256=$zipHash"
++}
++catch {
++    Write-Error -Message $_.Exception.Message -ErrorAction Continue
++    exit 1
++}
++finally {
++    if ($transcriptStarted) { Stop-Transcript | Out-Null }
++}
+--- /dev/null
++++ b/tools/checkpoint_rodada.py
+@@ -0,0 +1,84 @@
++"""Registra checkpoints, diffs e resultados locais sem depender de um checkout Git."""
++
++from pathlib import Path
++import argparse
++import difflib
++import hashlib
++import json
++import xml.etree.ElementTree as ET
++
++ROOT = Path(__file__).resolve().parents[1]
++EXTENSIONS = {".java", ".md", ".txt", ".xml", ".py", ".ps1", ".cmd", ".gitignore"}
++EXCLUDED = {"target", "dist", ".git", ".task-checkpoints", "assets", "__pycache__"}
++
++
++def state():
++    """Lê apenas fontes, scripts e documentos textuais da rodada."""
++    return {p.relative_to(ROOT).as_posix(): p.read_text(encoding="utf-8-sig")
++            for p in ROOT.rglob("*") if p.is_file() and p.suffix.lower() in EXTENSIONS
++            and not any(part in EXCLUDED for part in p.relative_to(ROOT).parts)}
++
++
++def checkpoint(task, finish):
++    """Salva a base ou produz o diff e os hashes do estado aprovado da etapa."""
++    folder = ROOT / ".task-checkpoints"
++    folder.mkdir(exist_ok=True)
++    path = folder / f"TASK-{task}-before.json"
++    current = state()
++    if not finish:
++        if path.exists():
++            raise FileExistsError(f"Checkpoint inicial já existe: {path}")
++        path.write_text(json.dumps(current, ensure_ascii=False), encoding="utf-8")
++        print(f"TASK-{task}: base salva ({len(current)} arquivos)")
++        return
++    previous = json.loads(path.read_text(encoding="utf-8"))
++    diff = []
++    changed = []
++    for name in sorted(previous.keys() | current.keys()):
++        old, new = previous.get(name, ""), current.get(name, "")
++        if old == new:
++            continue
++        changed.append(name)
++        diff.extend(difflib.unified_diff(old.splitlines(True), new.splitlines(True),
++                    fromfile="a/" + name if name in previous else "/dev/null",
++                    tofile="b/" + name if name in current else "/dev/null"))
++    (ROOT / f"docs/TASK-{task}.diff").write_text("".join(diff), encoding="utf-8")
++    metadata = {"task": task, "changed": changed,
++                "sha256": {n: hashlib.sha256(t.encode("utf-8")).hexdigest()
++                           for n, t in current.items()}}
++    (folder / f"TASK-{task}-after.json").write_text(
++        json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8")
++    print(f"TASK-{task}: diff salvo ({len(changed)} arquivos)")
++
++
++def results(task):
++    """Resume os relatórios reais do Surefire sem copiar propriedades do ambiente."""
++    reports = [ET.parse(p).getroot() for p in sorted(
++        (ROOT / "server/target/surefire-reports").glob("TEST-*.xml"))]
++    if not reports:
++        raise RuntimeError("Relatórios Surefire ausentes")
++    totals = {key: sum(int(r.get(key, "0")) for r in reports)
++              for key in ("tests", "failures", "errors", "skipped")}
++    if totals["failures"] or totals["errors"]:
++        raise RuntimeError(f"Suíte vermelha: {totals}")
++    text = [f"TASK-{task} - mvn clean test - BUILD SUCCESS", str(totals),
++            "Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.", ""]
++    text += [f"{r.get('name')}: tests={r.get('tests')}, failures={r.get('failures')}, "
++             f"errors={r.get('errors')}, skipped={r.get('skipped')}" for r in reports]
++    (ROOT / f"docs/TASK-{task}-testes.txt").write_text("\n".join(text) + "\n", encoding="utf-8")
++    print(totals)
++
++
++if __name__ == "__main__":
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("action", choices=("begin", "end", "results", "pdf"))
++    parser.add_argument("task")
++    args = parser.parse_args()
++    if args.action in ("begin", "end"):
++        checkpoint(args.task, args.action == "end")
++    elif args.action == "results":
++        results(args.task)
++    else:
++        from gerar_pdf_task002 import gerar_pdf
++        gerar_pdf(ROOT / f"docs/TASK-{args.task}.md",
++                  ROOT / f"docs/Spirit_Gate_TASK-{args.task}.pdf", f"TASK-{args.task}")
+--- /dev/null
++++ b/tools/test-windows-portable.ps1
+@@ -0,0 +1,292 @@
++<#
++.SYNOPSIS
++Valida o ZIP portatil e abre o executavel extraido fora da pasta de fontes.
++.DESCRIPTION
++Nao precisa de Java ou Maven no PATH. Confere estrutura, arquitetura e ponto de
++entrada; captura a janela real e fecha somente o processo iniciado pelo teste.
++Uma execucao local nao substitui a homologacao em outro Windows sem Java.
++#>
++[CmdletBinding()]
++param(
++    [Parameter(Mandatory = $true)][string]$ZipPath,
++    [string]$OutputDirectory,
++    [string]$EvidencePath
++)
++
++Set-StrictMode -Version Latest
++$ErrorActionPreference = 'Stop'
++Add-Type -AssemblyName System.IO.Compression.FileSystem
++Add-Type -AssemblyName System.Drawing
++if (-not ('SpiritGatePortableSmoke.Native' -as [type])) {
++    Add-Type -TypeDefinition @'
++using System;
++using System.Collections.Generic;
++using System.ComponentModel;
++using System.Runtime.InteropServices;
++namespace SpiritGatePortableSmoke {
++    public static class Native {
++        [StructLayout(LayoutKind.Sequential)]
++        public struct RECT { public int Left, Top, Right, Bottom; }
++        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
++        private struct PROCESSENTRY32 {
++            public uint dwSize, cntUsage, th32ProcessID;
++            public IntPtr th32DefaultHeapID;
++            public uint th32ModuleID, cntThreads, th32ParentProcessID;
++            public int pcPriClassBase;
++            public uint dwFlags;
++            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string szExeFile;
++        }
++        [DllImport("kernel32.dll", SetLastError = true)] private static extern IntPtr CreateToolhelp32Snapshot(uint flags, uint process);
++        [DllImport("kernel32.dll", CharSet = CharSet.Auto)] private static extern bool Process32First(IntPtr snapshot, ref PROCESSENTRY32 entry);
++        [DllImport("kernel32.dll", CharSet = CharSet.Auto)] private static extern bool Process32Next(IntPtr snapshot, ref PROCESSENTRY32 entry);
++        [DllImport("kernel32.dll")] private static extern bool CloseHandle(IntPtr handle);
++        [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr window, out RECT rect);
++        [DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr window, IntPtr target, uint flags);
++        [DllImport("user32.dll")] public static extern bool PostMessage(IntPtr window, uint message, IntPtr w, IntPtr l);
++        public static int[] DescendantIds(int root) {
++            IntPtr snapshot = CreateToolhelp32Snapshot(2, 0);
++            if (snapshot == new IntPtr(-1)) throw new Win32Exception();
++            var parents = new Dictionary<int, int>();
++            try {
++                var entry = new PROCESSENTRY32();
++                entry.dwSize = (uint)Marshal.SizeOf(typeof(PROCESSENTRY32));
++                if (Process32First(snapshot, ref entry)) do {
++                    parents[(int)entry.th32ProcessID] = (int)entry.th32ParentProcessID;
++                } while (Process32Next(snapshot, ref entry));
++            } finally { CloseHandle(snapshot); }
++            var owned = new HashSet<int>();
++            owned.Add(root);
++            bool changed;
++            do {
++                changed = false;
++                foreach (var pair in parents)
++                    if (owned.Contains(pair.Value) && owned.Add(pair.Key)) changed = true;
++            } while (changed);
++            owned.Remove(root);
++            var result = new int[owned.Count];
++            owned.CopyTo(result);
++            Array.Sort(result);
++            return result;
++        }
++    }
++}
++'@
++}
++
++# --- Destino novo: o teste nao apaga nem sobrescreve pastas existentes. ---
++$projectDirectory = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
++$workspaceDirectory = [IO.Path]::GetDirectoryName($projectDirectory)
++$archive = (Resolve-Path -LiteralPath $ZipPath).Path
++if (-not $OutputDirectory) {
++    $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
++    $OutputDirectory = Join-Path $workspaceDirectory ("Validacao Portatil\$stamp-" + [Guid]::NewGuid().ToString('N').Substring(0, 8))
++}
++$destination = [IO.Path]::GetFullPath($OutputDirectory)
++if ($destination.Equals($projectDirectory, [StringComparison]::OrdinalIgnoreCase) -or
++        $destination.StartsWith($projectDirectory + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
++    throw 'A extracao de verificacao deve ficar fora da pasta Projeto-K.'
++}
++if (Test-Path -LiteralPath $destination) { throw "O destino ja existe: $destination" }
++if ($destination -notmatch ' ') { throw 'Use um destino com espacos para validar caminhos portateis.' }
++if (-not $EvidencePath) { $EvidencePath = Join-Path $destination 'smoke-portable.json' }
++$evidenceFile = [IO.Path]::GetFullPath($EvidencePath)
++
++$result = [ordered]@{
++    status = 'EXECUCAO LOCAL EM ANDAMENTO'
++    startedAt = [DateTimeOffset]::Now.ToString('o')
++    zip = $archive
++    zipSha256 = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash
++    extractionDirectory = $destination
++    environment = [Environment]::OSVersion.VersionString
++    cleanWindowsWithoutJava = 'PENDENTE DE HOMOLOGACAO HUMANA'
++}
++$launched = $null
++$ownedProcesses = @{}
++$oldPath = $env:PATH
++$oldJavaHome = $env:JAVA_HOME
++
++try {
++    # --- Validacao das entradas antes da extracao (inclusive caminhos relativos). ---
++    $zip = [IO.Compression.ZipFile]::OpenRead($archive)
++    try {
++        foreach ($entry in $zip.Entries) {
++            $relative = $entry.FullName.Replace('/', [IO.Path]::DirectorySeparatorChar)
++            $expanded = [IO.Path]::GetFullPath((Join-Path $destination $relative))
++            if (-not $expanded.StartsWith($destination + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
++                throw "Entrada fora da pasta de extracao: $($entry.FullName)"
++            }
++            if ($entry.FullName -match '(^|/)(\.env([^/]*|$)|\.git(/|$)|target(/|$)|[^/]*\.(pem|key|p12|pfx)$)') {
++                throw "Entrada privada ou de desenvolvimento no pacote: $($entry.FullName)"
++            }
++        }
++        $result.archiveEntries = $zip.Entries.Count
++    } finally { $zip.Dispose() }
++    [IO.Directory]::CreateDirectory($destination) | Out-Null
++    [IO.Compression.ZipFile]::ExtractToDirectory($archive, $destination)
++    $executables = @(Get-ChildItem -LiteralPath $destination -Filter 'SpiritGate.exe' -File -Recurse)
++    if ($executables.Count -ne 1) { throw 'Esperado exatamente um SpiritGate.exe no ZIP.' }
++    $exe = $executables[0].FullName
++    $appDirectory = $executables[0].Directory.FullName
++    $configuration = Join-Path $appDirectory 'app\SpiritGate.cfg'
++    $jvm = Join-Path $appDirectory 'runtime\bin\server\jvm.dll'
++    $release = Join-Path $appDirectory 'runtime\release'
++    foreach ($required in @($configuration, $jvm, $release)) {
++        if (-not (Test-Path -LiteralPath $required -PathType Leaf)) { throw "Arquivo obrigatorio ausente: $required" }
++    }
++    $cfg = Get-Content -LiteralPath $configuration -Raw
++    if ($cfg -notmatch '(?m)^app\.mainclass=com\.projetok\.prototype\.DebugLauncher\s*$') {
++        throw 'O app-image nao aponta para DebugLauncher.'
++    }
++    $releaseText = Get-Content -LiteralPath $release -Raw
++    if ($releaseText -notmatch '(?m)^JAVA_VERSION="17(?:\.|\")') { throw 'O runtime integrado deve ser Java 17.' }
++    $reader = New-Object IO.BinaryReader([IO.File]::OpenRead($exe))
++    try {
++        $reader.BaseStream.Position = 0x3c
++        $reader.BaseStream.Position = $reader.ReadInt32()
++        if ($reader.ReadUInt32() -ne 0x00004550 -or $reader.ReadUInt16() -ne 0x8664) {
++            throw 'O executavel nao e um PE Windows x64.'
++        }
++    } finally { $reader.Dispose() }
++    $result.launcher = $exe
++    $result.launcherArchitecture = 'PE x64 (0x8664)'
++    $result.mainClass = 'com.projetok.prototype.DebugLauncher'
++    $result.runtimeRelease = $releaseText.Trim()
++    $result.configuration = $cfg.Trim()
++
++    # --- O manifest cobre cada arquivo distribuido, inclusive o inventario textual. ---
++    $manifestPath = Join-Path $appDirectory 'manifest.json'
++    if (-not (Test-Path -LiteralPath $manifestPath -PathType Leaf)) { throw 'manifest.json ausente.' }
++    $manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
++    if ($manifest.schemaVersion -ne 1) { throw 'Schema de manifest desconhecido.' }
++    if ($manifest.entrypoint -ne 'com.projetok.prototype.DebugLauncher') { throw 'Ponto de entrada inesperado no manifest.' }
++    if ($manifest.mainJar -ne 'app/spirit-gate-arena.jar') { throw 'JAR principal inesperado no manifest.' }
++    if ($manifest.javaModules -notcontains 'jdk.random' -or $releaseText -notmatch '(?m)^MODULES="[^"]*\bjdk\.random\b') {
++        throw 'O runtime precisa do modulo jdk.random para o provedor de RandomGenerator.'
++    }
++    $listed = @{}
++    foreach ($item in $manifest.files) {
++        $relative = $item.path.Replace('/', [IO.Path]::DirectorySeparatorChar)
++        $filePath = [IO.Path]::GetFullPath((Join-Path $appDirectory $relative))
++        if (-not $filePath.StartsWith($appDirectory + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
++            throw "Manifest referencia arquivo externo: $($item.path)"
++        }
++        if ($listed.ContainsKey($filePath)) { throw "Arquivo duplicado no manifest: $($item.path)" }
++        $listed[$filePath] = $true
++        $file = Get-Item -LiteralPath $filePath
++        if ($file.Length -ne $item.sizeBytes) { throw "Tamanho divergente: $($item.path)" }
++        if ((Get-FileHash -LiteralPath $filePath -Algorithm SHA256).Hash -ne $item.sha256) {
++            throw "SHA-256 divergente: $($item.path)"
++        }
++    }
++    foreach ($file in Get-ChildItem -LiteralPath $appDirectory -File -Recurse) {
++        if ($file.FullName -ne $manifestPath -and -not $listed.ContainsKey($file.FullName)) {
++            throw "Arquivo nao inventariado: $($file.FullName)"
++        }
++    }
++    $sidecar = $archive + '.sha256'
++    if (-not (Test-Path -LiteralPath $sidecar -PathType Leaf)) { throw 'SHA-256 externo do ZIP ausente.' }
++    $expectedZipHash = ((Get-Content -LiteralPath $sidecar -Raw).Trim() -split '\s+')[0]
++    if ($expectedZipHash -ne $result.zipSha256) { throw 'SHA-256 externo divergente do ZIP.' }
++    $result.manifestFilesVerified = $listed.Count
++    $result.packageVersion = $manifest.version
++    $result.javaModules = $manifest.javaModules
++    $result.manifestSha256 = (Get-FileHash -LiteralPath $manifestPath -Algorithm SHA256).Hash
++    $result.zipSidecarVerified = $true
++
++    # --- O teste usa a JVM integrada, sem Java/Maven do ambiente de desenvolvimento. ---
++    $env:PATH = "$env:SystemRoot\System32;$env:SystemRoot"
++    $env:JAVA_HOME = Join-Path $destination 'java-externo-ausente'
++    $launched = Start-Process -FilePath $exe -WorkingDirectory $destination -WindowStyle Hidden -PassThru
++    $ownedProcesses[$launched.Id] = $launched
++    $result.processId = $launched.Id
++    $window = [IntPtr]::Zero
++    $windowProcess = $null
++    $deadline = [DateTime]::UtcNow.AddSeconds(30)
++    while ([DateTime]::UtcNow -lt $deadline) {
++        foreach ($childId in [SpiritGatePortableSmoke.Native]::DescendantIds($launched.Id)) {
++            if (-not $ownedProcesses.ContainsKey($childId)) {
++                try { $ownedProcesses[$childId] = [Diagnostics.Process]::GetProcessById($childId) }
++                catch [ArgumentException] { } # O filho pode encerrar entre snapshot e leitura.
++            }
++        }
++        foreach ($candidate in $ownedProcesses.Values) {
++            $candidate.Refresh()
++            if (-not $candidate.HasExited -and $candidate.MainWindowHandle -ne [IntPtr]::Zero -and
++                    $candidate.MainWindowTitle -like '*Spirit Gate*') {
++                $window = $candidate.MainWindowHandle
++                $windowProcess = $candidate
++                break
++            }
++        }
++        if ($window -ne [IntPtr]::Zero) { break }
++        $launched.Refresh()
++        if ($launched.HasExited -and $ownedProcesses.Count -eq 1) { throw "O launcher encerrou antes de criar janela (codigo $($launched.ExitCode))." }
++        Start-Sleep -Milliseconds 200
++    }
++    if ($window -eq [IntPtr]::Zero) { throw 'O executavel nao apresentou janela em 30 segundos.' }
++    $result.windowTitle = $windowProcess.MainWindowTitle
++    $result.windowProcessId = $windowProcess.Id
++    $result.ownedProcessIds = @($ownedProcesses.Keys | Sort-Object)
++    # Preserva o handle antes do encerramento para obter ExitCode do filho nativo.
++    [void]$windowProcess.Handle
++    Start-Sleep -Milliseconds 900
++
++    # --- Captura da propria janela, sem controlar outras aplicacoes. ---
++    $rect = New-Object SpiritGatePortableSmoke.Native+RECT
++    if (-not [SpiritGatePortableSmoke.Native]::GetWindowRect($window, [ref]$rect)) { throw 'Nao foi possivel obter as dimensoes da janela.' }
++    $bitmap = New-Object Drawing.Bitmap(($rect.Right - $rect.Left), ($rect.Bottom - $rect.Top))
++    $graphics = [Drawing.Graphics]::FromImage($bitmap)
++    try {
++        $dc = $graphics.GetHdc()
++        try { $captured = [SpiritGatePortableSmoke.Native]::PrintWindow($window, $dc, 0) }
++        finally { $graphics.ReleaseHdc($dc) }
++        if (-not $captured) { throw 'PrintWindow nao conseguiu capturar o app-image.' }
++        $screenshot = Join-Path $destination 'SpiritGate-exe-smoke.png'
++        $bitmap.Save($screenshot, [Drawing.Imaging.ImageFormat]::Png)
++        $result.screenshot = $screenshot
++        $result.windowSize = "$($bitmap.Width)x$($bitmap.Height)"
++    } finally { $graphics.Dispose(); $bitmap.Dispose() }
++
++    # --- Observacao objetiva do processo aberto; nao afirma inspecao de trafego historico. ---
++    try {
++        $tcp = @(Get-NetTCPConnection -ErrorAction Stop | Where-Object { $ownedProcesses.ContainsKey([int]$_.OwningProcess) })
++        $udp = @(Get-NetUDPEndpoint -ErrorAction Stop | Where-Object { $ownedProcesses.ContainsKey([int]$_.OwningProcess) })
++        $result.tcpConnectionsObserved = $tcp.Count
++        $result.udpEndpointsObserved = $udp.Count
++        if ($tcp.Count -ne 0 -or $udp.Count -ne 0) { throw 'Foram observados sockets pertencentes ao launcher local.' }
++    } catch {
++        if ($_.Exception.Message -like 'Foram observados sockets*') { throw }
++        $result.networkInspection = 'INDISPONIVEL: ' + $_.Exception.Message
++    }
++    $result.pathDuringLaunch = $env:PATH
++    [SpiritGatePortableSmoke.Native]::PostMessage($window, 0x0010, [IntPtr]::Zero, [IntPtr]::Zero) | Out-Null
++    if (-not $windowProcess.WaitForExit(10000)) { throw 'O processo da janela nao encerrou normalmente depois de WM_CLOSE.' }
++    if (-not $launched.WaitForExit(10000)) { throw 'A janela nao encerrou normalmente depois de WM_CLOSE.' }
++    $result.windowExitCode = $windowProcess.ExitCode
++    $result.exitCode = $launched.ExitCode
++    if ($launched.ExitCode -ne 0 -or $windowProcess.ExitCode -ne 0) { throw "Saida nao-zero ao fechar a janela: $($launched.ExitCode)/$($windowProcess.ExitCode)" }
++    $result.status = 'EXECUCAO LOCAL CONFERIDA'
++} catch {
++    $result.status = 'FALHA'
++    $result.error = $_.Exception.Message
++    throw
++} finally {
++    $env:PATH = $oldPath
++    $env:JAVA_HOME = $oldJavaHome
++    $allExited = $true
++    foreach ($owned in @($ownedProcesses.Values)) {
++        $owned.Refresh()
++        if (-not $owned.HasExited) {
++            Stop-Process -Id $owned.Id -Force
++            $owned.WaitForExit(5000) | Out-Null
++            $result.forcedClose = $true
++        }
++        $allExited = $allExited -and $owned.HasExited
++        $owned.Dispose()
++    }
++    $result.processExited = $allExited
++    $result.finishedAt = [DateTimeOffset]::Now.ToString('o')
++    [IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($evidenceFile)) | Out-Null
++    $result | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $evidenceFile -Encoding UTF8
++}
++Write-Output "EXECUCAO LOCAL CONFERIDA: $evidenceFile"

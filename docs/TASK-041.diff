@@ -1,0 +1,180 @@
+--- /dev/null
++++ b/docs/TASK-041-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 248,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-041.md
+@@ -0,0 +1,7 @@
++# TASK-041 - Save local V1
++
++Snapshot imutavel RpgSave inclui identidade, localizacao, HP, experiencia, moedas, inventario, equipamento, missoes, flags e tick. Formato Properties legivel, schema=1; sem ObjectInputStream. Colecoes copiadas, IDs e limites validados. Rejeita duplicatas/campos desconhecidos, NaN, posicoes invalidas e versoes incompatíveis.
++
++LocalSaveStore grava temporario no mesmo diretorio, valida releitura e substitui atomicamente quando suportado. Backup validado antes da substituicao; arquivo atual corrompido exige recuperacao explicita. Falha de escrita preserva ultimo save. API de IO separada do tick; integracao assincrona com UI sera ampliada no menu.
++
++Testes reais em diretorio temporario: salvar/carregar/continuar, save ausente, escrita interrompida, backup, corrupcao e versao. Estado de futuros sistemas tem contrato persistente, comportamento sera integrado conforme suas tarefas. Nao alegar persistencia funcional de sistemas ainda inexistentes.
+--- /dev/null
++++ b/server/src/main/java/com/projetok/rpg/LocalSaveStore.java
+@@ -0,0 +1,76 @@
++package com.projetok.rpg;
++
++import java.io.*;
++import java.nio.file.*;
++import java.util.*;
++
++/** IO local fora do tick. Valida antes de substituir e preserva backup integro. */
++public final class LocalSaveStore {
++    @FunctionalInterface public interface Writer { void write(Path path, byte[] bytes) throws IOException; }
++    private final Path file;
++    private final Writer writer;
++    public LocalSaveStore(Path file) { this(file,Files::write); }
++    public LocalSaveStore(Path file, Writer writer) { this.file=file.toAbsolutePath(); this.writer=writer; }
++    public Path file() { return file; }
++    public synchronized RpgSave load() throws IOException { return decode(Files.readAllBytes(checked(file))); }
++    public synchronized RpgSave recoverBackup() throws IOException { return decode(Files.readAllBytes(checked(backup()))); }
++    private Path backup() { return file.resolveSibling(file.getFileName()+".bak"); }
++    private static Path checked(Path path) throws IOException {
++        if(Files.size(path)>262144) throw new IOException("Save excessivo"); return path;
++    }
++    public synchronized void save(RpgSave state) throws IOException {
++        byte[] data=encode(state); decode(data);
++        Files.createDirectories(file.getParent());
++        Path temporary=Files.createTempFile(file.getParent(),"offline-",".tmp");
++        try {
++            writer.write(temporary,data);
++            decode(Files.readAllBytes(checked(temporary)));
++            if(Files.exists(file)) {
++                try { load(); Files.copy(file,backup(),StandardCopyOption.REPLACE_EXISTING); }
++                catch(IllegalArgumentException corrupt) { throw new IOException("Save atual invalido; recuperar antes de substituir",corrupt); }
++            }
++            try { Files.move(temporary,file,StandardCopyOption.ATOMIC_MOVE,StandardCopyOption.REPLACE_EXISTING); }
++            catch(AtomicMoveNotSupportedException e) { Files.move(temporary,file,StandardCopyOption.REPLACE_EXISTING); }
++        } finally { Files.deleteIfExists(temporary); }
++    }
++    public static byte[] encode(RpgSave state) throws IOException {
++        Properties p=new Properties();
++        var i=state.identity();
++        p.setProperty("schema","1"); p.setProperty("id",i.id().toString()); p.setProperty("name",i.name());
++        p.setProperty("archetype",i.archetype()); p.setProperty("appearance",i.appearance());
++        p.setProperty("baseHp",""+i.baseHp()); p.setProperty("baseAttack",""+i.baseAttack());
++        p.setProperty("region",state.region()); p.setProperty("x",""+state.x()); p.setProperty("y",""+state.y());
++        p.setProperty("hp",""+state.hp()); p.setProperty("xp",""+state.xp()); p.setProperty("coins",""+state.coins()); p.setProperty("ticks",""+state.ticks());
++        state.inventory().forEach((k,v)->p.setProperty("inventory."+k,""+v));
++        state.equipment().forEach((k,v)->p.setProperty("equipment."+k,v));
++        state.quests().forEach((k,v)->p.setProperty("quest."+k,""+v));
++        state.flags().forEach(k->p.setProperty("flag."+k,"true"));
++        ByteArrayOutputStream out=new ByteArrayOutputStream(); p.store(out,"Spirit Gate offline V1"); return out.toByteArray();
++    }
++    public static RpgSave decode(byte[] bytes) throws IOException {
++        if(bytes.length>262144) throw new IOException("Save excessivo");
++        Properties p=new Properties() {
++            @Override public synchronized Object put(Object k,Object v) {
++                if(containsKey(k)) throw new IllegalArgumentException("Campo duplicado"); return super.put(k,v);
++            }
++        };
++        p.load(new ByteArrayInputStream(bytes));
++        try {
++            if(!"1".equals(take(p,"schema"))) throw new IllegalArgumentException("Schema de save incompativel");
++            CharacterIdentity identity=new CharacterIdentity(UUID.fromString(take(p,"id")),take(p,"name"),take(p,"archetype"),take(p,"appearance"),"village",Integer.parseInt(take(p,"baseHp")),Integer.parseInt(take(p,"baseAttack")));
++            String region=take(p,"region"); float x=Float.parseFloat(take(p,"x")),y=Float.parseFloat(take(p,"y"));
++            int hp=Integer.parseInt(take(p,"hp")),coins=Integer.parseInt(take(p,"coins")); long xp=Long.parseLong(take(p,"xp")),ticks=Long.parseLong(take(p,"ticks"));
++            Map<String,Integer> inventory=new TreeMap<>(),quests=new TreeMap<>(); Map<String,String> equipment=new TreeMap<>(); Set<String> flags=new TreeSet<>();
++            for(String key:p.stringPropertyNames()) {
++                String v=p.getProperty(key);
++                if(key.startsWith("inventory.")) inventory.put(key.substring(10),Integer.parseInt(v));
++                else if(key.startsWith("equipment.")) equipment.put(key.substring(10),v);
++                else if(key.startsWith("quest.")) quests.put(key.substring(6),Integer.parseInt(v));
++                else if(key.startsWith("flag.") && "true".equals(v)) flags.add(key.substring(5));
++                else throw new IllegalArgumentException("Campo desconhecido: "+key);
++            }
++            return new RpgSave(identity,region,x,y,hp,xp,coins,inventory,equipment,quests,flags,ticks);
++        } catch(NullPointerException | NumberFormatException e) { throw new IllegalArgumentException("Save incompleto/corrompido",e); }
++    }
++    private static String take(Properties p,String key) { return Objects.requireNonNull((String)p.remove(key),key); }
++}
+--- /dev/null
++++ b/server/src/main/java/com/projetok/rpg/RpgSave.java
+@@ -0,0 +1,22 @@
++package com.projetok.rpg;
++
++import java.util.*;
++
++/** Snapshot persistente V1, copias profundas de colecoes e limites verificaveis. */
++public record RpgSave(CharacterIdentity identity, String region, float x, float y, int hp,
++                      long xp, int coins, Map<String,Integer> inventory, Map<String,String> equipment,
++                      Map<String,Integer> quests, Set<String> flags, long ticks) {
++    public RpgSave {
++        Objects.requireNonNull(identity);
++        inventory=Map.copyOf(inventory); equipment=Map.copyOf(equipment); quests=Map.copyOf(quests); flags=Set.copyOf(flags);
++        RpgContent content=RpgContent.builtin(); content.get("region",region);
++        if (!Float.isFinite(x) || !Float.isFinite(y) || x<18 || x>942 || y<18 || y>622 || hp<0 || hp>10000
++                || xp<0 || xp>1_000_000 || coins<0 || coins>1_000_000 || ticks<0 || ticks>1_000_000_000L
++                || inventory.size()>100 || equipment.size()>8 || quests.size()>64 || flags.size()>2048)
++            throw new IllegalArgumentException("Save fora dos limites");
++        inventory.forEach((id,q)->{ content.get("item",id); if(q<1||q>9999) throw new IllegalArgumentException("Quantidade invalida"); });
++        equipment.forEach((slot,id)->{ if(!Set.of("weapon","torso","legs","accessory").contains(slot)) throw new IllegalArgumentException("Slot invalido"); content.get("item",id); });
++        quests.forEach((id,q)->{ content.get("quest",id); if(q<0||q>10000) throw new IllegalArgumentException("Quest invalida"); });
++        for(String flag:flags) if(!flag.matches("[a-zA-Z0-9_:.-]{1,100}")) throw new IllegalArgumentException("Flag invalida");
++    }
++}
+--- a/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -21,6 +21,12 @@
+     private final CollisionService.Space space = new CollisionService.Space(960, 640,
+             List.of(new CollisionService.Obstacle(380, 180, 120, 120)), List.of());
+     private long ticks;
++    public RpgSave save() { return new RpgSave(identity, "village",body.getPosition().x(),body.getPosition().y(),identity.baseHp(),0,0,java.util.Map.of(),java.util.Map.of(),java.util.Map.of(),java.util.Set.of(),ticks); }
++    public static RpgWorld restore(RpgSave state) {
++        RpgWorld world=new RpgWorld(state.identity());
++        if(!new CollisionService().isFree(world.body,state.x(),state.y(),18,world.space)) throw new IllegalArgumentException("Posicao de save obstruida");
++        world.body.setPosition(new Position(state.x(),state.y())); world.ticks=state.ticks(); return world;
++    }
+     public record View(float x, float y, long ticks, CharacterIdentity identity) { }
+     public void tick(float x, float y) {
+         movement.moveDirected(body, movement.direction(x, y), 215, 1f / 30, 18, space);
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/LocalSaveStoreTest.java
+@@ -0,0 +1,25 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import java.nio.file.*;
++import java.io.*;
++import static org.junit.jupiter.api.Assertions.*;
++class LocalSaveStoreTest {
++    @TempDir Path folder;
++    @Test void roundTripAndFailurePreserveLastGoodSave() throws Exception {
++        Path file=folder.resolve("save.properties"); LocalSaveStore store=new LocalSaveStore(file);
++        assertThrows(NoSuchFileException.class,store::load);
++        RpgWorld world=new RpgWorld(); world.tick(1,0); store.save(world.save());
++        assertEquals(world.save(),store.load()); assertEquals(world.snapshot(),RpgWorld.restore(store.load()).snapshot());
++        byte[] good=Files.readAllBytes(file);
++        LocalSaveStore broken=new LocalSaveStore(file,(path,bytes)->{Files.write(path,new byte[]{1}); throw new IOException("disco cheio");});
++        assertThrows(IOException.class,()->broken.save(world.save())); assertArrayEquals(good,Files.readAllBytes(file));
++        store.save(world.save()); assertEquals(world.save(),store.recoverBackup());
++    }
++    @Test void rejectsCorruptionVersionAndDuplicateFields() throws Exception {
++        byte[] good=LocalSaveStore.encode(new RpgWorld().save());
++        String text=new String(good,java.nio.charset.StandardCharsets.ISO_8859_1);
++        for(String invalid:new String[]{"garbage",text.replace("schema=1","schema=2"),text+"\nx=NaN\n",text.replace("x=140.0","x=NaN")})
++            assertThrows(IllegalArgumentException.class,()->LocalSaveStore.decode(invalid.getBytes(java.nio.charset.StandardCharsets.ISO_8859_1)));
++    }
++}

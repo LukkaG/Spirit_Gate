@@ -1,0 +1,126 @@
+--- /dev/null
++++ b/docs/TASK-039-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 244,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-039.md
+@@ -0,0 +1,7 @@
++# TASK-039 - Personagem local
++
++Identidade imutavel com UUID, nome normalizado NFC (3-24 caracteres), arquetipo, aparencia referenciada, regiao inicial e atributos base. Construtor permite restauracao deterministica sem UI; fabrica cria UUID local. Nao existe login.
++
++RpgLauncher apresenta criacao com validacao; cancelar encerra sem criar personagem. Snapshot exibe nome escolhido. Referencias de aparencia sao placeholders aprovados por codigo, nao sprites externos. Guardian com 140 HP/18 ataque e mystic com 100 HP/24 ataque; habilidades diferenciadas previstas na TASK-048.
++
++Testes de nomes invalidos, normalizacao, identidade restaurada e suite completa. Persistencia em arquivo sera implementada na TASK-041.
+--- a/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
+@@ -10,7 +10,12 @@
+     private RpgLauncher() { }
+     public static void main(String[] args) { SwingUtilities.invokeLater(RpgLauncher::open); }
+     static void open() {
+-        RpgRuntime runtime = new RpgRuntime();
++        String name = JOptionPane.showInputDialog(null, "Nome do personagem (3 a 24 caracteres)", "Criar personagem", JOptionPane.QUESTION_MESSAGE);
++        if (name == null) return;
++        com.projetok.rpg.CharacterIdentity identity;
++        try { identity = com.projetok.rpg.CharacterIdentity.create(name, "guardian", "azure"); }
++        catch (IllegalArgumentException error) { JOptionPane.showMessageDialog(null, error.getMessage()); open(); return; }
++        RpgRuntime runtime = new RpgRuntime(new com.projetok.rpg.RpgWorld(identity));
+         DebugSnapshot template = DebugWorld.demo().snapshot();
+         DebugPanel panel = new DebugPanel(() -> adapt(runtime.snapshot(), template));
+         JFrame frame = new JFrame("Spirit Gate | RPG offline");
+@@ -34,7 +39,7 @@
+         runtime.start(); timer.start(); frame.setVisible(true);
+     }
+     static DebugSnapshot adapt(com.projetok.rpg.RpgWorld.View v, DebugSnapshot t) {
+-        return new DebugSnapshot(List.of(new DebugSnapshot.ActorView(1,"Viajante",v.x(),v.y(),18,100,100,true,true)),
++        return new DebugSnapshot(List.of(new DebugSnapshot.ActorView(1,v.identity().name(),v.x(),v.y(),18,v.identity().baseHp(),v.identity().baseHp(),true,true)),
+             List.of(new DebugSnapshot.Obstacle(380,180,120,120)),List.of(),100,100,0,false,v.ticks(),"RPG offline | WASD: explorar",1,0,0,null,
+             100,100,0,List.of(),List.of(),false,0,0,List.of(),false,List.of(),t.cryostasisHud(),t.lightningStepHud());
+     }
+--- /dev/null
++++ b/server/src/main/java/com/projetok/rpg/CharacterIdentity.java
+@@ -0,0 +1,22 @@
++package com.projetok.rpg;
++
++import java.util.UUID;
++import java.util.Objects;
++import java.text.Normalizer;
++
++/** Identidade local, sem login. Valores iniciais exclusivos do modo RPG. */
++public record CharacterIdentity(UUID id, String name, String archetype, String appearance,
++                                String initialRegion, int baseHp, int baseAttack) {
++    public CharacterIdentity {
++        Objects.requireNonNull(id);
++        name = Normalizer.normalize(Objects.requireNonNull(name).strip(), Normalizer.Form.NFC);
++        if (!name.matches("[\\p{L}][\\p{L}\\p{N} _-]{2,23}")) throw new IllegalArgumentException("Nome: 3 a 24 letras/numeros, espacos, _ ou -");
++        if (!java.util.Set.of("guardian", "mystic").contains(archetype)) throw new IllegalArgumentException("Arquetipo desconhecido");
++        if (!java.util.Set.of("azure", "amber").contains(appearance) || !"village".equals(initialRegion)
++                || baseHp < 1 || baseHp > 1000 || baseAttack < 1 || baseAttack > 100) throw new IllegalArgumentException("Identidade invalida");
++    }
++    public static CharacterIdentity create(String name, String archetype, String appearance) {
++        return new CharacterIdentity(UUID.randomUUID(), name, archetype, appearance, "village",
++                archetype.equals("guardian") ? 140 : 100, archetype.equals("guardian") ? 18 : 24);
++    }
++}
+--- a/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -8,15 +8,21 @@
+ 
+ /** Mundo offline: uma thread proprietaria, geometria compartilhada com a arena. */
+ public final class RpgWorld {
+-    private final GameEntity body = new GameEntity(1, "Viajante", new Position(140, 320)) { };
++    private final CharacterIdentity identity;
++    private final GameEntity body;
++    public RpgWorld() { this(CharacterIdentity.create("Viajante", "guardian", "azure")); }
++    public RpgWorld(CharacterIdentity identity) {
++        this.identity = java.util.Objects.requireNonNull(identity);
++        body = new GameEntity(1, identity.name(), new Position(140, 320)) { };
++    }
+     private final MovementService movement = new MovementService(new CollisionService());
+     private final CollisionService.Space space = new CollisionService.Space(960, 640,
+             List.of(new CollisionService.Obstacle(380, 180, 120, 120)), List.of());
+     private long ticks;
+-    public record View(float x, float y, long ticks) { }
++    public record View(float x, float y, long ticks, CharacterIdentity identity) { }
+     public void tick(float x, float y) {
+         movement.moveDirected(body, movement.direction(x, y), 215, 1f / 30, 18, space);
+         ticks++;
+     }
+-    public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks); }
++    public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity); }
+ }
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/CharacterIdentityTest.java
+@@ -0,0 +1,13 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class CharacterIdentityTest {
++    @Test void validatesNamesAndRestoresStableIdentity() {
++        for (String name : new String[]{"", "ab", "<script>", "A\nB", "a".repeat(25)})
++            assertThrows(IllegalArgumentException.class, () -> CharacterIdentity.create(name,"guardian","azure"));
++        var original = CharacterIdentity.create("  Joao do Vale  ","guardian","azure");
++        var restored = new CharacterIdentity(original.id(),original.name(),original.archetype(),original.appearance(),original.initialRegion(),original.baseHp(),original.baseAttack());
++        assertEquals(original,restored);
++        assertEquals("Joao do Vale",new RpgWorld(restored).snapshot().identity().name());
++    }
++}

@@ -1,0 +1,128 @@
+--- /dev/null
++++ b/docs/TASK-057-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 266,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-057.md
+@@ -0,0 +1,5 @@
++# TASK-057 - Portais
++
++Quatro portais conectam vila, bosque e santuario, com destinos/spawns definidos em conteudo e validados. F a ate 65 unidades ativa passagem; chegada exige posicao livre. Personagem, recursos, inventario, equipamento e quests continuam no mesmo mundo autoritativo. Dialogo fecha; habilidades instantaneas ja foram resolvidas antes da passagem. Recarga de 30 ticks impede alternancia imediata.
++
++Teste de travessia, volta, preservacao e save. O acesso ao primeiro ciclo RPG agora esta habilitado na interface. Marcos A e mapas integrados serao empacotados apos validacao de ambientacao na TASK-058, sem substituir distribuicoes anteriores.
+--- a/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
+@@ -50,6 +50,7 @@
+         actors.add(new DebugSnapshot.ActorView(1,v.identity().name(),v.x(),v.y(),18,v.state().hp(),v.maxHp(),true,v.state().hp()>0));
+         for(var enemy:v.enemies())actors.add(new DebugSnapshot.ActorView(enemy.id(),enemy.name(),enemy.x(),enemy.y(),19,enemy.hp(),enemy.maxHp(),false,enemy.hp()>0));
+         int npcId=500;for(var npc:v.npcs())actors.add(new DebugSnapshot.ActorView(npcId++,npc.name()+" [F]",npc.x(),npc.y(),16,1,1,false,true));
++        for(var portal:v.portals())actors.add(new DebugSnapshot.ActorView(npcId++,"[F] "+portal.destination(),portal.x(),portal.y(),22,1,1,false,true));
+         var warnings=v.enemies().stream().filter(e->e.state().equals("PREPARE")).map(e->new DebugSnapshot.IceZoneView(e.x(),e.y(),e.hp()*2<=e.maxHp()?135:110,0,1)).toList();
+         return new DebugSnapshot(actors,
+             List.of(new DebugSnapshot.Obstacle(380,180,120,120)),List.of(),v.state().hp(),v.maxHp(),0,v.state().hp()==0,v.ticks(),v.message(),1,0,0,null,
+--- /dev/null
++++ b/server/src/main/java/com/projetok/rpg/PortalService.java
+@@ -0,0 +1,23 @@
++package com.projetok.rpg;
++import java.util.*;
++import java.io.*;
++import com.projetok.domain.entity.Position;
++public final class PortalService {
++    public record Portal(String id,String region,float x,float y,String destination,float arrivalX,float arrivalY) { }
++    private final Map<String,Portal> portals=new TreeMap<>();
++    public PortalService(RpgContent content) {
++        try(InputStream in=PortalService.class.getResourceAsStream("/rpg/portals.properties")) {
++            if(in==null)throw new IOException("Portais ausentes");Properties p=new Properties();p.load(in);
++            if(p.size()>64)throw new IllegalArgumentException("Portais excessivos");
++            for(String id:p.stringPropertyNames()) {
++                String[] v=p.getProperty(id).split("\\|");if(v.length!=6)throw new IllegalArgumentException("Portal invalido");content.get("region",v[0]);content.get("region",v[3]);
++                float x=Float.parseFloat(v[1]),y=Float.parseFloat(v[2]),ax=Float.parseFloat(v[4]),ay=Float.parseFloat(v[5]);
++                for(float n:new float[]{x,y,ax,ay})if(!Float.isFinite(n)||n<18||n>942)throw new IllegalArgumentException("Coordenada invalida");
++                if(y>622||ay>622)throw new IllegalArgumentException("Portal fora do mapa");portals.put(id,new Portal(id,v[0],x,y,v[3],ax,ay));
++            }
++        }catch(IOException e){throw new IllegalStateException(e);}
++    }
++    public List<Portal> views(String region){return portals.values().stream().filter(p->p.region().equals(region)).toList();}
++    public Optional<Portal> nearest(String region,Position p){return views(region).stream().filter(v->Math.hypot(v.x()-p.x(),v.y()-p.y())<=65).findFirst();}
++    public Portal get(String id){var p=portals.get(id);if(p==null)throw new IllegalArgumentException("Portal ausente");return p;}
++}
+--- a/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -80,6 +80,15 @@
+     private java.util.random.RandomGenerator random=new java.util.Random(741);
+     private long attackReadyTick;
+     private final NpcService npcs=new NpcService(content);
++    private final PortalService portals=new PortalService(content);
++    private long portalReadyTick;
++    public boolean travel(String id) {
++        var portal=portals.get(id);
++        if(hp==0||transitioning||ticks<portalReadyTick||!portal.region().equals(region)||distance(body.getPosition(),new Position(portal.x(),portal.y()))>65)return false;
++        if(!new CollisionService().isFree(body,portal.arrivalX(),portal.arrivalY(),18,space))return false;
++        transitioning=true;
++        try{region=portal.destination();body.setPosition(new Position(portal.arrivalX(),portal.arrivalY()));closeDialogue();portalReadyTick=ticks+30;questService.refresh(quests,flags,inventory,region);message="Chegou a "+content.get("region",region).name();return true;}finally{transitioning=false;}
++    }
+     private String activeNpc="";
+     public boolean trade(String id,int amount,boolean buying) {
+         var item=items.get(id);if(amount<1||amount>99)throw new IllegalArgumentException("Quantidade de comercio invalida");
+@@ -113,6 +122,7 @@
+     }
+     public boolean interact() {
+         if(hp==0||transitioning)return false;
++        var portal=portals.nearest(region,body.getPosition());if(portal.isPresent())return travel(portal.get().id());
+         var npc=npcs.nearest(region,body.getPosition());
+         if(npc.isEmpty()||!lineClear(body.getPosition(),new Position(npc.get().x(),npc.get().y()))){activeNpc="";message="Aproxime-se de um NPC e pressione F";return false;}
+         activeNpc=npc.get().id();dialogueNode=activeNpc+".start";message=npc.get().name()+": seja bem-vindo!";return true;
+@@ -167,7 +177,7 @@
+         world.enemies.restore(state.flags(),world.space);
+         if(world.hp>world.maxHp()) throw new IllegalArgumentException("HP acima do maximo"); return world;
+     }
+-    public record View(float x, float y, long ticks, CharacterIdentity identity, RpgSave state, int attack, int defense, String message, int maxHp, int level,List<EnemyService.View> enemies,List<NpcService.View> npcs,String activeNpc,DialogueService.Node dialogue,List<QuestService.View> journal) { public View { enemies=List.copyOf(enemies);npcs=List.copyOf(npcs);journal=List.copyOf(journal); } }
++    public record View(float x, float y, long ticks, CharacterIdentity identity, RpgSave state, int attack, int defense, String message, int maxHp, int level,List<EnemyService.View> enemies,List<NpcService.View> npcs,String activeNpc,DialogueService.Node dialogue,List<QuestService.View> journal,List<PortalService.Portal> portals) { public View { enemies=List.copyOf(enemies);npcs=List.copyOf(npcs);journal=List.copyOf(journal);portals=List.copyOf(portals); } }
+     public void tick(float x, float y) {
+         Position direction=movement.direction(x,y);
+         if(hp>0) {
+@@ -180,5 +190,5 @@
+         questService.refresh(quests,flags,inventory,region);
+         enemies.update(region,ticks,body.getPosition(),hp>0,movement,space,n->receiveDamage(Math.max(1,n-defense())),p->lineClear(body.getPosition(),p));
+     }
+-    public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message,maxHp(),level(),enemies.views(region),npcs.views(region),activeNpc,dialogue(),questService.views(quests,flags)); }
++    public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message,maxHp(),level(),enemies.views(region),npcs.views(region),activeNpc,dialogue(),questService.views(quests,flags),portals.views(region)); }
+ }
+--- /dev/null
++++ b/server/src/main/resources/rpg/portals.properties
+@@ -0,0 +1,4 @@
++village_east=village|880|320|forest|140|320
++forest_west=forest|80|320|village|810|320
++forest_east=forest|880|320|ruins|150|320
++ruins_west=ruins|80|320|forest|810|320
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/PortalTest.java
+@@ -0,0 +1,9 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class PortalTest {
++    @Test void travelReturnsAndPreservesProgress() {
++        var w=new RpgWorld();assertFalse(w.travel("village_east"));for(int i=0;i<105;i++)w.tick(1,0);assertTrue(w.interact());assertEquals("forest",w.save().region());assertEquals(3,w.inventory().count("potion"));
++        for(int i=0;i<30;i++)w.tick(0,0);for(int i=0;i<5;i++)w.tick(-1,0);assertTrue(w.interact());assertEquals("village",w.save().region());assertEquals(w.save(),RpgWorld.restore(w.save()).save());
++    }
++}

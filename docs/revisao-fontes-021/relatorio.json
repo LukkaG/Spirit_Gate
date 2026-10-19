@@ -1,0 +1,7302 @@
+{
+  "schemaVersion": 1,
+  "artApproved": false,
+  "assets": [
+    {
+      "path": "source/karakura-environment-v1.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "68594e1506cf816ac1e9348e76e0ce5bbc801f145bebea3666f0797f43b5db22",
+      "width": 1672,
+      "height": 941,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/agua-ondas-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "66c7ae7a0ab22d78636d255e0ca223f9df305464c1260429509bb6490e51ffcf",
+      "width": 67,
+      "height": 68,
+      "alpha": {
+        "transparent": 32,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/agua-ondas-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "b413aa5e58d34d25a3448917e932f7d8bc6b62ac7f2cbb1b0c845255017e8185",
+      "width": 68,
+      "height": 68,
+      "alpha": {
+        "transparent": 88,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arbusto-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "e3641fb512210175a0b89b67234f8ea8e149826cfdf6ac23ad6c0df97a4b563e",
+      "width": 52,
+      "height": 51,
+      "alpha": {
+        "transparent": 619,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arbusto-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "b7c73374cc6614f8a8a5a889445b071a018ef8af472eadf4d2a807ee768aa872",
+      "width": 47,
+      "height": 48,
+      "alpha": {
+        "transparent": 413,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arbusto-flores-brancas-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "334532a5bf032073d301324f0abac839a075627cd04bb335ede59261c8030652",
+      "width": 51,
+      "height": 52,
+      "alpha": {
+        "transparent": 589,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arbusto-flores-brancas-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "e8e2936c2b87283ed6e77112f3eb3e147f38242402a78ef583e0e63037238edc",
+      "width": 52,
+      "height": 52,
+      "alpha": {
+        "transparent": 641,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arbusto-flores-rosas.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9ea8014cea9f94631c3dfd5ac345371e5d4edd205318aaf194821935dbe6fb85",
+      "width": 53,
+      "height": 51,
+      "alpha": {
+        "transparent": 637,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arvore-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "0afc344ec7a4470ea56c97644b880d2f74d6279786d5db17f6851ac1a74de9a5",
+      "width": 134,
+      "height": 217,
+      "alpha": {
+        "transparent": 11506,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arvore-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "2954e5e390f745778a25dc13701b482307bb51ff6f87629c5460a0d34c3d30f0",
+      "width": 135,
+      "height": 199,
+      "alpha": {
+        "transparent": 10593,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arvore-03.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "4f3d000cb4cfc3721e98d42ae805604b647650c6b3188efe4c10cb630e550804",
+      "width": 152,
+      "height": 221,
+      "alpha": {
+        "transparent": 11469,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arvore-cerejeira-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "2e6a7c832075e6e9f3133433d2175d75cc4cbd8d9239b50c16811e98874c3d7e",
+      "width": 185,
+      "height": 221,
+      "alpha": {
+        "transparent": 16229,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arvore-cerejeira-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "fa0bf261afb2cb0e04d24b4c5f3236ac7f5d6fb4c6b18e081fa9e9a399d04db4",
+      "width": 183,
+      "height": 219,
+      "alpha": {
+        "transparent": 15767,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/asfalto-faixa-central.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9bdb5387a63781386ea662126789835b84420283dcd5d108f92ec1d2aa2fc5fd",
+      "width": 66,
+      "height": 68,
+      "alpha": {
+        "transparent": 77,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/asfalto-faixa-esquina-direita.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9be65d017e37fa9d22ccbf89939621a19f35eedda6dfa0cac8464e74bfcbd38a",
+      "width": 67,
+      "height": 67,
+      "alpha": {
+        "transparent": 102,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/asfalto-faixa-esquina-esquerda.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "78c45b10989a2afa687e49a9ae43c7e64a1729436a17ae428a0cd1e84f6efa29",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 20,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/asfalto-faixa-inferior.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "85d69d51420d901b6c389fc0363010ada30425c39138669add18766b97570f3b",
+      "width": 66,
+      "height": 66,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/asfalto-faixa-lateral-direita.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "b4145e123b3b5724e527a9e050bc6e28b2473cfeccea7f512201bb4425a32436",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 17,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/asfalto-faixa-lateral-esquerda.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "c780955ec909e8d8ab0a13f7fc7e20bf07ca0ebfbac1bd2aaea81ca493add932",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 74,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/asfalto-variacao.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "3a56f13f337c8be1e2c90a62a0fe59f461a07c8b401a234716e57e5e82a3b502",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 88,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/asfalto.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "b93cc12b03319e0586c98e86b0054be10b68d2708d6eea9ab71c54bd1b3afb64",
+      "width": 66,
+      "height": 68,
+      "alpha": {
+        "transparent": 87,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/atlas-verificacao.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "092636e9331e8bc4ab722ddd7215eb425f9464f2c356f30ed90be91e38203e4d",
+      "width": 1672,
+      "height": 941,
+      "alpha": {
+        "transparent": 644053,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/calcada-borda-horizontal.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "40cad7f52ee15c4fb64869875484597fe32a370a28c66297db91743ff0d97e5d",
+      "width": 67,
+      "height": 68,
+      "alpha": {
+        "transparent": 2100,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/calcada-esquina.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "0edf6b6ea13f0e6322184c66a13b9243c56ff6b33a7ce4f393f108e4f560c212",
+      "width": 68,
+      "height": 67,
+      "alpha": {
+        "transparent": 1218,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/calcada-meio-fio.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "4d633f9a4a40103b2ed7913f6b3de3933ea517329acb52b6ac5d55e7f2d3d260",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 816,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/calcada-pavimento.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "22f82a0117f9c46b38fd2a2b32ce0aa4ac50e4e35b2c66556579cae26a6df2ae",
+      "width": 66,
+      "height": 68,
+      "alpha": {
+        "transparent": 935,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/canal-esquina-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "7bd9bf9d99155b9a25e25f54704d3478faa79742abaf1b818429b046d900f30c",
+      "width": 67,
+      "height": 67,
+      "alpha": {
+        "transparent": 13,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/canal-esquina-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "41a58c95857b61d0db6d3ed19f3654988cd0226f4c93da34a3debf492a8882f9",
+      "width": 68,
+      "height": 68,
+      "alpha": {
+        "transparent": 68,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/canal-margem-esquerda.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "54558a57818da00014692215d7e6762024a0806b8cd5a09eda907dc42120165a",
+      "width": 69,
+      "height": 68,
+      "alpha": {
+        "transparent": 452,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/canal-margem-superior-ondas.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "3cdfdce6775cbebb69219b3467fa159501773758449b391986645a9a69045802",
+      "width": 67,
+      "height": 67,
+      "alpha": {
+        "transparent": 1,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/canal-margem-superior.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "88908a787508a4242585d3ca0644955196cd3257d57e4d352445973652495d0a",
+      "width": 68,
+      "height": 67,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/casa-telhado-azul-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "f4ef4133dcaf4d932c27f3b192d37ed4afc8816f9f0645179e98dc73135c4ba8",
+      "width": 364,
+      "height": 263,
+      "alpha": {
+        "transparent": 10508,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/casa-telhado-azul-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "6eb07d40a43e61408497124a7a1d2a8abc7314cb4e133df65ef9542fb1c1887a",
+      "width": 332,
+      "height": 283,
+      "alpha": {
+        "transparent": 13439,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/casa-telhado-cinza.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "f42fdc3aafb970e3ac43f892ed4d51b757aaec965a27374f4cecdec02b86593f",
+      "width": 374,
+      "height": 266,
+      "alpha": {
+        "transparent": 10846,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/cerca-viva-flores-brancas.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "8868fcec0dc2c4682599dad1965aa265911dc5a61af4b8704ede356a6700ad0a",
+      "width": 134,
+      "height": 55,
+      "alpha": {
+        "transparent": 734,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/cerca-viva-flores-rosas.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "50511986cfd93688e3881d86442f40cd3f5d3033c49843b4b75a7dad3d092cf0",
+      "width": 135,
+      "height": 55,
+      "alpha": {
+        "transparent": 810,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/cerca-viva.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9a8b77ed38b254fcb0d33f5eb69bb122ff5efccf5cd3da5702bb9044a7071ff6",
+      "width": 130,
+      "height": 54,
+      "alpha": {
+        "transparent": 632,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/faixa-de-pedestres.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "6e2464362b10297f8c1652e06d9b0a78ca5b32cae6d1175a57ffe55380886366",
+      "width": 67,
+      "height": 68,
+      "alpha": {
+        "transparent": 70,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/grama-terra-transicao-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "00e5cb78d0c77628ff8ae73d38794fa41df63b3e3dc64fa0bd58d13ef27ed794",
+      "width": 65,
+      "height": 68,
+      "alpha": {
+        "transparent": 26,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/grama-terra-transicao-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "d5c77c06dbd9f86f14331cb3d2841c89433f7e1b0c968cd6e9f377e141cc5bd2",
+      "width": 66,
+      "height": 68,
+      "alpha": {
+        "transparent": 88,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/grama-terra-transicao-03.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "f67604c4737be543ccbd3cc6840e8916c3d5f88f8dc71e2fd05955e6c9c43249",
+      "width": 65,
+      "height": 67,
+      "alpha": {
+        "transparent": 109,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/grama-terra-transicao-04.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "0d9d6be5ea78dd433f78d25250698df7d2dbb6fce90d8d6e6cd3053ef67a6c61",
+      "width": 65,
+      "height": 66,
+      "alpha": {
+        "transparent": 31,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/grama-terra-transicao-05.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "e957f35dd26a927d23a8915b8840ab6292d276df582ed2ed8f7da6e0940c0bfc",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 103,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/grama-terra-transicao-06.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "81222b63c9d08e60b85cd9b4ea51d21cd0e54d26e63527506dc5c4fe00ea2279",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 81,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/grama.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "7b319f664686194c5eeef510e9749ab454b0e7e705e6c8e87725f40ffe7d34bb",
+      "width": 64,
+      "height": 68,
+      "alpha": {
+        "transparent": 30,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/loja.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "eee0af7fcadcb3a54525edad9106806f9f43d2f064dff721daea251936154594",
+      "width": 312,
+      "height": 289,
+      "alpha": {
+        "transparent": 10772,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/muro-canal-escada-metalica.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "ffce839ef35a19f729e8ce1b2008d601c4339c6d37ce3877de7951b896c0ff88",
+      "width": 53,
+      "height": 103,
+      "alpha": {
+        "transparent": 105,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/muro-canal-escadaria.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "35092565c81b8a1b1d6036b7133941137658008cc4a135b5d0f748f230373431",
+      "width": 54,
+      "height": 102,
+      "alpha": {
+        "transparent": 116,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/muro-canal-esquina-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "c6f8ad15bf01e5de1c12e973065d06890d2bd817dc72ea79bf1814c2d00acc54",
+      "width": 101,
+      "height": 114,
+      "alpha": {
+        "transparent": 1990,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/muro-canal-esquina-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "cadc5104faa614751ec87faa5f33626481bb79a16577b66de33b8a87446554ba",
+      "width": 84,
+      "height": 88,
+      "alpha": {
+        "transparent": 83,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/muro-canal-estreito-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9710471561b53fed0e4309ec7e44f2443f0d3fbca8389ce6f588b0553cbf4725",
+      "width": 53,
+      "height": 86,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/muro-canal-estreito-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "eb964fcf494a3f32e78d4cc8e936ae2a2242c4c0d49e3a80eb6bee26aa6975bf",
+      "width": 54,
+      "height": 86,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/muro-canal-horizontal.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "c8199f227870f7eac3f6d995cd273469e760c481e2db668e16ffb1193d1f4bc6",
+      "width": 92,
+      "height": 86,
+      "alpha": {
+        "transparent": 1,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/muro-canal-variacao.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "e56bcc24a67f9a1f7ec514ecd11b90409c1dbc7c6f85cb0a3697ff063fb8a53d",
+      "width": 92,
+      "height": 103,
+      "alpha": {
+        "transparent": 178,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/predio-residencial-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "41014f5e5161a14f453d122b466909ad2b96cfd1cde0c2598e3de27306e832cb",
+      "width": 459,
+      "height": 358,
+      "alpha": {
+        "transparent": 15986,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/predio-residencial-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "045c08f1f8cd5c20fd195ebd57cfddc4520884e77a0048382819ce7215fb3806",
+      "width": 439,
+      "height": 348,
+      "alpha": {
+        "transparent": 12659,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/terra.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "393194706884052c4639f028668960d2d5633f6205f762f522626a74a2ef638a",
+      "width": 65,
+      "height": 68,
+      "alpha": {
+        "transparent": 115,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/atlas-verificacao.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "092636e9331e8bc4ab722ddd7215eb425f9464f2c356f30ed90be91e38203e4d",
+      "width": 1672,
+      "height": 941,
+      "alpha": {
+        "transparent": 644053,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-001.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "7b319f664686194c5eeef510e9749ab454b0e7e705e6c8e87725f40ffe7d34bb",
+      "width": 64,
+      "height": 68,
+      "alpha": {
+        "transparent": 30,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-002.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "393194706884052c4639f028668960d2d5633f6205f762f522626a74a2ef638a",
+      "width": 65,
+      "height": 68,
+      "alpha": {
+        "transparent": 115,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-003.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "00e5cb78d0c77628ff8ae73d38794fa41df63b3e3dc64fa0bd58d13ef27ed794",
+      "width": 65,
+      "height": 68,
+      "alpha": {
+        "transparent": 26,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-004.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "d5c77c06dbd9f86f14331cb3d2841c89433f7e1b0c968cd6e9f377e141cc5bd2",
+      "width": 66,
+      "height": 68,
+      "alpha": {
+        "transparent": 88,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-005.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "b93cc12b03319e0586c98e86b0054be10b68d2708d6eea9ab71c54bd1b3afb64",
+      "width": 66,
+      "height": 68,
+      "alpha": {
+        "transparent": 87,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-006.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9bdb5387a63781386ea662126789835b84420283dcd5d108f92ec1d2aa2fc5fd",
+      "width": 66,
+      "height": 68,
+      "alpha": {
+        "transparent": 77,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-007.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "b4145e123b3b5724e527a9e050bc6e28b2473cfeccea7f512201bb4425a32436",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 17,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-008.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "6e2464362b10297f8c1652e06d9b0a78ca5b32cae6d1175a57ffe55380886366",
+      "width": 67,
+      "height": 68,
+      "alpha": {
+        "transparent": 70,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-009.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "40cad7f52ee15c4fb64869875484597fe32a370a28c66297db91743ff0d97e5d",
+      "width": 67,
+      "height": 68,
+      "alpha": {
+        "transparent": 2100,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-010.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "22f82a0117f9c46b38fd2a2b32ce0aa4ac50e4e35b2c66556579cae26a6df2ae",
+      "width": 66,
+      "height": 68,
+      "alpha": {
+        "transparent": 935,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-011.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "54558a57818da00014692215d7e6762024a0806b8cd5a09eda907dc42120165a",
+      "width": 69,
+      "height": 68,
+      "alpha": {
+        "transparent": 452,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-012.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "66c7ae7a0ab22d78636d255e0ca223f9df305464c1260429509bb6490e51ffcf",
+      "width": 67,
+      "height": 68,
+      "alpha": {
+        "transparent": 32,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-013.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "b413aa5e58d34d25a3448917e932f7d8bc6b62ac7f2cbb1b0c845255017e8185",
+      "width": 68,
+      "height": 68,
+      "alpha": {
+        "transparent": 88,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-014.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "88908a787508a4242585d3ca0644955196cd3257d57e4d352445973652495d0a",
+      "width": 68,
+      "height": 67,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-015.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "c8199f227870f7eac3f6d995cd273469e760c481e2db668e16ffb1193d1f4bc6",
+      "width": 92,
+      "height": 86,
+      "alpha": {
+        "transparent": 1,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-016.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9710471561b53fed0e4309ec7e44f2443f0d3fbca8389ce6f588b0553cbf4725",
+      "width": 53,
+      "height": 86,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-017.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "eb964fcf494a3f32e78d4cc8e936ae2a2242c4c0d49e3a80eb6bee26aa6975bf",
+      "width": 54,
+      "height": 86,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-018.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "c6f8ad15bf01e5de1c12e973065d06890d2bd817dc72ea79bf1814c2d00acc54",
+      "width": 101,
+      "height": 114,
+      "alpha": {
+        "transparent": 1990,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-019.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "f67604c4737be543ccbd3cc6840e8916c3d5f88f8dc71e2fd05955e6c9c43249",
+      "width": 65,
+      "height": 67,
+      "alpha": {
+        "transparent": 109,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-020.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "0d9d6be5ea78dd433f78d25250698df7d2dbb6fce90d8d6e6cd3053ef67a6c61",
+      "width": 65,
+      "height": 66,
+      "alpha": {
+        "transparent": 31,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-021.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "e957f35dd26a927d23a8915b8840ab6292d276df582ed2ed8f7da6e0940c0bfc",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 103,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-022.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "81222b63c9d08e60b85cd9b4ea51d21cd0e54d26e63527506dc5c4fe00ea2279",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 81,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-023.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "3a56f13f337c8be1e2c90a62a0fe59f461a07c8b401a234716e57e5e82a3b502",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 88,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-024.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "85d69d51420d901b6c389fc0363010ada30425c39138669add18766b97570f3b",
+      "width": 66,
+      "height": 66,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-025.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "c780955ec909e8d8ab0a13f7fc7e20bf07ca0ebfbac1bd2aaea81ca493add932",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 74,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-026.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9be65d017e37fa9d22ccbf89939621a19f35eedda6dfa0cac8464e74bfcbd38a",
+      "width": 67,
+      "height": 67,
+      "alpha": {
+        "transparent": 102,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-027.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "4d633f9a4a40103b2ed7913f6b3de3933ea517329acb52b6ac5d55e7f2d3d260",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 816,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-028.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "78c45b10989a2afa687e49a9ae43c7e64a1729436a17ae428a0cd1e84f6efa29",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 20,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-029.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "0edf6b6ea13f0e6322184c66a13b9243c56ff6b33a7ce4f393f108e4f560c212",
+      "width": 68,
+      "height": 67,
+      "alpha": {
+        "transparent": 1218,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-030.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "3cdfdce6775cbebb69219b3467fa159501773758449b391986645a9a69045802",
+      "width": 67,
+      "height": 67,
+      "alpha": {
+        "transparent": 1,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-031.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "7bd9bf9d99155b9a25e25f54704d3478faa79742abaf1b818429b046d900f30c",
+      "width": 67,
+      "height": 67,
+      "alpha": {
+        "transparent": 13,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-032.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "41a58c95857b61d0db6d3ed19f3654988cd0226f4c93da34a3debf492a8882f9",
+      "width": 68,
+      "height": 68,
+      "alpha": {
+        "transparent": 68,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-033.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "e56bcc24a67f9a1f7ec514ecd11b90409c1dbc7c6f85cb0a3697ff063fb8a53d",
+      "width": 92,
+      "height": 103,
+      "alpha": {
+        "transparent": 178,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-034.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "ffce839ef35a19f729e8ce1b2008d601c4339c6d37ce3877de7951b896c0ff88",
+      "width": 53,
+      "height": 103,
+      "alpha": {
+        "transparent": 105,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-035.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "35092565c81b8a1b1d6036b7133941137658008cc4a135b5d0f748f230373431",
+      "width": 54,
+      "height": 102,
+      "alpha": {
+        "transparent": 116,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-036.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "cadc5104faa614751ec87faa5f33626481bb79a16577b66de33b8a87446554ba",
+      "width": 84,
+      "height": 88,
+      "alpha": {
+        "transparent": 83,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-037.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "e3641fb512210175a0b89b67234f8ea8e149826cfdf6ac23ad6c0df97a4b563e",
+      "width": 52,
+      "height": 51,
+      "alpha": {
+        "transparent": 619,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-038.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "334532a5bf032073d301324f0abac839a075627cd04bb335ede59261c8030652",
+      "width": 51,
+      "height": 52,
+      "alpha": {
+        "transparent": 589,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-039.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "e8e2936c2b87283ed6e77112f3eb3e147f38242402a78ef583e0e63037238edc",
+      "width": 52,
+      "height": 52,
+      "alpha": {
+        "transparent": 641,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-040.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9ea8014cea9f94631c3dfd5ac345371e5d4edd205318aaf194821935dbe6fb85",
+      "width": 53,
+      "height": 51,
+      "alpha": {
+        "transparent": 637,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-041.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "b7c73374cc6614f8a8a5a889445b071a018ef8af472eadf4d2a807ee768aa872",
+      "width": 47,
+      "height": 48,
+      "alpha": {
+        "transparent": 413,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-042.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9a8b77ed38b254fcb0d33f5eb69bb122ff5efccf5cd3da5702bb9044a7071ff6",
+      "width": 130,
+      "height": 54,
+      "alpha": {
+        "transparent": 632,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-043.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "8868fcec0dc2c4682599dad1965aa265911dc5a61af4b8704ede356a6700ad0a",
+      "width": 134,
+      "height": 55,
+      "alpha": {
+        "transparent": 734,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-044.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "50511986cfd93688e3881d86442f40cd3f5d3033c49843b4b75a7dad3d092cf0",
+      "width": 135,
+      "height": 55,
+      "alpha": {
+        "transparent": 810,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-045.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "f4ef4133dcaf4d932c27f3b192d37ed4afc8816f9f0645179e98dc73135c4ba8",
+      "width": 364,
+      "height": 263,
+      "alpha": {
+        "transparent": 10508,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-046.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "f42fdc3aafb970e3ac43f892ed4d51b757aaec965a27374f4cecdec02b86593f",
+      "width": 374,
+      "height": 266,
+      "alpha": {
+        "transparent": 10846,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-047.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "0afc344ec7a4470ea56c97644b880d2f74d6279786d5db17f6851ac1a74de9a5",
+      "width": 134,
+      "height": 217,
+      "alpha": {
+        "transparent": 11506,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-048.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "2954e5e390f745778a25dc13701b482307bb51ff6f87629c5460a0d34c3d30f0",
+      "width": 135,
+      "height": 199,
+      "alpha": {
+        "transparent": 10593,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-049.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "4f3d000cb4cfc3721e98d42ae805604b647650c6b3188efe4c10cb630e550804",
+      "width": 152,
+      "height": 221,
+      "alpha": {
+        "transparent": 11469,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-050.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "2e6a7c832075e6e9f3133433d2175d75cc4cbd8d9239b50c16811e98874c3d7e",
+      "width": 185,
+      "height": 221,
+      "alpha": {
+        "transparent": 16229,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-051.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "fa0bf261afb2cb0e04d24b4c5f3236ac7f5d6fb4c6b18e081fa9e9a399d04db4",
+      "width": 183,
+      "height": 219,
+      "alpha": {
+        "transparent": 15767,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-052.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "41014f5e5161a14f453d122b466909ad2b96cfd1cde0c2598e3de27306e832cb",
+      "width": 459,
+      "height": 358,
+      "alpha": {
+        "transparent": 15986,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-053.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "045c08f1f8cd5c20fd195ebd57cfddc4520884e77a0048382819ce7215fb3806",
+      "width": 439,
+      "height": 348,
+      "alpha": {
+        "transparent": 12659,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-054.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "eee0af7fcadcb3a54525edad9106806f9f43d2f064dff721daea251936154594",
+      "width": 312,
+      "height": 289,
+      "alpha": {
+        "transparent": 10772,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-055.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "6eb07d40a43e61408497124a7a1d2a8abc7314cb4e133df65ef9542fb1c1887a",
+      "width": 332,
+      "height": 283,
+      "alpha": {
+        "transparent": 13439,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/atlas-verificacao.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "092636e9331e8bc4ab722ddd7215eb425f9464f2c356f30ed90be91e38203e4d",
+      "width": 1672,
+      "height": 941,
+      "alpha": {
+        "transparent": 644053,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-001.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "7b319f664686194c5eeef510e9749ab454b0e7e705e6c8e87725f40ffe7d34bb",
+      "width": 64,
+      "height": 68,
+      "alpha": {
+        "transparent": 30,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-002.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "393194706884052c4639f028668960d2d5633f6205f762f522626a74a2ef638a",
+      "width": 65,
+      "height": 68,
+      "alpha": {
+        "transparent": 115,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-003.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "00e5cb78d0c77628ff8ae73d38794fa41df63b3e3dc64fa0bd58d13ef27ed794",
+      "width": 65,
+      "height": 68,
+      "alpha": {
+        "transparent": 26,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-004.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "d5c77c06dbd9f86f14331cb3d2841c89433f7e1b0c968cd6e9f377e141cc5bd2",
+      "width": 66,
+      "height": 68,
+      "alpha": {
+        "transparent": 88,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-005.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "b93cc12b03319e0586c98e86b0054be10b68d2708d6eea9ab71c54bd1b3afb64",
+      "width": 66,
+      "height": 68,
+      "alpha": {
+        "transparent": 87,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-006.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9bdb5387a63781386ea662126789835b84420283dcd5d108f92ec1d2aa2fc5fd",
+      "width": 66,
+      "height": 68,
+      "alpha": {
+        "transparent": 77,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-007.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "b4145e123b3b5724e527a9e050bc6e28b2473cfeccea7f512201bb4425a32436",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 17,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-008.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "6e2464362b10297f8c1652e06d9b0a78ca5b32cae6d1175a57ffe55380886366",
+      "width": 67,
+      "height": 68,
+      "alpha": {
+        "transparent": 70,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-009.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "40cad7f52ee15c4fb64869875484597fe32a370a28c66297db91743ff0d97e5d",
+      "width": 67,
+      "height": 68,
+      "alpha": {
+        "transparent": 2100,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-010.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "22f82a0117f9c46b38fd2a2b32ce0aa4ac50e4e35b2c66556579cae26a6df2ae",
+      "width": 66,
+      "height": 68,
+      "alpha": {
+        "transparent": 935,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-011.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "54558a57818da00014692215d7e6762024a0806b8cd5a09eda907dc42120165a",
+      "width": 69,
+      "height": 68,
+      "alpha": {
+        "transparent": 452,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-012.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "66c7ae7a0ab22d78636d255e0ca223f9df305464c1260429509bb6490e51ffcf",
+      "width": 67,
+      "height": 68,
+      "alpha": {
+        "transparent": 32,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-013.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "b413aa5e58d34d25a3448917e932f7d8bc6b62ac7f2cbb1b0c845255017e8185",
+      "width": 68,
+      "height": 68,
+      "alpha": {
+        "transparent": 88,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-014.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "88908a787508a4242585d3ca0644955196cd3257d57e4d352445973652495d0a",
+      "width": 68,
+      "height": 67,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-015.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "c8199f227870f7eac3f6d995cd273469e760c481e2db668e16ffb1193d1f4bc6",
+      "width": 92,
+      "height": 86,
+      "alpha": {
+        "transparent": 1,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-016.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9710471561b53fed0e4309ec7e44f2443f0d3fbca8389ce6f588b0553cbf4725",
+      "width": 53,
+      "height": 86,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-017.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "eb964fcf494a3f32e78d4cc8e936ae2a2242c4c0d49e3a80eb6bee26aa6975bf",
+      "width": 54,
+      "height": 86,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-018.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "c6f8ad15bf01e5de1c12e973065d06890d2bd817dc72ea79bf1814c2d00acc54",
+      "width": 101,
+      "height": 114,
+      "alpha": {
+        "transparent": 1990,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-019.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "f67604c4737be543ccbd3cc6840e8916c3d5f88f8dc71e2fd05955e6c9c43249",
+      "width": 65,
+      "height": 67,
+      "alpha": {
+        "transparent": 109,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-020.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "0d9d6be5ea78dd433f78d25250698df7d2dbb6fce90d8d6e6cd3053ef67a6c61",
+      "width": 65,
+      "height": 66,
+      "alpha": {
+        "transparent": 31,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-021.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "e957f35dd26a927d23a8915b8840ab6292d276df582ed2ed8f7da6e0940c0bfc",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 103,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-022.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "81222b63c9d08e60b85cd9b4ea51d21cd0e54d26e63527506dc5c4fe00ea2279",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 81,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-023.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "3a56f13f337c8be1e2c90a62a0fe59f461a07c8b401a234716e57e5e82a3b502",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 88,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-024.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "85d69d51420d901b6c389fc0363010ada30425c39138669add18766b97570f3b",
+      "width": 66,
+      "height": 66,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-025.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "c780955ec909e8d8ab0a13f7fc7e20bf07ca0ebfbac1bd2aaea81ca493add932",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 74,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-026.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9be65d017e37fa9d22ccbf89939621a19f35eedda6dfa0cac8464e74bfcbd38a",
+      "width": 67,
+      "height": 67,
+      "alpha": {
+        "transparent": 102,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-027.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "4d633f9a4a40103b2ed7913f6b3de3933ea517329acb52b6ac5d55e7f2d3d260",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 816,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-028.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "78c45b10989a2afa687e49a9ae43c7e64a1729436a17ae428a0cd1e84f6efa29",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 20,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-029.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "0edf6b6ea13f0e6322184c66a13b9243c56ff6b33a7ce4f393f108e4f560c212",
+      "width": 68,
+      "height": 67,
+      "alpha": {
+        "transparent": 1218,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-030.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "3cdfdce6775cbebb69219b3467fa159501773758449b391986645a9a69045802",
+      "width": 67,
+      "height": 67,
+      "alpha": {
+        "transparent": 1,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-031.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "7bd9bf9d99155b9a25e25f54704d3478faa79742abaf1b818429b046d900f30c",
+      "width": 67,
+      "height": 67,
+      "alpha": {
+        "transparent": 13,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-032.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "41a58c95857b61d0db6d3ed19f3654988cd0226f4c93da34a3debf492a8882f9",
+      "width": 68,
+      "height": 68,
+      "alpha": {
+        "transparent": 68,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-033.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "e56bcc24a67f9a1f7ec514ecd11b90409c1dbc7c6f85cb0a3697ff063fb8a53d",
+      "width": 92,
+      "height": 103,
+      "alpha": {
+        "transparent": 178,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-034.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "ffce839ef35a19f729e8ce1b2008d601c4339c6d37ce3877de7951b896c0ff88",
+      "width": 53,
+      "height": 103,
+      "alpha": {
+        "transparent": 105,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-035.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "35092565c81b8a1b1d6036b7133941137658008cc4a135b5d0f748f230373431",
+      "width": 54,
+      "height": 102,
+      "alpha": {
+        "transparent": 116,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-036.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "cadc5104faa614751ec87faa5f33626481bb79a16577b66de33b8a87446554ba",
+      "width": 84,
+      "height": 88,
+      "alpha": {
+        "transparent": 83,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-037.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "e3641fb512210175a0b89b67234f8ea8e149826cfdf6ac23ad6c0df97a4b563e",
+      "width": 52,
+      "height": 51,
+      "alpha": {
+        "transparent": 619,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-038.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "334532a5bf032073d301324f0abac839a075627cd04bb335ede59261c8030652",
+      "width": 51,
+      "height": 52,
+      "alpha": {
+        "transparent": 589,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-039.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "e8e2936c2b87283ed6e77112f3eb3e147f38242402a78ef583e0e63037238edc",
+      "width": 52,
+      "height": 52,
+      "alpha": {
+        "transparent": 641,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-040.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9ea8014cea9f94631c3dfd5ac345371e5d4edd205318aaf194821935dbe6fb85",
+      "width": 53,
+      "height": 51,
+      "alpha": {
+        "transparent": 637,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-041.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "b7c73374cc6614f8a8a5a889445b071a018ef8af472eadf4d2a807ee768aa872",
+      "width": 47,
+      "height": 48,
+      "alpha": {
+        "transparent": 413,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-042.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9a8b77ed38b254fcb0d33f5eb69bb122ff5efccf5cd3da5702bb9044a7071ff6",
+      "width": 130,
+      "height": 54,
+      "alpha": {
+        "transparent": 632,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-043.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "8868fcec0dc2c4682599dad1965aa265911dc5a61af4b8704ede356a6700ad0a",
+      "width": 134,
+      "height": 55,
+      "alpha": {
+        "transparent": 734,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-044.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "50511986cfd93688e3881d86442f40cd3f5d3033c49843b4b75a7dad3d092cf0",
+      "width": 135,
+      "height": 55,
+      "alpha": {
+        "transparent": 810,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-045.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "f4ef4133dcaf4d932c27f3b192d37ed4afc8816f9f0645179e98dc73135c4ba8",
+      "width": 364,
+      "height": 263,
+      "alpha": {
+        "transparent": 10508,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-046.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "f42fdc3aafb970e3ac43f892ed4d51b757aaec965a27374f4cecdec02b86593f",
+      "width": 374,
+      "height": 266,
+      "alpha": {
+        "transparent": 10846,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-047.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "0afc344ec7a4470ea56c97644b880d2f74d6279786d5db17f6851ac1a74de9a5",
+      "width": 134,
+      "height": 217,
+      "alpha": {
+        "transparent": 11506,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-048.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "2954e5e390f745778a25dc13701b482307bb51ff6f87629c5460a0d34c3d30f0",
+      "width": 135,
+      "height": 199,
+      "alpha": {
+        "transparent": 10593,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-049.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "4f3d000cb4cfc3721e98d42ae805604b647650c6b3188efe4c10cb630e550804",
+      "width": 152,
+      "height": 221,
+      "alpha": {
+        "transparent": 11469,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-050.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "2e6a7c832075e6e9f3133433d2175d75cc4cbd8d9239b50c16811e98874c3d7e",
+      "width": 185,
+      "height": 221,
+      "alpha": {
+        "transparent": 16229,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-051.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "fa0bf261afb2cb0e04d24b4c5f3236ac7f5d6fb4c6b18e081fa9e9a399d04db4",
+      "width": 183,
+      "height": 219,
+      "alpha": {
+        "transparent": 15767,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-052.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "41014f5e5161a14f453d122b466909ad2b96cfd1cde0c2598e3de27306e832cb",
+      "width": 459,
+      "height": 358,
+      "alpha": {
+        "transparent": 15986,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-053.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "045c08f1f8cd5c20fd195ebd57cfddc4520884e77a0048382819ce7215fb3806",
+      "width": 439,
+      "height": 348,
+      "alpha": {
+        "transparent": 12659,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-054.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "eee0af7fcadcb3a54525edad9106806f9f43d2f064dff721daea251936154594",
+      "width": 312,
+      "height": 289,
+      "alpha": {
+        "transparent": 10772,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-055.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "6eb07d40a43e61408497124a7a1d2a8abc7314cb4e133df65ef9542fb1c1887a",
+      "width": 332,
+      "height": 283,
+      "alpha": {
+        "transparent": 13439,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/atlas-verificacao.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "092636e9331e8bc4ab722ddd7215eb425f9464f2c356f30ed90be91e38203e4d",
+      "width": 1672,
+      "height": 941,
+      "alpha": {
+        "transparent": 644053,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-001.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "7b319f664686194c5eeef510e9749ab454b0e7e705e6c8e87725f40ffe7d34bb",
+      "width": 64,
+      "height": 68,
+      "alpha": {
+        "transparent": 30,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-002.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "393194706884052c4639f028668960d2d5633f6205f762f522626a74a2ef638a",
+      "width": 65,
+      "height": 68,
+      "alpha": {
+        "transparent": 115,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-003.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "00e5cb78d0c77628ff8ae73d38794fa41df63b3e3dc64fa0bd58d13ef27ed794",
+      "width": 65,
+      "height": 68,
+      "alpha": {
+        "transparent": 26,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-004.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "d5c77c06dbd9f86f14331cb3d2841c89433f7e1b0c968cd6e9f377e141cc5bd2",
+      "width": 66,
+      "height": 68,
+      "alpha": {
+        "transparent": 88,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-005.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "b93cc12b03319e0586c98e86b0054be10b68d2708d6eea9ab71c54bd1b3afb64",
+      "width": 66,
+      "height": 68,
+      "alpha": {
+        "transparent": 87,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-006.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9bdb5387a63781386ea662126789835b84420283dcd5d108f92ec1d2aa2fc5fd",
+      "width": 66,
+      "height": 68,
+      "alpha": {
+        "transparent": 77,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-007.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "b4145e123b3b5724e527a9e050bc6e28b2473cfeccea7f512201bb4425a32436",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 17,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-008.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "6e2464362b10297f8c1652e06d9b0a78ca5b32cae6d1175a57ffe55380886366",
+      "width": 67,
+      "height": 68,
+      "alpha": {
+        "transparent": 70,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-009.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "40cad7f52ee15c4fb64869875484597fe32a370a28c66297db91743ff0d97e5d",
+      "width": 67,
+      "height": 68,
+      "alpha": {
+        "transparent": 2100,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-010.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "22f82a0117f9c46b38fd2a2b32ce0aa4ac50e4e35b2c66556579cae26a6df2ae",
+      "width": 66,
+      "height": 68,
+      "alpha": {
+        "transparent": 935,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-011.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "54558a57818da00014692215d7e6762024a0806b8cd5a09eda907dc42120165a",
+      "width": 69,
+      "height": 68,
+      "alpha": {
+        "transparent": 452,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-012.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "66c7ae7a0ab22d78636d255e0ca223f9df305464c1260429509bb6490e51ffcf",
+      "width": 67,
+      "height": 68,
+      "alpha": {
+        "transparent": 32,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-013.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "b413aa5e58d34d25a3448917e932f7d8bc6b62ac7f2cbb1b0c845255017e8185",
+      "width": 68,
+      "height": 68,
+      "alpha": {
+        "transparent": 88,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-014.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "88908a787508a4242585d3ca0644955196cd3257d57e4d352445973652495d0a",
+      "width": 68,
+      "height": 67,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-015.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "c8199f227870f7eac3f6d995cd273469e760c481e2db668e16ffb1193d1f4bc6",
+      "width": 92,
+      "height": 86,
+      "alpha": {
+        "transparent": 1,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-016.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9710471561b53fed0e4309ec7e44f2443f0d3fbca8389ce6f588b0553cbf4725",
+      "width": 53,
+      "height": 86,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-017.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "eb964fcf494a3f32e78d4cc8e936ae2a2242c4c0d49e3a80eb6bee26aa6975bf",
+      "width": 54,
+      "height": 86,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-018.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "c6f8ad15bf01e5de1c12e973065d06890d2bd817dc72ea79bf1814c2d00acc54",
+      "width": 101,
+      "height": 114,
+      "alpha": {
+        "transparent": 1990,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-019.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "f67604c4737be543ccbd3cc6840e8916c3d5f88f8dc71e2fd05955e6c9c43249",
+      "width": 65,
+      "height": 67,
+      "alpha": {
+        "transparent": 109,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-020.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "0d9d6be5ea78dd433f78d25250698df7d2dbb6fce90d8d6e6cd3053ef67a6c61",
+      "width": 65,
+      "height": 66,
+      "alpha": {
+        "transparent": 31,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-021.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "e957f35dd26a927d23a8915b8840ab6292d276df582ed2ed8f7da6e0940c0bfc",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 103,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-022.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "81222b63c9d08e60b85cd9b4ea51d21cd0e54d26e63527506dc5c4fe00ea2279",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 81,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-023.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "3a56f13f337c8be1e2c90a62a0fe59f461a07c8b401a234716e57e5e82a3b502",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 88,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-024.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "85d69d51420d901b6c389fc0363010ada30425c39138669add18766b97570f3b",
+      "width": 66,
+      "height": 66,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-025.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "c780955ec909e8d8ab0a13f7fc7e20bf07ca0ebfbac1bd2aaea81ca493add932",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 74,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-026.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9be65d017e37fa9d22ccbf89939621a19f35eedda6dfa0cac8464e74bfcbd38a",
+      "width": 67,
+      "height": 67,
+      "alpha": {
+        "transparent": 102,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-027.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "4d633f9a4a40103b2ed7913f6b3de3933ea517329acb52b6ac5d55e7f2d3d260",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 816,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-028.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "78c45b10989a2afa687e49a9ae43c7e64a1729436a17ae428a0cd1e84f6efa29",
+      "width": 66,
+      "height": 67,
+      "alpha": {
+        "transparent": 20,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-029.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "48f3b9c4a00c76dcad1cfdd953be015f55e778d9bb03d0b9c3949d29337188e0",
+      "width": 68,
+      "height": 67,
+      "alpha": {
+        "transparent": 1867,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-030.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "ddd680e29dbf2beb6037087ae28f67a7a345dcc269cd47092d41a44cfe42122d",
+      "width": 24,
+      "height": 39,
+      "alpha": {
+        "transparent": 287,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-031.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "3cdfdce6775cbebb69219b3467fa159501773758449b391986645a9a69045802",
+      "width": 67,
+      "height": 67,
+      "alpha": {
+        "transparent": 1,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-032.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "7bd9bf9d99155b9a25e25f54704d3478faa79742abaf1b818429b046d900f30c",
+      "width": 67,
+      "height": 67,
+      "alpha": {
+        "transparent": 13,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-033.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "41a58c95857b61d0db6d3ed19f3654988cd0226f4c93da34a3debf492a8882f9",
+      "width": 68,
+      "height": 68,
+      "alpha": {
+        "transparent": 68,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-034.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "e56bcc24a67f9a1f7ec514ecd11b90409c1dbc7c6f85cb0a3697ff063fb8a53d",
+      "width": 92,
+      "height": 103,
+      "alpha": {
+        "transparent": 178,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-035.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "ffce839ef35a19f729e8ce1b2008d601c4339c6d37ce3877de7951b896c0ff88",
+      "width": 53,
+      "height": 103,
+      "alpha": {
+        "transparent": 105,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-036.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "35092565c81b8a1b1d6036b7133941137658008cc4a135b5d0f748f230373431",
+      "width": 54,
+      "height": 102,
+      "alpha": {
+        "transparent": 116,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-037.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "cadc5104faa614751ec87faa5f33626481bb79a16577b66de33b8a87446554ba",
+      "width": 84,
+      "height": 88,
+      "alpha": {
+        "transparent": 83,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-038.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "e3641fb512210175a0b89b67234f8ea8e149826cfdf6ac23ad6c0df97a4b563e",
+      "width": 52,
+      "height": 51,
+      "alpha": {
+        "transparent": 619,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-039.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "334532a5bf032073d301324f0abac839a075627cd04bb335ede59261c8030652",
+      "width": 51,
+      "height": 52,
+      "alpha": {
+        "transparent": 589,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-040.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "e8e2936c2b87283ed6e77112f3eb3e147f38242402a78ef583e0e63037238edc",
+      "width": 52,
+      "height": 52,
+      "alpha": {
+        "transparent": 641,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-041.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9ea8014cea9f94631c3dfd5ac345371e5d4edd205318aaf194821935dbe6fb85",
+      "width": 53,
+      "height": 51,
+      "alpha": {
+        "transparent": 637,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-042.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "b7c73374cc6614f8a8a5a889445b071a018ef8af472eadf4d2a807ee768aa872",
+      "width": 47,
+      "height": 48,
+      "alpha": {
+        "transparent": 413,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-043.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "9a8b77ed38b254fcb0d33f5eb69bb122ff5efccf5cd3da5702bb9044a7071ff6",
+      "width": 130,
+      "height": 54,
+      "alpha": {
+        "transparent": 632,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-044.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "8868fcec0dc2c4682599dad1965aa265911dc5a61af4b8704ede356a6700ad0a",
+      "width": 134,
+      "height": 55,
+      "alpha": {
+        "transparent": 734,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-045.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "50511986cfd93688e3881d86442f40cd3f5d3033c49843b4b75a7dad3d092cf0",
+      "width": 135,
+      "height": 55,
+      "alpha": {
+        "transparent": 810,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-046.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "f4ef4133dcaf4d932c27f3b192d37ed4afc8816f9f0645179e98dc73135c4ba8",
+      "width": 364,
+      "height": 263,
+      "alpha": {
+        "transparent": 10508,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-047.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "f42fdc3aafb970e3ac43f892ed4d51b757aaec965a27374f4cecdec02b86593f",
+      "width": 374,
+      "height": 266,
+      "alpha": {
+        "transparent": 10846,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-048.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "0afc344ec7a4470ea56c97644b880d2f74d6279786d5db17f6851ac1a74de9a5",
+      "width": 134,
+      "height": 217,
+      "alpha": {
+        "transparent": 11506,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-049.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "2954e5e390f745778a25dc13701b482307bb51ff6f87629c5460a0d34c3d30f0",
+      "width": 135,
+      "height": 199,
+      "alpha": {
+        "transparent": 10593,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-050.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "4f3d000cb4cfc3721e98d42ae805604b647650c6b3188efe4c10cb630e550804",
+      "width": 152,
+      "height": 221,
+      "alpha": {
+        "transparent": 11469,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-051.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "2e6a7c832075e6e9f3133433d2175d75cc4cbd8d9239b50c16811e98874c3d7e",
+      "width": 185,
+      "height": 221,
+      "alpha": {
+        "transparent": 16229,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-052.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "fa0bf261afb2cb0e04d24b4c5f3236ac7f5d6fb4c6b18e081fa9e9a399d04db4",
+      "width": 183,
+      "height": 219,
+      "alpha": {
+        "transparent": 15767,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-053.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "41014f5e5161a14f453d122b466909ad2b96cfd1cde0c2598e3de27306e832cb",
+      "width": 459,
+      "height": 358,
+      "alpha": {
+        "transparent": 15986,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-054.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "045c08f1f8cd5c20fd195ebd57cfddc4520884e77a0048382819ce7215fb3806",
+      "width": 439,
+      "height": 348,
+      "alpha": {
+        "transparent": 12659,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-055.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "eee0af7fcadcb3a54525edad9106806f9f43d2f064dff721daea251936154594",
+      "width": 312,
+      "height": 289,
+      "alpha": {
+        "transparent": 10772,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-056.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "6eb07d40a43e61408497124a7a1d2a8abc7314cb4e133df65ef9542fb1c1887a",
+      "width": 332,
+      "height": 283,
+      "alpha": {
+        "transparent": 13439,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "tilesets/karakura-environment-atlas.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "7fd58fc45d8d3a217e048da45a15f0d270ffc477fbbb4ad3362495721b3ae4ca",
+      "width": 1672,
+      "height": 941,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    },
+    {
+      "path": "tilesets/karakura-environment-v3-blend.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "REPROVADO",
+      "sha256": "795181a6f3699447cf9bc1c2e880aa117eb0628acfa671ecd8a5555bd336c7a0",
+      "width": 1672,
+      "height": 941,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0
+      },
+      "errors": [
+        "dimensoes fora da grade pretendida"
+      ],
+      "warnings": [
+        "recortes e linhas de corte exigem revisao no Aseprite",
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "reviewToolApprovesArt": false
+    }
+  ]
+}

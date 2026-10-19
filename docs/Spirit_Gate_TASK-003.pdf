@@ -1,0 +1,235 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R 10 0 R] /Count 4 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 2818 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-003 - Implementação do Vigor Físico) Tj T*
+() Tj T*
+(Spirit Gate | 18/10/2026 | Java 17 e Maven) Tj T*
+() Tj T*
+(## Resultado e parâmetros provisórios) Tj T*
+() Tj T*
+(Jogadores criados por PlayerFactory recebem 100/100 pontos de vigor. A arena exibe a) Tj T*
+(barra amarela e o valor numérico. A tecla E executa um esforço temporário de custo 20,) Tj T*
+(sem dano. A regeneração é de 15 pontos/s, limitada ao máximo. Os valores são provisórios) Tj T*
+(e não representam balanceamento definitivo.) Tj T*
+() Tj T*
+(Ataque básico e movimentação não gastam vigor. Nenhuma skill de combate, stamina de XP,) Tj T*
+(integração de rede ou alteração de banco foi introduzida. Nenhuma dependência foi) Tj T*
+(adicionada.) Tj T*
+() Tj T*
+(## Preparação e proposta) Tj T*
+() Tj T*
+(Foram inspecionados PlayerFactory, componentes, Position, DebugInput, DebugWorld,) Tj T*
+(DebugSnapshot, DebugRuntime, DebugLauncher, DebugPanel e MovementReplayTest antes de) Tj T*
+(modificar arquivos. O comando inicial mvn clean test -q passou com os 15 testes) Tj T*
+(existentes.) Tj T*
+() Tj T*
+(A proposta apresentada separou armazenamento e invariantes no componente, consumo e) Tj T*
+(regeneração no serviço, entrada por transição no mundo e leitura da barra por snapshot.) Tj T*
+(O processamento permanece na thread proprietária da simulação, sem mutações de entidades) Tj T*
+(no EDT.) Tj T*
+() Tj T*
+(## Arquitetura do domínio) Tj T*
+() Tj T*
+(StaminaComponent implementa Component, armazena valores float e inicia cheio. O) Tj T*
+(construtor padrão usa 100; o construtor com máximo explícito exige valor finito e) Tj T*
+(positivo. Não há setter de saldo ou máximo. tryConsume valida custo e só subtrai se) Tj T*
+(houver saldo. restore valida quantidade e limita a recuperação ao máximo. Custos ou) Tj T*
+(quantidades negativos, NaN e infinitos lançam IllegalArgumentException antes de qualquer) Tj T*
+(mutação.) Tj T*
+() Tj T*
+(StaminaService recebe GameEntity com HealthComponent e StaminaComponent. tryConsume) Tj T*
+(recusa entidade morta, inclusive custo zero, e delega o consumo ao componente. O) Tj T*
+(chamador executa a ação apenas se o método retornar true. regenerate valida dt finito e) Tj T*
+(não negativo, recusa mortos e aplica 15 * dt. O cálculo intermediário usa double e) Tj T*
+(saturação para evitar overflow com deltas finitos grandes. Delta zero não altera o) Tj T*
+(recurso.) Tj T*
+() Tj T*
+(O componente é armazenamento protegido por invariantes numéricas; elegibilidade por vida) Tj T*
+(pertence ao serviço. Ações do jogo devem usar StaminaService. O serviço não agenda) Tj T*
+(tarefas, não cria threads e não depende do protótipo, Swing, PostgreSQL ou Kryonet.) Tj T*
+() Tj T*
+(## Ordem do tick e entrada) Tj T*
+() Tj T*
+() Tj T*
+(Spirit Gate - TASK-003 - página 1/4) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 3389 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(DebugWorld valida dt antes de alterar estado, incluindo rejeição explícita de NaN.) Tj T*
+(Mantém atualização dos efeitos e cooldowns existentes; se morto, retorna. Para jogador) Tj T*
+(vivo, regenera antes das ações, detecta a transição de E, processa movimento, ataque) Tj T*
+(básico e inimigos na ordem anterior. Ao final, executa o esforço somente se houver nova) Tj T*
+(pressão e o jogador continuar vivo.) Tj T*
+() Tj T*
+(O custo é verificado antes da execução do esforço; sucesso e insuficiência publicam) Tj T*
+(mensagens no log. A ação provisória é somente essa confirmação e o consumo, sem dano ou) Tj T*
+(mudança de movimento. Se ocorrer morte no tick, o esforço não sobrescreve a mensagem de) Tj T*
+(derrota.) Tj T*
+() Tj T*
+(Segurar E não repete consumo. Uma recusa por saldo insuficiente também exige soltar e) Tj T*
+(pressionar novamente, mesmo que o saldo se recupere. O runtime sincroniza o estado de E) Tj T*
+(ao criar o mundo no reinício: a arena volta a 100/100, sem gasto automático por tecla) Tj T*
+(mantida. O construtor antigo de cinco booleanos de DebugInput continua disponível e) Tj T*
+(define effort=false.) Tj T*
+() Tj T*
+(DebugSnapshot acrescenta somente stamina e maxStamina. DebugPanel lê esses campos,) Tj T*
+(desenha a barra e mostra o controle E. O domínio não depende do formato visual. As) Tj T*
+(configurações de velocidade, colisão, hitboxes e dano foram preservadas.) Tj T*
+() Tj T*
+(## Replay e equivalência do comportamento anterior) Tj T*
+() Tj T*
+(Os três baselines originais de MovementReplayTest foram mantidos. Antes de acrescentar) Tj T*
+(campos ao snapshot, uma projeção explícita dos campos antigos foi comparada por) Tj T*
+(igualdade textual com o toString original em todos os 1.800 ticks; o teste passou. Após) Tj T*
+(a mudança, o replay aplica hash à mesma projeção, ignorando apenas os campos novos de) Tj T*
+(vigor. Nenhum baseline foi recalculado ou teste eliminado.) Tj T*
+() Tj T*
+(A projeção inclui atores, obstáculos, efeitos, HP, derrotas, morte, ticks, mensagem,) Tj T*
+(direção, cooldown e corte. O teste continua complementar às asserções de comportamento,) Tj T*
+(e permanece sensível à apresentação textual dos campos antigos. Mudanças futuras) Tj T*
+(precisam de justificativa, nunca de atualização automática dos hashes.) Tj T*
+() Tj T*
+(## Validação real) Tj T*
+() Tj T*
+(Comando final: mvn clean test, executado na pasta server, com compilação release 17.) Tj T*
+(Resultado: BUILD SUCCESS; 30 testes, zero falhas, zero erros e zero ignorados.) Tj T*
+() Tj T*
+(- MovementServiceTest: 6 testes existentes preservados.) Tj T*
+(- DebugWorldTest: 8 testes existentes preservados, incluindo dano, cone, alcance,) Tj T*
+(cooldown e renderização do corte.) Tj T*
+(- MovementReplayTest: 1 teste com três sequências de 600 ticks e baselines inalterados.) Tj T*
+(- StaminaServiceTest: 5 testes para valores iniciais, consumo válido/zero/insuficiente,) Tj T*
+(regeneração fracionária, saturação, entradas inválidas e morte.) Tj T*
+(- StaminaWorldTest: 8 testes para fábrica, compatibilidade de entrada, gasto único,) Tj T*
+(recusa sem consumo, reinício, ataque e movimento com vigor baixo, dano de 15 preservado,) Tj T*
+(morte e dt inválido.) Tj T*
+(- StaminaInterfaceTest: 2 testes para ligações reais de E no EDT, repetição de teclado,) Tj T*
+() Tj T*
+(Spirit Gate - TASK-003 - página 2/4) Tj T*
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 3023 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(reinício com a thread real da simulação e largura da barra em renderização sem janela.) Tj T*
+() Tj T*
+(O resumo Surefire está em TASK-003-testes.txt. A imagem TASK-003-vigor.png foi produzida) Tj T*
+(pelo teste e inspecionada: mostra 80/100 de vigor, barra parcial, tecla E e mensagem de) Tj T*
+(esforço sem sobreposição. Não houve sessão interativa de jogo com JFrame nesta etapa.) Tj T*
+() Tj T*
+(## Relação de arquivos alterados ou criados) Tj T*
+() Tj T*
+(Domínio:) Tj T*
+(- server/src/main/java/com/projetok/domain/entity/component/StaminaComponent.java) Tj T*
+(\(novo\).) Tj T*
+(- server/src/main/java/com/projetok/domain/resource/StaminaService.java \(novo\).) Tj T*
+(- server/src/main/java/com/projetok/domain/factory/PlayerFactory.java.) Tj T*
+() Tj T*
+(Protótipo, sob server/src/main/java/com/projetok/prototype/:) Tj T*
+(- DebugInput.java, DebugSnapshot.java, DebugWorld.java.) Tj T*
+(- DebugRuntime.java, DebugLauncher.java, DebugPanel.java.) Tj T*
+() Tj T*
+(Testes:) Tj T*
+(- server/src/test/java/com/projetok/domain/resource/StaminaServiceTest.java \(novo\).) Tj T*
+(- server/src/test/java/com/projetok/prototype/StaminaWorldTest.java \(novo\).) Tj T*
+(- server/src/test/java/com/projetok/prototype/StaminaInterfaceTest.java \(novo\).) Tj T*
+(- server/src/test/java/com/projetok/prototype/MovementReplayTest.java.) Tj T*
+() Tj T*
+(Documentação e ferramentas:) Tj T*
+(- README-PROTOTIPO.md e docs/HISTORICO-TECNICO.md.) Tj T*
+(- docs/TASK-003.md, docs/TASK-003-testes.txt, docs/TASK-003-vigor.png.) Tj T*
+(- docs/Spirit_Gate_TASK-003.pdf e docs/TASK-003.diff.) Tj T*
+(- tools/gerar_pdf_task002.py \(parâmetro opcional do rodapé; comportamento anterior) Tj T*
+(preservado\).) Tj T*
+(- tools/gerar_pdf_task003.py \(novo, reutiliza o gerador sem dependências\).) Tj T*
+() Tj T*
+(O diff textual é relativo ao estado inicial desta tarefa, capturado antes das) Tj T*
+(alterações. Esta pasta não é um checkout Git acessível; não foi realizado commit ou) Tj T*
+(merge. O patch não contém server/target, dados locais sensíveis ou binários. PDF e PNG) Tj T*
+(são entregues como artefatos separados. O próprio diff não se inclui recursivamente.) Tj T*
+() Tj T*
+(## Limitações e próximos passos) Tj T*
+() Tj T*
+(O esforço de E é uma ação provisória, sem animação própria e sem efeito de gameplay além) Tj T*
+(do consumo. A regeneração não tem atraso após consumo. Deltas e saldos usam precisão) Tj T*
+(float; a interface mostra uma casa decimal. O máximo é fixo durante a vida do) Tj T*
+(componente, sem progressão ou modificadores nesta tarefa.) Tj T*
+() Tj T*
+(A entrada conserva o modelo de estado amostrado por tick do protótipo: uma pressão e) Tj T*
+(soltura completas entre dois ticks podem não ser observadas. Uma futura fila de comandos) Tj T*
+(pode tratar isso junto à evolução da entrada; não há previsão de rede aqui.) Tj T*
+() Tj T*
+(MovementService, CollisionService, CombatService, Position, pom.xml e as regras da) Tj T*
+() Tj T*
+(Spirit Gate - TASK-003 - página 3/4) Tj T*
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 11 0 R >>
+endobj
+11 0 obj
+<< /Length 630 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(TASK-001/TASK-002 não foram alterados. Tunelamento, validação numérica da colisão e) Tj T*
+(otimização espacial permanecem fora desta tarefa.) Tj T*
+() Tj T*
+(## Reprodução) Tj T*
+() Tj T*
+(Na pasta server: mvn clean test. Na pasta Projeto-K: python -B) Tj T*
+(tools/gerar_pdf_task003.py. Para conferência manual, executar rodar-prototipo.cmd,) Tj T*
+(pressionar e segurar E, soltar e pressionar novamente, observar regeneração e) Tj T*
+(insuficiência, testar R com E mantido, mover e atacar com pouco vigor e conferir a) Tj T*
+(derrota.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-003 - página 4/4) Tj T*
+ET
+endstream
+endobj
+xref
+0 12
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000140 00000 n 
+0000000237 00000 n 
+0000000363 00000 n 
+0000003233 00000 n 
+0000003359 00000 n 
+0000006800 00000 n 
+0000006926 00000 n 
+0000010001 00000 n 
+0000010129 00000 n 
+trailer
+<< /Size 12 /Root 1 0 R >>
+startxref
+10811
+%%EOF

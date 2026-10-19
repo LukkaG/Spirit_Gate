@@ -1,0 +1,46 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 738 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-044 - Equipamento RPG) Tj T*
+() Tj T*
+(Slots weapon, torso, legs e accessory validados por catalogo. Equipar remove uma) Tj T*
+(unidade, devolve equipamento anterior e publica somente quando a transacao inteira cabe.) Tj T*
+(Desequipar recusa inventario cheio sem perder item. Ataque/defesa recalculados a partir) Tj T*
+(do estado atual, sem acumular modificadores.) Tj T*
+() Tj T*
+(Espada adiciona 8 ataque; manto adiciona 5 defesa. Formulas exclusivas do RPG; nenhuma) Tj T*
+(alteracao na arena. Save valida compatibilidade dos slots ao restaurar. Testes incluem) Tj T*
+(item ausente/incompativel, atributos apos save, cheio e rollback.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-044 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1133
+%%EOF

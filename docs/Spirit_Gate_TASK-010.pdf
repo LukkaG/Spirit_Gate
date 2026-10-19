@@ -1,0 +1,126 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3190 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-010 - Regressão determinística da arena) Tj T*
+() Tj T*
+(18/10/2026. Base: TASK-009 com 189 testes aprovados por mvn clean test. O inventário) Tj T*
+(considerou MovementReplayTest, suites de colisão/recuperação, habilidades, Freeze,) Tj T*
+(vigor, demo e HUD. Escopo: sequências e invariantes das mecânicas existentes, sem novas) Tj T*
+(funcionalidades de jogo.) Tj T*
+() Tj T*
+(## Lacunas antes e abordagem) Tj T*
+() Tj T*
+(Os testes anteriores já cobriam os serviços isolados, a fila, três replays históricos de) Tj T*
+(600 ticks, renderização pura e alguns fluxos assíncronos. Faltava executar o caminho) Tj T*
+(real de reinício do runtime de forma determinística, combinar comandos/recursos/colisões) Tj T*
+(por mais de um tick e proteger a informação de vigor nos valores imediatamente abaixo do) Tj T*
+(custo.) Tj T*
+() Tj T*
+(DebugRuntime mantém a mesma thread agendada e a mesma ordem de comandos. O corpo de um) Tj T*
+(tick é disponibilizado internamente para execução pelo proprietário do estado; os testes) Tj T*
+(usam esse método sem iniciar a thread. Uma fábrica interna de DebugWorld permite) Tj T*
+(controlar a aleatoriedade e recriar o demo no R. O loop de produção usa o mesmo método,) Tj T*
+(evitando reproduzir a implementação do runtime dentro dos testes. Não foi introduzido um) Tj T*
+(novo motor de simulação.) Tj T*
+() Tj T*
+(As sequências novas usam deltas explícitos de 1/30 s, comandos reais e gerador) Tj T*
+(controlado. Não usam Thread.sleep, janela JFrame, servidor, banco ou rede. Os replays e) Tj T*
+(os testes anteriores permanecem como referências; nenhum baseline foi atualizado.) Tj T*
+() Tj T*
+(## Bug reproduzido antes da correção) Tj T*
+() Tj T*
+(O HUD anterior formatava o saldo insuficiente com zero casas decimais.) Tj T*
+(Math.nextDown\(35f\) continua insuficiente para custo 35, mas aparecia como 35/35; o mesmo) Tj T*
+(ocorria com custo 55. HudPrecisionRegressionTest foi escrito primeiro e falhou de fato,) Tj T*
+(registrado em TASK-010-hud-reproducao-falha.log. Após a correção mínima, o mesmo teste) Tj T*
+(passou em TASK-010-hud-correcao.log.) Tj T*
+() Tj T*
+(A correção remove apenas essa contagem redundante do aviso, mantendo VIGOR INSUFICIENTE,) Tj T*
+(custo e dados numéricos do snapshot/barra. Não houve alteração no saldo, na comparação) Tj T*
+(do domínio, no consumo ou na regeneração. A suíte completa foi executada após as) Tj T*
+(sequências novas e repetida para conferir estabilidade.) Tj T*
+() Tj T*
+(## Cobertura depois) Tj T*
+() Tj T*
+(ArenaSequenceRegressionTest acrescenta 8 sequências pelo runtime/fila/bindings reais,) Tj T*
+(com EDT somente para entrada: Shift rápido e mantido além da recarga, competição FIFO) Tj T*
+(com 80/100 de vigor, suspensão/retomada WASD e ataque, Freeze com ataque da IA, R) Tj T*
+(limpando recursos/efeitos/feedback/comandos anteriores e preservando os três leves,) Tj T*
+(morte e reinício. Compara também 100 snapshots completos de duas execuções controladas,) Tj T*
+(sem criar um baseline novo.) Tj T*
+() Tj T*
+(DomainSequenceRegressionTest acrescenta 4 sequências: travessia de ator sem dano) Tj T*
+() Tj T*
+(Spirit Gate - TASK-010 - página 1/2) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 1988 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(automático e retorno à física normal/combate; cinco pulsos de ICE e Freeze com geometria) Tj T*
+(sólida ou leve; corpo móvel sobre o destino com recuo e atualização da grade seguida de) Tj T*
+(movimento; floats vizinhos a tangências e bordas. O gerador injetado falha se houver) Tj T*
+(sorteios extras. A referência sem índice é comparada à indexada após corrigir a posição.) Tj T*
+() Tj T*
+(HudPrecisionRegressionTest acrescenta 1 caso para o bug descrito acima. No total são 13) Tj T*
+(testes novos. Os 26 arquivos originais de teste da base 170 foram comparados diretamente) Tj T*
+(e permanecem intactos, assim como seus baselines.) Tj T*
+() Tj T*
+(AUTOMATIZADO APROVADO: primeira suíte completa mvn clean test e repetição mvn clean test) Tj T*
+(-o, ambas com 202 testes, zero falhas/erros/ignorados. Contagens e resultados por classe) Tj T*
+(são idênticos. O modo offline confirmou a execução sem acesso a repositório remoto, com) Tj T*
+(as dependências locais. Logs completos TASK-010-final.log e TASK-010-repeticao-) Tj T*
+(offline.log; resumo TASK-010-testes.txt. O teste isolado do runtime também passou \(8) Tj T*
+(casos\).) Tj T*
+() Tj T*
+(Arquivos: DebugRuntime, correção pontual em SkillHudMapper e três classes novas de) Tj T*
+(teste; documentação/PDF, resumos, logs e diff. Não foram alterados física, fórmula de) Tj T*
+(dano, habilidades ou testes antigos. A exposição de advanceOneTick e da fábrica é) Tj T*
+(restrita ao pacote e exige a thread proprietária; a produção mantém um único agendador.) Tj T*
+() Tj T*
+(## Critérios de evidência) Tj T*
+() Tj T*
+(Registrar a contagem real e os dois logs finais da suíte; conferir estabilidade sem) Tj T*
+(trocar resultados esperados. Documentar as sequências adicionadas, eventuais limitações) Tj T*
+(e o diff isolado. A homologação humana continua pendente e não impede avançar à TASK-011) Tj T*
+(se a base automatizada estiver verde.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-010 - página 2/2) Tj T*
+ET
+endstream
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000127 00000 n 
+0000000224 00000 n 
+0000000350 00000 n 
+0000003592 00000 n 
+0000003718 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+5758
+%%EOF

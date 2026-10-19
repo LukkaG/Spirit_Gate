@@ -1,0 +1,46 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 699 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-045 - Consumiveis) Tj T*
+() Tj T*
+(Pocao recupera ate 50 HP, com recarga de 60 ticks \(2 segundos\), persistida no save.) Tj T*
+(Consumo somente apos validar categoria, vida, HP maximo, quantidade, recarga e ausencia) Tj T*
+(de transicao. Feedback publicado no snapshot e exibido no HUD reutilizado. Dano e cura) Tj T*
+(acontecem exclusivamente no dominio.) Tj T*
+() Tj T*
+(Testes de HP cheio, morte, uso repetido, espera deterministica e save durante recarga.) Tj T*
+(Flag de transicao bloqueia uso e sera acionada pelo servico de portais. Nenhuma) Tj T*
+(alteracao de vigor ou habilidades legadas.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-045 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1094
+%%EOF

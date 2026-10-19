@@ -1,0 +1,82 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3307 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-015 - Mapa local e colisao separada) Tj T*
+() Tj T*
+(Baseline limpo: 210 testes, zero falhas/erros/ignorados. Arquivos previstos:) Tj T*
+(LocalArenaMap, factory opcional DebugWorld, seletor DebugLauncher, DebugPanel e testes.) Tj T*
+(Risco: carga de dados de geometria; variante isolada e comparada com referencia a cada) Tj T*
+(tick.) Tj T*
+() Tj T*
+(Formato Properties schemaVersion=1 com limites 960x640, spawn, lista de aparencias \(ID,) Tj T*
+(posicao, tamanho, camada e cor sintetica\) e descritores fisicos independentes.) Tj T*
+(Categorias SOFT_OBSTACLE e SOLID_OBSTACLE viram retangulos explicitos no dominio;) Tj T*
+(WORLD_BOUNDARY e um unico descritor do limite do Space, sem converter a arena inteira em) Tj T*
+(obstaculo. Rejeita contagens excessivas, numeros nao finitos, schema/chaves) Tj T*
+(desconhecidos, IDs/chaves duplicados, limites invalidos, spawns ocupados/sobrepostos e) Tj T*
+(obstaculos iniciais sobrepostos.) Tj T*
+() Tj T*
+(Mapa demonstrativo docs/mapa-demo.properties conserva geometria dos tres solidos e tres) Tj T*
+(leves e spawn historico. Aparencias maiores que corpos mostram a separacao. Renderer com) Tj T*
+(tiles sinteticos de 32x32 em cache, nearest-neighbor e aviso na captura. Nenhum PNG de) Tj T*
+(Karakura ativado, pois TASK-013 teve zero validados. Formato e demonstracao nao) Tj T*
+(equivalem ao cenario artistico final.) Tj T*
+() Tj T*
+(DebugWorld.demo\(\) e padrao da janela preservados. Seletor explicito: DebugLauncher --map) Tj T*
+(CAMINHO. No Maven: mvn.cmd -Dmaven.repo.local=.maven-repository -f server/pom.xml) Tj T*
+(exec:java -Dexec.mainClass=com.projetok.prototype.DebugLauncher "-Dexec.args=--map) Tj T*
+(../docs/mapa-demo.properties" \(o caminho depende do diretorio de execucao; prefira) Tj T*
+(absoluto\). R recria o mesmo mapa por factory; nada de banco, rede ou editor visual.) Tj T*
+() Tj T*
+(Seis testes novos: carga e repeticao, rejeicoes, spawn, dimensao visual independente da) Tj T*
+(colisao, replay da variante vs demo incluindo dash, reinicio deterministico e render sem) Tj T*
+(mutacao. Comparacao de snapshots por tick confirma fisica identica ao demo. Suite) Tj T*
+(completa final: 216 testes, zero falhas/erros/ignorados; replays e baselines historicos) Tj T*
+(preservados. Captura TASK-015-placeholders.png e demonstracao SINTETICA, sem arte final) Tj T*
+(integrada.) Tj T*
+() Tj T*
+(Falhas intermediarias preservadas em TASK-015-falha-intermediaria.log: uma fixture usava) Tj T*
+(spawn valido como negativo \(corrigida para y=0\); o teste de R detectou ausencia da) Tj T*
+(amostra visual do spawn apos reset. Corrigido DebugRuntime para inicializar o) Tj T*
+(sequenciador com o snapshot do novo mundo antes do primeiro tick, sem alterar mecanicas.) Tj T*
+() Tj T*
+(Evidencias: TASK-015-inicial.log, TASK-015-final.log, TASK-015-testes.txt, PDF, diff e) Tj T*
+(checkpoint local. Reproducao: mvn.cmd -Dmaven.repo.local=.maven-repository -f) Tj T*
+(server/pom.xml clean test.) Tj T*
+() Tj T*
+(O QUE FOI REALMENTE EXECUTADO: carga offline, rejeicoes, snapshots/replays, reinicio e) Tj T*
+(render sintetico. O QUE AINDA EXIGE O USUARIO: homologar nova variante e) Tj T*
+(fornecer/aprovar tiles; o padrao nao foi trocado pela variante.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-015 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+3703
+%%EOF

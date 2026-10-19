@@ -1,0 +1,104 @@
+--- /dev/null
++++ b/docs/TASK-051-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 260,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-051.md
+@@ -0,0 +1,5 @@
++# TASK-051 - Guardiao do Santuario
++
++Chefe de 320 HP: ataque basico e especial em area com estados PREPARE, execucao na simulacao e RECOVER. Aviso de 30 ticks; abaixo de 50% HP, aviso de 18 ticks, raio 135 e dano dobrado. Recuperacao de 45 ticks. Snapshot de aviso usa o desenho circular do renderer existente; desenhar nao aplica dano.
++
++Morte interrompe todas as acoes, nao tem respawn e concede reliquia unica pelo ledger. Flag boss-defeated persistente. Teste do encontro comprova aviso sem dano antecipado, execucao, derrota, recompensa e ausencia de ataques apos morte. Fase e derivada do HP salvo.
+--- a/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
+@@ -39,8 +39,12 @@
+         runtime.start(); timer.start(); frame.setVisible(true);
+     }
+     static DebugSnapshot adapt(com.projetok.rpg.RpgWorld.View v, DebugSnapshot t) {
+-        return new DebugSnapshot(List.of(new DebugSnapshot.ActorView(1,v.identity().name(),v.x(),v.y(),18,v.state().hp(),v.maxHp(),true,v.state().hp()>0)),
++        var actors=new java.util.ArrayList<DebugSnapshot.ActorView>();
++        actors.add(new DebugSnapshot.ActorView(1,v.identity().name(),v.x(),v.y(),18,v.state().hp(),v.maxHp(),true,v.state().hp()>0));
++        for(var enemy:v.enemies())actors.add(new DebugSnapshot.ActorView(enemy.id(),enemy.name(),enemy.x(),enemy.y(),19,enemy.hp(),enemy.maxHp(),false,enemy.hp()>0));
++        var warnings=v.enemies().stream().filter(e->e.state().equals("PREPARE")).map(e->new DebugSnapshot.IceZoneView(e.x(),e.y(),e.hp()*2<=e.maxHp()?135:110,0,1)).toList();
++        return new DebugSnapshot(actors,
+             List.of(new DebugSnapshot.Obstacle(380,180,120,120)),List.of(),v.state().hp(),v.maxHp(),0,v.state().hp()==0,v.ticks(),v.message(),1,0,0,null,
+-            100,100,0,List.of(),List.of(),false,0,0,List.of(),false,List.of(),t.cryostasisHud(),t.lightningStepHud());
++            100,100,0,warnings,List.of(),false,0,0,List.of(),false,List.of(),t.cryostasisHud(),t.lightningStepHud());
+     }
+ }
+--- a/server/src/main/java/com/projetok/rpg/EnemyService.java
++++ b/server/src/main/java/com/projetok/rpg/EnemyService.java
+@@ -49,6 +49,18 @@
+         for(Enemy e:current(region)) {
+             if(e.hp==0)continue;
+             double d=distance(e.getPosition(),player),homeDistance=distance(e.getPosition(),e.home);
++            if(e.definition.id().equals("warden") && alive) {
++                boolean enraged=e.hp*2<=e.definition.hp();
++                if(e.behavior.equals("PREPARE")) {
++                    if(tick>=e.attackTick) {
++                        if(d<=(enraged?135:110)&&visible.test(e.getPosition()))damage.accept(e.definition.attack()*(enraged?2:1));
++                        e.behavior="RECOVER";e.attackTick=tick+45;
++                    }
++                    continue;
++                }
++                if(e.behavior.equals("RECOVER")) { if(tick<e.attackTick)continue;e.behavior="CHASE";e.attackTick=tick+45; }
++                if(d<=150&&tick>=e.attackTick) { e.behavior="PREPARE";e.attackTick=tick+(enraged?18:30);continue; }
++            }
+             if(!alive || homeDistance>e.definition.leash() || d>e.definition.aggro()*1.4) e.behavior="RETURN";
+             else if(d<=e.definition.aggro()&&visible.test(e.getPosition())&&!e.behavior.equals("RETURN"))e.behavior="CHASE";
+             if(e.behavior.equals("RETURN")) {
+@@ -85,7 +97,7 @@
+             if(e.hp<0||e.hp>e.definition.hp()||e.generation<1||e.readyTick<0||!new CollisionService().isFree(e,x,y,19,space))throw new IllegalArgumentException("Estado de inimigo invalido");
+             e.setPosition(new Position(x,y));
+             if(v.length==9) {
+-                if(!Set.of("PATROL","CHASE","ATTACK","RETURN").contains(v[7]))throw new IllegalArgumentException("IA invalida");
++                if(!Set.of("PATROL","CHASE","ATTACK","RETURN","PREPARE","RECOVER").contains(v[7]))throw new IllegalArgumentException("IA invalida");
+                 e.behavior=v[7];e.attackTick=Long.parseLong(v[8]);if(e.attackTick<0)throw new IllegalArgumentException("Recarga invalida");
+             }
+         }
+--- a/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -92,6 +92,7 @@
+             if(loot.award(target.spawn,target.generation,target.definition.id(),inventory,flags,random)) {
+                 awardExperience(content.get("enemy",target.definition.id()).value());coins=Math.min(1_000_000,coins+5);
+                 message="Derrotado: +XP, loot e moedas";
++                if(target.definition.id().equals("warden")){flags.add("boss-defeated");message="Guardiao derrotado! Reliquia conquistada.";}
+             }
+         }
+         return true;
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/BossEncounterTest.java
+@@ -0,0 +1,13 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class BossEncounterTest {
++    static RpgWorld ruins() {var s=new RpgWorld().save();return RpgWorld.restore(new RpgSave(s.identity(),"ruins",650,320,s.hp(),s.xp(),s.coins(),s.inventory(),s.equipment(),s.quests(),s.flags(),s.ticks()));}
++    @Test void telegraphsThenExecutesAndNeverAttacksAfterDeath() {
++        var w=ruins();w.tick(0,0);assertEquals("PREPARE",w.snapshot().enemies().get(0).state());int hp=w.save().hp();
++        for(int i=0;i<29;i++)w.tick(0,0);assertEquals(hp,w.save().hp());w.tick(0,0);assertTrue(w.save().hp()<hp);
++        w.awardExperience(3600);for(int i=0;i<12&&w.snapshot().enemies().get(0).hp()>0;i++){w.attack();for(int t=0;t<12;t++)w.tick(0,0);}
++        assertEquals(0,w.snapshot().enemies().get(0).hp());assertTrue(w.save().flags().contains("boss-defeated"));
++        long xp=w.save().xp();hp=w.save().hp();for(int t=0;t<180;t++)w.tick(0,0);assertEquals(hp,w.save().hp());assertEquals(xp,w.save().xp());
++    }
++}

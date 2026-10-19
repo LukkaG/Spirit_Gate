@@ -1,0 +1,113 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3079 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-022 - Auditoria inicial e baseline) Tj T*
+() Tj T*
+(Data local: 19/10/2026. Situação: APROVADA na automação local.) Tj T*
+() Tj T*
+(## Objetivo e diagnóstico) Tj T*
+() Tj T*
+(Reproduzir a base 0.21.0-rc1 antes de alterar funcionalidades. Não há repositório Git) Tj T*
+(neste checkout; preservado o mecanismo tools/checkpoint_rodada.py. A TASK-021) Tj T*
+(registra 223 JUnit e 18 Python. Nenhuma fonte funcional foi alterada nesta tarefa.) Tj T*
+() Tj T*
+(## Inventário e decisões) Tj T*
+() Tj T*
+(server/pom.xml: Java 17, JUnit 5.11.4, Surefire 3.5.2; Kryonet e PostgreSQL) Tj T*
+(permanecem legados e são excluídos da arena portátil. Os pacotes domain e prototype) Tj T*
+(formam o jogo local. tools contém auditor, empacotador, revisão de sprites,) Tj T*
+(validação de assets, snapshots textuais e geração PDF sem dependências adicionais.) Tj T*
+(assets conserva arte candidata; dist preserva os releases históricos.) Tj T*
+() Tj T*
+(LocalArenaMap: Properties estrito V1, 960x640, limite de 4096 elementos por lista,) Tj T*
+(geometria e aparência independentes; validação quadrática de sobreposição.) Tj T*
+(DebugWorld: proprietário das entidades, colisões e habilidades; limites constantes) Tj T*
+(acoplados ao mundo e à Criostase. DebugRuntime: thread de simulação, fábrica para R,) Tj T*
+(fila FIFO e publicação imutável de apresentação. DebugPanel: Java2D, viewport e HUD;) Tj T*
+(limites históricos repetidos em clipping e desenho. ArenaViewport já aceita dimensões) Tj T*
+(maiores, mas o painel ainda fornece constantes. Não existe índice espacial paralelo.) Tj T*
+(DirectionalAnimation publica frames determinísticos. ValidatedSpriteAtlas é o) Tj T*
+(carregador único, com fallback. Revisão/autoria e pacote visual reutilizam contratos.) Tj T*
+(O ponto de duplicação relevante são limites de arena e contratos entre validadores) Tj T*
+(Python e Java; mudanças futuras exigem testes cruzados. Nenhuma remoção foi feita.) Tj T*
+() Tj T*
+(## Validações executadas) Tj T*
+() Tj T*
+(Java: clean test offline, 223 testes, zero falhas, erros ou ignorados.) Tj T*
+(Python: unittest discover, 18 testes, todos aprovados.) Tj T*
+(ZIP original 546ce1c5: auditoria PASS após recompilação; inventário, SHA,) Tj T*
+(whitelist, Java 17, PE x64 e comparação byte a byte do JAR com classes atuais.) Tj T*
+(Evidências: TASK-022-java.log, TASK-022-python.log, TASK-022-auditoria.json.) Tj T*
+(A primeira chamada Maven não recebeu corretamente a propriedade no PowerShell;) Tj T*
+(reexecutada com argumento inteiro entre aspas e caminho absoluto do cache local.) Tj T*
+(Não foram alteradas configurações globais.) Tj T*
+() Tj T*
+(## Reprodução) Tj T*
+() Tj T*
+(Na raiz Projeto-K:) Tj T*
+(python -m unittest discover -s tools -p "test_*.py" -v) Tj T*
+(mvn "-Dmaven.repo.local=$PWD/.maven-repository" -o -f server/pom.xml clean test) Tj T*
+(python tools/auditar_rc.py --zip) Tj T*
+(dist/SpiritGate-0.21.0-rc1-20261019T001737Z-546ce1c5-portable.zip --report) Tj T*
+(docs/TASK-022-auditoria.json) Tj T*
+() Tj T*
+(Spirit Gate - TASK-022 - página 1/2) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 871 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+() Tj T*
+(## Arquivos, checkpoint e limites) Tj T*
+() Tj T*
+(Adicionados os documentos/evidências TASK-022 e tools/registrar_task.py para) Tj T*
+(reutilizar PDF e fechamento de checkpoint. Antes: .task-) Tj T*
+(checkpoints/TASK-022-before.json;) Tj T*
+(depois: TASK-022-after.json e docs/TASK-022.diff. Snapshot inicial contém fontes) Tj T*
+(textuais recuperáveis; assets e releases anteriores permanecem preservados.) Tj T*
+(Sem smoke de EXE nesta tarefa; a evidência da TASK-021 é histórica, não reexecutada.) Tj T*
+(Sem homologação em outro Windows e sem aprovação de arte final.) Tj T*
+(Próximo passo: TASK-023, orquestrador de qualidade, com testes próprios.) Tj T*
+() Tj T*
+(## Resultado final observado) Tj T*
+(Validação local aprovada: 223 JUnit e 18 Python; zero falhas.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-022 - página 2/2) Tj T*
+ET
+endstream
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000127 00000 n 
+0000000224 00000 n 
+0000000350 00000 n 
+0000003481 00000 n 
+0000003607 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+4529
+%%EOF

@@ -1,0 +1,47 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 858 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-064 - Diario, mapa e objetivos) Tj T*
+() Tj T*
+(J abre diario completo com estados, contagens e todos os objetivos traduzidos do) Tj T*
+(catalogo. Missoes indisponiveis nao revelam detalhes. M mostra representacao da regiao) Tj T*
+(atual, jogador, solidos, NPCs, portais e recursos; inimigos apenas em raio proximo.) Tj T*
+(Regioes futuras nao sao desenhadas. Historico de regioes visitadas persiste.) Tj T*
+() Tj T*
+(Janelas atualizam snapshots durante transicao e apos load, sem mudar camera ou dominio.) Tj T*
+(Persistencia da recarga de portal tambem foi ajustada para impedir que reabrir save) Tj T*
+(remova a protecao contra alternancia imediata. Suite completa inclui ciclo de tres) Tj T*
+(regioes/quests/save; nenhuma alteracao de baseline historico.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-064 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1253
+%%EOF

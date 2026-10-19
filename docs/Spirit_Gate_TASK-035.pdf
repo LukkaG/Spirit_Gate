@@ -1,0 +1,64 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1977 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-035 - Estresse e estabilidade) Tj T*
+() Tj T*
+(Objetivo: sessões extensas determinísticas, limites e operações repetidas.) Tj T*
+(Base aprovada: TASK-034, 239 JUnit e 25 Python.) Tj T*
+(Implementação: StabilityStressTest executa dois runtimes com seed 24 em mapa) Tj T*
+(1920x1280, 6000 ticks cada, alternância WASD/ataque/vigor, Q/Shift em momentos) Tj T*
+(distintos e dez reinícios. Compara apresentação completa a cada tick, finitude,) Tj T*
+(vigor e limites; exige observação efetiva de gelo, Freeze e dash.) Tj T*
+(Segundo cenário: 4096 visuais em mundo 8192x8192, quatro zooms, câmera nos extremos) Tj T*
+(e 32 repetições de dash contra sólido. Validações negativas de mapas e replays) Tj T*
+(históricos permanecem na suíte completa, sem mudar expectativas.) Tj T*
+() Tj T*
+(Métricas reais do primeiro cenário: TASK-035-estresse.json. Contagem de testes,) Tj T*
+(tempo observado e logs: TASK-035-qualidade.json, TASK-035-testes.txt e logs.) Tj T*
+(Nenhum limiar rígido de tempo é usado como sucesso de gameplay. Render repetido) Tj T*
+(não modifica snapshots. Não foi introduzido benchmark ou dependência.) Tj T*
+(Reprodução: python tools/qualidade.py --offline --task 035) Tj T*
+(Arquivos: StabilityStressTest.java, documentação e evidências. Checkpoints/diff) Tj T*
+(padronizados; próximo passo TASK-036 somente depois da suíte aprovada.) Tj T*
+(Limites: carga sintética delimitada, não prova ausência de qualquer vazamento nem) Tj T*
+(substitui sessão humana prolongada. Homologação manual e outro Windows pendentes.) Tj T*
+() Tj T*
+(Falha inicial: erro de sintaxe no incremento do laço de zoom do teste novo.) Tj T*
+(Corrigido sem mudar asserções. Log original preservado em) Tj T*
+(TASK-035-primeira-compilacao.log e TASK-035-primeira-qualidade.json.) Tj T*
+() Tj T*
+(## Resultado final observado) Tj T*
+(Validação local aprovada: 241 JUnit e 25 Python; zero falhas.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-035 - página 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2373
+%%EOF

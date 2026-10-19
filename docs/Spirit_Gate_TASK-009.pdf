@@ -1,0 +1,118 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3294 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-009 - Feedback contextual de habilidades) Tj T*
+() Tj T*
+(18/10/2026. Base: TASK-008, 177 testes aprovados em mvn clean test antes das alterações.) Tj T*
+(Escopo restrito à comunicação do estado real das habilidades; regras de dano, custo,) Tj T*
+(duração, regeneração, cooldown, movimento e fila preservadas.) Tj T*
+() Tj T*
+(## Divisão de responsabilidades) Tj T*
+() Tj T*
+(DebugSnapshot acrescenta views imutáveis para Criostase e Passo Relâmpago.) Tj T*
+(SkillHudMapper produz dados renderizáveis na simulação, incluindo tecla, nome, custo,) Tj T*
+(vigor, cooldown, estado e feedback. Os estados distinguem READY, COOLDOWN,) Tj T*
+(INSUFFICIENT_STAMINA, DEAD, ACTIVE e AWAITING_LANDING. A prioridade é morto, espera de) Tj T*
+(saída, dash ativo, recarga, vigor insuficiente e pronto. Feedback transitório da última) Tj T*
+(tentativa fica separado do estado atual.) Tj T*
+() Tj T*
+(DebugWorld usa os resultados reais de cast para publicar aceitações e recusas. O) Tj T*
+(feedback dura 1,2 s no relógio da simulação, e não usa timers de Swing. A expiração) Tj T*
+(acontece no tick; snapshots anteriores continuam imutáveis. lastEvent foi preservado) Tj T*
+(para a regressão histórica. Manter a tecla não cria novas notificações: a fila e os) Tj T*
+(bindings continuam sendo os já existentes.) Tj T*
+() Tj T*
+(O movimento do dash publica uma flag informativa Step.blocked, calculada antes da) Tj T*
+(eventual recuperação da saída. Ela compara deslocamento pedido e efetivamente aplicado) Tj T*
+(pela física, com tolerância numérica, sem alterar posições ou relógios. Na arena, a) Tj T*
+(política seletiva ignora atores e leves; por isso o feedback se refere a sólido ou) Tj T*
+(borda. O texto não afirma que o alvo do mouse está atrás de uma parede nem confunde) Tj T*
+(recuo por arbusto com bloqueio por parede.) Tj T*
+() Tj T*
+(Os construtores anteriores de Step continuam disponíveis. Nenhum algoritmo de colisão) Tj T*
+(foi alterado. O HUD só desenha as strings, estados, valores e cores publicados; não) Tj T*
+(consulta componentes, sorteia, consome vigor ou modifica o mundo. As linhas anteriores) Tj T*
+(de Q/Shift foram substituídas por apresentação contextual, preservando controles e) Tj T*
+(espaço visual.) Tj T*
+() Tj T*
+(## Validação e limites) Tj T*
+() Tj T*
+(Testes devem comprovar mapeamento, lançamento aceito e recusado, cooldown, vigor) Tj T*
+(insuficiente, morte, espera/liberação, reinício, feedback transitório, colisão real e) Tj T*
+(renderização pura. Também é verificado que recuperar um destino dentro de arbusto não) Tj T*
+(produz um aviso falso de parede. Não se usam screenshots pixel a pixel como oráculo de) Tj T*
+(gameplay.) Tj T*
+() Tj T*
+(AUTOMATIZADO APROVADO: mvn clean test final, 189 testes, zero falhas/erros/ignorados.) Tj T*
+(HudSkillFeedbackTest acrescenta 12 casos; todos os 177 anteriores continuam verdes. Logs) Tj T*
+(TASK-009-inicial.log e TASK-009-final.log; resumo TASK-009-testes.txt. Captura) Tj T*
+(TASK-009-hud.png gerada e inspecionada em quatro quadros: pronto, sem vigor, ativo e) Tj T*
+(bloqueio real. Renderizar não alterou o mundo.) Tj T*
+() Tj T*
+(Espera/liberação foram exercitadas no mapper com estados controlados, além dos testes) Tj T*
+() Tj T*
+(Spirit Gate - TASK-009 - página 1/2) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 1495 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(anteriores de recuperação pendente do domínio. O teste novo de reinício cria outro mundo) Tj T*
+(pela fábrica; a integração determinística do comando R será coberta na TASK-010.) Tj T*
+(Feedback expira após no máximo um tick adicional de arredondamento de float. Nenhum) Tj T*
+(teste depende de tempo do sistema ou JFrame.) Tj T*
+() Tj T*
+(Arquivos: novo SkillHudMapper e HudSkillFeedbackTest; alterações em DebugWorld,) Tj T*
+(DebugSnapshot, DebugPanel e LightningStepService somente para publicar informação de) Tj T*
+(contato. Relatório/PDF, testes/logs, captura e diff. Os construtores anteriores de Step) Tj T*
+(foram preservados; fórmulas e clocks de gameplay não foram alterados.) Tj T*
+() Tj T*
+(A label de colisão deliberadamente não diferencia parede de borda quando a evidência) Tj T*
+(disponível só comprova um bloqueio sólido. A espera de saída continua obedecendo à regra) Tj T*
+(anterior: se toda a trajetória estiver ocupada, o estado pode persistir até haver) Tj T*
+(mudança no espaço ou reinício. O HUD não tenta resolver essa situação.) Tj T*
+() Tj T*
+(HOMOLOGACAO HUMANA PENDENTE: conferir legibilidade das linhas Q/Shift, custo e vigor,) Tj T*
+(transição de pronto para recarga, recusa por recurso, aviso breve de alvo inválido,) Tj T*
+(indicador durante dash e bloqueio real em parede/borda. Usar R e verificar limpeza. Sem) Tj T*
+(sons, assets, novas teclas ou novas habilidades.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-009 - página 2/2) Tj T*
+ET
+endstream
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000127 00000 n 
+0000000224 00000 n 
+0000000350 00000 n 
+0000003696 00000 n 
+0000003822 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+5369
+%%EOF

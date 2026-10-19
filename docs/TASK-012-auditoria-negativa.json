@@ -1,0 +1,22 @@
+{
+  "checks": [
+    {
+      "id": "zip_sha256_sidecar",
+      "status": "PASS",
+      "sha256": "116541049b67d8c46c4dd55b7278e99ae6b77e086982bd5f7919a11791f6bf82",
+      "sizeBytes": 29667264
+    },
+    {
+      "id": "estrutura_segura",
+      "status": "PASS",
+      "files": 146,
+      "root": "SpiritGate"
+    }
+  ],
+  "expected": "FAIL",
+  "zipSha256": "116541049b67d8c46c4dd55b7278e99ae6b77e086982bd5f7919a11791f6bf82",
+  "version": "0.12.0-task012",
+  "status": "FAIL",
+  "negativeControl": "PASS",
+  "error": "Tamanho divergente do manifest: app/spirit-gate-arena.jar"
+}

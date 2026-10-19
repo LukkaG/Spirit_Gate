@@ -1,0 +1,152 @@
+--- /dev/null
++++ b/docs/TASK-025-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 228,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 22
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-025.md
+@@ -0,0 +1,25 @@
++# TASK-025 - Culling conservador
++
++Objetivo: evitar desenho fora da viewport sem interferir no mundo.
++Base: TASK-024 aprovada, 226 JUnit e 22 Python.
++Implementação: ArenaViewport.visibleWorld publica o retângulo visível. Java2D
++hitClip reaproveita o clipping transformado para tiles, sólidos, leves e atores
++do fallback. Margens incluem sombras, strokes, nome, HP, Freeze e alcance H.
++Atlas com offsets arbitrários mantém desenho conservador, sem descarte de ator.
++Efeitos permanecem desenhados e recortados pelo Java2D, preservando cruzamentos
++de borda. Nenhum índice espacial ou alteração da física foi introduzido.
++
++Diagnóstico: o pipeline já recortava pixels, mas ainda submetia todos os objetos.
++Foi acrescentada uma chave de referência para comparar culling de entidades
++ligado/desligado. Tiles usam hitClip sempre. Ordem e dados continuam iguais.
++Arquivos: ArenaViewport.java, LocalArenaMap.java, DebugPanel.java, CullingTest.java.
++Testes: comparação de pixels em mapa 1920x1280, zoom 1 a 4, três tamanhos, hitboxes;
++interseções parciais diagonais e retângulo visível. Ver totais reais e resultado em
++TASK-025-qualidade.json e TASK-025-testes.txt, logs completos Java/Python.
++Comando: python tools/qualidade.py --offline --task 025
++
++Limites: fundo e efeitos ainda percorrem seus elementos; otimização é conservadora,
++sem alegar eliminação de todo trabalho fora da câmera. Sem benchmark temporal
++rígido ou arte aprovada. Homologação visual humana permanece pendente.
++Checkpoint recuperável antes/depois e diff em caminhos padronizados. Próximo:
++TASK-026, camadas explícitas. Não há mudanças de regras de gameplay.
+--- a/server/src/main/java/com/projetok/prototype/ArenaViewport.java
++++ b/server/src/main/java/com/projetok/prototype/ArenaViewport.java
+@@ -31,4 +31,9 @@
+     public boolean containsScreen(double x,double y) {
+         return x>=offsetX && y>=offsetY && x<offsetX+DebugWorld.WIDTH*scale && y<offsetY+DebugWorld.HEIGHT*scale;
+     }
++    /** Retângulo visível no mundo; HUD e letterbox não fazem parte da arena. */
++    public java.awt.geom.Rectangle2D.Double visibleWorld() {
++        return new java.awt.geom.Rectangle2D.Double(originX,originY,
++                (double)DebugWorld.WIDTH/zoom,(double)DebugWorld.HEIGHT/zoom);
++    }
+ }
+--- a/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ b/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -30,6 +30,13 @@
+     private LocalArenaMap.Renderer mapRenderer;
+     private int cameraZoom=1;
+     private int worldWidth=DebugWorld.WIDTH, worldHeight=DebugWorld.HEIGHT;
++    private boolean culling=true;
++    /** Referência de comparação visual; não altera os dados da simulação. */
++    public void setCulling(boolean enabled) { culling=enabled; }
++    private boolean visible(Graphics2D g,double x,double y,double w,double h) {
++        return !culling || g.hitClip((int)Math.floor(x),(int)Math.floor(y),
++                (int)Math.ceil(w)+2,(int)Math.ceil(h)+2);
++    }
+ 
+     /** Zoom inteiro opcional; padrao preserva coordenadas historicas. */
+     public void setCameraZoom(int zoom) {
+@@ -128,6 +135,8 @@
+         drawIceZones(g, s);
+         drawLightningTrails(g, s);
+         for (DebugSnapshot.ActorView actor : s.actors()) {
++            // Margem inclui nome, barras, alcance, sprite/pivot e marca de Freeze.
++            if(spriteAtlas==null && !visible(g,actor.x()-100,actor.y()-100,200,200)) continue;
+             DirectionalAnimation.View visual = null;
+             for (var candidate : animations) if (candidate.actorId() == actor.id()) { visual=candidate; break; }
+             if (spriteAtlas == null || visual == null || !spriteAtlas.draw(g, actor, visual)) drawActor(g, actor, s);
+@@ -219,6 +228,7 @@
+     /** Desenha pedras/paredes e destaca suas bordas sólidas no modo de inspeção. */
+     private void drawObstacles(Graphics2D g, DebugSnapshot world) {
+         for (DebugSnapshot.Obstacle o : world.obstacles()) {
++            if(!visible(g,o.x()-3,o.y()-3,o.width()+14,o.height()+16)) continue;
+             int x = Math.round(o.x()), y = Math.round(o.y());
+             int w = Math.round(o.width()), h = Math.round(o.height());
+             g.setColor(new Color(0, 0, 0, 65));
+@@ -244,6 +254,7 @@
+     /** Distingue arbustos e postes leves; H mostra exatamente o retângulo físico publicado. */
+     private void drawSoftObstacles(Graphics2D g, DebugSnapshot world) {
+         for (var obstacle : world.softObstacles()) {
++            if(!visible(g,obstacle.x()-6,obstacle.y()-3,obstacle.width()+18,obstacle.height()+16)) continue;
+             int x = Math.round(obstacle.x()), y = Math.round(obstacle.y());
+             int width = Math.round(obstacle.width()), height = Math.round(obstacle.height());
+             g.setColor(new Color(0, 0, 0, 65));
+--- a/server/src/main/java/com/projetok/prototype/LocalArenaMap.java
++++ b/server/src/main/java/com/projetok/prototype/LocalArenaMap.java
+@@ -130,7 +130,9 @@
+             Graphics2D g=(Graphics2D)original.create();
+             try {
+                 g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+-                for(var tile:tiles) {var v=tile.visual();g.drawImage(tile.image(),v.x(),v.y(),v.width(),v.height(),null);}
++                for(var tile:tiles) {var v=tile.visual();
++                    if(g.hitClip(v.x(),v.y(),v.width(),v.height()))
++                        g.drawImage(tile.image(),v.x(),v.y(),v.width(),v.height(),null);}
+                 g.setColor(Color.WHITE);g.drawString("MAPA LOCAL DE TESTE - TILES SINTETICOS",24,24);
+             }finally{g.dispose();}
+         }
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/CullingTest.java
+@@ -0,0 +1,32 @@
++package com.projetok.prototype;
++
++import java.awt.image.BufferedImage;
++import java.util.Arrays;
++import java.util.Random;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++
++class CullingTest {
++    @Test void optimizedPixelsEqualReferenceAtZoomResizeAndMapEdges() {
++        var map=LargeMapTest.large();var world=DebugWorld.forMap(map,new Random(1));var snapshot=world.snapshot();
++        for(int zoom=1;zoom<=4;zoom++)for(int[] size:new int[][]{{1260,750},{800,600},{1800,950}}) {
++            var panel=new DebugPanel(()->snapshot);panel.setLocalMap(map);panel.setSize(size[0],size[1]);
++            panel.setCameraZoom(zoom);panel.setShowHitboxes(true);
++            var a=new BufferedImage(size[0],size[1],BufferedImage.TYPE_INT_ARGB);
++            var b=new BufferedImage(size[0],size[1],BufferedImage.TYPE_INT_ARGB);
++            var ga=a.createGraphics();var gb=b.createGraphics();
++            panel.setCulling(false);panel.render(ga,snapshot);
++            panel.setCulling(true);panel.render(gb,snapshot);ga.dispose();gb.dispose();
++            assertArrayEquals(a.getRGB(0,0,size[0],size[1],null,0,size[0]),b.getRGB(0,0,size[0],size[1],null,0,size[0]));
++            assertEquals(snapshot,world.snapshot());
++        }
++    }
++    @Test void visibleRegionAndPartialDiagonalIntersection() {
++        var v=ArenaViewport.fit(1260,750,1920,1280,1500,1000,2);
++        var r=v.visibleWorld();assertEquals(480,r.width);assertEquals(320,r.height);
++        assertTrue(r.intersects(r.getMaxX()-1,r.getMaxY()-1,32,32));
++        assertFalse(r.intersects(r.getMaxX()+1,r.getMaxY()+1,32,32));
++        var g=new BufferedImage(64,64,BufferedImage.TYPE_INT_ARGB).createGraphics();
++        g.setClip(0,0,32,32);assertTrue(g.hitClip(31,31,32,32));assertFalse(g.hitClip(33,33,32,32));g.dispose();
++    }
++}

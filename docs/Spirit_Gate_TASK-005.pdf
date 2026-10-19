@@ -1,0 +1,269 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R 10 0 R] /Count 4 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3154 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-005 - Efeitos de status e congelamento probabilístico) Tj T*
+() Tj T*
+(Spirit Gate | 18/10/2026 | Java 17 e Maven) Tj T*
+() Tj T*
+(## Resultado) Tj T*
+() Tj T*
+(A Criostase oferece uma tentativa independente de 30% de Freeze a cada mob que receber) Tj T*
+(dano positivo e sobreviver ao pulso. Um sucesso aplica ou renova a duração para) Tj T*
+(exatamente 1 segundo, sem somar o tempo anterior. Fracassos não removem ou renovam o) Tj T*
+(efeito. Mobs congelados não se movimentam, mas continuam podendo atacar em alcance.) Tj T*
+() Tj T*
+(Foram preservados os parâmetros da habilidade: dano base 7 ICE, custo 55 de vigor,) Tj T*
+(cooldown 3 segundos, alcance 240, raio 85, duração 2,5 segundos e cinco pulsos em) Tj T*
+(0/0,5/1/1,5/2 s. Freeze não causa dano, não altera a frequência dos pulsos e não cria um) Tj T*
+(sexto pulso.) Tj T*
+() Tj T*
+(## Preparação e proposta) Tj T*
+() Tj T*
+(Antes das alterações foram inspecionados CryostasisService, CryostasisZone,) Tj T*
+(CombatService, MobFactory, MovementService, DebugWorld, DebugSnapshot, DebugPanel e) Tj T*
+(testes relacionados. Estado inicial: mvn clean test -q aprovado com 73 testes.) Tj T*
+() Tj T*
+(A proposta apresentada separou armazenamento por entidade, aplicação/atualização de) Tj T*
+(efeitos e sorteios por um gerador injetável. O bloqueio fica no serviço autoritativo de) Tj T*
+(movimento, e o snapshot publica uma coleção separada para preservar ActorView e o replay) Tj T*
+(legado. Uma revisão paralela somente de leitura confirmou a ordem temporal e a) Tj T*
+(preservação do ataque; nenhum achado bloqueador foi identificado.) Tj T*
+() Tj T*
+(## Domínio reutilizável) Tj T*
+() Tj T*
+(StatusEffectType identifica os efeitos; nesta tarefa contém somente FREEZE.) Tj T*
+(StatusEffectsComponent armazena segundos restantes por tipo em EnumMap, com precisão) Tj T*
+(interna double e consultas float. refresh substitui a duração, advance subtrai dt e) Tj T*
+(remove efeitos expirados, e snapshot retorna cópia imutável. Durações precisam ser) Tj T*
+(finitas e positivas; deltas, finitos e não negativos. Uma tolerância de um microssegundo) Tj T*
+(evita resíduos ao somar passos float de 30 Hz.) Tj T*
+() Tj T*
+(StatusEffectService separa elegibilidade e coordenação temporal do armazenamento. apply) Tj T*
+(valida duração, recusa alvos mortos e restringe FREEZE a Mob. MobFactory anexa o) Tj T*
+(componente vazio. Para entidades Mob construídas manualmente por código anterior, apply) Tj T*
+(pode anexar o componente no primeiro sucesso, preservando os testes existentes.) Tj T*
+(Jogadores não recebem Freeze nem têm esse componente anexado pelo serviço.) Tj T*
+() Tj T*
+(update avança efeitos existentes e limpa o componente quando o portador morre. Não) Tj T*
+(produz dano e não depende da Criostase. O coordenador do mundo, e não a habilidade,) Tj T*
+(define quando atualizar o relógio. O serviço e os componentes são usados somente pela) Tj T*
+(thread proprietária das entidades.) Tj T*
+() Tj T*
+(ProbabilityService recebe java.util.random.RandomGenerator da biblioteca padrão do Java) Tj T*
+() Tj T*
+(Spirit Gate - TASK-005 - página 1/4) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 3339 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(17. succeeds valida chance finita no intervalo [0,1]. Chance zero sempre falha e chance) Tj T*
+(um sempre sucede, sem consumir o gerador. Chances intermediárias usam uma nova amostra e) Tj T*
+(comparação estrita amostra < chance. Assim, para 30%, 0,29 sucede e 0,30 falha. Amostras) Tj T*
+(inválidas de um gerador customizado também são recusadas.) Tj T*
+() Tj T*
+(O serviço é reutilizável sem conhecer mobs, skills ou interface. Não há Math.random no) Tj T*
+(caminho da Criostase. O uso normal recebe RandomGenerator.getDefault; testes podem) Tj T*
+(injetar sequências exatas ou geradores com seed.) Tj T*
+() Tj T*
+(## Integração da Criostase) Tj T*
+() Tj T*
+(CryostasisService mantém seu construtor anterior e acrescenta injeção de) Tj T*
+(StatusEffectService e ProbabilityService. Após combat.attack retornar, verifica dano) Tj T*
+(positivo e sobrevivência. Somente então consome uma amostra de 30% para aquele mob e) Tj T*
+(pulso. Sucesso chama apply\(FREEZE,1\). O dano continua exclusivamente no CombatService,) Tj T*
+(cujo código e fórmula não foram alterados.) Tj T*
+() Tj T*
+(O conjunto já existente de alvos visitados garante uma tentativa no máximo por alvo no) Tj T*
+(mesmo pulso mesmo se a lista contiver duplicatas. Alvos mortos, fora da área, atingidos) Tj T*
+(letalmente ou com dano zero não consomem um sorteio nem recebem novo efeito. Falha de) Tj T*
+(sorteio não chama o serviço de aplicação.) Tj T*
+() Tj T*
+(O gerador pertence ao mundo/serviço e não é reinicializado a cada pulso ou mob.) Tj T*
+(DebugWorld permite injetá-lo pelo novo construtor sem perder o construtor padrão. A) Tj T*
+(ordem dos alvos é estável na lista da arena; uma sequência controlada produz resultados) Tj T*
+(reproduzíveis para cada alvo e pulso.) Tj T*
+() Tj T*
+(## Ordem autoritativa do tick) Tj T*
+() Tj T*
+(Após validar dt, o mundo avança os efeitos anteriores dos mobs. Depois atualiza os) Tj T*
+(relógios e processa os pulsos das zonas existentes. Seguem as ações e lançamentos novos,) Tj T*
+(incluindo o pulso imediato. O movimento e o ataque da IA são processados depois disso.) Tj T*
+() Tj T*
+(Assim, Freeze aplicado ou renovado por um pulso não sofre outro decremento no mesmo) Tj T*
+(tick, conserva 1 segundo no snapshot e já bloqueia o deslocamento daquele tick. No tick) Tj T*
+(de expiração, se não houver novo sucesso, o movimento volta a ser permitido. Um sucesso) Tj T*
+(no mesmo tick em que o efeito anterior expirou aplica um novo segundo completo.) Tj T*
+() Tj T*
+(MovementService consulta FREEZE para mobs antes de resolver o deslocamento. O bloqueio) Tj T*
+(cobre move, moveDirected e moveContinuous. O caminho bloqueado continua validando) Tj T*
+(coordenadas, deslocamentos, overflow e raio antes de retornar. CollisionService) Tj T*
+(permanece geometria sem conhecimento de status; atualizações de posição realizadas fora) Tj T*
+(do serviço não representam ações normais de movimento.) Tj T*
+() Tj T*
+(DebugWorld não pula a IA inteira por Freeze. O bloco de ataque e seus cooldowns) Tj T*
+(permanecem ativos, com cálculo de alcance a partir da posição imobilizada. Jogadores não) Tj T*
+(são bloqueados por esse mecanismo.) Tj T*
+() Tj T*
+(O passo de simulação permanece limitado a 0,1 s na arena. Em chamadas diretas que cruzem) Tj T*
+() Tj T*
+(Spirit Gate - TASK-005 - página 2/4) Tj T*
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 3023 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(vários pulsos, todos os pulsos devidos são avaliados na atualização corrente; o) Tj T*
+(coordenador continua responsável por avançar os efeitos antes dos pulsos. Não há) Tj T*
+(reconstrução de movimento contínuo ou de tempos passados de aplicação fora desse modelo) Tj T*
+(de ticks.) Tj T*
+() Tj T*
+(## Snapshot e interface) Tj T*
+() Tj T*
+(DebugSnapshot acrescenta uma lista imutável de StatusView, com ID do ator e duração) Tj T*
+(restante de Freeze. Só mobs vivos com efeito ativo são publicados. ActorView permanece) Tj T*
+(exatamente no contrato anterior; nenhum hash do replay precisou ser recalculado ou) Tj T*
+(alterado.) Tj T*
+() Tj T*
+(DebugPanel desenha tonalidade azul-gelo, contorno e legenda CONGELADO a partir dessa) Tj T*
+(lista. Não acessa componentes, sorteia ou avança temporizadores. Reiniciar a arena cria) Tj T*
+(entidades e armazenamento novos, sem reaproveitar efeitos. A fila de Q e os controles) Tj T*
+(anteriores permanecem intactos.) Tj T*
+() Tj T*
+(## Validação e captura) Tj T*
+() Tj T*
+(Comando final: mvn clean test na pasta server. Resultado real: BUILD SUCCESS, compilação) Tj T*
+(release 17, 105 testes, zero falhas, zero erros e zero ignorados. Os 73 testes) Tj T*
+(anteriores continuam aprovados e foram acrescentados 32 testes: 9 do serviço de efeitos,) Tj T*
+(5 de probabilidades, 7 da integração da Criostase com Freeze, 5 de bloqueio de movimento) Tj T*
+(e 6 da ordem temporal e interface no mundo. Resumo por classe em TASK-005-testes.txt.) Tj T*
+() Tj T*
+(Os testes novos cobrem os limites exatos 0%, 30% e 100%, probabilidades inválidas,) Tj T*
+(geradores controlados, amostras 0,29/0,30, armazenamento imutável, duração de 1 segundo,) Tj T*
+(renovação sem acumulação, fracasso preservando o tempo anterior e expiração com passos) Tj T*
+(de 30 Hz.) Tj T*
+() Tj T*
+(Também verificam tentativas independentes por alvo e pulso, cadáveres, dano letal e) Tj T*
+(zero, ausência de sexto pulso/dano extra, bloqueio nos caminhos de movimento e retomada) Tj T*
+(após expirar. A integração verifica aplicação antes da IA, segundo completo no tick do) Tj T*
+(pulso, ataque de mob congelado em alcance, ausência de Freeze no jogador, reinício e) Tj T*
+(renderização sem mutação.) Tj T*
+() Tj T*
+(Os testes anteriores e os três baselines de MovementReplayTest foram preservados. A) Tj T*
+(captura TASK-005-freeze.png foi produzida pelo teste com amostra controlada 0,29 e) Tj T*
+(inspecionada: exibe o mob congelado, a zona, a legenda, o vigor 45/100 e o cooldown 3 s.) Tj T*
+(O teste também comprova que renderizar não altera o snapshot. Não houve sessão) Tj T*
+(interativa com JFrame nesta etapa.) Tj T*
+() Tj T*
+(## Arquivos novos e alterados) Tj T*
+() Tj T*
+(Novos no domínio, sob server/src/main/java/com/projetok/:) Tj T*
+(- entity/component/StatusEffectsComponent.java.) Tj T*
+(- effect/StatusEffectType.java e StatusEffectService.java.) Tj T*
+(- probability/ProbabilityService.java.) Tj T*
+() Tj T*
+() Tj T*
+(Spirit Gate - TASK-005 - página 3/4) Tj T*
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 11 0 R >>
+endobj
+11 0 obj
+<< /Length 2615 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(Alterados no domínio:) Tj T*
+(- factory/MobFactory.java: armazenamento inicial vazio por mob.) Tj T*
+(- skill/CryostasisService.java: injeção e tentativa após dano positivo sobrevivido.) Tj T*
+(- movement/MovementService.java: bloqueio de movimento autoritativo.) Tj T*
+() Tj T*
+(Alterados no protótipo:) Tj T*
+(- prototype/DebugWorld.java: relógio de efeitos antes de pulsos e injeção de RNG.) Tj T*
+(- prototype/DebugSnapshot.java: valores visuais separados do ator legado.) Tj T*
+(- prototype/DebugPanel.java: tonalidade, contorno e legenda.) Tj T*
+() Tj T*
+(Novos testes, sob server/src/test/java/com/projetok/:) Tj T*
+(- domain/effect/StatusEffectServiceTest.java.) Tj T*
+(- domain/probability/ProbabilityServiceTest.java.) Tj T*
+(- domain/skill/CryostasisFreezeTest.java.) Tj T*
+(- domain/movement/FreezeMovementTest.java.) Tj T*
+(- prototype/FreezeWorldTest.java.) Tj T*
+() Tj T*
+(Documentação e ferramenta:) Tj T*
+(- README-PROTOTIPO.md e docs/HISTORICO-TECNICO.md.) Tj T*
+(- docs/TASK-005.md, docs/TASK-005-testes.txt e docs/TASK-005.diff.) Tj T*
+(- docs/Spirit_Gate_TASK-005.pdf e docs/TASK-005-freeze.png.) Tj T*
+(- tools/gerar_pdf_task005.py.) Tj T*
+() Tj T*
+(## Limitações e revisão) Tj T*
+() Tj T*
+(Nenhuma dependência foi adicionada. Não há PvP, resistência a controle, imunidade,) Tj T*
+(Freeze em jogadores, novas skills ou alteração de balanceamento da Criostase. O sistema) Tj T*
+(permite estender tipos de efeitos, mas só FREEZE foi implementado. O armazenamento não) Tj T*
+(tem regras de habilidade; o chamador de gameplay deve usar StatusEffectService para) Tj T*
+(elegibilidade.) Tj T*
+() Tj T*
+(A aleatoriedade real varia entre sessões; reproduzir uma sessão exige injetar o mesmo) Tj T*
+(gerador/seed e a mesma ordem de comandos e alvos. Testes usam sequências explícitas, não) Tj T*
+(testes estatísticos sujeitos a flutuação.) Tj T*
+() Tj T*
+(Esta pasta não é um checkout Git acessível; não houve commit, merge ou integração em) Tj T*
+(branch. O diff textual é relativo ao início desta tarefa, sem server/target, binários) Tj T*
+(temporários ou inclusão recursiva de si mesmo. PDF e captura são entregas separadas de) Tj T*
+(documentação.) Tj T*
+() Tj T*
+(Reproduzir: mvn clean test na pasta server; python -B tools/gerar_pdf_task005.py na) Tj T*
+(pasta Projeto-K para regenerar o PDF. Conferência manual: lançar Q sobre mobs e observar) Tj T*
+(que os congelados param de perseguir, mantêm ataques próximos e retomam o movimento ao) Tj T*
+(expirar. Como a chance é de 30%, nem todo pulso congela.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-005 - página 4/4) Tj T*
+ET
+endstream
+endobj
+xref
+0 12
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000140 00000 n 
+0000000237 00000 n 
+0000000363 00000 n 
+0000003569 00000 n 
+0000003695 00000 n 
+0000007086 00000 n 
+0000007212 00000 n 
+0000010287 00000 n 
+0000010415 00000 n 
+trailer
+<< /Size 12 /Root 1 0 R >>
+startxref
+13083
+%%EOF

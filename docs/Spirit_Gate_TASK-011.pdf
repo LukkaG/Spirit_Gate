@@ -1,0 +1,126 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3198 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-011 - Release candidate e kit de homologação) Tj T*
+() Tj T*
+(18/10/2026. Candidata 0.11.0-rc1, Windows x64. Não é publicação, release pública,) Tj T*
+(instalador, multiplayer ou homologação externa concluída.) Tj T*
+() Tj T*
+(## Preparação) Tj T*
+() Tj T*
+(TASK-007 a TASK-010 conferidas: código, PDFs, resumos, logs e diffs. Nenhum bloqueio) Tj T*
+(automatizado permanece. Base inicial da TASK-011: mvn clean test, 202 testes, zero) Tj T*
+(falhas/erros/ignorados. Java/jpackage Temurin 17.0.20.1 e Maven 3.10.0 no Windows 10) Tj T*
+(amd64.) Tj T*
+() Tj T*
+(O pacote foi reconstruído a partir dos fontes consolidados com o build limpo e a suíte) Tj T*
+(completa. Não foi reaproveitado o JAR da TASK-007. O build mantém runtime integrado,) Tj T*
+(lista permitida de produção, jdk.random, inventário e SHA-256, sem substituir a versão) Tj T*
+(anterior.) Tj T*
+() Tj T*
+(O kit contém roteiro de homologação por task, modelo de relato de bug e changelog) Tj T*
+(resumido. A cópia para o app-image permite apenas esses três nomes, antes de gerar) Tj T*
+(inventário e manifest. LEIA-ME-TESTER.txt e VERSION.txt são gerados pelo próprio build.) Tj T*
+() Tj T*
+(## Evidências reais) Tj T*
+() Tj T*
+(AUTOMATIZADO APROVADO: mvn clean test inicial e novamente no build final, 202 testes,) Tj T*
+(zero falhas/erros/ignorados. O log completo do build e da suíte está em) Tj T*
+(TASK-011-final.log; resumo em TASK-011-testes.txt. Nenhum teste novo foi necessário para) Tj T*
+(mecânicas nesta etapa; foram validados os scripts e os artefatos reais.) Tj T*
+() Tj T*
+(tools/auditar_rc.py verificou ZIP/manifest/inventário/hashes, PE x64, versões, ponto de) Tj T*
+(entrada, runtime 17 com jdk.random e todas as 122 classes do JAR, byte a byte contra a) Tj T*
+(compilação atual. São 149 arquivos no ZIP; o manifest cobre os outros 148 e o inventário) Tj T*
+(textual cobre 147, evitando circularidade. O staging só contém o conteúdo permitido, sem) Tj T*
+(teste, servidor/banco legado ou padrão concreto de credencial detectado nas classes do) Tj T*
+(jogo. Relatório: TASK-011-auditoria.json.) Tj T*
+() Tj T*
+(Controle negativo: uma cópia do ZIP em saída de build recebeu um byte alterado no JAR e) Tj T*
+(um SHA externo recalculado. O verificador recusou essa cópia por divergência no) Tj T*
+(manifest, antes de qualquer execução; exit code 1 era o resultado esperado do controle.) Tj T*
+(Evidência: TASK-011-auditoria-negativa.json. O original e seu hash foram preservados.) Tj T*
+() Tj T*
+(EXECUCAO LOCAL CONFERIDA: EXE extraído em pasta com espaços fora de Projeto-K, com PATH) Tj T*
+(sem Java/Maven e JAVA_HOME inexistente. A janela mostrou os três objetos leves e o HUD) Tj T*
+(atualizado. A DLL jvm.dll efetivamente carregada fica sob SpiritGate/runtime;) Tj T*
+(bundledJvmVerified=true. Launcher e processo filho fecharam normalmente com código 0.) Tj T*
+(Evidência TASK-011-portable-smoke.json e captura real TASK-011-exe.png; TASK-011-hud.png) Tj T*
+(mostra quatro estados renderizados a partir da compilação final. Não houve homologação) Tj T*
+(humana externa.) Tj T*
+() Tj T*
+(## Distribuição e reprodução) Tj T*
+() Tj T*
+(Spirit Gate - TASK-011 - página 1/2) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 1983 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+() Tj T*
+(ZIP: dist/SpiritGate-0.11.0-rc1-20261018T220040Z-b2e659ed-portable.zip. Tamanho) Tj T*
+(29.359.239 bytes. SHA-256:) Tj T*
+(7484f90f5de5ca0475c8d73a918a8868b20a089d5a3fb3a12dd2e40f5fc19d01. Sidecar .sha256 e) Tj T*
+(manifest externo estão junto ao ZIP. A versão anterior 0.7.0-task007 foi preservada.) Tj T*
+() Tj T*
+(Reconstruir na pasta Projeto-K: tools\\build-windows-portable.cmd -Version 0.11.0-rc1) Tj T*
+(-TesterKitDirectory docs\\kit-homologacao. O build padrão executa a suíte limpa. Novos) Tj T*
+(horários/identificadores geram nomes e hashes próprios, sem sobrescrita. Comandos) Tj T*
+(completos da auditoria e do smoke estão em CHANGELOG-RC.md.) Tj T*
+() Tj T*
+(Entregas: relatório/PDF, resumo/log, diff/checkpoint, ZIP/SHA/manifest, CHANGELOG-RC.md,) Tj T*
+(LEIA-ME-TESTER.txt, modelo de bug e roteiro de homologação por task no kit, scripts de) Tj T*
+(build/smoke/auditoria e RELATORIO-FINAL-RODADA.md/PDF. Nenhum arquivo Java ou teste foi) Tj T*
+(modificado na TASK-011. README atualizado para o estado consolidado.) Tj T*
+() Tj T*
+(Limites: a análise de arquivos e padrões não é prova absoluta de ausência de qualquer) Tj T*
+(segredo. Runtime inclui os arquivos normais do JDK, como certificados públicos e avisos) Tj T*
+(legais. Não se inclui banco, conexão JDBC, configuração privada, teste ou bibliotecas) Tj T*
+(legadas da aplicação. Nenhuma migração, rede/protocolo ou dependência externa nova foi) Tj T*
+(adicionada.) Tj T*
+() Tj T*
+(HOMOLOGACAO HUMANA PENDENTE: outro Windows x64 sem Java/Maven, usabilidade e roteiro por) Tj T*
+(task. Inspeção de sockets por CIM indisponível por restrição do ambiente, explicitamente) Tj T*
+(registrada. EXE não assinado e espera de saída totalmente ocupada continuam limitações) Tj T*
+(conhecidas. Não há bloqueio automatizado em aberto. Rodada encerrada na TASK-011, sem) Tj T*
+(push/publicação ou trabalho além do escopo.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-011 - página 2/2) Tj T*
+ET
+endstream
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000127 00000 n 
+0000000224 00000 n 
+0000000350 00000 n 
+0000003600 00000 n 
+0000003726 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+5761
+%%EOF

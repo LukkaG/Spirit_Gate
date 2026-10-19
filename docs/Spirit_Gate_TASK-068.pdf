@@ -1,0 +1,48 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 941 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-068 - Servidor local headless) Tj T*
+() Tj T*
+(LocalSimulationServer usa TCP JDK ligado somente a loopback por padrao \(porta 54557 ou) Tj T*
+(efemera em testes\). Thread proprietaria a 30 Hz, fila limitada 64, duas sessoes,) Tj T*
+(snapshots 10 Hz e caixa de saida de uma posicao por cliente. Leitura/escrita de socket) Tj T*
+(em threads separadas. Jogadores usam PlayerFactory, MovementService e CollisionService) Tj T*
+(existentes; nenhum Swing/PostgreSQL.) Tj T*
+() Tj T*
+(Handshake em 2 s, ociosidade em 5 s, 120 mensagens/s por conexao e sessao maxima 30 min.) Tj T*
+(Comandos de sessao encerrada/sequencias antigas rejeitados; movimento expira apos 15) Tj T*
+(ticks sem renovacao. Teste abre socket real em localhost, envia intencao, observa) Tj T*
+(posicao autoritativa e encerra servidor. Nao abre porta publica nem altera firewall.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-068 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1336
+%%EOF

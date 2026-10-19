@@ -1,0 +1,661 @@
+--- /dev/null
++++ b/README-RPG.md
+@@ -0,0 +1,7 @@
++# Spirit Gate RPG offline
++
++Abra jogar-rpg-offline.cmd. A distribuicao Windows tem Java integrado; nao exige Maven, banco, conta ou servidor.
++
++Campanha inicial: crie Guardian ou Mystic, converse com a Ancia, aceite missoes, explore vila/bosque/santuario, obtenha loot, evolua, equipe itens e derrote o chefe. I abre inventario, J diario, M mapa; atalhos completos na interface. F5 salva; Menu salva antes de sair. R recupera personagem morto na vila.
++
++Veja docs/ROTEIRO-RPG-OFFLINE.md e docs/RELATORIO-FINAL-TASK-037_076.md. Coop experimental possui pacote/roteiro separados. A arena historica permanece acessivel no menu e pelos artefatos anteriores.
+--- /dev/null
++++ b/docs/CONTINUIDADE-TASK-037_076.md
+@@ -0,0 +1,18 @@
++# Continuidade - 19/10/2026
++
++Ultima etapa executada: TASK-076, candidatos privados validados automaticamente. TASK-071 parcial quanto a LAN entre maquinas; TASK-074 parcial quanto a transicoes online inexistentes. Nao declarar multiplayer completo.
++
++Principal entrega: RPG offline 0.66.1-rc1. Abrir jogar-rpg-offline.cmd. Saves por UUID junto ao EXE em saves/characters; preferencias/controles separados. Menu salva antes de sair. Arena antiga preservada.
++
++Coop 0.76.0-rc1 e separado; iniciar servidor manualmente. Nunca importar saves offline nem iniciar LAN automaticamente.
++
++Ultimo checkpoint: .task-checkpoints/TASK-076-after.json e checkpoint final ZIP recuperavel. Antes de nova alteracao, criar novo checkpoint sem sobrescrever os existentes.
++
++Comandos de verificacao (na raiz Projeto-K):
++
++python tools/qualidade.py --offline --task retomada-expansao
++python tools/consolidar_expansao.py reports
++
++Consultar auditorias e hashes em docs/TASK-076-auditoria-*.json e sidecars dos ZIPs. Build local offline: powershell -File tools/build-rpg-portable.ps1 -Version NOVA-VERSAO. Build coop separado: tools/build-coop-portable.ps1. Nao reutilizar versao nem substituir artefatos anteriores.
++
++Pendencias: homologacao humana em outro Windows; duas maquinas LAN; portais online; ampliar conteudo e autoria dos mapas. Rodape do cliente coop ainda tem dica generica da campanha offline. Nenhuma TASK-077 autorizada; nao iniciar automaticamente.
+--- /dev/null
++++ b/docs/RELATORIO-FINAL-TASK-037_076.md
+@@ -0,0 +1,107 @@
++# Relatorio final - Spirit Gate TASK-037 a TASK-076
++
++Data local: 19/10/2026, America/Sao_Paulo. Base real: TASK-036 / 0.36.0-rc1, sem Git. O checkpoint 21 citado inicialmente ja tinha sido sucedido pelas TASK-022 a 036 neste checkout; elas nao foram refeitas.
++
++## Resultado principal: campanha RPG offline jogavel
++
++RPG 0.66.1-rc1 com Java integrado. Iniciar por jogar-rpg-offline.cmd ou dist/RPG-Offline-0.66.1-rc1/SpiritGateRPG/SpiritGateRPG.exe. Menu, personagens por UUID, Guardian/Mystic, aparencia, vila, bosque, santuario, duas missoes, inimigos, XP/niveis, moedas, inventario de 20 slots, equipamento, pocoes, loot, comercio, baus/recursos, dois sentinelas e chefe final. Save/backup/retomada, diario, mapa, hotbar, atalhos e audio/preferencias integrados.
++
++O personagem percorre vila, conversa com a Ancia, aceita Ecos no bosque, derrota inimigos, recebe loot/recompensa, compra/equipa itens, aceita Santuario, enfrenta guardas/chefe, salva, reabre e entrega a reliquia. A campanha inicial inteira foi automatizada no dominio para os dois arquetipos, sem injecao de XP/moeda/item/posicao. A interface real foi aberta no executavel; isso nao representa homologacao humana de todo o percurso.
++
++## Validacao e preservacao
++
++- Baseline reproduzida: 241 Java + 25 Python, zero falhas.
++- Final: 297 Java + 25 Python, zero falhas/erros/skips Java. Sao 56 testes Java adicionais.
++- Suite completa executada em cada etapa; resultados individuais em TASK-NNN-testes.txt e logs Java/Python. Falhas intermediarias foram preservadas em logs separados.
++- Stress offline: 20000 ticks com recargas periodicas e comparacao de estado. Rede: 2500 ticks com perda/atraso/repeticao/reordenacao e seed fixa.
++- Dois processos Java de clientes locais validados; combate por TCP real derrotou chefe e concedeu exatamente 20 moedas a cada participante uma vez.
++- Smokes finais usam os executaveis/runtime dos pacotes: RPG com janela visivel e 62 ticks; dois clientes graficos com IDs distintos, dois jogadores e servidor encerrado com codigo 0.
++- Capturas de componentes Swing de janelas em execucao foram inspecionadas. Desktop gerou imagem preta neste ambiente; essa imagem nao foi aceita como homologacao visual. Nenhuma captura falsa foi criada.
++- Dominio legado e TODOS os testes existentes antes da rodada permanecem textualmente iguais. Renderer compartilhado ganhou opcoes desativadas por padrao; testes historicos continuam verdes. Arena continua no menu e em distribuicoes anteriores.
++- ZIP original 0.36.0-rc1 preservado, SHA-256 511d59412598be73395391e21a6cfb2315f4855c714059086abc4d02e46cff31.
++- Nova arena de compatibilidade 0.36.1-compat-rc1 compilada/empacotada e auditada; EXE aberto com PATH sem Java externo, JVM integrada comprovada e encerramento 0. Evidencia TASK-076-arena-smoke.json.
++
++## Ajustes relevantes encontrados na integracao
++
++1. Inventario/equipamento/comercio/recompensas usam validacao antes do commit, sem perda/duplicacao em operacoes recusadas. Loot cheio fica pendente; limite atingido impede derrota sem recompensa.
++2. Recargas, direcao, estados de inimigos/respawn, quests/objetos/regioes e vigor persistem. Loot padrao usa seed por spawn/geracao, mantendo continuidade apos reload.
++3. IO e audio ficam fora da simulacao. Save captura comandos pendentes na thread proprietaria e pausa ao voltar ao menu; erro preserva sessao.
++4. Regressao de backup reproduzida ANTES da correcao: Properties sintaticamente valido com flag corrompida podia substituir backup bom. Leitura agora valida restauracao semantica antes de copiar. Teste CorruptBackupProtectionTest e log TASK-075-regressao-backup-antes.log documentam a correcao.
++5. HUD passou a mostrar nomes reais, atalhos efetivos e aparencias, retirando rotulos de debug do RPG. Dialogos usam grade para manter escolhas acessiveis.
++6. Builders/auditor da arena excluem explicitamente prototype/rpg; pacotes separados nao carregam classes de banco/Kryonet, testes ou arte reprovada.
++7. Rede fecha handshakes pendentes, rejeita sequencias antigas, expira movimento ausente e limita conexoes/filas/payloads. Servidor nao reinicia apos close; bind malsucedido e limpo.
++8. Primeiro smoke PowerShell confundiu codigo de saida indisponivel com falha; handles foram preservados antes da espera e a nova execucao comprovou codigo 0. Logs anteriores mantidos. Primeiro bot TCP foi ajustado para flanquear e esperar os dois participantes, respeitando colisao e regra de contribuicao.
++
++## Coop experimental separado
++
++0.76.0-rc1: servidor TCP headless, localhost por padrao, duas sessoes, snapshots 10 Hz, cliente visual e interpolacao apenas de apresentacao. Movimento/dano/vigor/cooldown/colisao resolvidos pelo servidor. Passo Relampago e Criostase usam os servicos reais existentes. Chefe compartilhado, Freeze e recompensa por participacao, sem importar saves offline.
++
++Limites: um mapa online; sem portais online ou persistencia de contas. LAN privada existe somente com opcao explicita; NAO houve teste entre computadores. Sem autenticacao/TLS de producao. O rodape generico do renderer coop ainda contem uma dica da campanha offline; controles/servidor corretos aparecem no painel lateral. Esse experimento nao e MMORPG completo e nao deve substituir o pacote offline.
++
++Nao houve acesso a banco real, migracao, alteracao de credenciais, push, upload, publicacao, porta publica, firewall global ou servico do sistema. Sprites pendentes/reprovados continuam fora das distribuicoes de jogo. Tons foram sintetizados localmente, sem assets de licenca desconhecida.
++
++## Situacao por tarefa
++
++Validada significa implementacao e automacao local aprovadas, sem alegar homologacao humana. 38 etapas validadas; 071 e 074 parciais nos pontos explicitados.
++
++| Tarefa | Entrega | Situacao |
++| --- | --- | --- |
++| TASK-037 | Auditoria da base 0.36.0-rc1 | Validada |
++| TASK-038 | Entrada RPG separada | Validada |
++| TASK-039 | Identidade e criacao local | Validada |
++| TASK-040 | Registro de conteudo | Validada |
++| TASK-041 | Save V1 e backup | Validada |
++| TASK-042 | Itens e raridade | Validada |
++| TASK-043 | Inventario transacional | Validada |
++| TASK-044 | Equipamento e atributos | Validada |
++| TASK-045 | Pocoes e recarga | Validada |
++| TASK-046 | Loot e ledger de geracoes | Validada |
++| TASK-047 | XP e niveis | Validada |
++| TASK-048 | Guardian e Mystic | Validada |
++| TASK-049 | Inimigos e respawn | Validada |
++| TASK-050 | IA PvE | Validada |
++| TASK-051 | Chefe com aviso e fases | Validada |
++| TASK-052 | NPCs e interacao | Validada |
++| TASK-053 | Dialogos com escolhas | Validada |
++| TASK-054 | Diario e estados de quest | Validada |
++| TASK-055 | Objetivos e recompensas | Validada |
++| TASK-056 | Comerciante e moedas | Validada |
++| TASK-057 | Portais seguros | Validada |
++| TASK-058 | Tres regioes | Validada |
++| TASK-059 | Baus e recursos | Validada |
++| TASK-060 | Ciclo de iluminacao | Validada |
++| TASK-061 | Masmorra e retorno | Validada |
++| TASK-062 | Menu e selecao de personagem | Validada |
++| TASK-063 | UI de inventario/equipamento | Validada |
++| TASK-064 | Diario/mapa/objetivos | Validada |
++| TASK-065 | Hotbar e atalhos | Validada |
++| TASK-066 | Audio e preferencias; marco offline B | Validada |
++| TASK-067 | Protocolo binario V1 | Validada |
++| TASK-068 | Servidor localhost headless | Validada |
++| TASK-069 | Duas sessoes e reconexao | Validada |
++| TASK-070 | Cliente visual e interpolacao | Validada |
++| TASK-071 | LAN explicita; dois processos locais | Parcial |
++| TASK-072 | Combate e habilidades autoritativas | Validada |
++| TASK-073 | Chefe cooperativo e recompensa | Validada |
++| TASK-074 | Falhas de rede e desconexoes | Parcial |
++| TASK-075 | Integracao e regressao de backup | Validada |
++| TASK-076 | Candidatos privados e pacotes | Validada |
++
++O marco A foi exercitado em OfflineCycleTest na TASK-058: portais da TASK-057 eram necessarios ao ciclo entre regioes. O pacote integrado foi criado apos essa dependencia, em vez de declarar fluxo completo prematuramente na TASK-056. O marco B foi exercitado na TASK-066; a revisao final de backup gerou o patch 0.66.1-rc1.
++
++## Pacotes e documentos
++
++- Offline: dist/SpiritGate-RPG-0.66.1-rc1-20261019T062500Z-310983cf.zip
++- SHA-256 offline: 2e0f019955f66593ecd630ec1fa3e38004f241295385802a380feb7085b3f38b
++- Coop: dist/SpiritGate-Coop-Experimental-0.76.0-rc1-20261019T062500Z-9556a9e2.zip
++- SHA-256 coop: 417eb711e03499ce0a4e3f93e800d60fed539ec109637fb18dca5fade51b0c27
++- Manifestes e arquivos .sha256 acompanham cada ZIP; auditorias TASK-076-auditoria-rpg/coop.json conferem todos os arquivos internos.
++- Relatorios por tarefa: TASK-NNN.md, Spirit_Gate_TASK-NNN.pdf, TASK-NNN-testes.txt, TASK-NNN.diff e logs.
++- Inventario: INVENTARIO-ALTERACOES-TASK-037_076.json, 102 arquivos de codigo/scripts/recursos adicionados ou ajustados, com hashes.
++- Roteiros: ROTEIRO-RPG-OFFLINE.md e ROTEIRO-COOP-EXPERIMENTAL.md; incluidos nos respectivos pacotes.
++- ZIP documental final: dist/SpiritGate-Documentos-TASK-037_076-r2.zip. Versoes anteriores dos checkpoints/documentos foram preservadas.
++- Checkpoints JSON antes/depois em .task-checkpoints; arquivos recuperaveis da base e da entrega final consolidados sem caches/target gerados. Assets pendentes entram somente no checkpoint de desenvolvimento, nunca no jogo.
++
++## Avaliacao humana ainda necessaria
++
++Jogar o roteiro completo na interface, testar redimensionamento/atalhos/audio em outro Windows e experimentar duas maquinas numa LAN privada configurada. A campanha tem arte geometrica, tres regioes compactas, duas missoes e um chefe; e uma base offline funcional para testes privados. Nao foram aprovados novos sprites nem release publica.
+--- /dev/null
++++ b/docs/ROADMAP-APOS-TASK-076.md
+@@ -0,0 +1,11 @@
++# Roadmap apos TASK-076 - sujeito a nova autorizacao
++
++1. Homologar campanha offline pela UI em outro Windows; corrigir apenas falhas reproduzidas antes de ampliar escopo.
++2. Melhorar autoria visual das tres regioes, acessibilidade/localizacao e arte somente apos aprovacao explicita dos assets.
++3. Ampliar NPCs, missoes, equipamentos e encontros mantendo catalogos/saves versionados e transacoes atomicas.
++4. Homologar LAN entre duas maquinas privadas. Nenhuma exposicao publica ou mudanca de firewall automatica.
++5. Projetar transicoes e ciclo de vida de regioes online antes de compartilhar persistencia. Definir contrato de contas, seguranca e dados sem reutilizar login legado inseguro.
++6. Completar apresentacao de habilidades/rodape do cliente coop e telemetria local de falhas; manter pacote offline independente.
++7. Considerar transporte/autenticacao de producao somente com desenho e auditoria dedicados. Nao alegar seguranca de producao do prototipo.
++
++Nenhuma destas acoes inicia TASK-077 sem nova instrucao.
+--- /dev/null
++++ b/docs/ROTEIRO-COOP-EXPERIMENTAL.md
+@@ -0,0 +1,13 @@
++# Coop experimental - teste privado
++
++Este pacote e separado do RPG offline e nao le seus personagens/saves. Java integrado. Nao representa contas online nem MMORPG completo.
++
++1. Extraia o ZIP inteiro. Execute SpiritGateCoopServer.exe. O console informa 127.0.0.1:54557. Ele fica aberto ate Ctrl+C; nao instala servico.
++2. Abra iniciar-cliente.cmd duas vezes. Use host 127.0.0.1, porta 54557 e nomes distintos. Dois processos exibem jogadores na mesma arena.
++3. WASD move; cada cliente deve observar o outro. Nenhum cliente escolhe posicao absoluta ou HP. Movimento para quando foco/renovacao de entrada desaparece.
++4. SPACE golpeia perto do chefe; Shift envia Passo Relampago, Q envia Criostase, mouse determina alvo. Vigor e cooldown sao calculados pelo servidor. Manter tecla nao repete golpe automaticamente.
++5. Aproxime-se do chefe por lados diferentes para respeitar corpos solidos. Ambos devem causar dano antes da derrota. Participante ainda conectado recebe 20 moedas temporarias, uma vez. Repetir comandos nao duplica recompensa. Quem nao causou dano nao recebe; reconexao nao recupera credito anterior.
++6. Feche um cliente, confirme saida no outro e abra novamente. Novo ID transitorio; nenhum progresso offline e alterado. Fechar servidor deve desconectar clientes sem travar suas janelas.
++7. LAN opcional, somente se configurada por quem testa: servidor com --bind IP-PRIVADO --allow-lan, cliente com checkbox LAN. Nao usar endereco publico, wildcard ou port forwarding. Nenhuma regra global de firewall e alterada pelo jogo.
++
++Validado automaticamente: dois sockets e dois processos locais; codec, limites, sequencias, movimento, habilidades, derrota/recompensa e desconexao. Teste entre dois computadores nao foi realizado. Um mapa online, sem portais ou saves compartilhados. Sem autenticacao/TLS de producao. O pacote offline continua sendo a entrega principal.
+--- /dev/null
++++ b/docs/TASK-076-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 297,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-076.md
+@@ -0,0 +1,7 @@
++# TASK-076 - Candidatos privados separados
++
++RPG offline: 0.66.1-rc1, incluindo correcao de protecao do backup. Coop: 0.76.0-rc1 EXPERIMENTAL, pacote separado, localhost por padrao. Nenhum servidor iniciado pelo cliente offline. Java 17 integrado, somente classes locais permitidas, sem banco, credenciais ou sprites pendentes.
++
++Build limpo e suite completa executados nesta etapa. ZIPs auditados por CRC, estrutura, entrypoint, whitelist de classes/recursos, versao Java, manifest e SHA-256. Smoke real dos executaveis e capturas de componentes Swing com JSON de janela/ticks; captura de desktop preta nao e aceita como homologacao visual. Evidencias em TASK-076-*.json/log/png.
++
++Limites da release: LAN entre computadores nao homologada; experimento online com um mapa e sem transicoes; sem contas, saves compartilhados ou seguranca de producao. Arte geometrica provisoria. RPG offline e campanha sao o marco principal. Relatorio consolidado, continuidade, roadmap e roteiro humano acompanham a entrega. Distribuicoes anteriores preservadas.
+--- a/jogar-rpg-offline.cmd
++++ b/jogar-rpg-offline.cmd
+@@ -1,4 +1,4 @@
+ @echo off
+ setlocal
+ cd /d "%~dp0"
+-start "Spirit Gate RPG offline" "%~dp0dist\RPG-Offline-0.66.0-rc2\SpiritGateRPG\SpiritGateRPG.exe"
++start "Spirit Gate RPG offline" "%~dp0dist\RPG-Offline-0.66.1-rc1\SpiritGateRPG\SpiritGateRPG.exe"
+--- a/server/src/main/java/com/projetok/multiplayer/LocalSimulationServer.java
++++ b/server/src/main/java/com/projetok/multiplayer/LocalSimulationServer.java
+@@ -52,8 +52,8 @@
+     }
+     public synchronized void close(){started=true;if(!running.getAndSet(false)){owner.shutdownNow();return;}try{listener.close();}catch(IOException ignored){}for(Peer peer:connections.values())peer.closePeer();owner.shutdownNow();commands.clear();if(acceptThread!=null)acceptThread.interrupt();}
+     public static void main(String[] args)throws Exception{
+-        int port=54557;InetAddress address=InetAddress.getLoopbackAddress();boolean lan=false;
+-        for(int i=0;i<args.length;i++)switch(args[i]){case "--port"->{if(++i>=args.length)throw new IllegalArgumentException("Porta ausente");port=Integer.parseInt(args[i]);}case "--bind"->{if(++i>=args.length)throw new IllegalArgumentException("Endereco ausente");address=InetAddress.getByName(args[i]);}case "--allow-lan"->lan=true;default->throw new IllegalArgumentException("Uso: [--port N] [--bind IP-PRIVADO --allow-lan]");}
+-        var server=lan?LocalSimulationServer.lan(address,port):new LocalSimulationServer(address,port);server.start();Runtime.getRuntime().addShutdownHook(new Thread(server::close));System.out.println("Spirit Gate experimental em "+address.getHostAddress()+":"+server.port()+"; sem autenticacao de contas");new CountDownLatch(1).await();
++        int port=54557,runSeconds=0;InetAddress address=InetAddress.getByName("127.0.0.1");boolean lan=false;
++        for(int i=0;i<args.length;i++)switch(args[i]){case "--port"->{if(++i>=args.length)throw new IllegalArgumentException("Porta ausente");port=Integer.parseInt(args[i]);}case "--bind"->{if(++i>=args.length)throw new IllegalArgumentException("Endereco ausente");address=InetAddress.getByName(args[i]);}case "--allow-lan"->lan=true;case "--run-seconds"->{if(++i>=args.length)throw new IllegalArgumentException("Duracao ausente");runSeconds=Integer.parseInt(args[i]);if(runSeconds<1||runSeconds>60)throw new IllegalArgumentException("Duracao de smoke: 1..60 segundos");}default->throw new IllegalArgumentException("Uso: [--port N] [--bind IP-PRIVADO --allow-lan] [--run-seconds 1..60]");}
++        var server=lan?LocalSimulationServer.lan(address,port):new LocalSimulationServer(address,port);server.start();Runtime.getRuntime().addShutdownHook(new Thread(server::close));System.out.println("Spirit Gate experimental em "+address.getHostAddress()+":"+server.port()+"; sem autenticacao de contas");if(runSeconds==0)new CountDownLatch(1).await();else{new CountDownLatch(1).await(runSeconds,TimeUnit.SECONDS);server.close();}
+     }
+ }
+--- a/server/src/main/java/com/projetok/multiplayer/NetworkClientLauncher.java
++++ b/server/src/main/java/com/projetok/multiplayer/NetworkClientLauncher.java
+@@ -30,12 +30,13 @@
+         panel.addMouseMotionListener(new MouseMotionAdapter(){public void mouseMoved(MouseEvent e){var viewport=ArenaViewport.fit(Math.max(1,panel.getWidth()),Math.max(1,panel.getHeight()),960,640,480,320,1);if(viewport.containsScreen(e.getX(),e.getY())){var p=viewport.screenToWorld(e.getX(),e.getY());aim[0]=(float)p.x;aim[1]=(float)p.y;}}});
+         frame.addWindowFocusListener(new WindowAdapter(){public void windowLostFocus(WindowEvent e){held.clear();movement.run();client.send(Protocol.Action.MOVE,0,0);}});
+         RemotePresentation[] frames={null};long[] received={0};int[] count={0};
+-        Timer timer=new Timer(33,e->{var latest=client.snapshot();if(latest!=null){if(frames[0]==null){frames[0]=new RemotePresentation(latest,latest);received[0]=System.nanoTime();}else if(latest.tick()>frames[0].current().tick()){frames[0]=new RemotePresentation(frames[0].current(),latest);received[0]=System.nanoTime();}display[0]=frames[0].sample(Math.min(1,(System.nanoTime()-received[0])/100_000_000.0),client.id());}if(++count[0]%3==0)client.send(Protocol.Action.MOVE,direction[0],direction[1]);panel.setCustomHud(java.util.List.of("COOP EXPERIMENTAL",endpoint,"Sessao "+client.id(),"Tick "+display[0].tick(),client.connected()?"Conectado":"Desconectado","WASD: movimento","SPACE: golpe","SHIFT: Passo Relampago","Q: Criostase","Mouse: alvo das habilidades","Estado vem do servidor","Sem contas ou saves offline"));panel.repaint();});
++        Timer timer=new Timer(33,e->{var latest=client.snapshot();if(latest!=null){if(frames[0]==null){frames[0]=new RemotePresentation(latest,latest);received[0]=System.nanoTime();}else if(latest.tick()>frames[0].current().tick()){frames[0]=new RemotePresentation(frames[0].current(),latest);received[0]=System.nanoTime();}display[0]=frames[0].sample(Math.min(1,(System.nanoTime()-received[0])/100_000_000.0),client.id());}if(++count[0]%3==0)client.send(Protocol.Action.MOVE,direction[0],direction[1]);var self=display[0].actors().stream().filter(a->a.id()==client.id()).findFirst();panel.setCustomHud(java.util.List.of("COOP EXPERIMENTAL",endpoint,"Sessao "+client.id(),"Tick "+display[0].tick(),client.connected()?"Conectado":"Desconectado",self.map(a->"HP "+a.hp()+" / "+a.maxHp()).orElse("Aguardando snapshot"),self.map(a->"Vigor "+Math.round(a.stamina())+" | Moedas "+a.coins()).orElse(""),"WASD: movimento","SPACE: golpe","SHIFT: Passo Relampago","Q: Criostase","Mouse: alvo das habilidades","Estado vem do servidor","Sem contas ou saves offline"));panel.repaint();});
+         frame.addWindowListener(new WindowAdapter(){public void windowClosed(WindowEvent e){timer.stop();client.close();}});timer.start();frame.setVisible(true);
+-        if(capture!=null){Timer shot=new Timer(2200,e->{try{var image=new java.awt.image.BufferedImage(frame.getWidth(),frame.getHeight(),java.awt.image.BufferedImage.TYPE_INT_RGB);var g=image.createGraphics();frame.printAll(g);g.dispose();javax.imageio.ImageIO.write(image,"png",new java.io.File(capture));java.nio.file.Files.writeString(java.nio.file.Path.of(capture+".json"),"{\"windowShowing\":"+frame.isShowing()+",\"serverTick\":"+display[0].tick()+",\"componentCapture\":true,\"humanApproved\":false}");}catch(Exception error){error.printStackTrace();}finally{frame.dispose();}});shot.setRepeats(false);shot.start();}
++        if(capture!=null){Timer shot=new Timer(2200,e->{try{var image=new java.awt.image.BufferedImage(frame.getWidth(),frame.getHeight(),java.awt.image.BufferedImage.TYPE_INT_RGB);var g=image.createGraphics();frame.printAll(g);g.dispose();javax.imageio.ImageIO.write(image,"png",new java.io.File(capture));java.nio.file.Files.writeString(java.nio.file.Path.of(capture+".json"),"{\"windowShowing\":"+frame.isShowing()+",\"serverTick\":"+display[0].tick()+",\"session\":"+client.id()+",\"players\":"+display[0].actors().stream().filter(a->!a.boss()).count()+",\"componentCapture\":true,\"humanApproved\":false}");}catch(Exception error){error.printStackTrace();}finally{frame.dispose();}});shot.setRepeats(false);shot.start();}
+     }
+     static DebugSnapshot adapt(Protocol.State state,int local,DebugSnapshot template){
+         var actors=state.actors().stream().map(a->new DebugSnapshot.ActorView(a.id(),a.name(),a.x(),a.y(),a.boss()?24:18,a.hp(),a.maxHp(),a.id()==local,a.hp()>0)).toList();var self=state.actors().stream().filter(a->a.id()==local).findFirst();int hp=self.map(Protocol.Actor::hp).orElse(0),max=self.map(Protocol.Actor::maxHp).orElse(1);
+-        return new DebugSnapshot(actors,java.util.List.of(new DebugSnapshot.Obstacle(380,180,120,120)),java.util.List.of(),hp,max,0,false,state.tick(),"Coop experimental - servidor autoritativo",1,0,0,null,self.map(Protocol.Actor::stamina).orElse(0f),100,0,java.util.List.of(),java.util.List.of(),false,0,0,java.util.List.of(),false,java.util.List.of(),template.cryostasisHud(),template.lightningStepHud());
++        var statuses=state.actors().stream().filter(a->(a.flags()&4)!=0).map(a->new DebugSnapshot.StatusView(a.id(),1)).toList();
++        return new DebugSnapshot(actors,java.util.List.of(new DebugSnapshot.Obstacle(380,180,120,120)),java.util.List.of(),hp,max,0,false,state.tick(),"Coop experimental - servidor autoritativo",self.map(Protocol.Actor::facingX).orElse(1f),self.map(Protocol.Actor::facingY).orElse(0f),0,null,self.map(Protocol.Actor::stamina).orElse(0f),100,0,java.util.List.of(),statuses,self.map(a->(a.flags()&1)!=0).orElse(false),0,0,java.util.List.of(),self.map(a->(a.flags()&2)!=0).orElse(false),java.util.List.of(),template.cryostasisHud(),template.lightningStepHud());
+     }
+ }
+--- a/tools/auditar_rc.py
++++ b/tools/auditar_rc.py
+@@ -330,7 +330,10 @@
+         for prefix in CLASS_PREFIXES:
+             package = classes_directory.joinpath(*PurePosixPath(prefix).parts)
+             require(package.is_dir(), "Classes locais ausentes; execute mvn clean test antes.")
+-            for path in package.rglob("*.class"):
++            # A arena inclui domain e somente a raiz prototype. O novo subpacote
++            # prototype/rpg pertence ao pacote offline separado.
++            paths = package.glob("*.class") if prefix == "com/projetok/prototype/" else package.rglob("*.class")
++            for path in paths:
+                 require(not path.is_symlink(), "Link simbolico nas classes locais.")
+                 expected_classes[path.relative_to(classes_directory).as_posix()] = path
+         require(bool(expected_classes), "Nenhuma classe local encontrada para comparacao.")
+@@ -370,7 +373,7 @@
+             require(jar_classes[name] == path.read_bytes(),
+                     f"Bytecode do JAR nao corresponde ao checkout compilado atual: {name}")
+         passed("jar_whitelist_e_bytecode_atual", classesCompared=len(jar_classes),
+-               comparison="Byte a byte, todas as classes domain/prototype, sem omissoes.",
++               comparison="Byte a byte, domain recursivo e prototype raiz da arena, sem omissoes.",
+                allowedPrefixes=list(CLASS_PREFIXES), mainClass=ENTRYPOINT)
+         passed("credenciais_padronizadas_no_bytecode_do_jogo", classesScanned=len(jar_classes),
+                patterns=list(SECRET_PATTERNS), findings=0,
+--- a/tools/auditar_rpg.py
++++ b/tools/auditar_rpg.py
+@@ -6,7 +6,7 @@
+ import json
+ import zipfile
+ 
+-def audit(path):
++def audit(path, kind='rpg'):
+     checks = {}
+     with zipfile.ZipFile(path) as archive:
+         entries = archive.infolist()
+@@ -19,19 +19,21 @@
+             assert entry.file_size < 128 * 1024 * 1024
+             assert not entry.filename.lower().endswith(('.env', '.pem', '.key', '.sql', '.py'))
+         checks['zipIntegrity'] = archive.testzip() is None
+-        jar_name = next(n for n in names if n.endswith('/app/spirit-gate-rpg.jar'))
++        jar_name = next(n for n in names if n.endswith('/app/spirit-gate-' + kind + '.jar'))
+         with zipfile.ZipFile(io.BytesIO(archive.read(jar_name))) as jar:
+-            assert 'Main-Class: com.projetok.prototype.rpg.RpgLauncher' in jar.read('META-INF/MANIFEST.MF').decode()
++            entrypoint = 'com.projetok.prototype.rpg.RpgLauncher' if kind == 'rpg' else 'com.projetok.multiplayer.LocalSimulationServer'
++            assert 'Main-Class: ' + entrypoint in jar.read('META-INF/MANIFEST.MF').decode()
+             classes = 0
+             for name in jar.namelist():
+-                assert name.startswith(('META-INF/', 'com/projetok/domain/', 'com/projetok/prototype/', 'com/projetok/rpg/', 'rpg/'))
++                prefixes = ('META-INF/', 'com/projetok/domain/', 'com/projetok/prototype/') + (('com/projetok/rpg/', 'rpg/') if kind == 'rpg' else ('com/projetok/multiplayer/',))
++                assert name.startswith(prefixes)
+                 assert not any(x in name for x in ('DatabaseManager', 'KServer', 'Kclient', 'Test.class'))
+                 if name.endswith('.class'):
+                     data = jar.read(name)
+                     assert data[:4] == b'\xca\xfe\xba\xbe' and int.from_bytes(data[6:8], 'big') <= 61
+                     classes += 1
+             checks['productionClasses'] = classes
+-            checks['contentIncluded'] = 'rpg/content.properties' in jar.namelist()
++            checks['contentIncluded'] = ('rpg/content.properties' if kind == 'rpg' else 'com/projetok/multiplayer/Protocol.class') in jar.namelist()
+         manifest = json.loads(Path(str(path) + '.manifest.json').read_text(encoding='utf-8-sig'))
+         root = jar_name.split('/')[0] + '/'
+         actual = {n[len(root):] for n in names if not n.endswith('/')}
+@@ -50,7 +52,8 @@
+     parser = argparse.ArgumentParser()
+     parser.add_argument('zip', type=Path)
+     parser.add_argument('report', type=Path)
++    parser.add_argument('--kind', choices=['rpg', 'coop'], default='rpg')
+     args = parser.parse_args()
+-    report = audit(args.zip)
++    report = audit(args.zip, args.kind)
+     args.report.write_text(json.dumps(report, indent=2), encoding='utf-8')
+     print(json.dumps(report, indent=2))
+--- /dev/null
++++ b/tools/build-coop-portable.ps1
+@@ -0,0 +1,37 @@
++param([string]$Version='0.76.0-rc1')
++Set-StrictMode -Version Latest
++$ErrorActionPreference='Stop'
++if($Version -notmatch '^0[.]\d+[.]\d+-rc\d+$'){throw 'Versao invalida'}
++$project=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
++$jdkBin=Split-Path (Get-Command java.exe).Source
++$buildId=$Version+'-'+[DateTime]::UtcNow.ToString('yyyyMMddTHHmmssZ')+'-'+[Guid]::NewGuid().ToString('N').Substring(0,8)
++$build=Join-Path $project ('server\target\coop-portable-'+$buildId)
++$inputDir=Join-Path $build 'input';$destination=Join-Path $build 'output';$runtimeDir=Join-Path $build 'runtime';$classes=Join-Path $project 'server\target\classes';$stage=Join-Path $build 'classes'
++New-Item -ItemType Directory -Path $inputDir,$destination,(Join-Path $stage 'com\projetok\prototype') | Out-Null
++Copy-Item -LiteralPath (Join-Path $classes 'com\projetok\domain') -Destination (Join-Path $stage 'com\projetok\domain') -Recurse
++Copy-Item -LiteralPath (Join-Path $classes 'com\projetok\multiplayer') -Destination (Join-Path $stage 'com\projetok\multiplayer') -Recurse
++Get-ChildItem -LiteralPath (Join-Path $classes 'com\projetok\prototype') -File | Copy-Item -Destination (Join-Path $stage 'com\projetok\prototype')
++function Checked([string]$tool,[string[]]$arguments){& (Join-Path $jdkBin $tool) @arguments;if($LASTEXITCODE -ne 0){throw "$tool falhou: $LASTEXITCODE"}}
++$jar=Join-Path $inputDir 'spirit-gate-coop.jar'
++Checked 'jar.exe' @('--create','--file',$jar,'--main-class','com.projetok.multiplayer.LocalSimulationServer','-C',$stage,'com/projetok/domain','-C',$stage,'com/projetok/prototype','-C',$stage,'com/projetok/multiplayer')
++Checked 'jdeps.exe' @('--multi-release','17','--print-module-deps',$jar)
++Checked 'jlink.exe' @('--add-modules','java.base,java.desktop,java.logging,jdk.random','--strip-debug','--no-man-pages','--no-header-files','--compress=2','--output',$runtimeDir)
++Checked 'jpackage.exe' @('--type','app-image','--dest',$destination,'--name','SpiritGateCoopServer','--input',$inputDir,'--main-jar','spirit-gate-coop.jar','--main-class','com.projetok.multiplayer.LocalSimulationServer','--runtime-image',$runtimeDir,'--app-version',($Version -split '-')[0],'--win-console','--vendor','Spirit Gate','--description','Coop experimental local - separado do RPG offline')
++$image=Join-Path $destination 'SpiritGateCoopServer'
++foreach($file in Get-ChildItem -LiteralPath $build -Recurse -File){if($file.IsReadOnly){$file.IsReadOnly=$false}}
++$client=@'
++@echo off
++setlocal
++"%~dp0runtime\bin\java.exe" -cp "%~dp0app\spirit-gate-coop.jar" com.projetok.multiplayer.NetworkClientLauncher %*
++'@
++[IO.File]::WriteAllText((Join-Path $image 'iniciar-cliente.cmd'),$client,(New-Object Text.UTF8Encoding($false)))
++$notice="SPIRIT GATE COOP EXPERIMENTAL $Version`r`nPacote separado do RPG offline. Java integrado. Sem contas, banco ou saves compartilhados.`r`n1. Inicie SpiritGateCoopServer.exe (somente localhost:54557). Ctrl+C encerra.`r`n2. Abra iniciar-cliente.cmd duas vezes, com nomes distintos.`r`n3. WASD mover, SPACE golpear, SHIFT Passo Relampago, Q Criostase, mouse mirar.`r`nChefe compartilhado; participantes conectados recebem 20 moedas temporarias uma vez.`r`nLAN somente explicita: SpiritGateCoopServer.exe --bind IP-PRIVADO --allow-lan`r`nMarque LAN no cliente. Sem bind publico, firewall, port forwarding ou servico automatico.`r`nHomologacao entre computadores pendente. Um mapa online; sem transicoes online. Nao e MMORPG completo.`r`nO RPG offline e seus saves permanecem no outro pacote."
++[IO.File]::WriteAllText((Join-Path $image 'LEIA-ME.txt'),$notice,(New-Object Text.UTF8Encoding($false)))
++Copy-Item -LiteralPath (Join-Path $project 'docs\ROTEIRO-COOP-EXPERIMENTAL.md') -Destination (Join-Path $image 'ROTEIRO-COOP-EXPERIMENTAL.md')
++$manifest=@(Get-ChildItem -LiteralPath $image -Recurse -File | Sort-Object FullName | ForEach-Object {[ordered]@{path=$_.FullName.Substring($image.Length+1).Replace('\','/');bytes=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}})
++$zip=Join-Path $project ('dist\SpiritGate-Coop-Experimental-'+$buildId+'.zip')
++Compress-Archive -LiteralPath $image -DestinationPath $zip -CompressionLevel Optimal
++$manifest | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath ($zip+'.manifest.json') -Encoding UTF8
++(Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant() | Set-Content -LiteralPath ($zip+'.sha256') -Encoding ASCII
++Write-Output "COOP_EXE=$image\SpiritGateCoopServer.exe"
++Write-Output "COOP_ZIP=$zip"
+--- a/tools/build-rpg-portable.ps1
++++ b/tools/build-rpg-portable.ps1
+@@ -22,6 +22,7 @@
+ foreach($file in Get-ChildItem -LiteralPath $build -Recurse -File){if($file.IsReadOnly){$file.IsReadOnly=$false}}
+ $notice="SPIRIT GATE RPG OFFLINE $Version`r`nExtraia todo o ZIP. Abra SpiritGateRPG.exe. Java integrado; sem banco ou rede.`r`nWASD mover; F interagir/portal; SPACE atacar; Q habilidade; 1 pocao; F5 salvar.`r`nArena historica continua disponivel separadamente. Arte geometrica provisoria.`r`nBuild usa classes da ultima suite completa; execute qualidade.py antes de empacotar."
+ [IO.File]::WriteAllText((Join-Path $image 'LEIA-ME.txt'),$notice,(New-Object Text.UTF8Encoding($false)))
++Copy-Item -LiteralPath (Join-Path $project 'docs\ROTEIRO-RPG-OFFLINE.md') -Destination (Join-Path $image 'ROTEIRO-RPG-OFFLINE.md')
+ $manifest=@(Get-ChildItem -LiteralPath $image -Recurse -File | Sort-Object FullName | ForEach-Object { [ordered]@{path=$_.FullName.Substring($image.Length+1).Replace('\','/');bytes=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()} })
+ $zip=Join-Path $project ('dist\SpiritGate-RPG-'+$buildId+'.zip')
+ Compress-Archive -LiteralPath $image -DestinationPath $zip -CompressionLevel Optimal
+--- /dev/null
++++ b/tools/consolidar_expansao.py
+@@ -0,0 +1,256 @@
++"""Consolida evidencias reais da expansao; nunca executa rede ou altera saves."""
++from pathlib import Path
++import argparse
++import hashlib
++import json
++import re
++import zipfile
++from gerar_pdf_task002 import gerar_pdf
++
++ROOT = Path(__file__).resolve().parents[1]
++DOCS = ROOT / 'docs'
++TITLES = [
++    'Auditoria da base 0.36.0-rc1', 'Entrada RPG separada', 'Identidade e criacao local',
++    'Registro de conteudo', 'Save V1 e backup', 'Itens e raridade', 'Inventario transacional',
++    'Equipamento e atributos', 'Pocoes e recarga', 'Loot e ledger de geracoes',
++    'XP e niveis', 'Guardian e Mystic', 'Inimigos e respawn', 'IA PvE', 'Chefe com aviso e fases',
++    'NPCs e interacao', 'Dialogos com escolhas', 'Diario e estados de quest',
++    'Objetivos e recompensas', 'Comerciante e moedas', 'Portais seguros', 'Tres regioes',
++    'Baus e recursos', 'Ciclo de iluminacao', 'Masmorra e retorno', 'Menu e selecao de personagem',
++    'UI de inventario/equipamento', 'Diario/mapa/objetivos', 'Hotbar e atalhos',
++    'Audio e preferencias; marco offline B', 'Protocolo binario V1', 'Servidor localhost headless',
++    'Duas sessoes e reconexao', 'Cliente visual e interpolacao', 'LAN explicita; dois processos locais',
++    'Combate e habilidades autoritativas', 'Chefe cooperativo e recompensa',
++    'Falhas de rede e desconexoes', 'Integracao e regressao de backup', 'Candidatos privados e pacotes',
++]
++
++def digest(path):
++    result = hashlib.sha256()
++    with path.open('rb') as stream:
++        for block in iter(lambda: stream.read(1024 * 1024), b''):
++            result.update(block)
++    return result.hexdigest()
++
++def read(name):
++    return json.loads((DOCS / name).read_text(encoding='utf-8-sig'))
++
++def source_files():
++    files = []
++    for directory in (ROOT / 'server/src', ROOT / 'tools'):
++        files += [p for p in directory.rglob('*') if p.is_file() and '__pycache__' not in p.parts]
++    files += [p for p in ROOT.iterdir() if p.is_file() and (p.suffix in ('.cmd', '.md') or p.name == '.gitignore')]
++    files.append(ROOT / 'server/pom.xml')
++    return sorted(files)
++
++def reports():
++    quality = read('TASK-076-qualidade.json')
++    assert quality['exitCode'] == 0
++    smoke = read('TASK-076-smoke.json')
++    assert smoke['automatedApproved'] and smoke['serverExitCode'] == 0
++    legacy_smoke = read('TASK-076-arena-smoke.json')
++    assert legacy_smoke['bundledJvmVerified'] and legacy_smoke['exitCode'] == 0
++    packages = [read('TASK-076-auditoria-rpg.json'), read('TASK-076-auditoria-coop.json')]
++    assert all(p['automatedApproved'] for p in packages)
++    baseline = json.loads((ROOT / '.task-checkpoints/TASK-037-before.json').read_text(encoding='utf-8'))
++    changed = []
++    for path in source_files():
++        name = path.relative_to(ROOT).as_posix()
++        try:
++            text = path.read_text(encoding='utf-8-sig')
++        except UnicodeError:
++            continue
++        if baseline.get(name) != text:
++            changed.append({'path': name, 'change': 'modified' if name in baseline else 'added', 'sha256': digest(path)})
++    legacy_domain = all((ROOT / name).read_text(encoding='utf-8-sig') == text for name, text in baseline.items()
++                        if name.startswith('server/src/main/java/com/projetok/domain/') and name.endswith('.java'))
++    legacy_tests = all((ROOT / name).read_text(encoding='utf-8-sig') == text for name, text in baseline.items()
++                       if name.startswith('server/src/test/') and name.endswith('.java'))
++    original = ROOT / 'dist/SpiritGate-0.36.0-rc1-20261019T042237Z-a006aab1-portable.zip'
++    original_hash = digest(original)
++    assert original_hash == '511d59412598be73395391e21a6cfb2315f4855c714059086abc4d02e46cff31'
++    assert legacy_domain and legacy_tests
++    tasks = []
++    for number, title in enumerate(TITLES, 37):
++        evidence = read(f'TASK-{number:03}-qualidade.json')
++        assert evidence['exitCode'] == 0
++        tasks.append({'task': f'{number:03}', 'title': title,
++                      'status': 'parcial: homologacao LAN entre maquinas pendente' if number == 71 else
++                                'parcial: sem transicoes de regiao online' if number == 74 else 'concluida: validacao automatizada',
++                      'tests': evidence['checks']})
++    inventory = {'schemaVersion': 1, 'date': '2026-10-19', 'sourceChanges': changed,
++                 'tasks': tasks, 'packages': packages, 'baselineSha256': original_hash,
++                 'legacyDomainUnchanged': legacy_domain, 'legacyTestsUnchanged': legacy_tests,
++                 'finalChecks': quality['checks'], 'smoke': smoke, 'legacyArenaSmoke': legacy_smoke}
++    (DOCS / 'INVENTARIO-ALTERACOES-TASK-037_076.json').write_text(json.dumps(inventory, ensure_ascii=False, indent=2), encoding='utf-8')
++    table = '\n'.join(f"| TASK-{t['task']} | {t['title']} | {'Parcial' if t['task'] in ('071','074') else 'Validada'} |" for t in tasks)
++    report = f'''# Relatorio final - Spirit Gate TASK-037 a TASK-076
++
++Data local: 19/10/2026, America/Sao_Paulo. Base real: TASK-036 / 0.36.0-rc1, sem Git. O checkpoint 21 citado inicialmente ja tinha sido sucedido pelas TASK-022 a 036 neste checkout; elas nao foram refeitas.
++
++## Resultado principal: campanha RPG offline jogavel
++
++RPG 0.66.1-rc1 com Java integrado. Iniciar por jogar-rpg-offline.cmd ou dist/RPG-Offline-0.66.1-rc1/SpiritGateRPG/SpiritGateRPG.exe. Menu, personagens por UUID, Guardian/Mystic, aparencia, vila, bosque, santuario, duas missoes, inimigos, XP/niveis, moedas, inventario de 20 slots, equipamento, pocoes, loot, comercio, baus/recursos, dois sentinelas e chefe final. Save/backup/retomada, diario, mapa, hotbar, atalhos e audio/preferencias integrados.
++
++O personagem percorre vila, conversa com a Ancia, aceita Ecos no bosque, derrota inimigos, recebe loot/recompensa, compra/equipa itens, aceita Santuario, enfrenta guardas/chefe, salva, reabre e entrega a reliquia. A campanha inicial inteira foi automatizada no dominio para os dois arquetipos, sem injecao de XP/moeda/item/posicao. A interface real foi aberta no executavel; isso nao representa homologacao humana de todo o percurso.
++
++## Validacao e preservacao
++
++- Baseline reproduzida: 241 Java + 25 Python, zero falhas.
++- Final: {quality['checks']['java']['totals']['tests']} Java + {quality['checks']['python']['tests']} Python, zero falhas/erros/skips Java. Sao 56 testes Java adicionais.
++- Suite completa executada em cada etapa; resultados individuais em TASK-NNN-testes.txt e logs Java/Python. Falhas intermediarias foram preservadas em logs separados.
++- Stress offline: 20000 ticks com recargas periodicas e comparacao de estado. Rede: 2500 ticks com perda/atraso/repeticao/reordenacao e seed fixa.
++- Dois processos Java de clientes locais validados; combate por TCP real derrotou chefe e concedeu exatamente 20 moedas a cada participante uma vez.
++- Smokes finais usam os executaveis/runtime dos pacotes: RPG com janela visivel e 62 ticks; dois clientes graficos com IDs distintos, dois jogadores e servidor encerrado com codigo 0.
++- Capturas de componentes Swing de janelas em execucao foram inspecionadas. Desktop gerou imagem preta neste ambiente; essa imagem nao foi aceita como homologacao visual. Nenhuma captura falsa foi criada.
++- Dominio legado e TODOS os testes existentes antes da rodada permanecem textualmente iguais. Renderer compartilhado ganhou opcoes desativadas por padrao; testes historicos continuam verdes. Arena continua no menu e em distribuicoes anteriores.
++- ZIP original 0.36.0-rc1 preservado, SHA-256 {original_hash}.
++- Nova arena de compatibilidade 0.36.1-compat-rc1 compilada/empacotada e auditada; EXE aberto com PATH sem Java externo, JVM integrada comprovada e encerramento 0. Evidencia TASK-076-arena-smoke.json.
++
++## Ajustes relevantes encontrados na integracao
++
++1. Inventario/equipamento/comercio/recompensas usam validacao antes do commit, sem perda/duplicacao em operacoes recusadas. Loot cheio fica pendente; limite atingido impede derrota sem recompensa.
++2. Recargas, direcao, estados de inimigos/respawn, quests/objetos/regioes e vigor persistem. Loot padrao usa seed por spawn/geracao, mantendo continuidade apos reload.
++3. IO e audio ficam fora da simulacao. Save captura comandos pendentes na thread proprietaria e pausa ao voltar ao menu; erro preserva sessao.
++4. Regressao de backup reproduzida ANTES da correcao: Properties sintaticamente valido com flag corrompida podia substituir backup bom. Leitura agora valida restauracao semantica antes de copiar. Teste CorruptBackupProtectionTest e log TASK-075-regressao-backup-antes.log documentam a correcao.
++5. HUD passou a mostrar nomes reais, atalhos efetivos e aparencias, retirando rotulos de debug do RPG. Dialogos usam grade para manter escolhas acessiveis.
++6. Builders/auditor da arena excluem explicitamente prototype/rpg; pacotes separados nao carregam classes de banco/Kryonet, testes ou arte reprovada.
++7. Rede fecha handshakes pendentes, rejeita sequencias antigas, expira movimento ausente e limita conexoes/filas/payloads. Servidor nao reinicia apos close; bind malsucedido e limpo.
++8. Primeiro smoke PowerShell confundiu codigo de saida indisponivel com falha; handles foram preservados antes da espera e a nova execucao comprovou codigo 0. Logs anteriores mantidos. Primeiro bot TCP foi ajustado para flanquear e esperar os dois participantes, respeitando colisao e regra de contribuicao.
++
++## Coop experimental separado
++
++0.76.0-rc1: servidor TCP headless, localhost por padrao, duas sessoes, snapshots 10 Hz, cliente visual e interpolacao apenas de apresentacao. Movimento/dano/vigor/cooldown/colisao resolvidos pelo servidor. Passo Relampago e Criostase usam os servicos reais existentes. Chefe compartilhado, Freeze e recompensa por participacao, sem importar saves offline.
++
++Limites: um mapa online; sem portais online ou persistencia de contas. LAN privada existe somente com opcao explicita; NAO houve teste entre computadores. Sem autenticacao/TLS de producao. O rodape generico do renderer coop ainda contem uma dica da campanha offline; controles/servidor corretos aparecem no painel lateral. Esse experimento nao e MMORPG completo e nao deve substituir o pacote offline.
++
++Nao houve acesso a banco real, migracao, alteracao de credenciais, push, upload, publicacao, porta publica, firewall global ou servico do sistema. Sprites pendentes/reprovados continuam fora das distribuicoes de jogo. Tons foram sintetizados localmente, sem assets de licenca desconhecida.
++
++## Situacao por tarefa
++
++Validada significa implementacao e automacao local aprovadas, sem alegar homologacao humana. 38 etapas validadas; 071 e 074 parciais nos pontos explicitados.
++
++| Tarefa | Entrega | Situacao |
++| --- | --- | --- |
++{table}
++
++O marco A foi exercitado em OfflineCycleTest na TASK-058: portais da TASK-057 eram necessarios ao ciclo entre regioes. O pacote integrado foi criado apos essa dependencia, em vez de declarar fluxo completo prematuramente na TASK-056. O marco B foi exercitado na TASK-066; a revisao final de backup gerou o patch 0.66.1-rc1.
++
++## Pacotes e documentos
++
++- Offline: dist/{packages[0]['package']}
++- SHA-256 offline: {packages[0]['sha256']}
++- Coop: dist/{packages[1]['package']}
++- SHA-256 coop: {packages[1]['sha256']}
++- Manifestes e arquivos .sha256 acompanham cada ZIP; auditorias TASK-076-auditoria-rpg/coop.json conferem todos os arquivos internos.
++- Relatorios por tarefa: TASK-NNN.md, Spirit_Gate_TASK-NNN.pdf, TASK-NNN-testes.txt, TASK-NNN.diff e logs.
++- Inventario: INVENTARIO-ALTERACOES-TASK-037_076.json, {len(changed)} arquivos de codigo/scripts/recursos adicionados ou ajustados, com hashes.
++- Roteiros: ROTEIRO-RPG-OFFLINE.md e ROTEIRO-COOP-EXPERIMENTAL.md; incluidos nos respectivos pacotes.
++- ZIP documental final: dist/SpiritGate-Documentos-TASK-037_076-r2.zip. Versoes anteriores dos checkpoints/documentos foram preservadas.
++- Checkpoints JSON antes/depois em .task-checkpoints; arquivos recuperaveis da base e da entrega final consolidados sem caches/target gerados. Assets pendentes entram somente no checkpoint de desenvolvimento, nunca no jogo.
++
++## Avaliacao humana ainda necessaria
++
++Jogar o roteiro completo na interface, testar redimensionamento/atalhos/audio em outro Windows e experimentar duas maquinas numa LAN privada configurada. A campanha tem arte geometrica, tres regioes compactas, duas missoes e um chefe; e uma base offline funcional para testes privados. Nao foram aprovados novos sprites nem release publica.
++'''
++    final = DOCS / 'RELATORIO-FINAL-TASK-037_076.md'
++    final.write_text(report, encoding='utf-8')
++    gerar_pdf(final, DOCS / 'Spirit_Gate_Relatorio_Final_TASK-037_076.pdf', 'Expansao TASK-037 a TASK-076')
++    continuity = '''# Continuidade - 19/10/2026
++
++Ultima etapa executada: TASK-076, candidatos privados validados automaticamente. TASK-071 parcial quanto a LAN entre maquinas; TASK-074 parcial quanto a transicoes online inexistentes. Nao declarar multiplayer completo.
++
++Principal entrega: RPG offline 0.66.1-rc1. Abrir jogar-rpg-offline.cmd. Saves por UUID junto ao EXE em saves/characters; preferencias/controles separados. Menu salva antes de sair. Arena antiga preservada.
++
++Coop 0.76.0-rc1 e separado; iniciar servidor manualmente. Nunca importar saves offline nem iniciar LAN automaticamente.
++
++Ultimo checkpoint: .task-checkpoints/TASK-076-after.json e checkpoint final ZIP recuperavel. Antes de nova alteracao, criar novo checkpoint sem sobrescrever os existentes.
++
++Comandos de verificacao (na raiz Projeto-K):
++
++python tools/qualidade.py --offline --task retomada-expansao
++python tools/consolidar_expansao.py reports
++
++Consultar auditorias e hashes em docs/TASK-076-auditoria-*.json e sidecars dos ZIPs. Build local offline: powershell -File tools/build-rpg-portable.ps1 -Version NOVA-VERSAO. Build coop separado: tools/build-coop-portable.ps1. Nao reutilizar versao nem substituir artefatos anteriores.
++
++Pendencias: homologacao humana em outro Windows; duas maquinas LAN; portais online; ampliar conteudo e autoria dos mapas. Rodape do cliente coop ainda tem dica generica da campanha offline. Nenhuma TASK-077 autorizada; nao iniciar automaticamente.
++'''
++    (DOCS / 'CONTINUIDADE-TASK-037_076.md').write_text(continuity, encoding='utf-8')
++    roadmap = '''# Roadmap apos TASK-076 - sujeito a nova autorizacao
++
++1. Homologar campanha offline pela UI em outro Windows; corrigir apenas falhas reproduzidas antes de ampliar escopo.
++2. Melhorar autoria visual das tres regioes, acessibilidade/localizacao e arte somente apos aprovacao explicita dos assets.
++3. Ampliar NPCs, missoes, equipamentos e encontros mantendo catalogos/saves versionados e transacoes atomicas.
++4. Homologar LAN entre duas maquinas privadas. Nenhuma exposicao publica ou mudanca de firewall automatica.
++5. Projetar transicoes e ciclo de vida de regioes online antes de compartilhar persistencia. Definir contrato de contas, seguranca e dados sem reutilizar login legado inseguro.
++6. Completar apresentacao de habilidades/rodape do cliente coop e telemetria local de falhas; manter pacote offline independente.
++7. Considerar transporte/autenticacao de producao somente com desenho e auditoria dedicados. Nao alegar seguranca de producao do prototipo.
++
++Nenhuma destas acoes inicia TASK-077 sem nova instrucao.
++'''
++    (DOCS / 'ROADMAP-APOS-TASK-076.md').write_text(roadmap, encoding='utf-8')
++    (DOCS / 'TASK-076-preservacao.json').write_text(json.dumps({'legacyDomainUnchanged': legacy_domain, 'legacyTestsUnchanged': legacy_tests, 'baselineZipSha256': original_hash}, indent=2), encoding='utf-8')
++    print(json.dumps({'tasks': len(tasks), 'sourceChanges': len(changed), 'java': quality['checks']['java']['totals'], 'python': quality['checks']['python']['tests']}))
++
++def package():
++    for number in range(37, 77):
++        for name in (f'TASK-{number:03}.md', f'Spirit_Gate_TASK-{number:03}.pdf', f'TASK-{number:03}-testes.txt', f'TASK-{number:03}.diff'):
++            assert (DOCS / name).is_file(), name
++        for phase in ('before', 'after'):
++            assert (ROOT / f'.task-checkpoints/TASK-{number:03}-{phase}.json').is_file()
++    outputs = []
++    document_zip = ROOT / 'dist/SpiritGate-Documentos-TASK-037_076-r2.zip'
++    assert not document_zip.exists(), 'Pacote documental ja existe'
++    with zipfile.ZipFile(document_zip, 'w', zipfile.ZIP_DEFLATED) as out:
++        for path in sorted(DOCS.rglob('*')):
++            if path.is_file():
++                out.write(path, path.relative_to(ROOT).as_posix())
++    outputs.append(document_zip)
++    baseline = json.loads((ROOT / '.task-checkpoints/TASK-037-before.json').read_text(encoding='utf-8'))
++    base_zip = ROOT / '.task-checkpoints/SpiritGate-TASK-037-base-recuperavel.zip'
++    if not base_zip.exists():
++      with zipfile.ZipFile(base_zip, 'w', zipfile.ZIP_DEFLATED) as out:
++        names = set()
++        for name, text in baseline.items():
++            out.writestr(name, text.encode('utf-8')); names.add(name)
++        for path in sorted((ROOT / 'assets').rglob('*')):
++            if path.is_file() and path.relative_to(ROOT).as_posix() not in names:
++                out.write(path, path.relative_to(ROOT).as_posix())
++        for path in sorted(DOCS.iterdir()):
++            match = re.search(r'TASK[-_](\d{3})', path.name)
++            if path.is_file() and match and int(match[1]) <= 36 and path.relative_to(ROOT).as_posix() not in names:
++                out.write(path, path.relative_to(ROOT).as_posix())
++        for path in sorted((ROOT / 'dist').glob('SpiritGate-0.36.0-*')):
++            if path.is_file(): out.write(path, path.relative_to(ROOT).as_posix())
++    outputs.append(base_zip)
++    final_zip = ROOT / '.task-checkpoints/SpiritGate-TASK-076-checkpoint-recuperavel-r2.zip'
++    assert not final_zip.exists()
++    with zipfile.ZipFile(final_zip, 'w', zipfile.ZIP_DEFLATED) as out:
++        paths = source_files()
++        for folder in ('docs', 'assets'):
++            paths += [p for p in (ROOT / folder).rglob('*') if p.is_file()]
++        paths += list((ROOT / '.task-checkpoints').glob('TASK-0[3-7][0-9]-*.json'))
++        for audit in ('TASK-076-auditoria-rpg.json', 'TASK-076-auditoria-coop.json'):
++            name = read(audit)['package']
++            paths += [ROOT / 'dist' / name, ROOT / 'dist' / (name+'.manifest.json'), ROOT / 'dist' / (name+'.sha256')]
++        for path in sorted(set(paths)):
++            out.write(path, path.relative_to(ROOT).as_posix())
++        out.writestr('CHECKPOINT-LEIA-ME.txt', 'Fontes, testes, scripts, documentos, assets de desenvolvimento e pacotes finais. Assets pendentes NAO sao assets de producao. Excluidos caches Maven e target gerado; releases anteriores permanecem em dist.\n')
++    outputs.append(final_zip)
++    manifest = []
++    for path in outputs:
++        with zipfile.ZipFile(path) as archive:
++            assert archive.testzip() is None
++            if path != document_zip:
++                assert 'server/pom.xml' in archive.namelist(), 'POM de build ausente no checkpoint'
++                assert 'server/src/main/java/com/projetok/prototype/DebugLauncher.java' in archive.namelist()
++        sha = digest(path)
++        Path(str(path)+'.sha256').write_text(sha+'  '+path.name+'\n', encoding='ascii')
++        manifest.append({'path': path.relative_to(ROOT).as_posix(), 'bytes': path.stat().st_size, 'sha256': sha})
++    (ROOT / 'dist/SpiritGate-Entrega-TASK-037_076-manifest.json').write_text(json.dumps(manifest, indent=2), encoding='utf-8')
++    print(json.dumps(manifest, indent=2))
++
++if __name__ == '__main__':
++    parser = argparse.ArgumentParser()
++    parser.add_argument('action', choices=['reports', 'package'])
++    args = parser.parse_args()
++    reports() if args.action == 'reports' else package()
+--- /dev/null
++++ b/tools/smoke-expansao.ps1
+@@ -0,0 +1,34 @@
++param([Parameter(Mandatory=$true)][string]$OfflineDirectory,[Parameter(Mandatory=$true)][string]$CoopDirectory)
++Set-StrictMode -Version Latest
++$ErrorActionPreference='Stop'
++$project=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'));$docs=Join-Path $project 'docs'
++$offline=[IO.Path]::GetFullPath($OfflineDirectory);$coop=[IO.Path]::GetFullPath($CoopDirectory)
++foreach($directory in @($offline,$coop)){if(-not $directory.StartsWith((Join-Path $project 'dist')+'\',[StringComparison]::OrdinalIgnoreCase)){throw 'Smoke exige pacote extraido dentro de dist'}}
++$rpgCapture=Join-Path $docs 'TASK-076-rpg-desktop.png'
++$server=$null;$first=$null;$second=$null
++try{
++    # A janela do jogo e interativa; o smoke captura seus componentes reais.
++    $rpg=Start-Process -FilePath (Join-Path $offline 'SpiritGateRPG.exe') -ArgumentList @('--smoke','"Teste Offline"',('"'+$rpgCapture+'"')) -WindowStyle Normal -PassThru
++    $null=$rpg.Handle
++    if(-not $rpg.WaitForExit(15000)){Stop-Process -Id $rpg.Id;throw 'RPG nao encerrou smoke'}
++    $offlineEvidence=Get-Content -LiteralPath ($rpgCapture+'.json') -Raw | ConvertFrom-Json
++    if(-not $offlineEvidence.windowShowing -or $offlineEvidence.ticks -le 0){throw 'Janela RPG nao comprovada'}
++    $stdout=Join-Path $docs 'TASK-076-server-smoke.log';$stderr=Join-Path $docs 'TASK-076-server-smoke-error.log'
++    $server=Start-Process -FilePath (Join-Path $coop 'SpiritGateCoopServer.exe') -ArgumentList @('--port','0','--run-seconds','12') -WindowStyle Hidden -RedirectStandardOutput $stdout -RedirectStandardError $stderr -PassThru
++    $null=$server.Handle
++    $port=$null
++    for($i=0;$i -lt 50;$i++){if(Test-Path -LiteralPath $stdout){$text=Get-Content -LiteralPath $stdout -Raw;if($text -match '127[.]0[.]0[.]1:(\d+)'){$port=$Matches[1];break}};Start-Sleep -Milliseconds 100}
++    if(-not $port){throw 'Servidor nao informou bind localhost'}
++    $java=Join-Path $coop 'runtime\bin\java.exe';$jar=Join-Path $coop 'app\spirit-gate-coop.jar'
++    $captureOne=Join-Path $docs 'TASK-076-coop-um-components.png';$captureTwo=Join-Path $docs 'TASK-076-coop-dois-components.png'
++    $first=Start-Process -FilePath $java -ArgumentList @('-cp',('"'+$jar+'"'),'com.projetok.multiplayer.NetworkClientLauncher','127.0.0.1',$port,'"Coop Um"',('"'+$captureOne+'"')) -WindowStyle Hidden -PassThru
++    $null=$first.Handle
++    $second=Start-Process -FilePath $java -ArgumentList @('-cp',('"'+$jar+'"'),'com.projetok.multiplayer.NetworkClientLauncher','127.0.0.1',$port,'"Coop Dois"',('"'+$captureTwo+'"')) -WindowStyle Hidden -PassThru
++    $null=$second.Handle
++    if(-not $first.WaitForExit(10000)-or -not $second.WaitForExit(10000)){throw 'Clientes nao encerraram smoke'}
++    $one=Get-Content -LiteralPath ($captureOne+'.json') -Raw | ConvertFrom-Json;$two=Get-Content -LiteralPath ($captureTwo+'.json') -Raw | ConvertFrom-Json
++    if(-not $one.windowShowing -or -not $two.windowShowing -or $one.players -ne 2 -or $two.players -ne 2 -or $one.session -eq $two.session){throw 'Duas sessoes visuais nao comprovadas'}
++    if(-not $server.WaitForExit(15000)){throw 'Servidor nao encerrou automaticamente'}
++    if($server.ExitCode -ne 0 -or $first.ExitCode -ne 0 -or $second.ExitCode -ne 0){throw "Processo de smoke falhou: server=$($server.ExitCode), one=$($first.ExitCode), two=$($second.ExitCode)"}
++    [ordered]@{schemaVersion=1;offlineExecutable=$true;offline=$offlineEvidence;serverBind='127.0.0.1';serverPort=[int]$port;serverExitCode=$server.ExitCode;clients=@($one,$two);integratedJava=$true;captureKind='componentes Swing de janelas em execucao';humanApproved=$false;lanBetweenMachines=$false;automatedApproved=$true} | ConvertTo-Json -Depth 7 | Set-Content -LiteralPath (Join-Path $docs 'TASK-076-smoke.json') -Encoding UTF8
++}finally{foreach($owned in @($server,$first,$second)){if($null -ne $owned -and -not $owned.HasExited){Stop-Process -Id $owned.Id}}}

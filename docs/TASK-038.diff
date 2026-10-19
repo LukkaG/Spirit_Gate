@@ -1,0 +1,152 @@
+--- /dev/null
++++ b/docs/TASK-038-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 243,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-038.md
+@@ -0,0 +1,7 @@
++# TASK-038 - Entrada offline independente
++
++RpgLauncher inicia o modo RPG; DebugLauncher continua iniciando a arena historica. Runtime proprio com ciclo explicito, thread unica, snapshots imutaveis e encerramento idempotente. Movimento/colisao reutilizam MovementService/CollisionService. A apresentacao reutiliza integralmente DebugPanel e sua camera, sem um segundo renderer.
++
++Entrada: java -cp server/target/classes com.projetok.prototype.rpg.RpgLauncher. Neste primeiro incremento o mundo contem apenas um personagem provisório e obstaculo de teste; identidade e conteudo seguem nas proximas tarefas. Nenhuma alegacao de ciclo RPG completo nesta etapa.
++
++Testes: limites do mundo, entrada nao finita e suite completa Java/Python. UI real sera verificada no marco integrado.
+--- /dev/null
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
+@@ -0,0 +1,41 @@
++package com.projetok.prototype.rpg;
++
++import com.projetok.prototype.*;
++import javax.swing.*;
++import java.awt.event.*;
++import java.util.List;
++
++/** Entrada RPG explicita. A arena permanece acessivel pelo DebugLauncher original. */
++public final class RpgLauncher {
++    private RpgLauncher() { }
++    public static void main(String[] args) { SwingUtilities.invokeLater(RpgLauncher::open); }
++    static void open() {
++        RpgRuntime runtime = new RpgRuntime();
++        DebugSnapshot template = DebugWorld.demo().snapshot();
++        DebugPanel panel = new DebugPanel(() -> adapt(runtime.snapshot(), template));
++        JFrame frame = new JFrame("Spirit Gate | RPG offline");
++        frame.setContentPane(panel); frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
++        frame.pack(); frame.setLocationRelativeTo(null);
++        boolean[] held = new boolean[4];
++        String[] keys = {"W", "S", "A", "D"};
++        for (int i = 0; i < keys.length; i++) {
++            final int key = i;
++            for (boolean down : new boolean[]{true, false}) {
++                String id = keys[i] + down;
++                panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke((down ? "pressed " : "released ") + keys[i]), id);
++                panel.getActionMap().put(id, new AbstractAction() {
++                    public void actionPerformed(ActionEvent e) { held[key] = down; runtime.input((held[3]?1:0)-(held[2]?1:0), (held[1]?1:0)-(held[0]?1:0)); }
++                });
++            }
++        }
++        Timer timer = new Timer(33, e -> panel.repaint());
++        frame.addWindowListener(new WindowAdapter() { public void windowClosed(WindowEvent e) { timer.stop(); runtime.close(); } });
++        frame.addWindowFocusListener(new WindowAdapter() { public void windowLostFocus(WindowEvent e) { java.util.Arrays.fill(held, false); runtime.input(0, 0); } });
++        runtime.start(); timer.start(); frame.setVisible(true);
++    }
++    static DebugSnapshot adapt(com.projetok.rpg.RpgWorld.View v, DebugSnapshot t) {
++        return new DebugSnapshot(List.of(new DebugSnapshot.ActorView(1,"Viajante",v.x(),v.y(),18,100,100,true,true)),
++            List.of(new DebugSnapshot.Obstacle(380,180,120,120)),List.of(),100,100,0,false,v.ticks(),"RPG offline | WASD: explorar",1,0,0,null,
++            100,100,0,List.of(),List.of(),false,0,0,List.of(),false,List.of(),t.cryostasisHud(),t.lightningStepHud());
++    }
++}
+--- /dev/null
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgRuntime.java
+@@ -0,0 +1,28 @@
++package com.projetok.prototype.rpg;
++
++import com.projetok.rpg.RpgWorld;
++import java.util.concurrent.*;
++
++/** Ciclo independente; entrada imutavel, snapshots publicados e fechamento idempotente. */
++public final class RpgRuntime implements AutoCloseable {
++    private final RpgWorld world;
++    private final ScheduledExecutorService loop = Executors.newSingleThreadScheduledExecutor(r -> {
++        Thread t = new Thread(r, "spirit-gate-rpg"); t.setDaemon(true); return t;
++    });
++    private volatile float x, y;
++    private volatile RpgWorld.View view;
++    private boolean started, closed;
++    public RpgRuntime() { this(new RpgWorld()); }
++    public RpgRuntime(RpgWorld world) { this.world = world; view = world.snapshot(); }
++    public synchronized void start() {
++        if (started || closed) throw new IllegalStateException("Ciclo ja iniciado/encerrado");
++        started = true;
++        loop.scheduleAtFixedRate(() -> { world.tick(x, y); view = world.snapshot(); }, 0, 33_333_333, TimeUnit.NANOSECONDS);
++    }
++    public void input(float x, float y) {
++        if (!Float.isFinite(x) || !Float.isFinite(y)) throw new IllegalArgumentException("Entrada invalida");
++        this.x = x; this.y = y;
++    }
++    public RpgWorld.View snapshot() { return view; }
++    public synchronized void close() { closed = true; loop.shutdownNow(); }
++}
+--- /dev/null
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -0,0 +1,22 @@
++package com.projetok.rpg;
++
++import com.projetok.domain.entity.GameEntity;
++import com.projetok.domain.entity.Position;
++import com.projetok.domain.movement.CollisionService;
++import com.projetok.domain.movement.MovementService;
++import java.util.List;
++
++/** Mundo offline: uma thread proprietaria, geometria compartilhada com a arena. */
++public final class RpgWorld {
++    private final GameEntity body = new GameEntity(1, "Viajante", new Position(140, 320)) { };
++    private final MovementService movement = new MovementService(new CollisionService());
++    private final CollisionService.Space space = new CollisionService.Space(960, 640,
++            List.of(new CollisionService.Obstacle(380, 180, 120, 120)), List.of());
++    private long ticks;
++    public record View(float x, float y, long ticks) { }
++    public void tick(float x, float y) {
++        movement.moveDirected(body, movement.direction(x, y), 215, 1f / 30, 18, space);
++        ticks++;
++    }
++    public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks); }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/RpgWorldTest.java
+@@ -0,0 +1,16 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class RpgWorldTest {
++    @Test void movementUsesExistingWallsAndBounds() {
++        RpgWorld world = new RpgWorld();
++        for (int i=0;i<200;i++) world.tick(-1,0);
++        assertTrue(world.snapshot().x()>=18);
++        assertEquals(200,world.snapshot().ticks());
++    }
++    @Test void invalidMovementDoesNotAdvanceTick() {
++        RpgWorld world = new RpgWorld();
++        assertThrows(IllegalArgumentException.class,()->world.tick(Float.NaN,0));
++        assertEquals(0,world.snapshot().ticks());
++    }
++}

@@ -1,0 +1,304 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R 10 0 R 12 0 R] /Count 5 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3135 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-006 - Passo Relâmpago) Tj T*
+() Tj T*
+(Spirit Gate | 18/10/2026 | Java 17 e Maven) Tj T*
+() Tj T*
+(Estado: implementação e participação do usuário validadas. O teste reservado de direção) Tj T*
+(zero foi escrito pelo usuário e passou na suíte completa. A conferência manual) Tj T*
+(interativa da sensação de jogo continua recomendada.) Tj T*
+() Tj T*
+(## Resultado implementado) Tj T*
+() Tj T*
+(Shift captura a direção até o ponto do mouse e publica SkillCastCommand com ID) Tj T*
+(lightning_step. Uma ativação custa 35 de vigor e inicia cooldown de 4 segundos. O) Tj T*
+(jogador se desloca progressivamente a 600 px/s durante 0,25 s, com orçamento máximo de) Tj T*
+(150 px antes das colisões. Não há teleporte no lançamento, dano, invulnerabilidade ou) Tj T*
+(efeito de status.) Tj T*
+() Tj T*
+(O ponto do mouse define somente a direção, fixada no início. Um cursor próximo ainda) Tj T*
+(solicita os 150 px nessa direção; colisões podem encurtar o percurso. Essa decisão foi) Tj T*
+(apresentada antes da implementação. O alvo precisa estar dentro da arena e ser finito. A) Tj T*
+(validação de direção zero está implementada e seu teste foi escrito pelo usuário.) Tj T*
+() Tj T*
+(## Preparação e arquitetura) Tj T*
+() Tj T*
+(Foram inspecionados MovementService, CollisionService, StaminaService, SkillCastCommand,) Tj T*
+(DebugCommandBuffer, DebugRuntime, DebugWorld, DebugLauncher, DebugSnapshot e DebugPanel.) Tj T*
+(O estado inicial passou em mvn clean test -q com 118 testes.) Tj T*
+() Tj T*
+(A proposta apresentada criou somente um serviço de habilidade específico e reutilizou) Tj T*
+(contrato, fila, consumo de vigor e física contínua. A movimentação e a Criostase mantêm) Tj T*
+(seus serviços existentes. Não foram adicionadas dependências, exclusões, renomeações,) Tj T*
+(rede ou alterações em banco.) Tj T*
+() Tj T*
+(LightningStepService é o estado de uma ativação por jogador: direção, duração restante e) Tj T*
+(cooldown. Recebe MovementService, StaminaService e CollisionService. cast valida comando) Tj T*
+(e geometria inicial antes de gastar. update avança cooldown e deslocamento, retornando) Tj T*
+(um Step imutável com as posições antes/depois. O serviço não conhece Swing, snapshots ou) Tj T*
+(o efeito visual.) Tj T*
+() Tj T*
+(O construtor recebe a mesma instância de detecção usada na movimentação. Assim, cast) Tj T*
+(consulta origem livre antes de consumir; não deixa para descobrir uma sobreposição na) Tj T*
+(primeira varredura. Cada recusa mantém vigor e cooldown. Morte durante a ação interrompe) Tj T*
+(o movimento seguinte, sem conceder proteção ou restaurar o recurso consumido.) Tj T*
+() Tj T*
+(## Duração, colisões e movimento normal) Tj T*
+() Tj T*
+(O serviço usa min\(dt, tempo restante\) e consome esse tempo mesmo quando bloqueado. A 30) Tj T*
+(Hz, são sete passos solicitados de 20 px e um último de 10 px. Não há compensação da) Tj T*
+(distância retida na parede em ticks posteriores. A precisão geométrica é float;) Tj T*
+(verificações de distância usam tolerâncias numéricas pequenas nos testes.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-006 - página 1/5) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 3432 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+() Tj T*
+(O deslocamento passa exclusivamente por MovementService.moveContinuous, usando Space) Tj T*
+(existente. A varredura mantém a prioridade X antes de Y e permite deslizar no eixo) Tj T*
+(livre, parando no contato com paredes, mobs e limites. O índice espacial continua sendo) Tj T*
+(atualizado pelo CollisionService. A assistência lenta de contorno usada para caminhada) Tj T*
+(não é aplicada ao dash; a física contínua existente foi mantida intacta.) Tj T*
+() Tj T*
+(Na arena, o serviço é atualizado no slot de movimento. Quando havia dash ativo no começo) Tj T*
+(do tick, WASD não é executado, inclusive no tick fracionário de conclusão. O movimento) Tj T*
+(normal retorna no tick seguinte, sem aplicar sobras de WASD ao orçamento da habilidade.) Tj T*
+() Tj T*
+(O lançamento ocorre no slot anterior de comandos de skill, depois do movimento e ataque) Tj T*
+(daquele tick. Ele inicia o estado sem mover; o primeiro avanço ocorre no próximo tick,) Tj T*
+(com latência de até um passo de simulação \(cerca de 33 ms\). Assim, mantém-se a ordem) Tj T*
+(anterior da Criostase e do ataque. Se havia WASD no tick de lançamento, ele ocorreu) Tj T*
+(antes de aceitar a habilidade; nenhum tick soma movimento de dash com movimento WASD.) Tj T*
+() Tj T*
+(Os efeitos existentes avançam antes dos pulsos da Criostase, como antes. Ataque básico e) Tj T*
+(IA continuam ativos durante o dash. A possibilidade de receber dano foi verificada tanto) Tj T*
+(pelo CombatService quanto pela IA real da arena. Não foram modificadas fórmulas,) Tj T*
+(afinidades, congelamento, pulsos ou parâmetros da Criostase.) Tj T*
+() Tj T*
+(## Fila e controles) Tj T*
+() Tj T*
+(DebugCommandBuffer e DebugRuntime não precisaram ser alterados: a lista de) Tj T*
+(SkillCastCommand já é imutável e preserva a ordem FIFO. DebugWorld despacha) Tj T*
+(lightning_step e cryostasis em um único laço, respeitando o saldo de vigor) Tj T*
+(compartilhado. Se só houver recurso para uma das habilidades, a primeira intenção) Tj T*
+(elegível vence; a recusa da segunda não inicia seu cooldown.) Tj T*
+() Tj T*
+(DebugLauncher registra press_SHIFT e release_SHIFT. O conjunto de teclas mantidas) Tj T*
+(publica uma intenção somente na nova pressão; autorepeat e Shift mantido não repetem.) Tj T*
+(Toques completos entre ticks chegam pela fila. A captura do mouse acontece no instante) Tj T*
+(da pressão.) Tj T*
+() Tj T*
+(Shift é um modificador do Swing, então os bindings também incluem combinações com) Tj T*
+(SHIFT_DOWN_MASK. Q, WASD, Espaço, E, H e R continuam respondendo quando Shift está) Tj T*
+(mantido. O teste de bindings usa um KeyEvent real com esse modificador.) Tj T*
+() Tj T*
+(R cria um mundo novo, eliminando dash, rastros e cooldowns. Comandos anteriores ao) Tj T*
+(reinício são descartados pela fila existente. O conjunto de teclas no EDT não é limpo) Tj T*
+(por R; Shift mantido não cria outra intenção até ser solto e pressionado de novo.) Tj T*
+() Tj T*
+(## Rastro e snapshot) Tj T*
+() Tj T*
+(O mundo publica lightningStepActive, lightningStepRemaining, lightningStepCooldown e uma) Tj T*
+(cópia imutável de LightningTrailView. Os segmentos vêm apenas de deslocamentos reais.) Tj T*
+(Cada passo pode produzir os dois trechos X/Y, representando o caminho da física sem) Tj T*
+(atravessar visualmente uma quina. Cada segmento vive por 0,18 s e desvanece mesmo depois) Tj T*
+() Tj T*
+(Spirit Gate - TASK-006 - página 2/5) Tj T*
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 3189 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(do dash terminar.) Tj T*
+() Tj T*
+(DebugPanel lê os segmentos e desenha um traço amarelo em zigue-zague, com brilho e) Tj T*
+(opacidade baseada no tempo publicado. Não move entidades, não atualiza timers e não) Tj T*
+(executa regras. O HUD mostra Shift, custo e cooldown, inclusive durante o deslocamento,) Tj T*
+(preservando os controles anteriores.) Tj T*
+() Tj T*
+(## Validação executada) Tj T*
+() Tj T*
+(Comando final, após a contribuição do usuário: mvn clean test na pasta server. Resultado) Tj T*
+(real: BUILD SUCCESS, compilação release 17, 147 testes, zero falhas, zero erros e zero) Tj T*
+(ignorados. São 118 testes anteriores, 28 testes implementados pelo agente e o teste de) Tj T*
+(direção zero escrito pelo usuário. A entrega anterior tinha 146 testes e aguardava essa) Tj T*
+(participação. Resumo por classe em TASK-006-testes.txt.) Tj T*
+() Tj T*
+(LightningStepServiceTest acrescenta 19 testes: consumo único, ausência de teleporte no) Tj T*
+(cast, progresso, último tick fracionário, duração, passo grande limitado, diagonal,) Tj T*
+(mouse próximo, cooldown, vigor insuficiente/exato, morto, morte durante a ação, entradas) Tj T*
+(inválidas, geometria inválida, dt inválido/zero, paredes finas, deslizamento X/Y,) Tj T*
+(limites, mobs sem dano/status e recebimento de dano pelo CombatService.) Tj T*
+() Tj T*
+(LightningStepIntegrationTest acrescenta 9 testes: ativação/publicação de rastro, duração) Tj T*
+(sem soma WASD, cooldown e ataque, ordem Q/Shift com vigor limitado, dano pela IA, rastro) Tj T*
+(imutável/expiração/captura, bindings Shift, toque rápido com reinício sem repetição e) Tj T*
+(descarte de dash pendente.) Tj T*
+() Tj T*
+(Os 118 testes anteriores e os três baselines de MovementReplayTest foram preservados.) Tj T*
+(Nenhum teste existente foi removido ou reescrito. Os campos novos ficam fora da projeção) Tj T*
+(histórica já existente. O teste do usuário foi revisado sem alteração de código e está) Tj T*
+(incluído na contagem final de 147.) Tj T*
+() Tj T*
+(Captura: TASK-006-passo-relampago.png, produzida pelo teste e inspecionada. Mostra o) Tj T*
+(jogador após cinco passos, rastro amarelo, vigor em regeneração e cooldown no HUD. Não) Tj T*
+(houve sessão interativa com JFrame; a imagem é uma renderização real do snapshot de) Tj T*
+(jogo, e os bindings são testados no EDT com o runtime real.) Tj T*
+() Tj T*
+(## Participação do usuário - teste validado) Tj T*
+() Tj T*
+(Arquivo criado pelo usuário e validado:) Tj T*
+(server/src/test/java/com/projetok/domain/skill/LightningStepZeroDirectionTest.java) Tj T*
+() Tj T*
+(O teste usa o pacote com.projetok.domain.skill, JUnit 5 e as fixtures reais indicadas) Tj T*
+(abaixo. O jogador está em \(100,100\), e o comando usa exatamente o mesmo ponto. As) Tj T*
+(asserções verificam ZERO_DIRECTION, vigor preservado, cooldown zerado, posição) Tj T*
+(preservada e dash inativo. Nenhuma correção obrigatória foi identificada. O agente não) Tj T*
+(escreveu nem modificou esse teste.) Tj T*
+() Tj T*
+(Construtor real:) Tj T*
+(LightningStepService\(MovementService movement, StaminaService stamina, CollisionService) Tj T*
+() Tj T*
+(Spirit Gate - TASK-006 - página 3/5) Tj T*
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 11 0 R >>
+endobj
+11 0 obj
+<< /Length 2850 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(collisions\)) Tj T*
+() Tj T*
+(Métodos reais:) Tj T*
+(- Status cast\(Player player, SkillCastCommand command, float radius,) Tj T*
+(CollisionService.Space space\).) Tj T*
+(- Step update\(Player player, float dt, float radius, CollisionService.Space space\).) Tj T*
+(- boolean active\(\); float remaining\(\); float cooldown\(\); Position direction\(\).) Tj T*
+(- SkillCastCommand\(String skillId, float targetX, float targetY\).) Tj T*
+(- Player.getPosition\(\); Player.require\(StaminaComponent.class\).current\(\).) Tj T*
+() Tj T*
+(As fixtures existentes ficam em LightningStepTestFixtures.java, no mesmo pacote de) Tj T*
+(testes:) Tj T*
+(- player\(float x, float y\): PlayerFactory real; humano com 100 HP e 100 vigor.) Tj T*
+(- emptySpace\(\): CollisionService.Space de 960 por 640, sem obstáculos ou corpos.) Tj T*
+(- service\(\): novo serviço, com MovementService e CollisionService compartilhados.) Tj T*
+(- RADIUS: 18f, o mesmo raio do jogador na arena.) Tj T*
+() Tj T*
+(São acessíveis diretamente por testes no mesmo pacote. Os resultados possíveis estão no) Tj T*
+(enum LightningStepService.Status. A suíte completa foi executada novamente após o) Tj T*
+(usuário salvar seu teste, e esta entrega foi atualizada. A participação reservada está) Tj T*
+(concluída e validada.) Tj T*
+() Tj T*
+(## Arquivos novos e alterados) Tj T*
+() Tj T*
+(Novos no domínio:) Tj T*
+(- server/src/main/java/com/projetok/domain/skill/LightningStepService.java.) Tj T*
+() Tj T*
+(Alterados no protótipo, sob server/src/main/java/com/projetok/prototype/:) Tj T*
+(- DebugWorld.java: instância do serviço, despacho FIFO, substituição de WASD e rastros.) Tj T*
+(- DebugLauncher.java: Shift e aliases de teclas com modificador.) Tj T*
+(- DebugSnapshot.java: estado por valor e lista imutável de rastros.) Tj T*
+(- DebugPanel.java: traço elétrico e indicador no HUD.) Tj T*
+() Tj T*
+(Novos testes e fixtures, sob server/src/test/java/com/projetok/:) Tj T*
+(- domain/skill/LightningStepServiceTest.java.) Tj T*
+(- domain/skill/LightningStepZeroDirectionTest.java \(autoria do usuário\).) Tj T*
+(- domain/skill/LightningStepTestFixtures.java.) Tj T*
+(- prototype/LightningStepIntegrationTest.java.) Tj T*
+() Tj T*
+(Documentação e ferramenta:) Tj T*
+(- README-PROTOTIPO.md e docs/HISTORICO-TECNICO.md.) Tj T*
+(- docs/TASK-006.md, docs/TASK-006-testes.txt e docs/TASK-006.diff.) Tj T*
+(- docs/Spirit_Gate_TASK-006.pdf e docs/TASK-006-passo-relampago.png.) Tj T*
+(- tools/gerar_pdf_task006.py.) Tj T*
+() Tj T*
+(DebugCommandBuffer, DebugRuntime, SkillCastCommand, CombatService, CryostasisService,) Tj T*
+(congelamento, recursos e serviços de movimento/colisão permaneceram inalterados. Nenhuma) Tj T*
+(dependência, banco, multiplayer ou habilidade adicional foi implementada.) Tj T*
+() Tj T*
+() Tj T*
+(Spirit Gate - TASK-006 - página 4/5) Tj T*
+ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 13 0 R >>
+endobj
+13 0 obj
+<< /Length 1226 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(## Reprodução e limites) Tj T*
+() Tj T*
+(Na pasta server: mvn clean test. Na pasta Projeto-K: python -B) Tj T*
+(tools/gerar_pdf_task006.py regenera o PDF. Para validar manualmente, iniciar rodar-) Tj T*
+(prototipo.cmd, apontar dentro da arena e pressionar Shift, testar parede/mob, manter) Tj T*
+(WASD, observar retorno da caminhada e usar R mantendo Shift.) Tj T*
+() Tj T*
+(A instância do serviço pertence a um jogador e à thread autoritativa. A duração progride) Tj T*
+(mesmo bloqueada; não há busca de caminho. O rastro é apenas visual. A morte interrompe o) Tj T*
+(dash na atualização seguinte; o dano pode continuar sendo aplicado normalmente.) Tj T*
+() Tj T*
+(A pasta não é um checkout Git acessível; não houve branch ou merge. O diff é relativo ao) Tj T*
+(estado anterior à TASK-006, sem target, segredos, binários temporários ou o próprio diff) Tj T*
+(recursivamente, e inclui a contribuição do usuário com sua autoria registrada. PDF e) Tj T*
+(captura são artefatos finais separados. A implementação e a participação reservada estão) Tj T*
+(validadas; uma sessão manual continua recomendada para conferir a sensação de jogo.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-006 - página 5/5) Tj T*
+ET
+endstream
+endobj
+xref
+0 14
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000147 00000 n 
+0000000244 00000 n 
+0000000370 00000 n 
+0000003557 00000 n 
+0000003683 00000 n 
+0000007167 00000 n 
+0000007293 00000 n 
+0000010534 00000 n 
+0000010662 00000 n 
+0000013565 00000 n 
+0000013693 00000 n 
+trailer
+<< /Size 14 /Root 1 0 R >>
+startxref
+14972
+%%EOF

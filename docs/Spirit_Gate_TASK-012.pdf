@@ -1,0 +1,81 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3106 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-012 - ZIP canonico e auditoria multiplataforma) Tj T*
+() Tj T*
+(18/10/2026. APROVADA na verificacao automatizada local; homologacao humana pendente.) Tj T*
+() Tj T*
+(Baseline: mvn clean test, 202 testes, zero falhas/erros/ignorados. A primeira tentativa) Tj T*
+(falhou ao acessar C:/.m2; copia do cache existente em .maven-repository resolveu sem) Tj T*
+(alterar dependencias. Comando real: mvn.cmd -Dmaven.repo.local=.maven-repository -f) Tj T*
+(server/pom.xml clean test. Logs inicial, repeticao e final preservados.) Tj T*
+() Tj T*
+(Arquivos afetados: build-windows-portable.ps1, auditar_rc.py, test-windows-portable.ps1) Tj T*
+(e novos controles Python. Risco: formato do ZIP e validacao de extracao; nenhuma) Tj T*
+(mecanica alterada.) Tj T*
+() Tj T*
+(Origem corrigida: Compress-Archive gravava separadores do host. ZipArchive agora recebe) Tj T*
+(arcname POSIX explicito para cada arquivo. Auditor verifica orig_filename antes de) Tj T*
+(normalizar; smoke Windows consulta FullName original e recusa nomes inseguros,) Tj T*
+(duplicatas e symlinks. Manifest, inventarios, PE/JVM/JAR e whitelist preservados.) Tj T*
+() Tj T*
+(Suite final: 202 testes, zero falhas/erros/ignorados. Python: 5 testes aprovados \(nomes) Tj T*
+(invalidos, NUL original, duplicatas, traversal, nomes reservados e symlink\). Falhas) Tj T*
+(intermediarias preservadas: escritor Python normalizava dados de teste, corrigido com) Tj T*
+(nome cru; primeiro build exigiu carregar assembly System.IO.Compression explicitamente.) Tj T*
+(Pacote vazio dessa tentativa nao e distribuivel; nao foi sobrescrito nem recebeu) Tj T*
+(sidecars.) Tj T*
+() Tj T*
+(Auditoria oficial PASS diretamente no ZIP original, sem copia normalizada. Controle) Tj T*
+(negativo em copia adulterada recusado. Smoke EXE real fora de Projeto-K, PATH sem) Tj T*
+(Java/Maven, JVM integrada conferida e fechamento normal; captura TASK-012-exe.png. Linux) Tj T*
+(nao disponivel para execucao nesta sessao. Hash historico 0.11.0-rc1 preservado:) Tj T*
+(7484f90f5de5ca0475c8d73a918a8868b20a089d5a3fb3a12dd2e40f5fc19d01.) Tj T*
+() Tj T*
+(Novo ZIP: C:\\Users\\lucas\\OneDrive\\Desktop\\Spirit_Gate_Prototipo_Jogavel\\Projeto-) Tj T*
+(K\\dist\\SpiritGate-0.12.0-task012-20261018T225125Z-3e5bf0d7-portable.zip) Tj T*
+() Tj T*
+(SHA-256: befe84b9d22eb19b7e2b8b2986ccd028da881a34fbee71af3e7d64a16caa6b63) Tj T*
+() Tj T*
+(Evidencias: TASK-012-auditoria.json, TASK-012-auditoria-negativa.json,) Tj T*
+(TASK-012-portable-smoke.json, logs, PDF e diff. Checkpoint local em .task-checkpoints;) Tj T*
+(checkout recebido sem Git. Reproducao: build-windows-portable.ps1 -Version) Tj T*
+(0.12.0-task012 -SkipMaven apos suite limpa; auditar_rc.py --zip ARQUIVO --report) Tj T*
+(RELATORIO; test-windows-portable.ps1 -ZipPath ARQUIVO.) Tj T*
+() Tj T*
+(O QUE FOI REALMENTE EXECUTADO: suite Maven, controles Python, build, auditoria original) Tj T*
+(e smoke Windows local. O QUE AINDA EXIGE O USUARIO: jogabilidade e outro Windows x64 sem) Tj T*
+(Java/Maven; sem publicacao ou assinatura.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-012 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+3502
+%%EOF

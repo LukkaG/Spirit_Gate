@@ -1,0 +1,47 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 831 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-057 - Portais) Tj T*
+() Tj T*
+(Quatro portais conectam vila, bosque e santuario, com destinos/spawns definidos em) Tj T*
+(conteudo e validados. F a ate 65 unidades ativa passagem; chegada exige posicao livre.) Tj T*
+(Personagem, recursos, inventario, equipamento e quests continuam no mesmo mundo) Tj T*
+(autoritativo. Dialogo fecha; habilidades instantaneas ja foram resolvidas antes da) Tj T*
+(passagem. Recarga de 30 ticks impede alternancia imediata.) Tj T*
+() Tj T*
+(Teste de travessia, volta, preservacao e save. O acesso ao primeiro ciclo RPG agora esta) Tj T*
+(habilitado na interface. Marcos A e mapas integrados serao empacotados apos validacao de) Tj T*
+(ambientacao na TASK-058, sem substituir distribuicoes anteriores.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-057 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1226
+%%EOF

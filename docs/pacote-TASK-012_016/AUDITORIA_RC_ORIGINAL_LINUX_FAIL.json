@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "task": "TASK-011",
+  "auditedAtUtc": "2026-10-18T22:28:33.829175+00:00",
+  "zip": "/mnt/data/_spiritgate_audit/Projeto-K/dist/SpiritGate-0.11.0-rc1-20261018T220040Z-b2e659ed-portable.zip",
+  "status": "FAIL",
+  "checks": [
+    {
+      "id": "zip_sha256_sidecar",
+      "status": "PASS",
+      "sha256": "7484f90f5de5ca0475c8d73a918a8868b20a089d5a3fb3a12dd2e40f5fc19d01",
+      "sizeBytes": 29359239
+    }
+  ],
+  "limitations": [
+    "Hashes e inventarios detectam divergencias, mas nao substituem assinatura digital nem autenticam um pacote e sidecars adulterados em conjunto.",
+    "A busca de credenciais inspeciona somente o bytecode das classes do jogo, com padroes concretos; nao comprova ausencia absoluta de segredos, ofuscacao ou credenciais em outros formatos.",
+    "A comparacao prova igualdade com server/target/classes no instante da auditoria; a compilacao recente dos fontes depende do mvn clean test registrado separadamente no processo de release.",
+    "A auditoria nao executa o EXE e nao substitui a homologacao interativa em outro Windows sem Java ou Maven instalados."
+  ],
+  "executedPackagedCode": false,
+  "zipSha256": "7484f90f5de5ca0475c8d73a918a8868b20a089d5a3fb3a12dd2e40f5fc19d01",
+  "error": "Caminho nao portatil ou com fluxo alternativo no pacote."
+}

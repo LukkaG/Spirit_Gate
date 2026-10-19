@@ -1,0 +1,64 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1933 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-023 - Orquestrador de qualidade) Tj T*
+() Tj T*
+(Objetivo: um comando reprodutível para validação local completa.) Tj T*
+(Situação: APROVADA. Base: 223 JUnit e 18 Python.) Tj T*
+() Tj T*
+(Diagnóstico: os scripts anteriores empacotavam e auditavam, mas a execução conjunta) Tj T*
+(de Java e Python dependia de comandos manuais. Implementado tools/qualidade.py;) Tj T*
+(reutiliza Maven/Surefire e unittest, sem duplicar testes ou instalar dependências.) Tj T*
+(Verifica Java 17, Maven e Python; cache Maven do projeto e opção --offline.) Tj T*
+(Logs individuais completos, resumo TXT e relatório estruturado JSON por execução.) Tj T*
+(Códigos: 0 aprovado, 2 ambiente, 3 testes, 4 build. Não muda o Windows global.) Tj T*
+(Adicionado tools/test_qualidade.py: classificação, totais XML, ambiente ausente e) Tj T*
+(rejeição de identificador com escape de diretório. Testes negativos usam mocks) Tj T*
+(somente no teste unitário, sem substituir a execução real do orquestrador.) Tj T*
+() Tj T*
+(Execução real: python tools/qualidade.py --offline --task 023) Tj T*
+(Resultado: 223 JUnit, zero falhas/erros/ignorados; 22 Python aprovados.) Tj T*
+(Evidências: TASK-023-qualidade.json, TASK-023-testes.txt e logs TASK-023-*.log.) Tj T*
+(Arquivos alterados/adicionados constam no diff; checkpoints before/after em) Tj T*
+(.task-checkpoints. Retomada: TASK-024 após esta aprovação.) Tj T*
+() Tj T*
+(Limitações: logs técnicos locais podem conter caminhos do ambiente de build;) Tj T*
+(não são o pacote de diagnóstico sanitizado da TASK-034. Não realiza homologação) Tj T*
+(humana nem certifica arte final. Falhas Maven não classificadas como teste são) Tj T*
+(tratadas como build. O modo online não foi necessário nesta validação.) Tj T*
+() Tj T*
+(## Resultado final observado) Tj T*
+(Validação local aprovada: 223 JUnit e 22 Python; zero falhas.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-023 - página 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2329
+%%EOF

@@ -1,0 +1,46 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 720 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-047 - Evolucao RPG) Tj T*
+() Tj T*
+(Progressao configuravel: limite 20, XP acumulada para nivel L = 60*L*\(L-1\)/2; +12 HP e) Tj T*
+(+3 ataque por nivel. Recompensa pode conceder varios niveis; XP satura no limite sem) Tj T*
+(overflow. HP recebe apenas o aumento de capacidade e personagens mortos nao ressuscitam) Tj T*
+(por XP.) Tj T*
+() Tj T*
+(Equipamentos agora respeitam nivel derivado. Snapshot publica nivel e HP maximo; save) Tj T*
+(preserva XP e recalcula atributos. Testes de multiplos niveis, limite, valores invalidos) Tj T*
+(e restauracao. Concessao por derrota sera conectada ao ledger de loot na TASK-049.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-047 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1115
+%%EOF

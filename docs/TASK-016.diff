@@ -1,0 +1,461 @@
+--- a/.gitignore
++++ b/.gitignore
+@@ -21,3 +21,5 @@
+ # Pacotes e checkpoints locais da rodada de desenvolvimento
+ dist/
+ .task-checkpoints/
++.maven-repository/
++__pycache__/
+--- a/README-PROTOTIPO.md
++++ b/README-PROTOTIPO.md
+@@ -309,3 +309,18 @@
+ 
+ Reconstrução: `tools\build-windows-portable.cmd -Version 0.11.0-rc1 -TesterKitDirectory docs\kit-homologacao`.
+ O script usa o JDK 17 e executa testes antes de gerar o pacote. Não exige WiX/MSI.
++
++
++## Rodada TASK-012 a TASK-016
++
++ZIP canonico, pipeline de assets, animacao direcional com fallback e mapa local opcional.
++Nenhuma arte final foi ativada: inventario de 228 PNGs, zero validados.
++Suite consolidada: 216 testes; ver logs e relatorio para evidencias reais.
++
++[Relatorio completo](docs/RELATORIO-FINAL-TASK-012_016.md),
++[PDF](docs/Spirit_Gate_Relatorio_Final_TASK-012_016.pdf) e
++[roteiro do tester](docs/kit-homologacao-012-016/ROTEIRO-HOMOLOGACAO.md).
++
++Build: tools\build-windows-portable.ps1 -Version 0.16.0-rc1 -MavenRepository .maven-repository -TesterKitDirectory docs\kit-homologacao-012-016.
++Python 3 (biblioteca padrao) e ferramenta de build/auditoria; nao dependencia do jogo.
++Homologacao humana, outro Windows e arte final permanecem pendentes.
+--- /dev/null
++++ b/docs/RELATORIO-FINAL-TASK-012_016.md
+@@ -0,0 +1,65 @@
++# Spirit Gate - Relatorio final TASK-012 a TASK-016
++
++18/10/2026, America/Sao_Paulo. Trabalho aplicado em Projeto-K do workspace recebido. Documentos do pacote foram usados como especificacoes das cinco tarefas autorizadas; nenhuma publicacao, trabalho remoto ou expansao de escopo foi executada.
++
++**AUTOMATIZADA APROVADA. HOMOLOGACAO HUMANA PENDENTE.**
++
++## Indice de tarefas e checkpoints
++
++| Etapa | Resultado local | JUnit final | Entregas |
++| --- | --- | --- | --- |
++| TASK-012 | APROVADA | 202, 0 falhas/erros/ignorados | [Relatorio](TASK-012.md), [PDF](Spirit_Gate_TASK-012.pdf), [diff](TASK-012.diff), [suite](TASK-012-testes.txt) |
++| TASK-013 | APROVADA | 202, 0 falhas/erros/ignorados | [Relatorio](TASK-013.md), [PDF](Spirit_Gate_TASK-013.pdf), [diff](TASK-013.diff), [suite](TASK-013-testes.txt) |
++| TASK-014 | APROVADA | 210, 0 falhas/erros/ignorados | [Relatorio](TASK-014.md), [PDF](Spirit_Gate_TASK-014.pdf), [diff](TASK-014.diff), [suite](TASK-014-testes.txt) |
++| TASK-015 | APROVADA | 216, 0 falhas/erros/ignorados | [Relatorio](TASK-015.md), [PDF](Spirit_Gate_TASK-015.pdf), [diff](TASK-015.diff), [suite](TASK-015-testes.txt) |
++| TASK-016 | APROVADA | 216, 0 falhas/erros/ignorados | [Relatorio](TASK-016.md), [PDF](Spirit_Gate_TASK-016.pdf), [diff](TASK-016.diff), [suite](TASK-016-testes.txt) |
++
++Checkout recebido sem repositorio Git: nao foram inventados commits. Para cada numero NNN, .task-checkpoints/TASK-NNN-before.json conserva a base exata e TASK-NNN-after.json lista alteracoes/hashes; docs/TASK-NNN.diff fornece o checkpoint revisavel. Logs TASK-NNN-inicial.log e TASK-NNN-final.log, com repeticoes/falhas preservadas onde aplicavel. PDF individual por etapa e este consolidado. [Hashes de todas as evidencias](TASK-012_016-integridade.json).
++
++## O que foi feito e ajustado
++
++1. TASK-012: trocada a origem do ZIP que usava barras do Windows por nomes POSIX explicitos. Auditor usa orig_filename e smoke verifica FullName antes de substituicoes. Rejeicao de traversal, paths absolutos, streams, duplicatas sem diferenciar caixa, dispositivos Windows e symlinks. Manifest, runtime, PE, JAR, inventarios e hashes preservados. Novo pacote interno 0.12.0-task012 passou diretamente; historico 0.11.0-rc1 nao foi sobrescrito.
++2. TASK-013: pipeline PNG sem bibliotecas externas, inventario deterministico, dimensoes/grade/alfa/hashes/origem/camada/pivot/offset/recortes, revisao vinculada ao SHA e contrato de 59 frames de personagem 64x64. Exporta atlas e ponte Properties somente para aprovados. Inspecionados 228 PNGs: todos fora da grade declarada de 32, zero validados. Isso reprova integracao como tiles prontos, nao descarta fontes artisticas. Originais PNG/Aseprite preservados. Checklist Aseprite no relatorio da tarefa.
++3. TASK-014: estados/direcoes e frames deterministas por dt na simulacao, publicacao visual atomica/imutavel, sinais reais de ataque e dano, KO por morte real, pausa por Freeze e reset por R. RUN nunca e produzido sem corrida real. Renderer por manifest verificado e SHA, nearest-neighbor, pivot constante e fallback geometrico. Nenhuma arte final integrada.
++4. TASK-015: mapa local Properties, aparencia separada do descritor de colisao, limites WORLD_BOUNDARY e obstaculos SOLID/SOFT explicitos. Valida limites, schema, IDs/chaves, contagens, spawn e sobreposicoes. Variante sintetica opcional --map com reinicio deterministico; demo e arena padrao preservados. Corrigida a amostragem visual do spawn apos R, detectada pelo novo teste.
++5. TASK-016: revisao, cache Maven local configuravel, auditoria obrigatoria no build, kit atualizado com mapa opcional, reforcos dos validadores, suites normal/offline, novo RC e smoke EXE real padrao/mapa. Todas as mudancas foram locais.
++
++## Evidencias executadas
++
++- Maven inicial da rodada: 202 testes. Final: 216, zero falhas, erros ou ignorados. Sao 14 testes JUnit adicionais, sem editar testes/baselines historicos. Tres replays historicos continuam verdes; nova comparacao da variante com demo por tick tambem passou.
++- Suite final normal no build e repeticao offline registradas em [log final](TASK-016-final.log) e [offline](TASK-016-offline.log). [Resumo por classe](TASK-016-testes.txt).
++- Ferramentas: 12 testes Python aprovados (7 de assets, 5 de ZIP). [Log](TASK-016-python.log). Inclui fixtures validas/negativas, CRC, contrato/exportacao de frames e pivot.
++- Inventario final: [integridade de assets](TASK-016-assets.json) e [repeticao deterministica](TASK-016-determinismo.json). Zero atlas de producao gerados; fixtures sinteticas de testes nao entram no JAR.
++- Auditoria oficial no proprio ZIP: [PASS](TASK-016-auditoria.json), seis controles, 150 arquivos, 149 entradas no manifest, 148 no inventario textual, 138 classes JAR comparadas byte a byte com classes atuais. [Controle negativo](TASK-016-auditoria-negativa.json) recusou copia adulterada.
++- EXE fora de Projeto-K, em caminho com espacos e PATH sem Java/Maven: [smoke padrao](TASK-016-portable-smoke.json) e [mapa](TASK-016-map-smoke.json). Ambos comprovaram JVM integrada e fechamento com codigo 0, sem fechamento forcado. [Captura real padrao](TASK-016-exe.png), [captura real mapa sintetico](TASK-016-mapa-exe.png).
++- Capturas de testes: [personagem sintetico magenta](TASK-014-sintetico.png) e [mapa placeholder](TASK-015-placeholders.png). Identificadas como sinteticas; nao sao aprovacao artistica.
++
++## Pacote local para testes
++
++[ZIP Windows x64 0.16.0-rc1](../dist/SpiritGate-0.16.0-rc1-20261018T230252Z-a6150a66-portable.zip)
++
++Tamanho: 29.386.343 bytes. SHA-256:
++9bc425107d23ccfd9a4d36279be4da23c7f016a74c92fe03a9bb1f0d36eb79c1
++
++[Sidecar SHA](../dist/SpiritGate-0.16.0-rc1-20261018T230252Z-a6150a66-portable.zip.sha256), [manifest externo](../dist/SpiritGate-0.16.0-rc1-20261018T230252Z-a6150a66-portable.zip.manifest.json) e [auditoria gerada pelo build](../dist/SpiritGate-0.16.0-rc1-20261018T230252Z-a6150a66-portable.zip.audit.json).
++
++Extrair inteiro e abrir SpiritGate/SpiritGate.exe. Para a variante sintetica, abrir PowerShell na pasta SpiritGate e executar .\SpiritGate.exe --map mapa-demo.properties. Sem argumentos abre o padrao. O pacote contem runtime Java 17 integrado, roteiro por task, changelog, modelo de bug e mapa demonstrativo opcional. Nao requer Java/Maven/Python no PC do tester.
++
++Historico 0.11.0-rc1 preservado com SHA 7484f90f5de5ca0475c8d73a918a8868b20a089d5a3fb3a12dd2e40f5fc19d01. Ele conserva a incompatibilidade original de nomes; nao foi renomeado nem falsamente declarado aprovado no Linux. Candidato intermediario 0.12.0-task012 tem SHA befe84b9d22eb19b7e2b8b2986ccd028da881a34fbee71af3e7d64a16caa6b63.
++
++## Falhas intermediarias e ajustes
++
++Primeiro Maven tentou cache C:/.m2 sem acesso; copiado cache existente para .maven-repository do workspace, sem trocar dependencias. Primeiro build TASK-012 exigiu carregar assembly Compression explicitamente; tentativa vazia sem sidecars nao e release valido. Testes de ZIP precisaram simular nome cru porque o escritor Windows normaliza barras/NUL. TASK-014 teve erro de compilacao em fixture lambda, corrigido. TASK-015 detectou um negativo com spawn valido e diferenca visual no primeiro tick apos R; corrigidos e suite repetida verde. Smoke final direto encontrou ExecutionPolicy restrita; repetido com Bypass somente no processo, sem alterar politica global. Logs de falha que continham resultados foram preservados; erros operacionais sem log constam aqui.
++
++## O QUE FOI REALMENTE EXECUTADO
++
++Implementacao local das cinco tarefas em ordem, baselines antes das etapas, testes completos apos mudancas, validadores e controles negativos, inventarios/determinismo, capturas sinteticas, rebuild atual, auditoria do ZIP original, execucao Windows local de padrao e mapa com JVM integrada e encerramento normal, documentacao/PDFs/diffs/checkpoints/hashes e kit de homologacao. Mecanicas de movimento, colisao seletiva, vigor, Criostase, Freeze, dano, FIFO e replays preservadas pelos testes. Sem banco, rede, autenticacao, migracoes, protocolo, instalacao de servicos, alteracao de credenciais, push ou publicacao.
++
++## O QUE AINDA EXIGE O USUARIO
++
++- Jogar e homologar em outro Windows x64 sem Java/Maven; conferir usabilidade e roteiro do kit. Smoke local nao substitui esse teste independente.
++- Revisar fontes no Aseprite, corrigir grades/recortes, produzir personagem 64x64 com 59 frames, aprovar visualmente e registrar SHA. Nenhum visual final de Karakura/personagem foi integrado.
++- Auditoria Linux independente nao executada: tentativa de consultar WSL retornou ajuda, sem ambiente Linux utilizavel nesta sessao. Verificacao Python do ZIP original foi executada no Windows, inclusive orig_filename.
++- EXE continua sem assinatura e sem multiplayer. Espera de pouso com rota totalmente ocupada permanece comportamento conhecido. Busca de segredos por padroes nao comprova ausencia absoluta; hashes nao autenticam origem.
++
++[Kit/roteiro completo](kit-homologacao-012-016/ROTEIRO-HOMOLOGACAO.md). Rodada encerrada na TASK-016, sem iniciar outra tarefa.
+--- /dev/null
++++ b/docs/TASK-016-reproduzir-smoke.ps1
+@@ -0,0 +1,5 @@
++param([Parameter(Mandatory=$true)][string]$ZipPath)
++$ErrorActionPreference = 'Stop'
++# Bypass apenas no processo que executa este script; nenhuma politica global alterada.
++& "$PSScriptRoot\..\tools\test-windows-portable.ps1" -ZipPath $ZipPath -EvidencePath "$PSScriptRoot\TASK-016-portable-smoke.json"
++& "$PSScriptRoot\..\tools\test-windows-portable.ps1" -ZipPath $ZipPath -EvidencePath "$PSScriptRoot\TASK-016-map-smoke.json" -LauncherArguments @('--map','SpiritGate/mapa-demo.properties')
+--- /dev/null
++++ b/docs/TASK-016-testes.txt
+@@ -0,0 +1,36 @@
++TASK-016 - mvn clean test - BUILD SUCCESS
++{'tests': 216, 'failures': 0, 'errors': 0, 'skipped': 0}
++Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.
++
++com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.DomainSequenceRegressionTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaSequenceRegressionTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugLauncherEntrypointTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.DirectionalAnimationTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudPrecisionRegressionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudSkillFeedbackTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.prototype.LocalArenaMapTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SoftObstacleDemoTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
+--- /dev/null
++++ b/docs/TASK-016.md
+@@ -0,0 +1,29 @@
++# TASK-016 - Candidato consolidado e verificacao final
++
++18/10/2026. AUTOMATIZADA APROVADA. HOMOLOGACAO HUMANA PENDENTE.
++
++Baseline exato: mvn.cmd -Dmaven.repo.local=.maven-repository -f server/pom.xml clean test, 216 testes, zero falhas/erros/ignorados. Revisadas TASK-012 a TASK-015: diffs, PDFs, suites, replays e capturas. Nenhum asset reprovado ativado. Risco previsto: empacotamento, ferramentas e kit de teste; sem alteracao de gameplay nesta etapa.
++
++Build agora exige auditoria oficial do ZIP original antes de anunciar sucesso. Parametro MavenRepository permite cache local gravavel sem alterar configuracao global. Kit permite mapa-demo.properties opcional com nome explicito, mantendo kits historicos de tres arquivos. Smoke admite argumentos para testar a variante local. Revisao reforcou nomes Windows reservados (incluindo dispositivos especiais e numeros sobrescritos), symlink de asset e validacao de pivot/offset. Novos testes de exportacao de 59 frames, pivot invalido e CRC adulterado.
++
++Suite final do proprio build: 216 JUnit, zero falhas/erros/ignorados. Repeticao offline: mesmos 216 verdes. Python: 12 testes verdes. Inventario final repetido byte a byte: 228 PNGs reprovados para grade pretendida, zero validados; sem atlas de producao ou personagem aprovado. Arte-fonte preservada e fallback ativo. Manifest Properties de personagens e atlas foram exercitados apenas com fixtures sinteticas temporarias.
++
++Novo ZIP: dist/SpiritGate-0.16.0-rc1-20261018T230252Z-a6150a66-portable.zip
++Tamanho: 29.386.343 bytes.
++SHA-256: 9bc425107d23ccfd9a4d36279be4da23c7f016a74c92fe03a9bb1f0d36eb79c1
++
++Auditoria original PASS nos seis controles: SHA externo, estrutura segura (150 arquivos), manifest/inventario, runtime/PE, whitelist/JAR e bytecode (138 classes comparadas) e busca de padroes concretos de credenciais. Nenhuma normalizacao intermediaria. Controle negativo: copia descartavel com JAR adulterado e SHA externo recalculado recusada por tamanho do manifest; negativeControl=PASS. Original preservado.
++
++Dois smokes Windows reais fora de Projeto-K: padrao e --map SpiritGate/mapa-demo.properties. PATH sem Java/Maven; jvm.dll carregada do runtime integrado comprovada; launcher e janela encerraram com codigo 0, sem fechamento forcado. Capturas TASK-016-exe.png e TASK-016-mapa-exe.png. Mapa tem aviso de tiles sinteticos. Testes de sockets por CIM podem estar indisponiveis no ambiente; o JSON registra o limite. Nao houve teste independente em outro computador.
++
++Falha operacional intermediaria: invocacao direta dos scripts encontrou ExecutionPolicy restrita. Reexecutado em powershell -NoProfile -ExecutionPolicy Bypass somente no processo, sem mudar politica global, pelo script reproduzivel TASK-016-reproduzir-smoke.ps1. A verificacao de Linux/WSL retornou ajuda em vez de ambiente utilizavel; nao foi executada auditoria Linux nesta sessao. Evidencia bruta em TASK-016-linux-disponibilidade.log.
++
++Reconstruir na raiz Projeto-K: powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-windows-portable.ps1 -Version 0.16.0-rc1 -MavenRepository .maven-repository -TesterKitDirectory docs/kit-homologacao-012-016. O script usa JDK 17, Maven e Python 3 da maquina de build; o jogo portatil nao exige essas instalacoes. Nome unico com timestamp e identificador evita sobrescrita. Auditar: python tools/auditar_rc.py --zip ARQUIVO --report RELATORIO. Smoke: powershell -NoProfile -ExecutionPolicy Bypass -File docs/TASK-016-reproduzir-smoke.ps1 -ZipPath ARQUIVO.
++
++## O QUE FOI REALMENTE EXECUTADO
++
++Revisao local, suites normal/offline, 12 testes de ferramentas, inventario deterministico, rebuild atual, auditoria original, controle negativo e dois smokes EXE com captura/fechamento real. Kit de teste, relatorios/PDFs/diffs/checkpoints e hashes produzidos. Nenhum push, publicacao, servico, servidor remoto, banco, protocolo ou credencial alterado.
++
++## O QUE AINDA EXIGE O USUARIO
++
++Homologacao humana de jogabilidade, teste em outro Windows x64 sem Java/Maven e aprovacao/exportacao da arte. Executavel sem assinatura e sem multiplayer. Pouso com rota totalmente ocupada pode permanecer aguardando saida, comportamento historico preservado. Hashes nao sao assinatura nem prova absoluta de ausencia de segredos. Rodada encerrada na TASK-016.
+--- /dev/null
++++ b/docs/kit-homologacao-012-016/CHANGELOG-RESUMIDO.md
+@@ -0,0 +1,9 @@
++# Spirit Gate 0.16.0-rc1 - candidato interno
++
++TASK-012: ZIP canonico POSIX e auditoria de nomes crus antes da extracao.
++TASK-013: inventario/validacao de PNGs e contrato de 59 frames; zero assets finais aprovados.
++TASK-014: sequenciador direcional por tick, sinais reais de combate e fallback geometrico.
++TASK-015: mapa offline opcional, aparencias sinteticas e colisao separada.
++TASK-016: build atual, auditoria obrigatoria, testes e smoke Windows local.
++
++Padrao: arena com tres solidos, dois arbustos e um poste. Mecanicas, rede e protocolo preservados. Nenhum multiplayer, instalador, assinatura ou publicacao. Arte Karakura/64x64 final pendente.
+--- /dev/null
++++ b/docs/kit-homologacao-012-016/MODELO-RELATO-BUG.md
+@@ -0,0 +1,13 @@
++# Relato de bug
++
++Versao e SHA-256 do ZIP:
++Windows e arquitetura:
++Mapa usado (padrao ou --map):
++Passos numerados para reproduzir:
++Resultado esperado:
++Resultado obtido:
++Frequencia/repetibilidade:
++Captura e mensagens de erro:
++Impacto no movimento, colisao, vigor, Q, Shift ou R:
++
++Nao incluir senhas, credenciais ou arquivos privados.
+--- /dev/null
++++ b/docs/kit-homologacao-012-016/ROTEIRO-HOMOLOGACAO.md
+@@ -0,0 +1,12 @@
++# Roteiro TASK-012 a TASK-016
++
++HOMOLOGACAO HUMANA PENDENTE. Testes automatizados locais nao equivalem a jogar nem a testar outro PC.
++
++1. Confira o SHA do ZIP e extraia tudo. Em outro Windows x64 sem Java/Maven, abra SpiritGate/SpiritGate.exe. Preserve app/ e runtime/. Feche normalmente e registre qualquer aviso; executavel sem assinatura.
++2. TASK-012: extrair em caminho com espacos; abrir, fechar, reabrir e confirmar versao em VERSION.txt.
++3. TASK-013: nenhuma arte Karakura ou personagem final esta ativa. Relatorio do projeto lista 228 PNGs e zero validados; revisar no Aseprite antes de integrar.
++4. TASK-014: testar quatro direcoes, parar/retornar, atacar, receber dano, Freeze, morrer e R. Sem personagem aprovado, o fallback geometrico e intencional; fixtures magenta nao estao no pacote.
++5. TASK-015: variante isolada sintetica. Abra um PowerShell na pasta SpiritGate e execute .\SpiritGate.exe --map mapa-demo.properties. Confira aviso de tiles sinteticos e R voltando ao mesmo mapa. Feche e reabra sem argumentos para voltar ao padrao. Desenho maior nao muda hitbox.
++6. TASK-016/gameplay: WASD, Espaco, E (20 vigor), Q (55), Shift (35, mirar com mouse), H e R. Caminhar bloqueia nos leves; dash atravessa atores/leves, bloqueia em parede/borda e termina em destino livre. Testar gasto, cooldown, congelamento, morte e reinicio. Nao ha corrida nova.
++
++Aprovacao visual, jogabilidade e outro computador exigem relato humano. Espera por pouso com rota inteiramente ocupada continua limitacao conhecida. Nao publicar automaticamente.
+--- /dev/null
++++ b/docs/kit-homologacao-012-016/mapa-demo.properties
+@@ -0,0 +1,74 @@
++# DEMONSTRACAO SINTETICA - sem arte Karakura ativada
++schemaVersion=1
++width=960
++height=640
++spawnX=135
++spawnY=340
++visual.count=3
++physical.count=7
++visual.0.id=piso
++visual.0.x=32
++visual.0.y=32
++visual.0.width=256
++visual.0.height=256
++visual.0.layer=0
++visual.0.rgb=245342
++visual.1.id=fachada-placeholder
++visual.1.x=320
++visual.1.y=80
++visual.1.width=160
++visual.1.height=288
++visual.1.layer=1
++visual.1.rgb=444c73
++visual.2.id=arbusto-placeholder
++visual.2.x=48
++visual.2.y=400
++visual.2.width=96
++visual.2.height=96
++visual.2.layer=1
++visual.2.rgb=467642
++physical.0.id=limite
++physical.0.x=0
++physical.0.y=0
++physical.0.width=960
++physical.0.height=640
++physical.0.category=WORLD_BOUNDARY
++physical.1.id=predio-a
++physical.1.x=346
++physical.1.y=112
++physical.1.width=110
++physical.1.height=228
++physical.1.category=SOLID_OBSTACLE
++physical.2.id=predio-b
++physical.2.x=594
++physical.2.y=310
++physical.2.width=112
++physical.2.height=174
++physical.2.category=SOLID_OBSTACLE
++physical.3.id=muro
++physical.3.x=275
++physical.3.y=500
++physical.3.width=145
++physical.3.height=44
++physical.3.category=SOLID_OBSTACLE
++physical.4.id=arbusto-a
++physical.4.x=70
++physical.4.y=420
++physical.4.width=36
++physical.4.height=40
++physical.4.category=SOFT_OBSTACLE
++physical.4.kind=BUSH
++physical.5.id=arbusto-b
++physical.5.x=160
++physical.5.y=420
++physical.5.width=36
++physical.5.height=40
++physical.5.category=SOFT_OBSTACLE
++physical.5.kind=BUSH
++physical.6.id=poste
++physical.6.x=250
++physical.6.y=425
++physical.6.width=14
++physical.6.height=30
++physical.6.category=SOFT_OBSTACLE
++physical.6.kind=POST
+--- a/tools/auditar_rc.py
++++ b/tools/auditar_rc.py
+@@ -95,7 +95,7 @@
+                 not any(c in '<>"|?*' for c in part),
+                 "Nome incompativel com extracao segura no Windows.")
+         stem = part.split(".", 1)[0].upper()
+-        require(not re.fullmatch(r"CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9]", stem),
++        require(not re.fullmatch(r"CON|PRN|AUX|NUL|CONIN\$|CONOUT\$|COM[1-9¹²³]|LPT[1-9¹²³]", stem),
+                 "Nome de dispositivo reservado no pacote.")
+     return "/".join(parts)
+ 
+@@ -371,7 +371,7 @@
+         parser.error("O relatorio nao pode sobrescrever o ZIP nem seus sidecars.")
+     report = {
+         "schemaVersion": 1,
+-        "task": "TASK-011",
++        "task": "TASK-012_016",
+         "auditedAtUtc": datetime.now(timezone.utc).isoformat(),
+         "zip": str(zip_path),
+         "status": "FAIL",
+--- a/tools/build-windows-portable.ps1
++++ b/tools/build-windows-portable.ps1
+@@ -18,6 +18,7 @@
+     [string] $Version = '0.7.0-task007',
+     [string] $JavaHome = '',
+     [string] $TesterKitDirectory = '',
++    [string] $MavenRepository = '',
+     [switch] $SkipMaven
+ )
+ 
+@@ -90,6 +91,10 @@
+     if ($TesterKitDirectory) {
+         $kitDirectory = Get-Item -LiteralPath $TesterKitDirectory -ErrorAction Stop
+         if (-not $kitDirectory.PSIsContainer) { throw 'TesterKitDirectory deve apontar para uma pasta.' }
++        # Mapa opcional de teste local; kits historicos de tres arquivos continuam validos.
++        if (Test-Path -LiteralPath (Join-Path $kitDirectory.FullName 'mapa-demo.properties') -PathType Leaf) {
++            $testerKitFileNames += 'mapa-demo.properties'
++        }
+         foreach ($fileName in $testerKitFileNames) {
+             $kitFile = Get-Item -LiteralPath (Join-Path $kitDirectory.FullName $fileName) -ErrorAction Stop
+             if ($kitFile.PSIsContainer -or ($kitFile.Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+@@ -147,7 +152,9 @@
+     Push-Location -LiteralPath $serverDirectory
+     try {
+         if (-not $SkipMaven) {
+-            Invoke-CheckedTool $maven @('clean', 'test')
++            $testArguments = @('clean', 'test')
++            if ($MavenRepository) { $testArguments = @('-Dmaven.repo.local=' + [IO.Path]::GetFullPath($MavenRepository)) + $testArguments }
++            Invoke-CheckedTool $maven $testArguments
+         }
+         else {
+             Write-Host 'SkipMaven: reutilizando classes locais; execute mvn clean test antes deste modo.'
+@@ -290,6 +297,10 @@
+     $zipHash = (Get-FileHash -LiteralPath $zipPath -Algorithm SHA256).Hash.ToLowerInvariant()
+     Write-Utf8File ($zipPath + '.sha256') ($zipHash + '  ' + [IO.Path]::GetFileName($zipPath) + "`r`n")
+     Copy-Item -LiteralPath $manifestPath -Destination ($zipPath + '.manifest.json') -ErrorAction Stop
++    # Gate local: so anuncia sucesso depois de auditar o ZIP original, sem normalizacao.
++    $python = (Get-Command python.exe -ErrorAction Stop).Source
++    Invoke-CheckedTool $python @((Join-Path $PSScriptRoot 'auditar_rc.py'), '--zip', $zipPath,
++        '--report', ($zipPath + '.audit.json'))
+     Write-Host "Pacote gerado: $zipPath"
+     Write-Host ('Tamanho: ' + (Get-Item -LiteralPath $zipPath).Length + ' bytes')
+     Write-Output "ZIP_PATH=$zipPath"
+--- a/tools/test-windows-portable.ps1
++++ b/tools/test-windows-portable.ps1
+@@ -10,7 +10,8 @@
+ param(
+     [Parameter(Mandatory = $true)][string]$ZipPath,
+     [string]$OutputDirectory,
+-    [string]$EvidencePath
++    [string]$EvidencePath,
++    [string[]]$LauncherArguments = @()
+ )
+ 
+ Set-StrictMode -Version Latest
+@@ -114,7 +115,7 @@
+             # FullName e consultado antes de qualquer substituicao/extracao.
+             $rawName = $entry.FullName
+             if ($rawName.Contains('\') -or $rawName -match '(^/|:|\x00|(^|/)\.{1,2}(/|$)|//|[<>"|?*])' -or
+-                $rawName -match '(^|/)(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\.|/|$)' -or
++                $rawName -match '(^|/)(CON|PRN|AUX|NUL|CONIN\$|CONOUT\$|COM[1-9\u00b9\u00b2\u00b3]|LPT[1-9\u00b9\u00b2\u00b3])(\.|/|$)' -or
+                 $rawName -match '[ .](/|$)' -or $seenEntries.ContainsKey($rawName.TrimEnd('/')) -or
+                 (($entry.ExternalAttributes -shr 16) -band 0xF000) -eq 0xA000) {
+                 throw "Nome original inseguro no ZIP: $rawName"
+@@ -206,7 +207,10 @@
+     # --- O teste usa a JVM integrada, sem Java/Maven do ambiente de desenvolvimento. ---
+     $env:PATH = "$env:SystemRoot\System32;$env:SystemRoot"
+     $env:JAVA_HOME = Join-Path $destination 'java-externo-ausente'
+-    $launched = Start-Process -FilePath $exe -WorkingDirectory $destination -WindowStyle Hidden -PassThru
++    $launchOptions = @{ FilePath=$exe; WorkingDirectory=$destination; WindowStyle='Hidden'; PassThru=$true }
++    if ($LauncherArguments.Count -gt 0) { $launchOptions.ArgumentList = $LauncherArguments }
++    $result.launcherArguments = @($LauncherArguments)
++    $launched = Start-Process @launchOptions
+     $ownedProcesses[$launched.Id] = $launched
+     $result.processId = $launched.Id
+     $window = [IntPtr]::Zero
+--- a/tools/test_assets.py
++++ b/tools/test_assets.py
+@@ -75,6 +75,26 @@
+         entry['review']={}
+         self.assertEqual(inspect(self.root,entry)[0]['status'],'PENDENTE')
+ 
++    def test_export_contract_and_invalid_pivot(self):
++        entry=self.character()
++        manifest,report=(self.root/n for n in ('manifest.json','report.json'))
++        manifest.write_text(json.dumps({'assets':[entry]}))
++        atlas=self.root.parent/(self.root.name+'-atlas.png')
++        self.addCleanup(lambda:atlas.unlink(missing_ok=True))
++        run(self.root,manifest,report,atlas)
++        exported=(self.root/'hero-validated.properties').read_text()
++        self.assertIn('status=VALIDADO',exported)
++        self.assertEqual(59,sum(line.startswith(tuple(CONTRACT)+('KO',)) for line in exported.splitlines()))
++        self.assertIn('PUNCH.FRONT.2=',exported)
++        entry['pivot']=[999,0]
++        self.assertIn('pivot fora do frame',inspect(self.root,entry)[0]['errors'])
++
++    def test_corrupt_png(self):
++        entry=self.tile()
++        png=self.root/'tile.png'
++        data=bytearray(png.read_bytes());data[20]^=1;png.write_bytes(data)
++        self.assertEqual(inspect(self.root,entry)[0]['status'],'REPROVADO')
++
+ 
+ if __name__=='__main__':
+     unittest.main()
+--- a/tools/test_zip_security.py
++++ b/tools/test_zip_security.py
+@@ -21,7 +21,7 @@
+ 
+     def test_unsafe_names(self):
+         for name in ['SpiritGate\\app/a', '/a', '../a', 'a/../b', 'a:b',
+-                     'a//b', 'a/NUL.txt', 'a/COM1', 'a/x.', 'a/x ', 'a/\x00hidden']:
++                     'a//b', 'a/NUL.txt', 'a/COM1', 'a/COM¹', 'a/CONOUT$', 'a/x.', 'a/x ', 'a/\x00hidden']:
+             with self.subTest(name=name), self.archive(['placeholder']) as archive:
+                 # O escritor Python no Windows normaliza barras e trunca NUL;
+                 # simula o nome cru malformado que o leitor precisa recusar.
+--- a/tools/validar_assets.py
++++ b/tools/validar_assets.py
+@@ -82,7 +82,7 @@
+     errors, warnings = [], []
+     relative = Path(entry['path'])
+     path = (root / relative).resolve()
+-    if relative.is_absolute() or not path.is_relative_to(root.resolve()) or path.is_symlink():
++    if relative.is_absolute() or not path.is_relative_to(root.resolve()) or (root / relative).is_symlink():
+         raise ValueError('caminho de asset inseguro')
+     result['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+     pixels = None
+@@ -127,9 +127,16 @@
+             warnings.append('recortes e linhas de corte exigem revisao no Aseprite')
+         if entry.get('pivot') is None or entry.get('offset') is None or not entry.get('layer') or not entry.get('origin'):
+             errors.append('metadados obrigatorios ausentes')
++        else:
++            for field in ('pivot','offset'):
++                value=entry[field]
++                if not isinstance(value,list) or len(value)!=2 or any(type(v) is not int for v in value):
++                    errors.append('pivot/offset inconsistente')
++                elif field=='pivot' and any(v<0 or v>grid for v in value):
++                    errors.append('pivot fora do frame')
+     except NotImplementedError as error:
+         warnings.append(str(error))
+-    except (ValueError, struct.error, zlib.error) as error:
++    except (ValueError, TypeError, KeyError, struct.error, zlib.error) as error:
+         errors.append(str(error))
+     approved = entry.get('review', {}).get('approvedSha256') == result['sha256']
+     if not approved:

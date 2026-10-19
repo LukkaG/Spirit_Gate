@@ -1,0 +1,312 @@
+--- a/docs/TASK-018.md
++++ b/docs/TASK-018.md
+@@ -1,13 +1,13 @@
+-# TASK-018 - Autoria e revis?o de sprites
++# TASK-018 - Autoria e revisão de sprites
+ 
+-18/10/2026. Ferramentas automatizadas aprovadas; arte humana pendente.
++18/10/2026. 216 JUnit e 16 Python verdes; logs TASK-018-java.log e TASK-018-python.log.
+ 
+-Criada tools/revisar_sprites.py, extens?o do inspetor e contrato TASK-013, sem segundo validador de aprova??o. CLI template gera PNG transparente 512x512 com 59 posi??es 64x64 (cinco c?lulas excedentes n?o usadas), ?ndice JSON com dura??o 100ms e pivot 32,48. Resultado reproduz?vel em docs/autoria-018. Template vazio ? intencionalmente reprovado como personagem: nunca ? arte de produ??o.
++Criada tools/revisar_sprites.py reutilizando contrato e inspetor TASK-013. Template transparente vazio 512x512: 59 posições 64x64 e cinco células não usadas. Índice JSON: ação, direção, frame, duração 100ms, pivot 32,48. Arquivos reproduzíveis em docs/autoria-018. Template vazio é intencionalmente reprovado como personagem; não é arte de produção.
+ 
+-CLI review gera HTML com grade, fundo quadriculado, ?ndices, pivots, SHA e relat?rio por arquivo. Reutiliza checagens de bordas/alfa/dimens?es/recortes do inspetor original; acrescenta ordem/dire??o e consist?ncia de pivot/dura??o. Sa?das fora de assets; originais n?o s?o alterados. Os 228 PNGs existentes permanecem reprovados: docs/revisao-fontes-018/relatorio.json e preview.html. Nenhum atlas de produ??o criado.
++CLI review produz HTML com grade, fundo quadriculado, índices, pivots, tamanho, alfa, bordas e SHA por arquivo. Reutiliza inspect e acrescenta ordem/direção/pivot/duração. Saídas fora de assets, sem alterar fontes. Relatório e preview dos 228 PNGs em docs/revisao-fontes-018: todos continuam reprovados. Nenhum atlas de produção.
+ 
+-Fluxo: editar c?pia do template no Aseprite; nomear frames ACTION.DIRECTION.INDEX, com FRONT/BACK/LEFT/RIGHT expl?citos; exportar PNG e JSON array, sem trim/rotate/pack; dura??o 100ms, sourceSize e spriteSourceSize 64x64. CLI aseprite PNG JSON MANIFEST aceita somente esse contrato estrito e rejeita incompatibilidade, sem autocorre??o. Revisar dire??o visual humana: metadados n?o provam orienta??o do desenho.
++Aseprite: nomear ACTION.DIRECTION.INDEX; direções FRONT/BACK/LEFT/RIGHT. Exportar json-array e PNG, duração 100ms, sourceSize e spriteSourceSize 64x64; sem trim/rotate/pack. CLI aseprite PNG JSON NOVO_MANIFEST rejeita incompatibilidade. Orientação visual exige revisão humana.
+ 
+-Comandos: python tools/revisar_sprites.py template NOVA_PASTA; python tools/revisar_sprites.py review RAIZ MANIFEST NOVA_PASTA; python tools/revisar_sprites.py aseprite PNG JSON NOVO_MANIFEST. Revis?o humana deve registrar o SHA exato em review.approvedSha256 no manifest da TASK-013, somente ap?s aprova??o expl?cita. Depois executar o pipeline validar_assets.py. Qualquer edi??o muda o SHA e invalida a revis?o anterior.
++Comandos: python tools/revisar_sprites.py template NOVA_PASTA; python tools/revisar_sprites.py review RAIZ MANIFEST NOVA_PASTA; python tools/revisar_sprites.py aseprite PNG JSON NOVO_MANIFEST. Após aprovação humana expressa, registrar SHA exato em review.approvedSha256 e executar validar_assets.py. Edição exige nova revisão.
+ 
+-Valida??o: 216 JUnit e 16 Python, zero falhas. Novos testes: template vazio/59/reprodu??o, dire??o invertida, ordem, frame ausente, pivot, sobreposi??o, alfa parcial, hash modificado, importa??o Aseprite v?lida e recusa de trim/ordem. Fixtures sint?ticas tempor?rias, sem aprova??o dos originais. Logs TASK-018-java.log e TASK-018-python.log.
++Testes novos: template vazio/59/reprodução, direção invertida, ordem, ausência, pivot, sobreposição, alfa parcial, hash alterado, importação Aseprite válida e rejeição de trim/ordem. Fixtures sintéticas temporárias. Nenhuma aprovação de arte existente.--- a/docs/TASK-019.md
++++ b/docs/TASK-019.md
+@@ -1,13 +1,13 @@
+-# TASK-019 - Integra??o controlada de pacote visual
++# TASK-019 - Integração controlada de pacote visual
+ 
+-18/10/2026. 219 JUnit e 18 Python verdes. Logs TASK-019-java.log e TASK-019-python.log. Nenhuma arte real aprovada.
++18/10/2026. 219 JUnit e 18 Python verdes. Logs TASK-019-java.log e TASK-019-python.log.
+ 
+-Loader ValidatedSpriteAtlas preservado e estendido: contrato legado mant?m fallback por frame; pacote versionado v1 exige 59 frames, ID est?vel, tileSize 32, frameSize 64, origem de revis?o, SHA aprovado igual ao arquivo, pivots/offsets v?lidos. Caminho externo e link direto recusados. Metadados ausentes/malformados s?o IOException controlada. loadOptional retorna fallback para aus?ncia/corrup??o. Imagem e recortes carregados somente na inicializa??o; render permanece sem IO.
++ValidatedSpriteAtlas estendido sem duplicar loader. Legado mantém fallback por frame; pacote v1 exige 59 frames, ID estável, tileSize 32, frameSize 64, origem da revisão, SHA aprovado igual ao arquivo, pivots e offsets válidos. Caminhos externos e links diretos recusados. Metadados malformados viram IOException controlada. loadOptional retorna fallback para ausência/corrupção. Imagem e recortes carregados uma vez, render sem IO.
+ 
+-Launcher procura visual/character.properties ao lado do EXE via jpackage.app-path; em desenvolvimento, relativo ao diret?rio corrente. Manifest ausente mant?m geometria. Pacote opcional ? carregado uma vez ao abrir a janela.
++Launcher procura visual/character.properties junto ao EXE por jpackage.app-path; em desenvolvimento, relativo ao diretório corrente. Pacote ausente mantém geometria.
+ 
+-Ferramenta tools/pacote_visual.py reutiliza inspect TASK-013 para staging. Entrada: JSON com packageVersion=1, assetId est?vel e um ?nico assets[] de kind character, incluindo review.origin e approvedSha256. Sa?da estrita: character.png, character.properties e review.json, sem fontes pendentes. Build admite VisualManifest e VisualRoot expl?citos, sem copiar assets indiscriminadamente. Auditor oficial revalida pacote e igualdade da exporta??o, al?m do invent?rio global. Release sem esses argumentos cont?m zero imagens aprovadas e mant?m fallback.
++tools/pacote_visual.py reutiliza inspect TASK-013. JSON de entrada: packageVersion=1, assetId estável e um único assets[] de kind character, com review.origin e approvedSha256. Saída: character.png, character.properties e review.json. Build admite VisualManifest e VisualRoot explícitos. Auditor revalida pacote e igualdade da exportação. Sem esses argumentos, release usa fallback e não inclui arte.
+ 
+-Procedimento futuro: autoria/revis?o TASK-018; aprova??o humana expressa do SHA exato; registrar review.origin e approvedSha256; executar pacote_visual.py RAIZ MANIFEST NOVA_PASTA e revisar resultado; build com -VisualManifest MANIFEST -VisualRoot RAIZ. Altera??o de qualquer pixel exige nova revis?o. N?o usar fixtures como arte de produ??o.
++Procedimento futuro: autoria e revisão TASK-018; aprovação humana expressa do SHA; registrar review.origin e approvedSha256; executar pacote_visual.py RAIZ MANIFEST NOVA_PASTA; build com -VisualManifest MANIFEST -VisualRoot RAIZ. Edição exige nova aprovação. Fixtures não são arte de produção.
+ 
+-Testes Java: pacote sint?tico completo, carga ?nica ap?s remover fonte, fallback de hash/revis?o/frame/dimens?o/arquivo/pivot/vers?o/origem inv?lidos e caminho do launcher. Testes Python: staging sint?tico com whitelist e ZIP de teste, exclus?o de PNG pendente e recusa de pacotes n?o aprovados. Fixtures ficam exclusivamente nos testes tempor?rios. Fontes art?sticas e gameplay preservados.
++Testes Java: pacote completo, carga única após remover fonte, fallback de hash/revisão/frame/dimensão/arquivo/pivot/versão/origem inválidos e caminho do launcher. Python: staging com whitelist, ZIP sintético, exclusão de PNG pendente e recusa de pacotes inválidos. Fixtures exclusivamente temporárias. Gameplay e fontes artísticas preservados.--- /dev/null
++++ b/docs/TASK-020-testes.txt
+@@ -0,0 +1,38 @@
++TASK-020 - mvn clean test - BUILD SUCCESS
++{'tests': 223, 'failures': 0, 'errors': 0, 'skipped': 0}
++Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.
++
++com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.DomainSequenceRegressionTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaSequenceRegressionTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaViewportTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugLauncherEntrypointTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.DirectionalAnimationTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudPrecisionRegressionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudSkillFeedbackTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.prototype.LocalArenaMapTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SoftObstacleDemoTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.VisualPackageTest: tests=3, failures=0, errors=0, skipped=0
+--- /dev/null
++++ b/docs/TASK-020.md
+@@ -0,0 +1,15 @@
++# TASK-020 - Câmera, viewport e entrada
++
++18/10/2026. Plano apresentado antes das edições: preservar mapa 960x640, criar transformação pura, aplicar câmera somente ao mundo, converter mouse no momento do comando e adaptar canvas à janela.
++
++ArenaViewport implementa ida/volta mundo/tela, câmera com origem inteira e limites, zoom inteiro 1 a 4, escala inteira quando cabe e redução proporcional quando a janela é menor. Canvas lógico completo permanece 1260x750 (arena 960x640 e HUD). Letterbox centralizado; interpolação nearest-neighbor. A janela agora permite redimensionamento.
++
++DebugPanel separa desenho do mundo e HUD. Toda geometria, mapa, efeitos, trails, sprites e hitboxes usa a mesma câmera e recorte. HUD acompanha escala do canvas, sem deslocamento pela câmera. Câmera calculada do snapshot, sem timers ou mutação. Padrão zoom=1 mantém origem zero e coordenadas históricas; setCameraZoom habilita zoom de integração/teste, sem novo atalho.
++
++Mouse permanece em tela até Shift/Q: conversão usa câmera atual no momento do comando, mesmo sem novo evento de mouse. HUD e letterbox são alvos inválidos. Física, custos, dano, alcance, FIFO e replays preservados.
++
++Schema de mapa exige 960x640 e foi preservado. Transformação para mundo sintético 1920x1280 testada, sem mapas maiores em produção. Reinício deriva câmera novamente do spawn.
++
++Validação: 223 JUnit e 18 Python, zero falhas finais. Testes: identidade padrão, resize/letterbox, zoom 1 a 4, limites/diagonais e ida/volta em mundo maior, Shift/Q com câmera deslocada e resize, comparação integral dos snapshots incluindo colisões e reinício, render repetido puro e HUD fixo. Evidência TASK-020-camera-sintetica.png.
++
++Primeira execução: fixture nova escolheu alvo fora da região visível em zoom 4, corretamente recusado. Corrigido cenário para alvo visível relativo ao spawn real; preservada comparação integral com comando direto. Log inicial TASK-020-java-primeira-tentativa.log; resultado final TASK-020-java.log. Nenhum teste antigo removido ou alterado.--- /dev/null
++++ b/server/src/main/java/com/projetok/prototype/ArenaViewport.java
+@@ -0,0 +1,34 @@
++package com.projetok.prototype;
++
++import java.awt.geom.Point2D;
++
++/** Transformacao pura; sem relogio, entidades ou estado de camera acumulado. */
++public record ArenaViewport(double originX, double originY, int zoom,
++                            double scale, double offsetX, double offsetY) {
++    public ArenaViewport {
++        if(!Double.isFinite(originX+originY+scale+offsetX+offsetY) || scale<=0 || zoom<1 || zoom>4)
++            throw new IllegalArgumentException("Viewport invalida");
++    }
++    /** Canvas completo preserva HUD; camera recorta apenas a arena logica. */
++    public static ArenaViewport fit(int screenWidth,int screenHeight,int worldWidth,int worldHeight,
++                                    double targetX,double targetY,int zoom) {
++        if(screenWidth<=0 || screenHeight<=0 || worldWidth<DebugWorld.WIDTH || worldHeight<DebugWorld.HEIGHT ||
++                !Double.isFinite(targetX+targetY) || zoom<1 || zoom>4) throw new IllegalArgumentException("Limites invalidos");
++        double fit=Math.min((double)screenWidth/DebugPanel.PANEL_WIDTH,(double)screenHeight/DebugPanel.PANEL_HEIGHT);
++        double scale=fit>=1?Math.floor(fit):fit;
++        double visibleW=(double)DebugWorld.WIDTH/zoom,visibleH=(double)DebugWorld.HEIGHT/zoom;
++        double x=Math.floor(Math.max(0,Math.min(worldWidth-visibleW,targetX-visibleW/2)));
++        double y=Math.floor(Math.max(0,Math.min(worldHeight-visibleH,targetY-visibleH/2)));
++        return new ArenaViewport(x,y,zoom,scale,(screenWidth-DebugPanel.PANEL_WIDTH*scale)/2,
++                (screenHeight-DebugPanel.PANEL_HEIGHT*scale)/2);
++    }
++    public Point2D.Double worldToScreen(double x,double y) {
++        return new Point2D.Double(offsetX+(x-originX)*zoom*scale,offsetY+(y-originY)*zoom*scale);
++    }
++    public Point2D.Double screenToWorld(double x,double y) {
++        return new Point2D.Double((x-offsetX)/(zoom*scale)+originX,(y-offsetY)/(zoom*scale)+originY);
++    }
++    public boolean containsScreen(double x,double y) {
++        return x>=offsetX && y>=offsetY && x<offsetX+DebugWorld.WIDTH*scale && y<offsetY+DebugWorld.HEIGHT*scale;
++    }
++}
+--- a/server/src/main/java/com/projetok/prototype/DebugLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/DebugLauncher.java
+@@ -51,7 +51,7 @@
+         JFrame frame = new JFrame("Spirit Gate | Arena de Debug 2D");
+         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+         frame.setContentPane(panel);
+-        frame.setResizable(false);
++        frame.setResizable(true);
+         frame.pack();
+         frame.setLocationRelativeTo(null);
+         Set<String> held = new HashSet<>();
+@@ -99,7 +99,10 @@
+         bindKey(inputs, "Q", "press_Q", "release_Q");
+         actions.put("press_Q", new AbstractAction() {
+             @Override public void actionPerformed(ActionEvent event) {
+-                if (held.add("Q")) runtime.cast(new SkillCastCommand(CryostasisService.ID, aim[0], aim[1]));
++                if (held.add("Q")) {
++                    var target=panel.aimAt(aim[0],aim[1]);
++                    runtime.cast(new SkillCastCommand(CryostasisService.ID, (float)target.x, (float)target.y));
++                }
+             }
+         });
+         actions.put("release_Q", new AbstractAction() {
+@@ -108,7 +111,10 @@
+         bindKey(inputs, "SHIFT", "press_SHIFT", "release_SHIFT");
+         actions.put("press_SHIFT", new AbstractAction() {
+             @Override public void actionPerformed(ActionEvent event) {
+-                if (held.add("SHIFT")) runtime.cast(new SkillCastCommand(LightningStepService.ID, aim[0], aim[1]));
++                if (held.add("SHIFT")) {
++                    var target=panel.aimAt(aim[0],aim[1]);
++                    runtime.cast(new SkillCastCommand(LightningStepService.ID, (float)target.x, (float)target.y));
++                }
+             }
+         });
+         actions.put("release_SHIFT", new AbstractAction() {
+--- a/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ b/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -28,6 +28,24 @@
+     private Supplier<DirectionalAnimation.Presentation> presentationSource;
+     private ValidatedSpriteAtlas spriteAtlas;
+     private LocalArenaMap.Renderer mapRenderer;
++    private int cameraZoom=1;
++
++    /** Zoom inteiro opcional; padrao preserva coordenadas historicas. */
++    public void setCameraZoom(int zoom) {
++        if(zoom<1 || zoom>4) throw new IllegalArgumentException("Zoom invalido");
++        cameraZoom=zoom; repaint();
++    }
++    ArenaViewport viewport(DebugSnapshot snapshot) {
++        var player=snapshot.actors().stream().filter(DebugSnapshot.ActorView::player).findFirst();
++        double x=player.map(a->(double)a.x()).orElse(480d),y=player.map(a->(double)a.y()).orElse(320d);
++        return ArenaViewport.fit(getWidth()>0?getWidth():PANEL_WIDTH,getHeight()>0?getHeight():PANEL_HEIGHT,
++                DebugWorld.WIDTH,DebugWorld.HEIGHT,x,y,cameraZoom);
++    }
++    /** Conversao no instante do comando evita mira obsoleta se a camera se moveu. */
++    java.awt.geom.Point2D.Double aimAt(float x,float y) {
++        var v=viewport(source.get());
++        return v.containsScreen(x,y)?v.screenToWorld(x,y):new java.awt.geom.Point2D.Double(Double.NaN,Double.NaN);
++    }
+ 
+     /** Seletor visual opcional de demonstracao, sem modificar o mundo a partir da imagem. */
+     public void setLocalMap(LocalArenaMap map) { mapRenderer = map == null ? null : map.renderer(); }
+@@ -79,6 +97,25 @@
+     }
+ 
+     private void renderScene(Graphics2D g, DebugSnapshot s, java.util.List<DirectionalAnimation.View> animations) {
++        var viewport=viewport(s);
++        Graphics2D canvas=(Graphics2D)g.create();
++        try {
++        canvas.translate(viewport.offsetX(),viewport.offsetY());
++        canvas.scale(viewport.scale(),viewport.scale());
++        canvas.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
++        Graphics2D world=(Graphics2D)canvas.create();
++        try {
++        world.clipRect(0,0,DebugWorld.WIDTH,DebugWorld.HEIGHT);
++        world.scale(viewport.zoom(),viewport.zoom());
++        world.translate(-viewport.originX(),-viewport.originY());
++        renderWorld(world,s,animations);
++        } finally {world.dispose();}
++        drawSidebar(canvas,s);
++        drawBottom(canvas,s);
++        } finally {canvas.dispose();}
++    }
++
++    private void renderWorld(Graphics2D g,DebugSnapshot s,java.util.List<DirectionalAnimation.View> animations) {
+         drawWorld(g);
+         if (mapRenderer != null) mapRenderer.draw(g);
+         drawObstacles(g, s);
+@@ -92,8 +129,6 @@
+         }
+         drawAttack(g, s.attack());
+         drawEffects(g, s);
+-        drawSidebar(g, s);
+-        drawBottom(g, s);
+     }
+ 
+     // --- Cenário ---
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/ArenaViewportTest.java
+@@ -0,0 +1,73 @@
++package com.projetok.prototype;
++
++import org.junit.jupiter.api.Test;
++import java.awt.event.*;
++import java.awt.image.BufferedImage;
++import java.nio.file.Path;
++import java.util.*;
++import javax.imageio.ImageIO;
++import javax.swing.SwingUtilities;
++import static org.junit.jupiter.api.Assertions.*;
++
++class ArenaViewportTest {
++    @Test void defaultIdentityAndResizeLetterbox() {
++        var v=ArenaViewport.fit(1260,750,960,640,135,148,1);
++        assertEquals(0,v.originX());assertEquals(0,v.originY());assertEquals(1,v.scale());
++        assertEquals(135,v.worldToScreen(135,148).x);assertEquals(148,v.screenToWorld(135,148).y);
++        var large=ArenaViewport.fit(2600,1600,960,640,135,148,1);
++        assertEquals(2,large.scale());assertTrue(large.offsetX()>0);
++        assertFalse(large.containsScreen(0,0));
++        assertFalse(v.containsScreen(1000,100)); // HUD nao vira alvo.
++        assertFalse(v.containsScreen(Double.NaN,Double.NaN));
++    }
++    @Test void largeSyntheticWorldClampedRoundTripsAllSizesAndZooms() {
++        for(int zoom=1;zoom<=4;zoom++) for(int width:new int[]{630,1260,2600})
++            for(double target:new double[]{0,500,2000}) {
++                var v=ArenaViewport.fit(width,width*750/1260,1920,1280,target,target,zoom);
++                assertTrue(v.originX()>=0 && v.originX()+960d/zoom<=1920);
++                assertTrue(v.originY()>=0 && v.originY()+640d/zoom<=1280);
++                for(double[] p:new double[][]{{0,0},{1919,1279},{783.25,432.75}}) {
++                    var screen=v.worldToScreen(p[0],p[1]);var world=v.screenToWorld(screen.x,screen.y);
++                    assertEquals(p[0],world.x,1e-9);assertEquals(p[1],world.y,1e-9);
++                }
++            }
++        assertThrows(IllegalArgumentException.class,()->ArenaViewport.fit(0,750,960,640,0,0,1));
++        assertThrows(IllegalArgumentException.class,()->ArenaViewport.fit(1260,750,960,640,0,0,0));
++    }
++    private void mouse(DebugPanel panel,double x,double y) throws Exception {
++        SwingUtilities.invokeAndWait(()->{
++            var e=new MouseEvent(panel,MouseEvent.MOUSE_MOVED,0,0,(int)x,(int)y,0,false);
++            for(var listener:panel.getMouseMotionListeners()) listener.mouseMoved(e);
++        });
++    }
++    private void action(DebugPanel panel,String key) throws Exception {
++        SwingUtilities.invokeAndWait(()->panel.getActionMap().get(key).actionPerformed(new ActionEvent(panel,0,key)));
++    }
++    @Test void qAndShiftUseWorldAfterZoomResizeAndRestart() throws Exception {
++        for(String key:new String[]{"Q","SHIFT"}) try(var actual=new DebugRuntime(()->DebugWorld.demo(new Random(5)));
++                                                    var reference=new DebugRuntime(()->DebugWorld.demo(new Random(5)))) {
++            var panel=new DebugPanel(actual::snapshot);panel.setCameraZoom(4);panel.setSize(2520,1500);
++            SwingUtilities.invokeAndWait(()->DebugLauncher.configureKeys(panel,actual,new HashSet<>()));
++            var v=panel.viewport(actual.snapshot());assertTrue(v.originX()>0 && v.originY()>0);
++            float targetX=actual.snapshot().actors().get(0).x()+80,targetY=actual.snapshot().actors().get(0).y();
++            var screen=v.worldToScreen(targetX,targetY);assertTrue(v.containsScreen(screen.x,screen.y));mouse(panel,screen.x,screen.y);
++            action(panel,"press_"+key);
++            reference.cast(new com.projetok.domain.skill.SkillCastCommand(key.equals("Q")?"cryostasis":"lightning_step",targetX,targetY));
++            actual.advanceOneTick();reference.advanceOneTick();
++            assertEquals(reference.snapshot(),actual.snapshot());
++            action(panel,"restart");actual.advanceOneTick();reference.restart();reference.advanceOneTick();
++            assertEquals(reference.snapshot(),actual.snapshot());
++        }
++    }
++    @Test void renderingRepeatedIsPureAndHudDoesNotFollowCamera() throws Exception {
++        var world=DebugWorld.demo(new Random(2));var snapshot=world.snapshot();var panel=new DebugPanel(()->snapshot);
++        var normal=new BufferedImage(1260,750,2);var g=normal.createGraphics();panel.render(g,snapshot);g.dispose();
++        panel.setCameraZoom(4);panel.setShowHitboxes(true);
++        var zoomed=new BufferedImage(1260,750,2);g=zoomed.createGraphics();panel.render(g,snapshot);panel.render(g,snapshot);g.dispose();
++        assertEquals(snapshot,world.snapshot());
++        // HUD pixels remain identical despite camera and world zoom.
++        for(int y=0;y<640;y+=17)for(int x=980;x<1260;x+=17)assertEquals(normal.getRGB(x,y),zoomed.getRGB(x,y));
++        g=zoomed.createGraphics();g.setColor(java.awt.Color.MAGENTA);g.drawString("CENARIO SINTETICO - CAMERA 4X / HITBOXES",20,730);g.dispose();
++        ImageIO.write(zoomed,"png",Path.of("../docs/TASK-020-camera-sintetica.png").toFile());
++    }
++}

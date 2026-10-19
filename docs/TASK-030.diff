@@ -1,0 +1,83 @@
+--- /dev/null
++++ b/docs/TASK-030-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 233,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-030.md
+@@ -0,0 +1,22 @@
++# TASK-030 - Estabilidade das animações
++
++Objetivo: validar transições direcionais sem alterar combate.
++Base aprovada: TASK-029, 231 JUnit e 25 Python.
++Diagnóstico: sequenciador já trata prioridades e pausa por Freeze; não foi
++encontrada regressão reproduzível que justifique alterar sua política.
++Política existente preservada: morte vence tudo e usa FRONT; HIT vence ATTACK;
++animações pontuais persistem até sua duração; direção nova reinicia o frame;
++Freeze segura tempo/estado enquanto não há sinal novo; R limpa tracks; WALK
++exige deslocamento real. RUN continua sem emissão porque não existe corrida real.
++Contrato temporal aceita dt finito entre 0 e 0.1; valores grandes são recusados
++explicitamente. Não há avanço silencioso ou alteração do relógio de combate.
++
++Implementação: ampliados testes em DirectionalAnimationTest.java, sem mudança
++funcional desnecessária. Cobrem deltas variáveis, ciclos completos, limites e
++grandes/NaN/infinito, ataque caminhando, dano durante ataque, morte, direção e R.
++Testes anteriores mantêm Freeze/retomada, KO final, sinais reais e fallback atlas.
++Suíte completa e totais: TASK-030-qualidade.json, TASK-030-testes.txt e logs.
++Reprodução: python tools/qualidade.py --offline --task 030
++Diff/checkpoints padronizados; próximo passo TASK-031.
++Limites: sem nova mecânica de corrida ou arte final. Homologação artística e
++interativa humana permanece pendente. Aceite técnico depende dos logs aprovados.
+--- a/server/src/test/java/com/projetok/prototype/DirectionalAnimationTest.java
++++ b/server/src/test/java/com/projetok/prototype/DirectionalAnimationTest.java
+@@ -14,6 +14,32 @@
+ import static org.junit.jupiter.api.Assertions.*;
+ 
+ class DirectionalAnimationTest {
++    @Test void variableDeltasFullCyclesAndLargeValuesRespectExistingContract() {
++        var animation=new DirectionalAnimation();visual(animation,100,100,0);
++        visual(animation,101,100,.02);
++        assertEquals(0,visual(animation,102,100,.03).frame());
++        assertEquals(1,visual(animation,103,100,.07).frame());
++        for(int i=0;i<30;i++) {
++            var value=visual(animation,104+i,100,.1);
++            assertTrue(value.frame()>=0 && value.frame()<4);
++            assertEquals(DirectionalAnimation.State.WALK,value.state());
++        }
++        for(double dt:new double[]{-.1,.10001,1,Double.POSITIVE_INFINITY,Double.NaN})
++            assertThrows(IllegalArgumentException.class,()->visual(animation,150,100,dt));
++    }
++    @Test void attackWhileWalkingHitThenDeathAndDirectionTransition() {
++        var animation=new DirectionalAnimation();visual(animation,100,100,0);
++        var attack=new DirectionalAnimation.Signal(1,DirectionalAnimation.State.ATTACK);
++        var hit=new DirectionalAnimation.Signal(1,DirectionalAnimation.State.HIT);
++        var a=animation.advance(snapshot(101,100,true),List.of(attack),.03).animations().get(0);
++        assertEquals(DirectionalAnimation.State.ATTACK,a.state());assertEquals(DirectionalAnimation.Direction.RIGHT,a.direction());
++        assertEquals(1,animation.advance(snapshot(102,100,true),List.of(),.1).animations().get(0).frame());
++        a=animation.advance(snapshot(102,99,true),List.of(hit,attack),.03).animations().get(0);
++        assertEquals(DirectionalAnimation.State.HIT,a.state());assertEquals(0,a.frame());
++        a=animation.advance(snapshot(102,98,false),List.of(attack,hit),.03).animations().get(0);
++        assertEquals(DirectionalAnimation.State.FAINT,a.state());assertEquals(DirectionalAnimation.Direction.FRONT,a.direction());
++        animation.reset();assertEquals(DirectionalAnimation.State.IDLE,visual(animation,100,100,0).state());
++    }
+     @TempDir Path temp;
+     private final DebugSnapshot base=DebugWorld.demo(new java.util.Random(12)).snapshot();
+ 

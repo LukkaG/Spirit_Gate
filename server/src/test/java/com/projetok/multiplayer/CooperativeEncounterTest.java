@@ -1,0 +1,7 @@
+package com.projetok.multiplayer;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+class CooperativeEncounterTest {
+    static void control(CoopWorld w,int id,long[] seq){var p=AuthoritativeCombatTest.actor(w,id);var boss=AuthoritativeCombatTest.actor(w,CoopWorld.BOSS_ID);double distance=Math.hypot(p.x()-boss.x(),p.y()-boss.y());if(distance<=80){w.accept(id,new Protocol.Intent(++seq[0],Protocol.Action.MOVE,0,0));w.accept(id,new Protocol.Intent(++seq[0],Protocol.Action.ATTACK,0,0));}else{float tx=p.x()<530?550:boss.x(),ty=p.x()<530?(id==1?345:410):boss.y();w.accept(id,new Protocol.Intent(++seq[0],Protocol.Action.MOVE,Math.abs(tx-p.x())<5?0:Math.signum(tx-p.x()),Math.abs(ty-p.y())<5?0:Math.signum(ty-p.y())));}}
+    @Test void sharedEnemyAndParticipationRewardOnlyOnce(){var w=new CoopWorld();w.join(1,"Jogador Um");w.join(2,"Jogador Dois");long[] one={0},two={0};for(int i=0;i<600&&AuthoritativeCombatTest.actor(w,CoopWorld.BOSS_ID).hp()>0;i++){control(w,1,one);control(w,2,two);w.step();}assertEquals(0,AuthoritativeCombatTest.actor(w,CoopWorld.BOSS_ID).hp());assertEquals(20,AuthoritativeCombatTest.actor(w,1).coins());assertEquals(20,AuthoritativeCombatTest.actor(w,2).coins());for(int i=0;i<100;i++){w.accept(1,new Protocol.Intent(++one[0],Protocol.Action.ATTACK,0,0));w.step();}assertEquals(20,AuthoritativeCombatTest.actor(w,1).coins());w.leave(1);assertTrue(w.join(3,"Novo Jogador"));assertEquals(0,AuthoritativeCombatTest.actor(w,3).coins());}
+}

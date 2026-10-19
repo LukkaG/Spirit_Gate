@@ -1,0 +1,175 @@
+--- /dev/null
++++ b/docs/TASK-053-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 262,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-053.md
+@@ -0,0 +1,5 @@
++# TASK-053 - Dialogos com escolhas
++
++Arvores declarativas Properties, referencias validadas, escolhas limitadas, acoes e condicoes enumeradas. Nenhum script arbitrario. Nos de ancia e comerciante, ramificacoes, retorno e fechamento. Condicoes de missao previstas no contrato e conectadas nas tarefas seguintes.
++
++Painel Swing consome snapshot imutavel; botoes enfileiram escolha. Escape fecha. Fora do alcance ou morto nao se pode escolher. Testes de arvore, escolha invalida, cancelamento, no ausente e reinicio. UI nao aplica dominio durante pintura.
+--- /dev/null
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgHud.java
+@@ -0,0 +1,24 @@
++package com.projetok.prototype.rpg;
++import com.projetok.rpg.*;
++import javax.swing.*;
++import java.awt.*;
++/** Widgets consomem snapshots; botoes apenas enfileiram intencoes. */
++final class RpgHud extends JPanel {
++    private final JLabel status=new JLabel();
++    private final JPanel dialogue=new JPanel(new FlowLayout(FlowLayout.LEFT));
++    private DialogueService.Node last;
++    private final RpgRuntime runtime;
++    RpgHud(RpgRuntime runtime) {super(new BorderLayout());this.runtime=runtime;add(status,BorderLayout.NORTH);add(dialogue,BorderLayout.CENTER);}
++    void update(RpgWorld.View view) {
++        status.setText("  "+view.identity().name()+" | Nivel "+view.level()+" | XP "+view.state().xp()+" | Moedas "+view.state().coins()+" | Ataque "+view.attack()+" | Defesa "+view.defense()+" | "+view.state().region()+" | F: conversar  SPACE: atacar  Q: habilidade  1: pocao  F5: salvar");
++        if(!java.util.Objects.equals(last,view.dialogue())) {
++            last=view.dialogue();dialogue.removeAll();
++            if(last!=null) {
++                dialogue.add(new JLabel(last.text()));
++                for(int i=0;i<last.choices().size();i++){int index=i;JButton button=new JButton(last.choices().get(i).text());button.addActionListener(e->runtime.command(w->w.choose(index)));dialogue.add(button);}
++                JButton close=new JButton("Fechar");close.addActionListener(e->runtime.command(RpgWorld::closeDialogue));dialogue.add(close);
++            }
++            revalidate();repaint();
++        }
++    }
++}
+--- a/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
+@@ -19,12 +19,14 @@
+         DebugSnapshot template = DebugWorld.demo().snapshot();
+         DebugPanel panel = new DebugPanel(() -> adapt(runtime.snapshot(), template));
+         JFrame frame = new JFrame("Spirit Gate | RPG offline");
+-        frame.setContentPane(panel); frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
++        JPanel root=new JPanel(new java.awt.BorderLayout());RpgHud hud=new RpgHud(runtime);root.add(panel,java.awt.BorderLayout.CENTER);root.add(hud,java.awt.BorderLayout.SOUTH);
++        frame.setContentPane(root); frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+         frame.pack(); frame.setLocationRelativeTo(null);
+         boolean[] held = new boolean[4];
+         bind(panel,"F",()->runtime.command(w->w.interact()));
+         bind(panel,"SPACE",()->runtime.command(w->w.attack()));
+         bind(panel,"Q",()->runtime.command(w->w.castAbility()));
++        bind(panel,"ESCAPE",()->runtime.command(w->w.closeDialogue()));
+         bind(panel,"1",()->runtime.command(w->w.use("potion")));
+         bind(panel,"F5",()->runtime.save(new com.projetok.rpg.LocalSaveStore(java.nio.file.Path.of("saves","offline.properties"))).whenComplete((unused,error)->SwingUtilities.invokeLater(()->JOptionPane.showMessageDialog(frame,error==null?"Progresso salvo":"Falha ao salvar: "+error.getMessage()))));
+         String[] keys = {"W", "S", "A", "D"};
+@@ -38,7 +40,7 @@
+                 });
+             }
+         }
+-        Timer timer = new Timer(33, e -> panel.repaint());
++        Timer timer = new Timer(33, e -> {panel.repaint();hud.update(runtime.snapshot());});
+         frame.addWindowListener(new WindowAdapter() { public void windowClosed(WindowEvent e) { timer.stop(); runtime.close(); } });
+         frame.addWindowFocusListener(new WindowAdapter() { public void windowLostFocus(WindowEvent e) { java.util.Arrays.fill(held, false); runtime.input(0, 0); } });
+         runtime.start(); timer.start(); frame.setVisible(true);
+--- /dev/null
++++ b/server/src/main/java/com/projetok/rpg/DialogueService.java
+@@ -0,0 +1,30 @@
++package com.projetok.rpg;
++import java.util.*;
++import java.io.*;
++/** Arvore declarativa, somente acoes enumeradas e condicoes conhecidas. */
++public final class DialogueService {
++    public record Choice(String text,String target,String action,String condition) { }
++    public record Node(String id,String text,List<Choice> choices) { public Node { choices=List.copyOf(choices); } }
++    private final Map<String,Node> nodes;
++    public DialogueService() {
++        try(InputStream in=DialogueService.class.getResourceAsStream("/rpg/dialogues.properties")) {
++            if(in==null)throw new IOException("Dialogos ausentes"); Properties p=new Properties();p.load(in);Map<String,Node> map=new TreeMap<>();
++            if(p.size()>64)throw new IllegalArgumentException("Dialogos excessivos");
++            for(String key:p.stringPropertyNames()) {
++                String[] parts=p.getProperty(key).split("\\|",-1);if(parts.length<2||parts.length>6||parts[0].length()>300)throw new IllegalArgumentException("No invalido");
++                List<Choice> choices=new ArrayList<>();
++                for(int i=1;i<parts.length;i++) {
++                    String[] c=parts[i].split(">",-1);if(c.length!=4||c[0].isBlank()||c[0].length()>80||!Set.of("none","accept_first","claim_first","accept_boss","claim_boss","shop").contains(c[2])||!Set.of("always","first_ready","first_done","boss_ready").contains(c[3]))throw new IllegalArgumentException("Escolha invalida");
++                    choices.add(new Choice(c[0],c[1],c[2],c[3]));
++                }
++                map.put(key,new Node(key,parts[0],choices));
++            }
++            for(Node node:map.values())for(Choice c:node.choices())if(!c.target().equals("close")&&!map.containsKey(c.target()))throw new IllegalArgumentException("No de destino ausente");
++            nodes=Map.copyOf(map);
++        }catch(IOException e){throw new IllegalStateException(e);}
++    }
++    public Node node(String id,java.util.function.Predicate<String> condition) {
++        Node n=nodes.get(id);if(n==null)throw new IllegalArgumentException("No ausente: "+id);
++        return new Node(n.id(),n.text(),n.choices().stream().filter(c->condition.test(c.condition())).toList());
++    }
++}
+--- a/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -81,11 +81,21 @@
+     private long attackReadyTick;
+     private final NpcService npcs=new NpcService(content);
+     private String activeNpc="";
++    private final DialogueService dialogues=new DialogueService();
++    private String dialogueNode="";
++    public DialogueService.Node dialogue() { return dialogueNode.isEmpty()?null:dialogues.node(dialogueNode,c->c.equals("always")); }
++    public void closeDialogue(){dialogueNode="";activeNpc="";}
++    public boolean choose(int choice) {
++        var node=dialogue();if(node==null||choice<0||choice>=node.choices().size()||hp==0)return false;
++        if(npcs.nearest(region,body.getPosition()).filter(n->n.id().equals(activeNpc)).isEmpty()){closeDialogue();return false;}
++        var selected=node.choices().get(choice);
++        if(selected.target().equals("close"))closeDialogue();else dialogueNode=selected.target();return true;
++    }
+     public boolean interact() {
+         if(hp==0||transitioning)return false;
+         var npc=npcs.nearest(region,body.getPosition());
+         if(npc.isEmpty()||!lineClear(body.getPosition(),new Position(npc.get().x(),npc.get().y()))){activeNpc="";message="Aproxime-se de um NPC e pressione F";return false;}
+-        activeNpc=npc.get().id();message=npc.get().name()+": seja bem-vindo!";return true;
++        activeNpc=npc.get().id();dialogueNode=activeNpc+".start";message=npc.get().name()+": seja bem-vindo!";return true;
+     }
+     public RpgWorld(CharacterIdentity identity,java.util.random.RandomGenerator random) { this(identity);this.random=java.util.Objects.requireNonNull(random); }
+     public boolean attack() {
+@@ -135,7 +145,7 @@
+         world.enemies.restore(state.flags(),world.space);
+         if(world.hp>world.maxHp()) throw new IllegalArgumentException("HP acima do maximo"); return world;
+     }
+-    public record View(float x, float y, long ticks, CharacterIdentity identity, RpgSave state, int attack, int defense, String message, int maxHp, int level,List<EnemyService.View> enemies,List<NpcService.View> npcs,String activeNpc) { public View { enemies=List.copyOf(enemies);npcs=List.copyOf(npcs); } }
++    public record View(float x, float y, long ticks, CharacterIdentity identity, RpgSave state, int attack, int defense, String message, int maxHp, int level,List<EnemyService.View> enemies,List<NpcService.View> npcs,String activeNpc,DialogueService.Node dialogue) { public View { enemies=List.copyOf(enemies);npcs=List.copyOf(npcs); } }
+     public void tick(float x, float y) {
+         Position direction=movement.direction(x,y);
+         if(hp>0) {
+@@ -147,5 +157,5 @@
+         enemies.respawn(ticks,region);
+         enemies.update(region,ticks,body.getPosition(),hp>0,movement,space,n->receiveDamage(Math.max(1,n-defense())),p->lineClear(body.getPosition(),p));
+     }
+-    public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message,maxHp(),level(),enemies.views(region),npcs.views(region),activeNpc); }
++    public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message,maxHp(),level(),enemies.views(region),npcs.views(region),activeNpc,dialogue()); }
+ }
+--- /dev/null
++++ b/server/src/main/resources/rpg/dialogues.properties
+@@ -0,0 +1,4 @@
++elder.start=Aurora esta cercada por ecos. Preciso da sua ajuda.|Como posso ajudar?>elder.help>none>always|Ate logo>close>none>always
++elder.help=Explore o bosque a leste. Prepare equipamento antes de entrar no santuario.|Entendi>close>none>always|Voltar>elder.start>none>always
++trader.start=Sou Nilo. Negocio pocoes, espadas e mantos.|Ver mercadorias>trader.shop>none>always|Ate logo>close>none>always
++trader.shop=Os precos estarao disponiveis no painel de comercio.|Voltar>trader.start>none>always
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/DialogueTest.java
+@@ -0,0 +1,6 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class DialogueTest {
++    @Test void branchesCancelRejectInvalidAndRestart(){var w=new RpgWorld();assertFalse(w.choose(0));w.interact();assertFalse(w.choose(99));assertTrue(w.choose(0));assertEquals("elder.help",w.snapshot().dialogue().id());assertTrue(w.choose(0));assertNull(w.snapshot().dialogue());w.interact();assertEquals("elder.start",w.snapshot().dialogue().id());w.closeDialogue();assertNull(w.snapshot().dialogue());assertThrows(IllegalArgumentException.class,()->new DialogueService().node("missing",c->true));}
++}

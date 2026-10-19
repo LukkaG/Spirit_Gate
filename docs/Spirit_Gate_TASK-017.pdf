@@ -1,0 +1,63 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1860 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-017 - Auditoria reproduzível da base) Tj T*
+() Tj T*
+(18/10/2026. APROVADA nos controles automatizados Windows locais.) Tj T*
+() Tj T*
+(Documentos anexos tratados como especificação das TASK-017 a 021 dentro do pedido do) Tj T*
+(usuário. Pacote original extraído em docs/pacote-TASK-017_021. Sem Git; base textual) Tj T*
+(exata em .task-checkpoints/TASK-017-before.json.) Tj T*
+() Tj T*
+(ZIP original: SpiritGate-0.16.0-rc1-20261018T230252Z-a6150a66-portable.zip, 29.386.343) Tj T*
+(bytes. SHA-256 confirmado:) Tj T*
+(9bc425107d23ccfd9a4d36279be4da23c7f016a74c92fe03a9bb1f0d36eb79c1.) Tj T*
+() Tj T*
+(Reexecução offline: 216 JUnit, zero falhas, erros ou ignorados; 12 Python verdes.) Tj T*
+(Auditor oficial repetido DEPOIS do clean build: PASS, incluindo igualdade de todas as) Tj T*
+(classes, runtime Java 17, PE x64, whitelist, inventário e manifest. ZIP original não foi) Tj T*
+(reescrito. Controle negativo em cópia descartável: adulteração do JAR rejeitada. Testes) Tj T*
+(Python cobrem traversal, duplicatas, links e nomes Windows inseguros.) Tj T*
+() Tj T*
+(Smokes reais Windows padrão e --map aprovados, com JVM integrada e PATH controlado:) Tj T*
+(TASK-017-smoke.json e TASK-017-map-smoke.json. Homologação humana e outro computador NÃO) Tj T*
+(EXECUTADOS. Linux NÃO EXECUTADO: sem ambiente Linux comprovado nesta rodada.) Tj T*
+() Tj T*
+(Ocorrência operacional: argumento Maven sem aspas foi interpretado incorretamente pelo) Tj T*
+(PowerShell; reexecutado com '-Dmaven.repo.local=.maven-repository', sem alterar) Tj T*
+(configuração global. Resultado final registrado em TASK-017-java.log. Nenhuma correção) Tj T*
+(de gameplay necessária. Arte e fontes preservadas. Dependências legadas do pom não) Tj T*
+(entram no JAR portátil, conforme auditoria.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-017 - página 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2256
+%%EOF

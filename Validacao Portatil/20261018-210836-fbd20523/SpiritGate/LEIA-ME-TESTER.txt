@@ -1,0 +1,20 @@
+SPIRIT GATE - ARENA LOCAL PORTATIL
+Versao: 0.16.0-rc1 | Windows x64
+CANDIDATO A HOMOLOGACAO; NAO RELEASE PUBLICA
+
+1. Extraia o ZIP inteiro para uma pasta gravavel.
+2. Abra SpiritGate.exe dentro da pasta SpiritGate. Nao mova somente o EXE.
+3. Nao e necessario instalar Java, Maven, PostgreSQL ou conectar a um servidor.
+
+Controles: WASD mover; Espaco atacar; E esforco (20 vigor);
+Q Criostase (55 vigor); Shift Passo Relampago (35 vigor), mirando com mouse;
+H mostrar hitboxes; R reiniciar. Feche a janela para sair.
+
+Mantenha app/ e runtime/ junto ao EXE. O runtime Java 17 esta integrado.
+O executavel nao e assinado; avisos do Windows podem ocorrer. Nao desative
+protecoes. Confira a origem e o SHA-256 fornecido com a distribuicao.
+
+Ao relatar um problema, informe versao, Windows, passos para reproduzir,
+resultado esperado/obtido e captura se possivel. Nao envie credenciais.
+Este pacote e candidato a testes locais, sem multiplayer e sem instalador.
+Teste em outro Windows sem Java/Maven: PENDENTE DE HOMOLOGACAO HUMANA.

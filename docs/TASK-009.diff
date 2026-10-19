@@ -1,0 +1,798 @@
+--- a/docs/HISTORICO-TECNICO.md
++++ b/docs/HISTORICO-TECNICO.md
+@@ -1,4 +1,17 @@
+ # Histórico técnico
++
++## 18/10/2026 - TASK-009: feedback contextual de habilidades
++
++HUD recebe views imutáveis de estado/recarga/vigor e feedback breve de cast.
++Simulação calcula todos os valores; painel apenas desenha. Step.blocked relata
++redução real antes da recuperação, sem modificar movimento nem confundir arbusto
++com parede. Campos e mensagens históricos do replay preservados.
++
++`mvn clean test`: base 177, final 189 testes, zero falhas/erros/ignorados.
++Doze testes novos de mapeamento, integração e renderização; captura de quatro
++estados inspecionada. Homologação visual humana permanece pendente.
++
++Entrega: [TASK-009](TASK-009.md), PDF, resultados, logs, diff e captura.
+ 
+ ## 18/10/2026 - TASK-008: cenário demonstrativo de colisão leve
+ 
+--- a/docs/RELATORIO-FINAL-RODADA.md
++++ b/docs/RELATORIO-FINAL-RODADA.md
+@@ -21,3 +21,13 @@
+ Artefatos: [relatório](TASK-008.md), [PDF](Spirit_Gate_TASK-008.pdf), [testes](TASK-008-testes.txt), [diff](TASK-008.diff), [captura](TASK-008-demo.png) e logs inicial/final.
+ 
+ Pendências manuais: roteiro de três minutos para WASD, Shift, parede, hitboxes e R. A captura é renderizada; homologação humana ainda pendente.
++
++## TASK-009 - HUD contextual
++
++Status: IMPLEMENTADA. AUTOMATIZADO APROVADO. Testes: inicial 177; final 189, zero falhas/erros/ignorados. Doze casos novos e captura renderizada em quatro estados.
++
++Mudanças: views imutáveis, mapper executado na simulação, disponibilidade/vigor/recarga/atividade/espera e motivos temporários reais de cast. Bloqueio deriva do deslocamento efetivo antes da recuperação, sem inferir parede pelo cursor. Nenhuma mudança nas regras ou na fila; lastEvent histórico preservado.
++
++Artefatos: [relatório](TASK-009.md), [PDF](Spirit_Gate_TASK-009.pdf), [testes](TASK-009-testes.txt), [diff](TASK-009.diff), [captura](TASK-009-hud.png) e logs inicial/final.
++
++Pendências manuais: legibilidade e transições no HUD jogando. Espera/liberação automatizadas no mapper e domínio; R determinístico será acrescentado na etapa seguinte.
+--- /dev/null
++++ b/docs/TASK-009-testes.txt
+@@ -0,0 +1,31 @@
++TASK-009 - mvn clean test - BUILD SUCCESS
++{'tests': 189, 'failures': 0, 'errors': 0, 'skipped': 0}
++Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.
++
++com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugLauncherEntrypointTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudSkillFeedbackTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SoftObstacleDemoTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
+--- /dev/null
++++ b/docs/TASK-009.md
+@@ -0,0 +1,27 @@
++# TASK-009 - Feedback contextual de habilidades
++
++18/10/2026. Base: TASK-008, 177 testes aprovados em mvn clean test antes das alterações. Escopo restrito à comunicação do estado real das habilidades; regras de dano, custo, duração, regeneração, cooldown, movimento e fila preservadas.
++
++## Divisão de responsabilidades
++
++DebugSnapshot acrescenta views imutáveis para Criostase e Passo Relâmpago. SkillHudMapper produz dados renderizáveis na simulação, incluindo tecla, nome, custo, vigor, cooldown, estado e feedback. Os estados distinguem READY, COOLDOWN, INSUFFICIENT_STAMINA, DEAD, ACTIVE e AWAITING_LANDING. A prioridade é morto, espera de saída, dash ativo, recarga, vigor insuficiente e pronto. Feedback transitório da última tentativa fica separado do estado atual.
++
++DebugWorld usa os resultados reais de cast para publicar aceitações e recusas. O feedback dura 1,2 s no relógio da simulação, e não usa timers de Swing. A expiração acontece no tick; snapshots anteriores continuam imutáveis. lastEvent foi preservado para a regressão histórica. Manter a tecla não cria novas notificações: a fila e os bindings continuam sendo os já existentes.
++
++O movimento do dash publica uma flag informativa Step.blocked, calculada antes da eventual recuperação da saída. Ela compara deslocamento pedido e efetivamente aplicado pela física, com tolerância numérica, sem alterar posições ou relógios. Na arena, a política seletiva ignora atores e leves; por isso o feedback se refere a sólido ou borda. O texto não afirma que o alvo do mouse está atrás de uma parede nem confunde recuo por arbusto com bloqueio por parede.
++
++Os construtores anteriores de Step continuam disponíveis. Nenhum algoritmo de colisão foi alterado. O HUD só desenha as strings, estados, valores e cores publicados; não consulta componentes, sorteia, consome vigor ou modifica o mundo. As linhas anteriores de Q/Shift foram substituídas por apresentação contextual, preservando controles e espaço visual.
++
++## Validação e limites
++
++Testes devem comprovar mapeamento, lançamento aceito e recusado, cooldown, vigor insuficiente, morte, espera/liberação, reinício, feedback transitório, colisão real e renderização pura. Também é verificado que recuperar um destino dentro de arbusto não produz um aviso falso de parede. Não se usam screenshots pixel a pixel como oráculo de gameplay.
++
++AUTOMATIZADO APROVADO: mvn clean test final, 189 testes, zero falhas/erros/ignorados. HudSkillFeedbackTest acrescenta 12 casos; todos os 177 anteriores continuam verdes. Logs TASK-009-inicial.log e TASK-009-final.log; resumo TASK-009-testes.txt. Captura TASK-009-hud.png gerada e inspecionada em quatro quadros: pronto, sem vigor, ativo e bloqueio real. Renderizar não alterou o mundo.
++
++Espera/liberação foram exercitadas no mapper com estados controlados, além dos testes anteriores de recuperação pendente do domínio. O teste novo de reinício cria outro mundo pela fábrica; a integração determinística do comando R será coberta na TASK-010. Feedback expira após no máximo um tick adicional de arredondamento de float. Nenhum teste depende de tempo do sistema ou JFrame.
++
++Arquivos: novo SkillHudMapper e HudSkillFeedbackTest; alterações em DebugWorld, DebugSnapshot, DebugPanel e LightningStepService somente para publicar informação de contato. Relatório/PDF, testes/logs, captura e diff. Os construtores anteriores de Step foram preservados; fórmulas e clocks de gameplay não foram alterados.
++
++A label de colisão deliberadamente não diferencia parede de borda quando a evidência disponível só comprova um bloqueio sólido. A espera de saída continua obedecendo à regra anterior: se toda a trajetória estiver ocupada, o estado pode persistir até haver mudança no espaço ou reinício. O HUD não tenta resolver essa situação.
++
++HOMOLOGACAO HUMANA PENDENTE: conferir legibilidade das linhas Q/Shift, custo e vigor, transição de pronto para recarga, recusa por recurso, aviso breve de alvo inválido, indicador durante dash e bloqueio real em parede/borda. Usar R e verificar limpeza. Sem sons, assets, novas teclas ou novas habilidades.
+--- a/server/src/main/java/com/projetok/domain/skill/LightningStepService.java
++++ b/server/src/main/java/com/projetok/domain/skill/LightningStepService.java
+@@ -42,12 +42,17 @@
+     public enum Status { STARTED, INVALID, DEAD, ZERO_DIRECTION, COOLDOWN, STAMINA, LANDING_PENDING }
+ 
+     /** Trajeto imutável do tick, incluindo curvas por eixo e eventual recuo de saída. */
+-    public record Step(Position from, Position to, List<Position> path) {
++    public record Step(Position from, Position to, List<Position> path, boolean blocked) {
+         /** Garante que as duas extremidades estejam disponíveis ao consumidor. */
+         public Step {
+             Objects.requireNonNull(from, "from");
+             Objects.requireNonNull(to, "to");
+             path = List.copyOf(path);
++        }
++
++        /** Preserva consumidores anteriores que não publicavam informação de contato. */
++        public Step(Position from, Position to, List<Position> path) {
++            this(from, to, path, false);
+         }
+ 
+         /** Preserva o construtor anterior, explicitando o vértice intermediário X/Y. */
+@@ -145,6 +150,7 @@
+         Position from = player.getPosition();
+         List<Position> tickPath = new ArrayList<>();
+         tickPath.add(from);
++        boolean blocked = false;
+         cooldown = Math.max(0, cooldown - dt);
+         if (cooldown < CLOCK_TOLERANCE) cooldown = 0;
+         if (player.isDead()) {
+@@ -157,6 +163,9 @@
+             movement.moveContinuous(player, direction.x() * distance, direction.y() * distance,
+                     radius, space, policy);
+             Position to = player.getPosition();
++            // Compara o avanço real antes do recuo de saída; o cursor não comprova contato.
++            blocked = shortened(from.x(), to.x(), direction.x() * distance)
++                    || shortened(from.y(), to.y(), direction.y() * distance);
+             appendAxisPath(tickPath, from, to);
+             appendAxisPath(travelled, from, to);
+             remaining = Math.max(0, remaining - stepTime);
+@@ -171,7 +180,14 @@
+                 travelled.clear();
+             }
+         }
+-        return new Step(from, player.getPosition(), tickPath);
++        return new Step(from, player.getPosition(), tickPath, blocked);
++    }
++
++    /** Desconsidera somente o arredondamento natural das posições em ponto flutuante. */
++    private static boolean shortened(float from, float to, float requested) {
++        float tolerance = Math.max(0.0001f,
++                Math.max(Math.ulp(from), Math.ulp(to)) * 4f);
++        return Math.abs(requested) - Math.abs(to - from) > tolerance;
+     }
+ 
+     /** Conserva a curva efetiva da varredura X/Y, sem substituir por uma corda diagonal. */
+--- a/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ b/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -399,7 +399,7 @@
+         g.drawString("GOLPE DESARMADO", 25, DebugWorld.HEIGHT + 29);
+         g.setColor(TEXT);
+         g.setFont(new Font("SansSerif", Font.PLAIN, 13));
+-        g.drawString("Alcance 74 px  |  Cone 90 graus  |  Dano: dominio CombatService", 25,
++        g.drawString("Alcance 74 px  |  Cone 90 graus  |  Sem custo de vigor", 25,
+                 DebugWorld.HEIGHT + 52);
+         g.setFont(new Font("SansSerif", Font.PLAIN, 11));
+         g.setColor(new Color(205, 211, 171));
+@@ -408,18 +408,29 @@
+         g.setColor(s.cooldown() > 0 ? new Color(245, 171, 108) : new Color(80, 219, 168));
+         g.setFont(new Font("SansSerif", Font.BOLD, 13));
+         g.drawString(s.cooldown() > 0 ? "RECARGA" : "PRONTO", 770, DebugWorld.HEIGHT + 39);
+-        g.setColor(new Color(175, 235, 255));
+-        g.setFont(new Font("SansSerif", Font.BOLD, 12));
+-        g.drawString("Q  CRIOSTASE | Mouse | Alcance 240 | Raio 85 | 55 vigor", 25, DebugWorld.HEIGHT + 83);
+-        g.drawString(s.cryostasisCooldown() > 0
+-                ? String.format(java.util.Locale.ROOT, "RECARGA %.1f s", s.cryostasisCooldown()) : "CRIOSTASE PRONTA",
+-                650, DebugWorld.HEIGHT + 83);
+-        g.setColor(new Color(255, 235, 110));
+-        g.drawString("SHIFT  PASSO RELAMPAGO | Mouse | 150 px | 35 vigor | 4 s", 25, DebugWorld.HEIGHT + 102);
+-        g.drawString(s.lightningStepAwaitingLanding() ? "AGUARDANDO SAIDA LIVRE" : s.lightningStepActive()
+-                ? String.format(java.util.Locale.ROOT, "ATIVO | RECARGA %.1f s", s.lightningStepCooldown()) : s.lightningStepCooldown() > 0
+-                ? String.format(java.util.Locale.ROOT, "RECARGA %.1f s", s.lightningStepCooldown()) : "PASSO PRONTO",
+-                650, DebugWorld.HEIGHT + 102);
++        drawSkillHud(g, s.cryostasisHud(), DebugWorld.HEIGHT + 83, new Color(175, 235, 255));
++        drawSkillHud(g, s.lightningStepHud(), DebugWorld.HEIGHT + 102, new Color(255, 235, 110));
++    }
++
++    /** Desenha somente o estado e o retorno já publicados; não decide elegibilidade. */
++    private static void drawSkillHud(Graphics2D g, DebugSnapshot.SkillHudView hud, int y, Color accent) {
++        g.setFont(new Font("SansSerif", Font.BOLD, 11));
++        g.setColor(accent);
++        String label = hud.key() + "  " + hud.label() + " | Mouse | " + Math.round(hud.cost()) + " vigor";
++        g.drawString(label, 25, y);
++        int stateX = 25 + g.getFontMetrics().stringWidth(label) + 16;
++        g.setColor(switch (hud.state()) {
++            case READY -> new Color(80, 219, 168);
++            case COOLDOWN -> new Color(245, 171, 108);
++            case INSUFFICIENT_STAMINA, DEAD -> new Color(250, 121, 121);
++            case ACTIVE -> new Color(255, 235, 110);
++            case AWAITING_LANDING -> new Color(255, 187, 85);
++        });
++        g.drawString(hud.stateText(), stateX, y);
++        int feedbackX = stateX + g.getFontMetrics().stringWidth(hud.stateText()) + 16;
++        g.setFont(new Font("SansSerif", Font.PLAIN, 11));
++        g.setColor(new Color(205, 218, 227));
++        g.drawString(hud.feedback().message(), feedbackX, y);
+     }
+ 
+     /** Pinta uma barra proporcional, limitando visualmente os valores entre 0 e 1. */
+--- a/server/src/main/java/com/projetok/prototype/DebugSnapshot.java
++++ b/server/src/main/java/com/projetok/prototype/DebugSnapshot.java
+@@ -10,12 +10,30 @@
+         float stamina, float maxStamina, float cryostasisCooldown, List<IceZoneView> iceZones,
+         List<StatusView> statuses, boolean lightningStepActive, float lightningStepRemaining,
+         float lightningStepCooldown, List<LightningTrailView> lightningTrails,
+-        boolean lightningStepAwaitingLanding, List<SoftObstacleView> softObstacles) {
++        boolean lightningStepAwaitingLanding, List<SoftObstacleView> softObstacles,
++        SkillHudView cryostasisHud, SkillHudView lightningStepHud) {
+ 
+     /** Copia os novos metadados visuais; a interface nunca recebe a lista mutável do mundo. */
+     public DebugSnapshot {
+         softObstacles = List.copyOf(softObstacles);
+     }
++
++    /** Disponibilidade calculada pela simulação, sem decisões de gameplay no painel. */
++    public enum SkillState { READY, COOLDOWN, INSUFFICIENT_STAMINA, DEAD, ACTIVE, AWAITING_LANDING }
++
++    /** Origem explícita do último retorno breve de uma habilidade. */
++    public enum SkillFeedbackKind {
++        NONE, ACCEPTED, INVALID_TARGET, DEAD, ZERO_DIRECTION, COOLDOWN,
++        INSUFFICIENT_STAMINA, AWAITING_LANDING, SOLID_OR_BOUNDARY
++    }
++
++    /** Mensagem e duração copiadas da simulação; a interface não avança seu relógio. */
++    public record SkillFeedbackView(SkillFeedbackKind kind, String message, float remaining) { }
++
++    /** Linha pronta para renderização, com números e estado sem referências mutáveis. */
++    public record SkillHudView(String skillId, String key, String label, float cost, float cooldown,
++                               float stamina, SkillState state, String stateText,
++                               SkillFeedbackView feedback) { }
+ 
+     /** Aparências do demo; ambas usam retângulos explícitos de colisão leve. */
+     public enum SoftObstacleKind { BUSH, POST }
+--- a/server/src/main/java/com/projetok/prototype/DebugWorld.java
++++ b/server/src/main/java/com/projetok/prototype/DebugWorld.java
+@@ -93,6 +93,9 @@
+     private final List<DebugSnapshot.EffectView> effects = new ArrayList<>();
+     private final List<DebugSnapshot.LightningTrailView> lightningTrails = new ArrayList<>();
+     private static final float TRAIL_DURATION = 0.18f;
++    private static final float SKILL_FEEDBACK_DURATION = 1.2f;
++    private DebugSnapshot.SkillFeedbackView cryostasisFeedback = SkillHudMapper.none();
++    private DebugSnapshot.SkillFeedbackView lightningStepFeedback = SkillHudMapper.none();
+     private final float[] enemyCooldowns = new float[3];
+     private float facingX = 1f;
+     private float facingY = 0f;
+@@ -185,6 +188,9 @@
+     void tickQueued(DebugInput input, float dt, int effortPresses, List<SkillCastCommand> casts) {
+         if (!Float.isFinite(dt) || dt <= 0f || dt > 0.1f) throw new IllegalArgumentException("dt fora do intervalo (0, 0.1]");
+         ticks++;
++        // Retornos do HUD têm relógio próprio e não substituem o log histórico da arena.
++        cryostasisFeedback = SkillHudMapper.elapse(cryostasisFeedback, dt);
++        lightningStepFeedback = SkillHudMapper.elapse(lightningStepFeedback, dt);
+         // Efeitos antigos avançam antes dos pulsos: um novo sucesso conserva 1 s inteiro.
+         for (Mob mob : mobs) statusEffects.update(mob, dt);
+         if (attack != null) {
+@@ -214,6 +220,8 @@
+         boolean dashingAtStart = lightningStep.active() || lightningStep.awaitingLanding();
+         var dashStep = lightningStep.update(player, dt, PLAYER_RADIUS, collisionSpace);
+         if (dashStep.moved()) addLightningTrail(dashStep);
++        // A política seletiva ignora atores e leves: redução real só indica sólido ou borda.
++        if (dashStep.blocked()) lightningStepFeedback = SkillHudMapper.blockedFeedback(SKILL_FEEDBACK_DURATION);
+         if (player.isDead()) return;
+         staminaService.regenerate(player, dt);
+         int activations = effortPresses >= 0 ? effortPresses : (input.effort() && !effortHeld ? 1 : 0);
+@@ -225,6 +233,7 @@
+             // Um único laço preserva a ordem de Q/Shift e o saldo compartilhado de vigor.
+             if (command != null && LightningStepService.ID.equals(command.skillId())) {
+                 var status = lightningStep.cast(player, command, PLAYER_RADIUS, collisionSpace);
++                lightningStepFeedback = SkillHudMapper.feedback(status, SKILL_FEEDBACK_DURATION);
+                 lastEvent = switch (status) {
+                     case STARTED -> "Passo Relampago iniciado: 35 de vigor.";
+                     case INVALID -> "Passo Relampago: alvo invalido.";
+@@ -237,6 +246,7 @@
+                 continue;
+             }
+             var result = cryostasis.cast(player, command, WIDTH, HEIGHT, cryostasisTargets());
++            cryostasisFeedback = SkillHudMapper.feedback(result.status(), SKILL_FEEDBACK_DURATION);
+             lastEvent = switch (result.status()) {
+                 case CAST -> "Criostase lancada: zona de gelo ativa.";
+                 case INVALID -> "Criostase: alvo ou habilidade invalida.";
+@@ -382,6 +392,7 @@
+         actors.add(view(player, PLAYER_RADIUS, true));
+         for (Mob mob : mobs) actors.add(view(mob, MOB_RADIUS, false));
+         HealthComponent hp = player.require(HealthComponent.class);
++        float vigor = player.require(StaminaComponent.class).current();
+         return new DebugSnapshot(List.copyOf(actors), ORIGINAL_OBSTACLES.stream().map(o ->
+                         new DebugSnapshot.Obstacle(o.x(), o.y(), o.width(), o.height())).toList(), List.copyOf(effects),
+                 hp.current(), hp.max(), defeated, player.isDead(), ticks,
+@@ -398,7 +409,10 @@
+                     var body = obstacle.body();
+                     return new DebugSnapshot.SoftObstacleView(body.x(), body.y(), body.width(), body.height(),
+                             obstacle.kind());
+-                }).toList());
++                }).toList(),
++                SkillHudMapper.cryostasis(player.isDead(), vigor, cryostasis.cooldown(), cryostasisFeedback),
++                SkillHudMapper.lightningStep(player.isDead(), vigor, lightningStep.cooldown(),
++                        lightningStep.active(), lightningStep.awaitingLanding(), lightningStepFeedback));
+     }
+ 
+     /** Extrai apenas os campos visuais de uma entidade do domínio. */
+--- /dev/null
++++ b/server/src/main/java/com/projetok/prototype/SkillHudMapper.java
+@@ -0,0 +1,113 @@
++package com.projetok.prototype;
++
++import com.projetok.domain.skill.CryostasisService;
++import com.projetok.domain.skill.LightningStepService;
++import com.projetok.prototype.DebugSnapshot.SkillFeedbackKind;
++import com.projetok.prototype.DebugSnapshot.SkillFeedbackView;
++import com.projetok.prototype.DebugSnapshot.SkillHudView;
++import com.projetok.prototype.DebugSnapshot.SkillState;
++
++import java.util.Locale;
++
++/**
++ * Converte valores autoritativos em descrições imutáveis para o HUD.
++ * Não consulta componentes mutáveis, não consome recursos e não executa habilidades.
++ */
++public final class SkillHudMapper {
++    private static final SkillFeedbackView NONE = new SkillFeedbackView(SkillFeedbackKind.NONE, "", 0f);
++
++    private SkillHudMapper() { }
++
++    // --- Disponibilidade atual, independente do retorno temporário da última tentativa ---
++
++    /** Descreve a disponibilidade atual da Criostase sem alterar o serviço. */
++    public static SkillHudView cryostasis(boolean dead, float stamina, float cooldown,
++                                          SkillFeedbackView feedback) {
++        return map(CryostasisService.ID, "Q", "CRIOSTASE", CryostasisService.COST,
++                dead, stamina, cooldown, false, false, feedback);
++    }
++
++    /** Distingue deslocamento ativo, espera por saída livre, recarga e falta de vigor. */
++    public static SkillHudView lightningStep(boolean dead, float stamina, float cooldown,
++                                             boolean active, boolean awaitingLanding,
++                                             SkillFeedbackView feedback) {
++        return map(LightningStepService.ID, "SHIFT", "PASSO RELAMPAGO", LightningStepService.COST,
++                dead, stamina, cooldown, active, awaitingLanding, feedback);
++    }
++
++    /** Aplica uma ordem visual explícita sem interferir na elegibilidade do domínio. */
++    private static SkillHudView map(String id, String key, String label, float cost, boolean dead,
++                                    float stamina, float cooldown, boolean active,
++                                    boolean awaitingLanding, SkillFeedbackView feedback) {
++        SkillState state = dead ? SkillState.DEAD : awaitingLanding ? SkillState.AWAITING_LANDING
++                : active ? SkillState.ACTIVE : cooldown > 0f ? SkillState.COOLDOWN
++                : stamina < cost ? SkillState.INSUFFICIENT_STAMINA : SkillState.READY;
++        String stateText = switch (state) {
++            case DEAD -> "JOGADOR DERROTADO";
++            case AWAITING_LANDING -> "AGUARDANDO SAIDA LIVRE";
++            case ACTIVE -> String.format(Locale.ROOT, "EM MOVIMENTO | RECARGA %.1f s", cooldown);
++            case COOLDOWN -> String.format(Locale.ROOT, "RECARGA %.1f s", cooldown);
++            case INSUFFICIENT_STAMINA -> String.format(Locale.ROOT,
++                    "VIGOR INSUFICIENTE (%.0f/%.0f)", stamina, cost);
++            case READY -> "DISPONIVEL";
++        };
++        return new SkillHudView(id, key, label, cost, cooldown, stamina, state, stateText, feedback);
++    }
++
++    // --- Retornos breves conservam o motivo real retornado pelo domínio ---
++
++    /** Retorna um marcador compartilhado e imutável de ausência de mensagem. */
++    public static SkillFeedbackView none() { return NONE; }
++
++    /** Converte exatamente o resultado do lançamento da Criostase. */
++    public static SkillFeedbackView feedback(CryostasisService.Status status, float duration) {
++        return message(switch (status) {
++            case CAST -> SkillFeedbackKind.ACCEPTED;
++            case INVALID -> SkillFeedbackKind.INVALID_TARGET;
++            case DEAD -> SkillFeedbackKind.DEAD;
++            case COOLDOWN -> SkillFeedbackKind.COOLDOWN;
++            case STAMINA -> SkillFeedbackKind.INSUFFICIENT_STAMINA;
++        }, duration);
++    }
++
++    /** Converte exatamente o resultado da tentativa do Passo Relâmpago. */
++    public static SkillFeedbackView feedback(LightningStepService.Status status, float duration) {
++        return message(switch (status) {
++            case STARTED -> SkillFeedbackKind.ACCEPTED;
++            case INVALID -> SkillFeedbackKind.INVALID_TARGET;
++            case DEAD -> SkillFeedbackKind.DEAD;
++            case ZERO_DIRECTION -> SkillFeedbackKind.ZERO_DIRECTION;
++            case COOLDOWN -> SkillFeedbackKind.COOLDOWN;
++            case STAMINA -> SkillFeedbackKind.INSUFFICIENT_STAMINA;
++            case LANDING_PENDING -> SkillFeedbackKind.AWAITING_LANDING;
++        }, duration);
++    }
++
++    /** Publica contato confirmado pela varredura seletiva, sem supor a geometria pelo alvo. */
++    public static SkillFeedbackView blockedFeedback(float duration) {
++        return message(SkillFeedbackKind.SOLID_OR_BOUNDARY, duration);
++    }
++
++    /** Avança somente uma cópia do relógio visual; o mundo chama uma vez por tick. */
++    public static SkillFeedbackView elapse(SkillFeedbackView feedback, float dt) {
++        float remaining = Math.max(0f, feedback.remaining() - dt);
++        return remaining > 0f
++                ? new SkillFeedbackView(feedback.kind(), feedback.message(), remaining) : NONE;
++    }
++
++    /** Associa cada motivo a uma mensagem curta, calculada antes da renderização. */
++    private static SkillFeedbackView message(SkillFeedbackKind kind, float duration) {
++        String message = switch (kind) {
++            case NONE -> "";
++            case ACCEPTED -> "ATIVADA";
++            case INVALID_TARGET -> "RECUSADA: ALVO INVALIDO";
++            case DEAD -> "RECUSADA: JOGADOR DERROTADO";
++            case ZERO_DIRECTION -> "RECUSADA: DIRECAO ZERO";
++            case COOLDOWN -> "RECUSADA: EM RECARGA";
++            case INSUFFICIENT_STAMINA -> "RECUSADA: VIGOR INSUFICIENTE";
++            case AWAITING_LANDING -> "RECUSADA: AGUARDANDO SAIDA";
++            case SOLID_OR_BOUNDARY -> "BLOQUEIO: SOLIDO / BORDA";
++        };
++        return new SkillFeedbackView(kind, message, duration);
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/HudSkillFeedbackTest.java
+@@ -0,0 +1,370 @@
++package com.projetok.prototype;
++
++import com.projetok.domain.entity.Player;
++import com.projetok.domain.entity.Position;
++import com.projetok.domain.factory.PlayerArchetype;
++import com.projetok.domain.factory.PlayerFactory;
++import com.projetok.domain.movement.CollisionCategory;
++import com.projetok.domain.movement.CollisionPolicy;
++import com.projetok.domain.movement.CollisionService;
++import com.projetok.domain.movement.MovementService;
++import com.projetok.domain.network.PlayerConnection;
++import com.projetok.domain.progression.VitalityService;
++import com.projetok.domain.race.RaceRegistry;
++import com.projetok.domain.resource.StaminaService;
++import com.projetok.domain.skill.CryostasisService;
++import com.projetok.domain.skill.LightningStepService;
++import com.projetok.domain.skill.SkillCastCommand;
++import com.projetok.prototype.DebugSnapshot.SkillFeedbackKind;
++import com.projetok.prototype.DebugSnapshot.SkillState;
++import org.junit.jupiter.api.Test;
++
++import javax.imageio.ImageIO;
++import java.awt.Color;
++import java.awt.Font;
++import java.awt.Graphics2D;
++import java.awt.image.BufferedImage;
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.util.List;
++import java.util.Random;
++
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Exercita a tradução de regras em dados visuais sem relógio real, threads ou JFrame. */
++class HudSkillFeedbackTest {
++    private static final float DT = 1f / 30f;
++    private static final float RADIUS = DebugWorld.PLAYER_RADIUS;
++    private static final SkillCastCommand CRYO = new SkillCastCommand(CryostasisService.ID, 500, 340);
++    private static final SkillCastCommand DASH = new SkillCastCommand(LightningStepService.ID, 500, 340);
++    private static final DebugInput RIGHT = new DebugInput(false, false, false, true, false);
++    private static final DebugInput LEFT = new DebugInput(false, false, true, false, false);
++    private static final DebugInput DOWN = new DebugInput(false, true, false, false, false);
++
++    /** Disponibilidade usa custo real e dá prioridade a morte, espera, movimento e cooldown. */
++    @Test
++    void mapeiaEstadosCustosEVigorSemConsultarOuModificarEntidades() {
++        var none = SkillHudMapper.none();
++        var cryo = SkillHudMapper.cryostasis(false, 100, 0, none);
++        var dash = SkillHudMapper.lightningStep(false, 100, 0, false, false, none);
++        assertEquals(CryostasisService.COST, cryo.cost());
++        assertEquals(LightningStepService.COST, dash.cost());
++        assertEquals(CryostasisService.ID, cryo.skillId());
++        assertEquals(LightningStepService.ID, dash.skillId());
++        assertEquals(SkillState.READY, cryo.state());
++        assertEquals(SkillState.READY, dash.state());
++        assertFalse(cryo.stateText().isBlank());
++        assertFalse(dash.stateText().isBlank());
++        assertEquals(SkillState.READY, SkillHudMapper.cryostasis(false, 55, 0, none).state());
++        assertEquals(SkillState.READY, SkillHudMapper.lightningStep(false, 35, 0, false, false, none).state());
++        assertEquals(SkillState.INSUFFICIENT_STAMINA, SkillHudMapper.cryostasis(false, 54.99f, 0, none).state());
++        assertEquals(SkillState.INSUFFICIENT_STAMINA,
++                SkillHudMapper.lightningStep(false, 34.99f, 0, false, false, none).state());
++        assertEquals(SkillState.COOLDOWN, SkillHudMapper.cryostasis(false, 0, 3, none).state());
++        assertEquals(SkillState.COOLDOWN, SkillHudMapper.lightningStep(false, 0, 4, false, false, none).state());
++        assertEquals(SkillState.ACTIVE, SkillHudMapper.lightningStep(false, 0, 4, true, false, none).state());
++        assertEquals(SkillState.AWAITING_LANDING,
++                SkillHudMapper.lightningStep(false, 0, 3, true, true, none).state());
++        assertEquals(SkillState.DEAD, SkillHudMapper.cryostasis(true, 100, 0, none).state());
++        assertEquals(SkillState.DEAD, SkillHudMapper.lightningStep(true, 100, 0, true, true, none).state());
++    }
++
++    /** Cada resposta real do domínio tem um feedback inequívoco, inclusive direção zero. */
++    @Test
++    void traduzTodosOsResultadosDeCastSemInventarMotivos() {
++        var cryoKinds = List.of(SkillFeedbackKind.ACCEPTED, SkillFeedbackKind.INVALID_TARGET,
++                SkillFeedbackKind.DEAD, SkillFeedbackKind.COOLDOWN, SkillFeedbackKind.INSUFFICIENT_STAMINA);
++        var cryoStatuses = List.of(CryostasisService.Status.CAST, CryostasisService.Status.INVALID,
++                CryostasisService.Status.DEAD, CryostasisService.Status.COOLDOWN, CryostasisService.Status.STAMINA);
++        for (int i = 0; i < cryoStatuses.size(); i++) {
++            var feedback = SkillHudMapper.feedback(cryoStatuses.get(i), 1.2f);
++            assertEquals(cryoKinds.get(i), feedback.kind());
++            assertFalse(feedback.message().isBlank());
++            assertEquals(1.2f, feedback.remaining());
++        }
++        var dashKinds = List.of(SkillFeedbackKind.ACCEPTED, SkillFeedbackKind.INVALID_TARGET,
++                SkillFeedbackKind.DEAD, SkillFeedbackKind.ZERO_DIRECTION, SkillFeedbackKind.COOLDOWN,
++                SkillFeedbackKind.INSUFFICIENT_STAMINA, SkillFeedbackKind.AWAITING_LANDING);
++        var dashStatuses = List.of(LightningStepService.Status.STARTED, LightningStepService.Status.INVALID,
++                LightningStepService.Status.DEAD, LightningStepService.Status.ZERO_DIRECTION,
++                LightningStepService.Status.COOLDOWN, LightningStepService.Status.STAMINA,
++                LightningStepService.Status.LANDING_PENDING);
++        for (int i = 0; i < dashStatuses.size(); i++) {
++            var feedback = SkillHudMapper.feedback(dashStatuses.get(i), 1.2f);
++            assertEquals(dashKinds.get(i), feedback.kind());
++            assertFalse(feedback.message().isBlank());
++        }
++    }
++
++    /** A mensagem dura somente o tempo simulado, sem modificar o valor já publicado. */
++    @Test
++    void feedbackExpiraPorDeltaEEsperaPodeSerLiberadaSemRenovarHabilidade() {
++        var accepted = SkillHudMapper.feedback(LightningStepService.Status.STARTED, 1.2f);
++        var advanced = SkillHudMapper.elapse(accepted, 0.2f);
++        assertEquals(1, advanced.remaining(), 0.00001);
++        assertEquals(1.2f, accepted.remaining());
++        assertEquals(SkillFeedbackKind.NONE, SkillHudMapper.elapse(advanced, 1).kind());
++        assertTrue(SkillHudMapper.elapse(advanced, 1).message().isBlank());
++        var pending = SkillHudMapper.lightningStep(false, 65, 2, false, true,
++                SkillHudMapper.feedback(LightningStepService.Status.LANDING_PENDING, 1.2f));
++        assertEquals(SkillState.AWAITING_LANDING, pending.state());
++        var released = SkillHudMapper.lightningStep(false, 65, 2, false, false, SkillHudMapper.none());
++        assertEquals(SkillState.COOLDOWN, released.state());
++        assertEquals(2, released.cooldown());
++        assertEquals(65, released.stamina());
++        assertEquals(SkillState.READY,
++                SkillHudMapper.lightningStep(false, 65, 0, false, false, SkillHudMapper.none()).state());
++    }
++
++    /** Duas skills aceitas na mesma fila mantêm o saldo e as recusas posteriores exatas. */
++    @Test
++    void snapshotRefleteAceiteFifoERecusaPorCooldownSemGastoExtra() {
++        var world = world();
++        cast(world, CRYO, DASH);
++        var started = world.snapshot();
++        assertEquals(10, started.stamina());
++        assertEquals(SkillState.COOLDOWN, started.cryostasisHud().state());
++        assertEquals(SkillState.ACTIVE, started.lightningStepHud().state());
++        assertEquals(SkillFeedbackKind.ACCEPTED, started.cryostasisHud().feedback().kind());
++        assertEquals(SkillFeedbackKind.ACCEPTED, started.lightningStepHud().feedback().kind());
++        assertEquals(started.cryostasisCooldown(), started.cryostasisHud().cooldown());
++        assertEquals(started.lightningStepCooldown(), started.lightningStepHud().cooldown());
++        advance(world, 8);
++        cast(world, CRYO, DASH);
++        var refused = world.snapshot();
++        assertEquals(14.5f, refused.stamina());
++        assertEquals(SkillFeedbackKind.COOLDOWN, refused.cryostasisHud().feedback().kind());
++        assertEquals(SkillFeedbackKind.COOLDOWN, refused.lightningStepHud().feedback().kind());
++        assertEquals(SkillState.COOLDOWN, refused.lightningStepHud().state());
++    }
++
++    /** Falta de vigor aparece nas duas skills sem ativação, gasto, cooldown ou mensagem infinita. */
++    @Test
++    void vigorInsuficienteBloqueiaAmbasEFeedbackTerminaSemNovosComandos() {
++        var world = depletedWorld();
++        cast(world, CRYO, DASH);
++        var refused = world.snapshot();
++        assertEquals(0.5f, refused.stamina());
++        assertEquals(SkillState.INSUFFICIENT_STAMINA, refused.cryostasisHud().state());
++        assertEquals(SkillState.INSUFFICIENT_STAMINA, refused.lightningStepHud().state());
++        assertEquals(SkillFeedbackKind.INSUFFICIENT_STAMINA, refused.cryostasisHud().feedback().kind());
++        assertEquals(SkillFeedbackKind.INSUFFICIENT_STAMINA, refused.lightningStepHud().feedback().kind());
++        assertEquals(0, refused.cryostasisCooldown());
++        assertEquals(0, refused.lightningStepCooldown());
++        assertTrue(refused.iceZones().isEmpty());
++        assertFalse(refused.lightningStepActive());
++        advance(world, 37);
++        assertEquals(SkillFeedbackKind.NONE, world.snapshot().cryostasisHud().feedback().kind());
++        assertEquals(SkillFeedbackKind.NONE, world.snapshot().lightningStepHud().feedback().kind());
++        assertEquals(SkillState.INSUFFICIENT_STAMINA, world.snapshot().lightningStepHud().state());
++    }
++
++    /** Dados inválidos e cursor na origem produzem motivos distintos sem efeitos colaterais. */
++    @Test
++    void errosDeAlvoEDirecaoSaoFiéisAosResultadosDoDominio() {
++        var world = world();
++        var origin = world.snapshot().actors().get(0);
++        cast(world, new SkillCastCommand(CryostasisService.ID, Float.NaN, 340),
++                new SkillCastCommand(LightningStepService.ID, origin.x(), origin.y()));
++        var snapshot = world.snapshot();
++        assertEquals(SkillFeedbackKind.INVALID_TARGET, snapshot.cryostasisHud().feedback().kind());
++        assertEquals(SkillFeedbackKind.ZERO_DIRECTION, snapshot.lightningStepHud().feedback().kind());
++        assertEquals(100, snapshot.stamina());
++        assertEquals(0, snapshot.lightningStepCooldown());
++        assertEquals(origin.x(), snapshot.actors().get(0).x());
++        assertEquals(origin.y(), snapshot.actors().get(0).y());
++        cast(world, new SkillCastCommand(LightningStepService.ID, Float.POSITIVE_INFINITY, 340));
++        assertEquals(SkillFeedbackKind.INVALID_TARGET, world.snapshot().lightningStepHud().feedback().kind());
++    }
++
++    /** Um alvo além da parede não significa bloqueio quando o alcance termina antes dela. */
++    @Test
++    void naoInventaBloqueioQuandoAlvoFicaAlemDeUmaParedeNaoAlcancada() {
++        var world = world();
++        cast(world, new SkillCastCommand(LightningStepService.ID, 700, 340));
++        advance(world, 8);
++        assertEquals(285, world.snapshot().actors().get(0).x(), 0.0001);
++        assertNotEquals(SkillFeedbackKind.SOLID_OR_BOUNDARY, world.snapshot().lightningStepHud().feedback().kind());
++        assertEquals(SkillState.COOLDOWN, world.snapshot().lightningStepHud().state());
++    }
++
++    /** Parede e limite realmente alcançados publicam o bloqueio medido pela simulação. */
++    @Test
++    void paredeELimiteRealmenteBloqueantesPublicamFeedbackTemporario() {
++        var wall = blockedWorld();
++        var blocked = wall.snapshot();
++        assertEquals(328, blocked.actors().get(0).x(), 0.0001);
++        assertEquals(SkillFeedbackKind.SOLID_OR_BOUNDARY, blocked.lightningStepHud().feedback().kind());
++        assertEquals(SkillState.COOLDOWN, blocked.lightningStepHud().state());
++        advance(wall, 37);
++        assertEquals(SkillFeedbackKind.NONE, wall.snapshot().lightningStepHud().feedback().kind());
++        var edge = world();
++        cast(edge, new SkillCastCommand(LightningStepService.ID, 0, 340));
++        advance(edge, 8);
++        assertEquals(RADIUS, edge.snapshot().actors().get(0).x(), 0.0001);
++        assertEquals(SkillFeedbackKind.SOLID_OR_BOUNDARY, edge.snapshot().lightningStepHud().feedback().kind());
++    }
++
++    /** Recuar para sair de arbusto não é evidência de parede nem deve ser rotulado assim. */
++    @Test
++    void recuperacaoDentroDeArbustoNaoEhReportadaComoParedeOuLimite() {
++        var world = world();
++        for (int i = 0; i < 14; i++) world.tick(LEFT, DT);
++        for (int i = 0; i < 14; i++) world.tick(DOWN, DT);
++        var origin = world.snapshot().actors().get(0);
++        assertEquals(35, origin.x(), 1);
++        assertEquals(440, origin.y(), 1);
++        cast(world, new SkillCastCommand(LightningStepService.ID, 700, origin.y()));
++        advance(world, 8);
++        var recovered = world.snapshot();
++        assertEquals(142, recovered.actors().get(0).x(), 0.0001);
++        assertFalse(recovered.lightningStepAwaitingLanding());
++        assertNotEquals(SkillFeedbackKind.SOLID_OR_BOUNDARY, recovered.lightningStepHud().feedback().kind());
++    }
++
++    /** O dado publicado pelo domínio distingue varredura bloqueada de recuperação normal. */
++    @Test
++    void stepIndicaSomenteBloqueioFisicoAnteriorACorrecao() {
++        var collisions = new CollisionService();
++        var empty = new CollisionService.Space(960, 640, List.of(), List.of());
++        var free = player(100, 100);
++        var freeDash = service(collisions);
++        assertEquals(LightningStepService.Status.STARTED,
++                freeDash.cast(free, new SkillCastCommand(LightningStepService.ID, 500, 100), RADIUS, empty));
++        assertFalse(freeDash.update(free, 0.1f, RADIUS, empty).blocked());
++
++        var wallSpace = new CollisionService.Space(960, 640,
++                List.of(new CollisionService.Obstacle(140, 0, 10, 640)), List.of());
++        var walled = player(100, 100);
++        var wallDash = service(collisions);
++        wallDash.cast(walled, new SkillCastCommand(LightningStepService.ID, 500, 100), RADIUS, wallSpace);
++        assertTrue(wallDash.update(walled, 0.1f, RADIUS, wallSpace).blocked());
++
++        var bushSpace = new CollisionService.Space(960, 640,
++                List.of(new CollisionService.Obstacle(180, 70, 80, 60, CollisionCategory.SOFT_OBSTACLE)), List.of());
++        var recovering = player(100, 100);
++        var selective = service(collisions);
++        selective.cast(recovering, new SkillCastCommand(LightningStepService.ID, 500, 100), RADIUS, bushSpace);
++        LightningStepService.Step finalStep = null;
++        for (int i = 0; i < 8; i++) finalStep = selective.update(recovering, DT, RADIUS, bushSpace);
++        assertNotNull(finalStep);
++        assertEquals(162, recovering.getPosition().x(), 0.0001);
++        assertFalse(finalStep.blocked(), "O recuo de saída não se confunde com impacto sólido");
++    }
++
++    /** Morte prevalece sobre recurso disponível e arena nova elimina feedback e estados antigos. */
++    @Test
++    void morteBloqueiaDisponibilidadeEReinicioRestauraHud() {
++        var dead = world();
++        for (int i = 0; i < 1800 && !dead.snapshot().gameOver(); i++) dead.tick(DebugInput.NONE, DT);
++        assertTrue(dead.snapshot().gameOver());
++        assertEquals(SkillState.DEAD, dead.snapshot().cryostasisHud().state());
++        assertEquals(SkillState.DEAD, dead.snapshot().lightningStepHud().state());
++
++        var old = world();
++        cast(old, CRYO, DASH);
++        advance(old, 2);
++        assertFalse(old.snapshot().lightningTrails().isEmpty());
++        var restarted = world().snapshot();
++        assertEquals(100, restarted.stamina());
++        assertEquals(SkillState.READY, restarted.cryostasisHud().state());
++        assertEquals(SkillState.READY, restarted.lightningStepHud().state());
++        assertEquals(SkillFeedbackKind.NONE, restarted.cryostasisHud().feedback().kind());
++        assertEquals(SkillFeedbackKind.NONE, restarted.lightningStepHud().feedback().kind());
++        assertFalse(restarted.lightningStepActive());
++        assertFalse(restarted.lightningStepAwaitingLanding());
++        assertTrue(restarted.lightningTrails().isEmpty());
++        assertEquals(3, restarted.softObstacles().size());
++    }
++
++    /** Captura quatro estados do painel real; renderizar repetidamente não altera a simulação. */
++    @Test
++    void capturaHudProntoSemVigorAtivoEBloqueadoSemModificarMundo() throws Exception {
++        var ready = world();
++        var empty = depletedWorld();
++        cast(empty, CRYO, DASH);
++        var active = world();
++        cast(active, CRYO, DASH);
++        advance(active, 2);
++        var blocked = blockedWorld();
++        List<DebugWorld> worlds = List.of(ready, empty, active, blocked);
++        List<DebugSnapshot> snapshots = worlds.stream().map(DebugWorld::snapshot).toList();
++        List<String> titles = List.of("PRONTO: custo e disponibilidade", "SEM VIGOR: recusa fiel e temporária",
++                "ATIVO: Q e Shift na mesma fila", "BLOQUEIO REAL: parede alcançada, recarga mantida");
++        int header = 36, frameHeight = DebugPanel.PANEL_HEIGHT + header;
++        var image = new BufferedImage(DebugPanel.PANEL_WIDTH * 2, frameHeight * 2, BufferedImage.TYPE_INT_ARGB);
++        Graphics2D graphics = image.createGraphics();
++        try {
++            graphics.setColor(new Color(10, 21, 35));
++            graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
++            graphics.setFont(new Font("SansSerif", Font.BOLD, 16));
++            for (int i = 0; i < worlds.size(); i++) {
++                int x = i % 2 * DebugPanel.PANEL_WIDTH, y = i / 2 * frameHeight;
++                graphics.setColor(new Color(207, 234, 184));
++                graphics.drawString(titles.get(i), x + 18, y + 24);
++                Graphics2D frame = (Graphics2D) graphics.create();
++                try {
++                    frame.translate(x, y + header);
++                    frame.clipRect(0, 0, DebugPanel.PANEL_WIDTH, DebugPanel.PANEL_HEIGHT);
++                    var panel = new DebugPanel(worlds.get(i)::snapshot);
++                    panel.setShowHitboxes(true);
++                    panel.render(frame, snapshots.get(i));
++                } finally {
++                    frame.dispose();
++                }
++                assertEquals(snapshots.get(i), worlds.get(i).snapshot());
++            }
++        } finally {
++            graphics.dispose();
++        }
++        Path output = Path.of("target/task009-hud.png");
++        Files.createDirectories(output.getParent());
++        assertTrue(ImageIO.write(image, "png", output.toFile()));
++    }
++
++    /** Constrói a arena jogável com sorteios reproduzíveis, sem iniciar o runtime Swing. */
++    private static DebugWorld world() { return DebugWorld.demo(new Random(9)); }
++
++    /** Consome vigor somente pela ação provisória existente, preservando as regras do domínio. */
++    private static DebugWorld depletedWorld() {
++        var world = world();
++        world.tickQueued(DebugInput.NONE, DT, 5, List.of());
++        assertEquals(0, world.snapshot().stamina());
++        return world;
++    }
++
++    /** Posiciona por WASD e executa um dash real contra a primeira parede histórica. */
++    private static DebugWorld blockedWorld() {
++        var world = world();
++        for (int i = 0; i < 8; i++) world.tick(RIGHT, DT);
++        cast(world, new SkillCastCommand(LightningStepService.ID, 700, 340));
++        advance(world, 8);
++        return world;
++    }
++
++    /** Transporta os comandos em FIFO pelo mesmo ponto de integração usado pelo runtime. */
++    private static void cast(DebugWorld world, SkillCastCommand... commands) {
++        world.tickQueued(DebugInput.NONE, DT, 0, List.of(commands));
++    }
++
++    /** Avança somente o tempo de simulação; não depende de sleeps nem de relógio do SO. */
++    private static void advance(DebugWorld world, int ticks) {
++        for (int i = 0; i < ticks; i++) world.tick(DebugInput.NONE, DT);
++    }
++
++    /** Reutiliza a física autoritativa e a política seletiva para inspecionar o relatório do passo. */
++    private static LightningStepService service(CollisionService collisions) {
++        return new LightningStepService(new MovementService(collisions), new StaminaService(), collisions,
++                CollisionPolicy.PHASE_THROUGH_ACTORS_AND_SOFT);
++    }
++
++    /** Instancia o jogador real sem sockets, banco ou referências da interface. */
++    private static Player player(float x, float y) {
++        var archetype = new PlayerArchetype(RaceRegistry.withDefaults().get("human"), 30, 8, 14, null, null);
++        return new PlayerFactory(new VitalityService()).create(1, "HUD", archetype,
++                new Position(x, y), new PlayerConnection() {
++                    @Override public void send(Object packet) { /* simulação local */ }
++                    @Override public void disconnect() { /* nenhuma conexão */ }
++                });
++    }
++}

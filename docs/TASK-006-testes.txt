@@ -1,0 +1,27 @@
+TASK-006 | 18/10/2026
+Inicial: mvn clean test -q; 118 testes aprovados.
+Primeira entrega sem teste reservado: 146 testes aprovados.
+Validacao final apos contribuicao do usuario: mvn clean test; BUILD SUCCESS; release 17.
+147 testes, 0 falhas, 0 erros, 0 ignorados.
+LightningStepZeroDirectionTest: escrito pelo usuario, revisado e aprovado sem alteracoes.
+
+Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.066 s -- in com.projetok.domain.effect.StatusEffectServiceTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.041 s -- in com.projetok.domain.movement.FreezeMovementTest
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.025 s -- in com.projetok.domain.movement.MovementHardeningTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in com.projetok.domain.movement.MovementServiceTest
+Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.018 s -- in com.projetok.domain.movement.SoftSlideCollisionTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.057 s -- in com.projetok.domain.movement.SpatialBodyIndexTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.005 s -- in com.projetok.domain.probability.ProbabilityServiceTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.005 s -- in com.projetok.domain.resource.StaminaServiceTest
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.014 s -- in com.projetok.domain.skill.CryostasisFreezeTest
+Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.021 s -- in com.projetok.domain.skill.CryostasisServiceTest
+Tests run: 19, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.017 s -- in com.projetok.domain.skill.LightningStepServiceTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 s -- in com.projetok.domain.skill.LightningStepZeroDirectionTest
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.636 s -- in com.projetok.prototype.CryostasisIntegrationTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.010 s -- in com.projetok.prototype.DebugCommandBufferTest
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.088 s -- in com.projetok.prototype.DebugWorldTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.066 s -- in com.projetok.prototype.FreezeWorldTest
+Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.229 s -- in com.projetok.prototype.LightningStepIntegrationTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.105 s -- in com.projetok.prototype.MovementReplayTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.470 s -- in com.projetok.prototype.StaminaInterfaceTest
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.012 s -- in com.projetok.prototype.StaminaWorldTest

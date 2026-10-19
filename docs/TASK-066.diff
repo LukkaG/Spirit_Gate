@@ -1,0 +1,626 @@
+--- /dev/null
++++ b/docs/ROTEIRO-RPG-OFFLINE.md
+@@ -0,0 +1,22 @@
++# Roteiro de teste privado - Spirit Gate RPG offline
++
++Extraia o ZIP RPG inteiro em pasta gravavel. Abra SpiritGateRPG.exe. O Java esta integrado. Nenhum servidor, banco ou login e necessario. A arena antiga continua disponivel pelo menu e pelos pacotes anteriores.
++
++1. Crie um personagem com nome de 3 a 24 caracteres. Escolha Guardian (mais vida e investida) ou Mystic (ataque a distancia e cura), e aparencia azure/amber. O save inicial e criado sem apagar outro personagem.
++2. Na vila, aproxime-se da Ancia e pressione F. Escolha aceitar Ecos no bosque. Escape fecha dialogo. Consulte J para ver objetivos.
++3. WASD move. O bau ao sudeste da vila entrega uma espada. F abre o bau; I abre inventario. Selecione espada e clique Equipar. Atributo de ataque deve aumentar. M mostra mapa e posicao.
++4. Caminhe para o portal leste da vila e pressione F. No bosque, SPACE ataca o inimigo mais proximo ao alcance e sem parede entre voces. Cada pressao e um golpe; solte para atacar novamente. O botao Golpe tambem funciona.
++5. Q usa habilidade do arquetipo. Guardian faz investida; Mystic cura quando estiver ferido. Vigor e recarga limitam uso. 1 consome pocao apenas se ferido e fora da recarga.
++6. Derrote dois ecos. E possivel explorar os dois spawns ou aguardar respawn. HP, XP, nivel, moedas e cristais devem refletir combate. F coleta ervas curativas. Se cair, R recupera na vila preservando progresso.
++7. Volte pelo portal oeste. Converse com a Ancia e entregue Ecos. Receba XP, moedas e pocoes. Aceite O Santuario Partido.
++8. Nilo fica ao sul da Ancia. Aproxime-se e pressione F. Compre manto/pocoes ou venda cristais. I permite equipar manto, aumentando defesa. Inventario cheio/saldo insuficiente devem recusar a compra sem perder moedas.
++9. Atravesse bosque ate portal leste e entre no Santuario. Derrote os dois sentinelas; o chefe so desperta depois deles. Explore a reserva de pocoes ao sul da entrada.
++10. Enfrente o Guardiao. Circulo indica preparacao de ataque em area: afaste-se antes da execucao. A segunda fase acelera o aviso e aumenta alcance/dano. Derrota concede reliquia unica.
++11. F5 salva. Use Menu para salvar e voltar a selecao. Continue o mesmo personagem e confirme inventario, equipamento, posicao, inimigos mortos e progresso. Volte a Ancia e entregue a reliquia para concluir a campanha inicial.
++12. Experimente I: separar/mover pilhas, usar pocao e desequipar. J: objetivos e estado. M: regiao atual/visitadas. Atalhos: remapeie sem conflitos; WASD e teclas de sistema sao reservados. Audio/ambiente: altere volume, mudo e ciclo; reabra para confirmar preferencias.
++13. Crie outro personagem e confirme isolamento de saves. Nao e necessario apagar o primeiro. Saves invalidos sao preservados; backups recuperaveis aparecem na selecao e abrem em novo arquivo.
++14. Abra Arena historica e confira os controles legados Q/Shift/E, colisao e combate. Configuracoes RPG nao mudam a arena.
++
++Os testes automatizados executam a campanha para os dois arquetipos. Capturas de componentes Swing documentam a janela real em execucao; o desktop deste ambiente pode produzir captura preta. Isso nao e homologacao humana nem teste em outro Windows.
++
++Limitacoes intencionais: arte geometrica provisoria, tres regioes compactas, duas missoes, um chefe e dois arquetipos. Inventario de 20 slots. A arena e o RPG offline nao usam multiplayer. Tons sao sintetizados localmente; sem dispositivo, o jogo fica silencioso.
+--- /dev/null
++++ b/docs/TASK-066-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 281,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-066.md
+@@ -0,0 +1,7 @@
++# TASK-066 - Audio, preferencias e marco offline B
++
++Audio JDK javax.sound.sampled com tons originais sintetizados para UI, golpe, dano, cura, nivel e ambiente. Volume/mudo e ciclo visual configuraveis, preferencias separadas dos personagens. Fila de oito eventos, executor proprio, fallback silencioso sem dispositivo; nenhum arquivo de origem/licenca desconhecida.
++
++Integracao final: salvamento captura comandos pendentes na thread da simulacao antes do IO, pausa ao sair e mantem sessao diante de erro. Direcao, recargas e RNG deterministico por spawn/geracao preservam continuidade. Catalogos/atributos usados por tick ficam em memoria. Estado semantico de flags validado antes de sobrescrever save; limite de loot pendente impede derrota sem recompensa.
++
++UI: atalhos efetivos no HUD/hotbar, labels legiveis, botoes de dialogo em grade, dados de missao/consumiveis/equipamento reais. Audio e iluminacao nao alteram dominio. Testes incluem dispositivo indisponivel, mudo, preferencias, fila/save, corrupcao sem sobrescrita, direcao/RNG, 20000 ticks e campanha integral para guardian e mystic. Build, auditoria e smoke do pacote registrados no marco B antes de qualquer trabalho de rede.
+--- /dev/null
++++ b/jogar-rpg-offline.cmd
+@@ -0,0 +1,4 @@
++@echo off
++setlocal
++cd /d "%~dp0"
++start "Spirit Gate RPG offline" "%~dp0dist\RPG-Offline-0.66.0-rc2\SpiritGateRPG\SpiritGateRPG.exe"
+--- a/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ b/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -83,7 +83,10 @@
+ 
+     /** Seletor visual opcional de demonstracao, sem modificar o mundo a partir da imagem. */
+     public void setLocalMap(LocalArenaMap map) {
+-        mapRenderer = map == null ? null : map.renderer();
++        setLocalMap(map,true);
++    }
++    public void setLocalMap(LocalArenaMap map,boolean diagnosticTiles) {
++        mapRenderer = map == null ? null : map.renderer(diagnosticTiles);
+         worldWidth = map == null ? DebugWorld.WIDTH : map.width();
+         worldHeight = map == null ? DebugWorld.HEIGHT : map.height();
+     }
+@@ -154,7 +157,7 @@
+             canvas.setColor(new Color(12,19,35));canvas.fillRect(960,0,300,750);canvas.fillRect(0,640,960,110);
+             canvas.setFont(new Font("SansSerif",Font.BOLD,15));canvas.setColor(TEXT);int lineY=32;
+             for(String line:customHud){canvas.drawString(line,978,lineY);lineY+=26;}
+-            canvas.setColor(ACCENT);canvas.drawString(s.lastEvent(),20,674);canvas.setColor(TEXT);canvas.drawString("WASD explorar | F interagir | SPACE golpe | Q habilidade | 1 pocao | I inventario | J diario | M mapa",20,704);
++            canvas.setColor(ACCENT);canvas.drawString(s.lastEvent(),20,674);canvas.setColor(TEXT);canvas.drawString("WASD explorar | Use a hotbar e os atalhos configurados na barra superior.",20,704);
+             canvas.drawString(s.gameOver()?"Voce caiu. Pressione R para recuperar na vila.":"Explore, converse com a Ancia e prepare-se para o Santuario.",20,730);
+         }
+         if(showHelp) {
+@@ -400,9 +403,9 @@
+         }
+         g.setFont(new Font("SansSerif", Font.BOLD, 11));
+         g.setColor(TEXT);
+-        center(g, a.player() ? "GUARDIAO" : "ESPIRITO " + (a.id() - 99),
++        center(g, customHud.isEmpty()?(a.player() ? "GUARDIAO" : "ESPIRITO " + (a.id() - 99)):a.name(),
+                 Math.round(x), Math.round(y - r - 19));
+-        drawBar(g, Math.round(x - 24), Math.round(y - r - 13), 48, 5,
++        if(customHud.isEmpty()||a.id()<500)drawBar(g, Math.round(x - 24), Math.round(y - r - 13), 48, 5,
+                 a.maxHp() == 0 ? 0 : (float) a.hp() / a.maxHp(),
+                 a.player() ? ACCENT : new Color(243, 99, 109));
+     }
+--- a/server/src/main/java/com/projetok/prototype/LocalArenaMap.java
++++ b/server/src/main/java/com/projetok/prototype/LocalArenaMap.java
+@@ -134,15 +134,18 @@
+                 .map(p->new CollisionService.Obstacle(p.x(),p.y(),p.width(),p.height(),p.category())).toList();
+     }
+     /** Renderer de demonstracao usa tiles sinteticos em cache, sem ativar PNG candidato. */
+-    public Renderer renderer() {return new Renderer(this);}
++    public Renderer renderer() {return new Renderer(this,true);}
++    public Renderer renderer(boolean diagnosticTiles) {return new Renderer(this,diagnosticTiles);}
+     public static final class Renderer {
+         private record Tile(Visual visual,BufferedImage image) { }
+         private final List<Tile> tiles;
+-        private Renderer(LocalArenaMap map) {
++        private final boolean diagnosticTiles;
++        private Renderer(LocalArenaMap map,boolean diagnosticTiles) {
++            this.diagnosticTiles=diagnosticTiles;
+             tiles=map.visuals().stream().sorted(java.util.Comparator.comparingInt(Visual::layer)).map(v->{
+                 BufferedImage image=new BufferedImage(32,32,BufferedImage.TYPE_INT_RGB);var g=image.createGraphics();
+                 g.setColor(new Color(v.rgb()));g.fillRect(0,0,32,32);g.setColor(new Color(v.rgb()).brighter());
+-                g.drawRect(0,0,31,31);g.drawLine(0,0,31,31);g.dispose();return new Tile(v,image);
++                if(diagnosticTiles){g.drawRect(0,0,31,31);g.drawLine(0,0,31,31);}g.dispose();return new Tile(v,image);
+             }).toList();
+         }
+         /** Renderiza somente dados imutaveis; nenhum efeito no mundo ou na hitbox. */
+@@ -157,7 +160,7 @@
+                 for(var tile:tiles) {var v=tile.visual();
+                     if(v.layer()>=first && v.layer()<=last && g.hitClip(v.x(),v.y(),v.width(),v.height()))
+                         g.drawImage(tile.image(),v.x(),v.y(),v.width(),v.height(),null);}
+-                if(first==0) {g.setColor(Color.WHITE);g.drawString("MAPA LOCAL DE TESTE - TILES SINTETICOS",24,24);}
++                if(first==0&&diagnosticTiles) {g.setColor(Color.WHITE);g.drawString("MAPA LOCAL DE TESTE - TILES SINTETICOS",24,24);}
+             }finally{g.dispose();}
+         }
+     }
+--- a/server/src/main/java/com/projetok/prototype/rpg/ControlsDialog.java
++++ b/server/src/main/java/com/projetok/prototype/rpg/ControlsDialog.java
+@@ -7,7 +7,7 @@
+ final class ControlsDialog {
+     static void open(JFrame owner,RpgControls current,Path file,java.util.function.Consumer<RpgControls> apply){
+         JPanel form=new JPanel(new GridLayout(0,2,6,6));Map<String,JTextField> fields=new TreeMap<>();
+-        for(String action:new TreeSet<>(current.keys().keySet())){form.add(new JLabel(action));JTextField text=new JTextField(current.key(action),8);fields.put(action,text);form.add(text);}
++        for(String action:new TreeSet<>(current.keys().keySet())){form.add(new JLabel(RpgLauncher.actionLabel(action)));JTextField text=new JTextField(current.key(action),8);fields.put(action,text);form.add(text);}
+         if(JOptionPane.showConfirmDialog(owner,form,"Atalhos RPG (WASD reservado)",JOptionPane.OK_CANCEL_OPTION)!=JOptionPane.OK_OPTION)return;
+         try{Map<String,String> map=new TreeMap<>();fields.forEach((id,field)->map.put(id,field.getText().strip().toUpperCase(Locale.ROOT)));RpgControls controls=new RpgControls(map);
+             new SwingWorker<Void,Void>(){protected Void doInBackground()throws Exception{controls.save(file);return null;}protected void done(){try{get();apply.accept(controls);}catch(Exception error){JOptionPane.showMessageDialog(owner,"Falha ao salvar atalhos: "+error.getMessage());}}}.execute();
+--- /dev/null
++++ b/server/src/main/java/com/projetok/prototype/rpg/PreferencesDialog.java
+@@ -0,0 +1,12 @@
++package com.projetok.prototype.rpg;
++import com.projetok.rpg.RpgPreferences;
++import javax.swing.*;
++import java.awt.*;
++import java.nio.file.Path;
++final class PreferencesDialog {
++    static void open(JFrame owner,RpgPreferences current,Path file,java.util.function.Consumer<RpgPreferences> apply){
++        JSlider volume=new JSlider(0,100,current.volume());volume.setPaintTicks(true);volume.setMajorTickSpacing(25);volume.setPaintLabels(true);JCheckBox muted=new JCheckBox("Mudo",current.muted()),environment=new JCheckBox("Ciclo de iluminacao",current.environment());JPanel form=new JPanel(new GridLayout(0,1));form.add(new JLabel("Volume dos tons sintetizados"));form.add(volume);form.add(muted);form.add(environment);
++        if(JOptionPane.showConfirmDialog(owner,form,"Audio e ambiente",JOptionPane.OK_CANCEL_OPTION)!=JOptionPane.OK_OPTION)return;
++        var value=new RpgPreferences(volume.getValue(),muted.isSelected(),environment.isSelected());new SwingWorker<Void,Void>(){protected Void doInBackground()throws Exception{value.save(file);return null;}protected void done(){try{get();apply.accept(value);}catch(Exception error){JOptionPane.showMessageDialog(owner,"Falha nas preferencias: "+error.getMessage());}}}.execute();
++    }
++}
+--- /dev/null
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgAudio.java
+@@ -0,0 +1,24 @@
++package com.projetok.prototype.rpg;
++import com.projetok.rpg.RpgPreferences;
++import javax.sound.sampled.*;
++import java.util.concurrent.*;
++import java.util.concurrent.atomic.AtomicInteger;
++/** Tons originais sintetizados, fila limitada e fallback silencioso. */
++public final class RpgAudio implements AutoCloseable {
++    public enum Cue { UI,HIT,HURT,HEAL,LEVEL,AMBIENT }
++    @FunctionalInterface public interface Backend{void play(Cue cue,int volume)throws Exception;}
++    private final ThreadPoolExecutor worker=new ThreadPoolExecutor(1,1,0,TimeUnit.MILLISECONDS,new ArrayBlockingQueue<>(8),r->{Thread t=new Thread(r,"spirit-gate-audio");t.setDaemon(true);return t;},new ThreadPoolExecutor.DiscardPolicy());
++    private final Backend backend;private volatile RpgPreferences preferences;private final AtomicInteger unavailable=new AtomicInteger();
++    public RpgAudio(RpgPreferences preferences){this(preferences,RpgAudio::tone);}
++    public RpgAudio(RpgPreferences preferences,Backend backend){this.preferences=preferences;this.backend=backend;}
++    public void preferences(RpgPreferences value){preferences=value;}
++    public int unavailableCount(){return unavailable.get();}
++    CompletableFuture<Void> flush(){var result=new CompletableFuture<Void>();worker.execute(()->result.complete(null));return result;}
++    public void play(Cue cue){var value=preferences;if(value.muted()||value.volume()==0||worker.isShutdown())return;worker.execute(()->{try{backend.play(cue,value.volume());}catch(Exception error){unavailable.incrementAndGet();}});}
++    private static void tone(Cue cue,int volume)throws Exception{
++        float rate=22050;int samples=2205;byte[] pcm=new byte[samples*2];int hz=switch(cue){case UI->500;case HIT->260;case HURT->150;case HEAL->660;case LEVEL->880;case AMBIENT->220;};
++        for(int i=0;i<samples;i++){double envelope=Math.sin(Math.PI*i/samples);short sample=(short)(Math.sin(2*Math.PI*hz*i/rate)*envelope*volume/100.0*4000);pcm[i*2]=(byte)sample;pcm[i*2+1]=(byte)(sample>>8);}
++        try(Clip clip=AudioSystem.getClip()){clip.open(new AudioFormat(rate,16,1,true,false),pcm,0,pcm.length);clip.start();clip.drain();clip.stop();}
++    }
++    public void close(){worker.shutdownNow();}
++}
+--- a/server/src/main/java/com/projetok/prototype/rpg/RpgHud.java
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgHud.java
+@@ -6,22 +6,23 @@
+ final class RpgHud extends JPanel {
+     private final JLabel status=new JLabel();
+     private final JTextArea journal=new JTextArea(3,80);
+-    private final JPanel dialogue=new JPanel(new FlowLayout(FlowLayout.LEFT));
++    private final JPanel dialogue=new JPanel(new BorderLayout(4,4));
+     private DialogueService.Node last;
+     private final RpgRuntime runtime;
+     RpgHud(RpgRuntime runtime) {super(new BorderLayout());this.runtime=runtime;add(status,BorderLayout.NORTH);add(dialogue,BorderLayout.CENTER);journal.setEditable(false);add(journal,BorderLayout.SOUTH);}
+     void update(RpgWorld.View view) {
+         journal.setText(view.journal().stream().map(q->q.name()+" | "+q.state()+" | "+q.progress()+"/"+q.required()+" - "+q.objective()).collect(java.util.stream.Collectors.joining("\n")));
+-        status.setText("  "+view.identity().name()+" | Nivel "+view.level()+" | XP "+view.state().xp()+" | Moedas "+view.state().coins()+" | Ataque "+view.attack()+" | Defesa "+view.defense()+" | "+view.state().region()+" | F: conversar  SPACE: atacar  Q: habilidade  1: pocao  F5: salvar");
++        status.setText("  "+view.identity().name()+" | Nivel "+view.level()+" | XP "+view.state().xp()+" | Moedas "+view.state().coins()+" | Ataque "+view.attack()+" | Defesa "+view.defense()+" | "+view.state().region()+" | Atalhos na barra superior");
+         if(!java.util.Objects.equals(last,view.dialogue())) {
+             last=view.dialogue();dialogue.removeAll();
+             if(last!=null) {
+-                dialogue.add(new JLabel(last.text()));
+-                for(int i=0;i<last.choices().size();i++){int index=i;JButton button=new JButton(last.choices().get(i).text());button.addActionListener(e->runtime.command(w->w.choose(index)));dialogue.add(button);}
+-                JButton close=new JButton("Fechar");close.addActionListener(e->runtime.command(RpgWorld::closeDialogue));dialogue.add(close);
++                JTextArea words=new JTextArea(last.text(),2,40);words.setLineWrap(true);words.setWrapStyleWord(true);words.setEditable(false);dialogue.add(words,BorderLayout.NORTH);
++                JPanel choices=new JPanel(new GridLayout(0,3,4,4));dialogue.add(choices,BorderLayout.CENTER);
++                for(int i=0;i<last.choices().size();i++){int index=i;JButton button=new JButton(last.choices().get(i).text());button.addActionListener(e->runtime.command(w->w.choose(index)));choices.add(button);}
++                JButton close=new JButton("Fechar");close.addActionListener(e->runtime.command(RpgWorld::closeDialogue));choices.add(close);
+                 if(view.activeNpc().equals("trader")) {
+-                    for(String id:new String[]{"potion","sword","robe"}){var item=new ItemCatalog(RpgContent.builtin()).get(id);JButton buy=new JButton("Comprar "+item.name()+" ("+item.price()+")");buy.addActionListener(e->runtime.command(w->w.trade(id,1,true)));dialogue.add(buy);}
+-                    JButton sell=new JButton("Vender cristal (1 moeda)");sell.addActionListener(e->runtime.command(w->w.trade("crystal",1,false)));dialogue.add(sell);
++                    for(String id:new String[]{"potion","sword","robe"}){var item=new ItemCatalog(RpgContent.builtin()).get(id);JButton buy=new JButton("Comprar "+item.name()+" ("+item.price()+")");buy.addActionListener(e->runtime.command(w->w.trade(id,1,true)));choices.add(buy);}
++                    JButton sell=new JButton("Vender cristal (1 moeda)");sell.addActionListener(e->runtime.command(w->w.trade("crystal",1,false)));choices.add(sell);
+                 }
+             }
+             revalidate();repaint();
+--- a/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
+@@ -24,9 +24,13 @@
+     }
+     static void play(com.projetok.rpg.RpgWorld world,com.projetok.rpg.LocalSaveStore store) {
+         RpgRuntime runtime = new RpgRuntime(world);
++        var preferencesFile=RpgMenu.home().resolve("saves/preferences.properties");
++        com.projetok.rpg.RpgPreferences[] preferences={com.projetok.rpg.RpgPreferences.defaults()};
++        try{preferences[0]=com.projetok.rpg.RpgPreferences.load(preferencesFile);}catch(Exception error){JOptionPane.showMessageDialog(null,"Preferencias invalidas preservadas; usando padrao: "+error.getMessage());}
++        RpgAudio audio=new RpgAudio(preferences[0]);audio.play(RpgAudio.Cue.UI);
+         DebugSnapshot template = DebugWorld.demo().snapshot();
+         DebugPanel panel = new DebugPanel(() -> adapt(runtime.snapshot(), template));
+-        panel.setLocalMap(RpgMaps.region("village"));
++        panel.setLocalMap(RpgMaps.region("village"),false);
+         JFrame frame = new JFrame("Spirit Gate | RPG offline");
+         JPanel root=new JPanel(new java.awt.BorderLayout());RpgHud hud=new RpgHud(runtime);root.add(panel,java.awt.BorderLayout.CENTER);root.add(hud,java.awt.BorderLayout.SOUTH);
+         frame.setContentPane(root); frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+@@ -42,9 +46,11 @@
+         boolean amber=runtime.snapshot().identity().appearance().equals("amber");
+         panel.setActorPalette(id->id==1?(amber?new java.awt.Color(230,177,65):new java.awt.Color(65,190,220)):id>=500?new java.awt.Color(90,200,160):null);
+         JButton menuButton=new JButton("Salvar e voltar ao menu");menuButton.addActionListener(e->frame.dispatchEvent(new WindowEvent(frame,WindowEvent.WINDOW_CLOSING)));JPanel toolbar=new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));toolbar.add(menuButton);root.add(toolbar,java.awt.BorderLayout.NORTH);
+-        for(String action:new String[]{"attack","ability","potion","inventory"}){JButton button=new JButton(action+" ["+controls[0].key(action)+"]");button.addActionListener(e->actions.get(action).run());toolbar.add(button);}
+-        JButton configure=new JButton("Atalhos");configure.addActionListener(e->ControlsDialog.open(frame,controls[0],controlsFile,next->{for(String key:controls[0].keys().values())for(boolean down:new boolean[]{true,false}){panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(KeyStroke.getKeyStroke((down?"pressed ":"released ")+key));panel.getActionMap().remove(key+down);}resetHeld(panel);controls[0]=next;bindActions.run();}));toolbar.add(configure);
+-        frame.addWindowListener(new WindowAdapter(){public void windowClosing(WindowEvent e){runtime.input(0,0);frame.setEnabled(false);runtime.save(store).whenComplete((unused,error)->SwingUtilities.invokeLater(()->{if(error!=null){frame.setEnabled(true);JOptionPane.showMessageDialog(frame,"Falha ao salvar; sessao preservada: "+error.getMessage());}else frame.dispose();}));}});
++        java.util.Map<String,JButton> hotbar=new java.util.TreeMap<>();
++        for(String action:new String[]{"attack","ability","potion","inventory","journal","map"}){JButton button=new JButton(actionLabel(action)+" ["+controls[0].key(action)+"]");button.addActionListener(e->{audio.play(RpgAudio.Cue.UI);actions.get(action).run();});toolbar.add(button);hotbar.put(action,button);}
++        JButton configure=new JButton("Atalhos");configure.addActionListener(e->ControlsDialog.open(frame,controls[0],controlsFile,next->{for(String key:controls[0].keys().values())for(boolean down:new boolean[]{true,false}){panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(KeyStroke.getKeyStroke((down?"pressed ":"released ")+key));panel.getActionMap().remove(key+down);}resetHeld(panel);controls[0]=next;bindActions.run();hotbar.forEach((id,button)->button.setText(actionLabel(id)+" ["+next.key(id)+"]"));}));toolbar.add(configure);
++        JButton settings=new JButton("Audio / ambiente");settings.addActionListener(e->PreferencesDialog.open(frame,preferences[0],preferencesFile,next->{preferences[0]=next;audio.preferences(next);audio.play(RpgAudio.Cue.UI);}));toolbar.add(settings);
++        frame.addWindowListener(new WindowAdapter(){public void windowClosing(WindowEvent e){runtime.input(0,0);inventory.setVisible(false);exploration.setVisible(false);frame.setEnabled(false);runtime.saveAndPause(store).whenComplete((unused,error)->SwingUtilities.invokeLater(()->{if(error!=null){frame.setEnabled(true);JOptionPane.showMessageDialog(frame,"Falha ao salvar; sessao preservada: "+error.getMessage());}else frame.dispose();}));}});
+         frame.pack(); frame.setLocationRelativeTo(null);
+         var screen=java.awt.Toolkit.getDefaultToolkit().getScreenSize();frame.setSize(Math.min(1260,screen.width-60),Math.min(900,screen.height-80));frame.setLocationRelativeTo(null);
+         boolean[] held = new boolean[4];
+@@ -61,8 +67,21 @@
+             }
+         }
+         String[] displayedRegion={"village"};
+-        Timer timer = new Timer(33, e -> {var view=runtime.snapshot();panel.setCustomHud(java.util.List.of("SPIRIT GATE | RPG OFFLINE",view.identity().name(),"Nivel "+view.level()+" | XP "+view.state().xp(),"HP "+view.state().hp()+" / "+view.maxHp(),"Ataque "+view.attack()+" | Defesa "+view.defense(),"Moedas "+view.state().coins(),"Regiao: "+view.state().region(),"[F] NPC / portal / objeto","[SPACE] Ataque basico","[Q] Habilidade do arquetipo","[1] Pocao de vida","[I] Inventario / equipamentos","[J] Diario | [M] Mapa","[F5] Salvar progresso","[R] Recuperar se morto"));panel.setAmbientLight(com.projetok.rpg.EnvironmentCycle.light(view.ticks(),true));if(!displayedRegion[0].equals(view.state().region())){displayedRegion[0]=view.state().region();panel.setLocalMap(RpgMaps.region(displayedRegion[0]));}panel.repaint();hud.update(view);});
+-        frame.addWindowListener(new WindowAdapter() { public void windowClosed(WindowEvent e) { timer.stop(); runtime.close();if(System.getProperty("spiritgate.smoke.output")==null)RpgMenu.open(); } });
++        com.projetok.rpg.RpgWorld.View[] previous={runtime.snapshot()};
++        Timer timer = new Timer(33, e -> {
++            var view=runtime.snapshot();var before=previous[0];
++            if(view.state().hp()<before.state().hp())audio.play(RpgAudio.Cue.HURT);
++            else if(view.state().hp()>before.state().hp())audio.play(RpgAudio.Cue.HEAL);
++            if(view.level()>before.level())audio.play(RpgAudio.Cue.LEVEL);
++            if(view.state().region().equals(before.state().region())&&view.enemies().stream().mapToInt(com.projetok.rpg.EnemyService.View::hp).sum()<before.enemies().stream().mapToInt(com.projetok.rpg.EnemyService.View::hp).sum())audio.play(RpgAudio.Cue.HIT);
++            if(view.ticks()/900>before.ticks()/900)audio.play(RpgAudio.Cue.AMBIENT);previous[0]=view;
++            var keysNow=controls[0];
++            panel.setCustomHud(java.util.List.of("SPIRIT GATE | RPG OFFLINE",view.identity().name(),"Nivel "+view.level()+" | XP "+view.state().xp(),"HP "+view.state().hp()+" / "+view.maxHp(),"Ataque "+view.attack()+" | Defesa "+view.defense(),"Moedas "+view.state().coins(),"Regiao: "+view.state().region(),"["+keysNow.key("interact")+"] NPC / portal / objeto","["+keysNow.key("attack")+"] Ataque basico","["+keysNow.key("ability")+"] Habilidade do arquetipo","["+keysNow.key("potion")+"] Pocao de vida","["+keysNow.key("inventory")+"] Inventario / equipamentos","["+keysNow.key("journal")+"] Diario | ["+keysNow.key("map")+"] Mapa","["+keysNow.key("save")+"] Salvar progresso","["+keysNow.key("revive")+"] Recuperar se morto"));
++            panel.setAmbientLight(com.projetok.rpg.EnvironmentCycle.light(view.ticks(),preferences[0].environment()));
++            if(!displayedRegion[0].equals(view.state().region())){displayedRegion[0]=view.state().region();panel.setLocalMap(RpgMaps.region(displayedRegion[0]),false);}
++            panel.repaint();hud.update(view);
++        });
++        frame.addWindowListener(new WindowAdapter() { public void windowClosed(WindowEvent e) { timer.stop(); runtime.close();audio.close();if(System.getProperty("spiritgate.smoke.output")==null)RpgMenu.open(); } });
+         frame.addWindowFocusListener(new WindowAdapter() { public void windowLostFocus(WindowEvent e) { java.util.Arrays.fill(held, false);resetHeld(panel); runtime.input(0, 0); } });
+         runtime.start(); timer.start(); frame.setVisible(true);
+         if(System.getProperty("spiritgate.smoke.output")!=null){Timer capture=new Timer(2000,e->{
+@@ -76,9 +95,9 @@
+         var actors=new java.util.ArrayList<DebugSnapshot.ActorView>();
+         actors.add(new DebugSnapshot.ActorView(1,v.identity().name(),v.x(),v.y(),18,v.state().hp(),v.maxHp(),true,v.state().hp()>0));
+         for(var enemy:v.enemies())actors.add(new DebugSnapshot.ActorView(enemy.id(),enemy.name(),enemy.x(),enemy.y(),19,enemy.hp(),enemy.maxHp(),false,enemy.hp()>0));
+-        int npcId=500;for(var npc:v.npcs())actors.add(new DebugSnapshot.ActorView(npcId++,npc.name()+" [F]",npc.x(),npc.y(),16,1,1,false,true));
+-        for(var portal:v.portals())actors.add(new DebugSnapshot.ActorView(npcId++,"[F] "+portal.destination(),portal.x(),portal.y(),22,1,1,false,true));
+-        for(var object:v.objects())if(object.available())actors.add(new DebugSnapshot.ActorView(npcId++,"[F] "+object.id(),object.x(),object.y(),15,1,1,false,true));
++        int npcId=500;for(var npc:v.npcs())actors.add(new DebugSnapshot.ActorView(npcId++,npc.name(),npc.x(),npc.y(),16,1,1,false,true));
++        for(var portal:v.portals())actors.add(new DebugSnapshot.ActorView(npcId++,"Portal: "+portal.destination(),portal.x(),portal.y(),22,1,1,false,true));
++        for(var object:v.objects())if(object.available())actors.add(new DebugSnapshot.ActorView(npcId++,object.id().contains("chest")?"Bau do aprendiz":object.id().contains("herbs")?"Ervas curativas":"Reserva de pocoes",object.x(),object.y(),15,1,1,false,true));
+         var warnings=v.enemies().stream().filter(e->e.state().equals("PREPARE")).map(e->new DebugSnapshot.IceZoneView(e.x(),e.y(),e.hp()*2<=e.maxHp()?135:110,0,1)).toList();
+         return new DebugSnapshot(actors,
+             List.of(new DebugSnapshot.Obstacle(380,180,120,120)),List.of(),v.state().hp(),v.maxHp(),0,v.state().hp()==0,v.ticks(),v.message(),1,0,0,null,
+@@ -94,4 +113,5 @@
+         }
+     }
+     static void resetHeld(JComponent component){Object held=component.getClientProperty("rpg.held");if(held instanceof java.util.Set<?> keys)keys.clear();}
++    static String actionLabel(String action){return switch(action){case "attack"->"Golpe";case "ability"->"Habilidade";case "potion"->"Pocao";case "inventory"->"Inventario";case "journal"->"Diario";case "map"->"Mapa";case "interact"->"Interagir";case "save"->"Salvar";case "revive"->"Recuperar";default->action;};}
+ }
+--- a/server/src/main/java/com/projetok/prototype/rpg/RpgRuntime.java
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgRuntime.java
+@@ -14,28 +14,39 @@
+     private record Input(float x,float y) { }
+     private volatile Input input=new Input(0,0);
+     private volatile RpgWorld.View view;
++    private volatile boolean paused;
++    private volatile RuntimeException failure;
+     private boolean started, closed;
+     public RpgRuntime() { this(new RpgWorld()); }
+     public RpgRuntime(RpgWorld world) { this.world = world; view = world.snapshot(); }
+     public synchronized void start() {
+         if (started || closed) throw new IllegalStateException("Ciclo ja iniciado/encerrado");
+         started = true;
+-        loop.scheduleAtFixedRate(() -> {
+-            for(int i=0;i<64;i++){var command=commands.poll();if(command==null)break;command.accept(world);}
+-            Input value=input;world.tick(value.x(),value.y());view=world.snapshot();
+-        }, 0, 33_333_333, TimeUnit.NANOSECONDS);
++        loop.scheduleAtFixedRate(() -> {try{advanceOneTick();}catch(RuntimeException error){failure=error;loop.shutdown();error.printStackTrace();}}, 0, 33_333_333, TimeUnit.NANOSECONDS);
+     }
++    void advanceOneTick(){
++        if(paused)return;
++        for(int i=0;i<64;i++){var command=commands.poll();if(command==null)break;command.accept(world);if(paused)break;}
++        if(!paused){Input value=input;world.tick(value.x(),value.y());}view=world.snapshot();
++    }
++    public RuntimeException failure(){return failure;}
+     public void input(float x, float y) {
+         if (!Float.isFinite(x) || !Float.isFinite(y)) throw new IllegalArgumentException("Entrada invalida");
+         input=new Input(x,y);
+     }
+     public RpgWorld.View snapshot() { return view; }
+-    public synchronized boolean command(java.util.function.Consumer<RpgWorld> command){return !closed&&commands.offer(java.util.Objects.requireNonNull(command));}
++    public synchronized boolean command(java.util.function.Consumer<RpgWorld> command){return !closed&&failure==null&&commands.offer(java.util.Objects.requireNonNull(command));}
+     public CompletableFuture<Boolean> action(java.util.function.Function<RpgWorld,Boolean> action){
+         var result=new CompletableFuture<Boolean>();if(!command(w->{try{result.complete(action.apply(w));}catch(RuntimeException error){result.completeExceptionally(error);}}))result.complete(false);return result;
+     }
+     public CompletableFuture<Void> save(com.projetok.rpg.LocalSaveStore store) {
+-        var state=view.state();return CompletableFuture.runAsync(()->{try{store.save(state);}catch(java.io.IOException e){throw new CompletionException(e);}},io);
++        return save(store,false);
++    }
++    public CompletableFuture<Void> saveAndPause(com.projetok.rpg.LocalSaveStore store){return save(store,true);}
++    private CompletableFuture<Void> save(com.projetok.rpg.LocalSaveStore store,boolean pause){
++        var capture=new CompletableFuture<com.projetok.rpg.RpgSave>();
++        if(!command(w->{capture.complete(w.save());paused=pause;}))capture.completeExceptionally(new IllegalStateException("Simulacao encerrada ou fila cheia"));
++        return capture.thenAcceptAsync(state->{try{store.save(state);}catch(java.io.IOException e){throw new CompletionException(e);}},io).whenComplete((unused,error)->{if(error!=null&&pause)paused=false;});
+     }
+     public synchronized void close() { closed = true; loop.shutdownNow();io.shutdown(); }
+ }
+--- a/server/src/main/java/com/projetok/rpg/Archetypes.java
++++ b/server/src/main/java/com/projetok/rpg/Archetypes.java
+@@ -8,6 +8,10 @@
+     private Archetypes() { }
+     public static Definition get(String id) {
+         if(!Set.of("guardian","mystic").contains(id))throw new IllegalArgumentException("Arquetipo desconhecido");
++        return Builtin.VALUES.get(id);
++    }
++    private static final class Builtin {static final Map<String,Definition> VALUES=Map.of("guardian",read("guardian"),"mystic",read("mystic"));}
++    private static Definition read(String id) {
+         try(InputStream in=Archetypes.class.getResourceAsStream("/rpg/archetypes.properties")) {
+             if(in==null)throw new IOException("Arquetipos ausentes"); Properties p=new Properties();p.load(in);
+             String[] v=p.getProperty(id).split("\\|");
+--- a/server/src/main/java/com/projetok/rpg/LocalSaveStore.java
++++ b/server/src/main/java/com/projetok/rpg/LocalSaveStore.java
+@@ -19,7 +19,7 @@
+         if(Files.size(path)>262144) throw new IOException("Save excessivo"); return path;
+     }
+     public synchronized void save(RpgSave state) throws IOException {
+-        byte[] data=encode(state); decode(data);
++        RpgWorld.restore(state);byte[] data=encode(state); decode(data);
+         Files.createDirectories(file.getParent());
+         Path temporary=Files.createTempFile(file.getParent(),"offline-",".tmp");
+         try {
+--- a/server/src/main/java/com/projetok/rpg/RpgContent.java
++++ b/server/src/main/java/com/projetok/rpg/RpgContent.java
+@@ -16,6 +16,10 @@
+     }
+     public Collection<Definition> all(String kind) { return entries.getOrDefault(kind, Map.of()).values(); }
+     public static RpgContent builtin() {
++        return Builtin.VALUE;
++    }
++    private static final class Builtin { static final RpgContent VALUE=loadBuiltin(); }
++    private static RpgContent loadBuiltin() {
+         try (InputStream in = RpgContent.class.getResourceAsStream("/rpg/content.properties")) {
+             if (in == null) throw new IOException("Catalogo RPG ausente");
+             return load(in);
+--- /dev/null
++++ b/server/src/main/java/com/projetok/rpg/RpgPreferences.java
+@@ -0,0 +1,18 @@
++package com.projetok.rpg;
++import java.nio.file.*;
++import java.io.*;
++import java.util.*;
++public record RpgPreferences(int volume,boolean muted,boolean environment) {
++    public RpgPreferences{if(volume<0||volume>100)throw new IllegalArgumentException("Volume invalido");}
++    public static RpgPreferences defaults(){return new RpgPreferences(40,false,true);}
++    public static RpgPreferences load(Path file)throws IOException{
++        if(!Files.exists(file))return defaults();if(Files.size(file)>4096)throw new IOException("Preferencias excessivas");Properties p=new Properties();try(var in=Files.newInputStream(file)){p.load(in);}
++        if(!"1".equals(p.remove("schema"))||!p.stringPropertyNames().equals(Set.of("volume","muted","environment")))throw new IOException("Preferencias incompativeis");
++        for(String key:new String[]{"muted","environment"})if(!Set.of("true","false").contains(p.getProperty(key)))throw new IOException("Booleano invalido");
++        return new RpgPreferences(Integer.parseInt(p.getProperty("volume")),Boolean.parseBoolean(p.getProperty("muted")),Boolean.parseBoolean(p.getProperty("environment")));
++    }
++    public void save(Path file)throws IOException{
++        Path target=file.toAbsolutePath();Files.createDirectories(target.getParent());Path temp=Files.createTempFile(target.getParent(),"preferences-",".tmp");
++        try{Files.writeString(temp,"schema=1\nvolume="+volume+"\nmuted="+muted+"\nenvironment="+environment+"\n");load(temp);try{Files.move(temp,target,StandardCopyOption.ATOMIC_MOVE,StandardCopyOption.REPLACE_EXISTING);}catch(AtomicMoveNotSupportedException e){Files.move(temp,target,StandardCopyOption.REPLACE_EXISTING);}}finally{Files.deleteIfExists(temp);}
++    }
++}
+--- a/server/src/main/java/com/projetok/rpg/RpgSave.java
++++ b/server/src/main/java/com/projetok/rpg/RpgSave.java
+@@ -6,6 +6,7 @@
+ public record RpgSave(CharacterIdentity identity, String region, float x, float y, int hp,
+                       long xp, int coins, Map<String,Integer> inventory, Map<String,String> equipment,
+                       Map<String,Integer> quests, Set<String> flags, long ticks) {
++    private static final ItemCatalog ITEMS=new ItemCatalog(RpgContent.builtin());
+     public RpgSave {
+         Objects.requireNonNull(identity);
+         inventory=Map.copyOf(inventory); equipment=Map.copyOf(equipment); quests=Map.copyOf(quests); flags=Set.copyOf(flags);
+@@ -14,7 +15,7 @@
+                 || xp<0 || xp>1_000_000 || coins<0 || coins>1_000_000 || ticks<0 || ticks>1_000_000_000L
+                 || inventory.size()>100 || equipment.size()>8 || quests.size()>64 || flags.size()>2048)
+             throw new IllegalArgumentException("Save fora dos limites");
+-        InventoryService.restore(new ItemCatalog(content),20,inventory);
++        InventoryService.restore(ITEMS,20,inventory);
+         equipment.forEach((slot,id)->{ if(!Set.of("weapon","torso","legs","accessory").contains(slot)) throw new IllegalArgumentException("Slot invalido"); content.get("item",id); });
+         quests.forEach((id,q)->{ content.get("quest",id); if(q<0||q>10000) throw new IllegalArgumentException("Quest invalida"); });
+         for(String flag:flags) if(!flag.matches("[a-zA-Z0-9_:.-]{1,100}")) throw new IllegalArgumentException("Flag invalida");
+--- a/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -79,7 +79,7 @@
+             List.of(new CollisionService.Obstacle(380, 180, 120, 120)), List.of());
+     private final EnemyService enemies=new EnemyService(content,space);
+     private final LootService loot=new LootService(content,items);
+-    private java.util.random.RandomGenerator random=new java.util.Random(741);
++    private java.util.random.RandomGenerator random;
+     private long attackReadyTick;
+     private final NpcService npcs=new NpcService(content);
+     private final PortalService portals=new PortalService(content);
+@@ -113,7 +113,7 @@
+     }
+     private final DialogueService dialogues=new DialogueService();
+     private final QuestService questService=new QuestService(content);
+-    public boolean acceptQuest(String id){if(!canTalkElder()||!questService.accept(id,quests,flags))return false;questService.event("talk","elder","elder",ticks+1,quests,flags);questService.refresh(quests,flags,inventory,region);message="Missao aceita";return true;}
++    public boolean acceptQuest(String id){if(!canTalkElder()||!questService.accept(id,quests,flags))return false;questService.event("talk","elder","accept_"+id,ticks+1,quests,flags);questService.refresh(quests,flags,inventory,region);message="Missao aceita";return true;}
+     public boolean completeQuest(String id){
+         if(!canTalkElder())return false;questService.refresh(quests,flags,inventory,region);if(questService.state(id,quests,flags)!=QuestService.State.READY)return false;
+         var d=questService.definition(id);var copy=inventory.copy();for(var o:d.objectives())if(o.type().equals("collect")&&!copy.remove(o.target(),o.count()))return false;
+@@ -138,7 +138,7 @@
+         var portal=portals.nearest(region,body.getPosition());if(portal.isPresent())return travel(portal.get().id());
+         var npc=npcs.nearest(region,body.getPosition());
+         if(npc.isEmpty()||!lineClear(body.getPosition(),new Position(npc.get().x(),npc.get().y()))){closeDialogue();var object=objects.views(region,ticks,flags).stream().filter(o->o.available()&&distance(body.getPosition(),new Position(o.x(),o.y()))<=65).findFirst();if(object.isPresent())return harvest(object.get().id());message="Aproxime-se de NPC, portal ou objeto e pressione F";return false;}
+-        activeNpc=npc.get().id();dialogueNode=activeNpc+".start";message=npc.get().name()+": seja bem-vindo!";return true;
++        activeNpc=npc.get().id();questService.event("talk",activeNpc,activeNpc,ticks+1,quests,flags);questService.refresh(quests,flags,inventory,region);dialogueNode=activeNpc+".start";message=npc.get().name()+": seja bem-vindo!";return true;
+     }
+     public RpgWorld(CharacterIdentity identity,java.util.random.RandomGenerator random) { this(identity);this.random=java.util.Objects.requireNonNull(random); }
+     public boolean attack() {
+@@ -150,13 +150,13 @@
+         message="Golpe em "+target.getName()+": "+attackPower();
+         if(target.hp==0) {
+             target.readyTick=ticks+target.definition.respawn();
+-            if(loot.award(target.spawn,target.generation,target.definition.id(),inventory,flags,random)) {
++            if(loot.award(target.spawn,target.generation,target.definition.id(),inventory,flags,random==null?new java.util.Random(741L^((long)target.spawn.hashCode()<<16)^target.generation):random)) {
+                 questService.event("kill",target.definition.id(),target.spawn,target.generation,quests,flags);
+                 questService.refresh(quests,flags,inventory,region);
+                 awardExperience(content.get("enemy",target.definition.id()).value());coins=Math.min(1_000_000,coins+5);
+                 message="Derrotado: +XP, loot e moedas";
+                 if(target.definition.id().equals("warden")){flags.add("boss-defeated");flags.add("dungeon-completed");message="Santuario concluido! Volte a Ancia com a reliquia.";}
+-            }
++            }else{target.hp=1;target.readyTick=0;message="Libere espaco nas recompensas pendentes antes da derrota";}
+         }
+         return true;
+     }
+@@ -169,7 +169,7 @@
+     public void collectLoot() { loot.collect(inventory,flags);message="Recompensas pendentes recolhidas quando houver espaco"; }
+     private long ticks;
+     public RpgSave save() {
+-        var persistent=new java.util.TreeSet<>(flags);persistent.removeIf(f->f.startsWith("stamina:")||f.startsWith("mob:")||f.startsWith("attack-until:")||f.startsWith("portal-until:"));persistent.add("stamina:"+stamina);persistent.add("attack-until:"+attackReadyTick);persistent.add("portal-until:"+portalReadyTick);persistent.addAll(enemies.saveFlags());
++        var persistent=new java.util.TreeSet<>(flags);persistent.removeIf(f->f.startsWith("stamina:")||f.startsWith("mob:")||f.startsWith("attack-until:")||f.startsWith("portal-until:")||f.startsWith("facing:"));persistent.add("stamina:"+stamina);persistent.add("facing:"+facingX+":"+facingY);persistent.add("attack-until:"+attackReadyTick);persistent.add("portal-until:"+portalReadyTick);persistent.addAll(enemies.saveFlags());
+         return new RpgSave(identity,region,body.getPosition().x(),body.getPosition().y(),hp,xp,coins,inventory.snapshot(),equipment,quests,persistent,ticks);
+     }
+     public static RpgWorld restore(RpgSave state) {
+@@ -186,10 +186,33 @@
+             if(flag.startsWith("stamina:"))world.stamina=Integer.parseInt(flag.substring(8));
+             if(flag.startsWith("attack-until:"))world.attackReadyTick=Long.parseLong(flag.substring(13));
+             if(flag.startsWith("portal-until:"))world.portalReadyTick=Long.parseLong(flag.substring(13));
++            if(flag.startsWith("facing:")){var v=flag.split(":");if(v.length!=3)throw new IllegalArgumentException("Direcao invalida");world.facingX=Float.parseFloat(v[1]);world.facingY=Float.parseFloat(v[2]);if(!Float.isFinite(world.facingX)||!Float.isFinite(world.facingY)||Math.abs(Math.hypot(world.facingX,world.facingY)-1)>0.0001)throw new IllegalArgumentException("Direcao invalida");}
+         }
+         if(world.stamina<0||world.stamina>1000)throw new IllegalArgumentException("Vigor invalido");
+         world.enemies.restore(state.flags(),world.space);
++        world.validateFlags(state.flags());
+         if(world.hp>world.maxHp()) throw new IllegalArgumentException("HP acima do maximo"); return world;
++    }
++    private void validateFlags(java.util.Set<String> source) {
++        var keys=new java.util.HashSet<String>();
++        for(String flag:source) {
++            String[] p=flag.split(":");String key=p[0];
++            switch(p[0]) {
++                case "stamina","potion-until","ability-until","attack-until","portal-until"->{if(p.length!=2||Long.parseLong(p[1])<0||Long.parseLong(p[1])>1_000_009_000L)throw new IllegalArgumentException("Recurso/recarga invalido");}
++                case "facing"->{if(p.length!=3)throw new IllegalArgumentException("Direcao invalida");}
++                case "mob"->{if(p.length!=7&&p.length!=9)throw new IllegalArgumentException("Estado de mob invalido");key+=":"+p[1];}
++                case "pending"->{if(p.length!=3)throw new IllegalArgumentException("Loot pendente invalido");items.get(p[1]);int n=Integer.parseInt(p[2]);if(n<1||n>9999)throw new IllegalArgumentException("Loot pendente fora do limite");key+=":"+p[1];}
++                case "defeat"->{if(p.length!=3||Long.parseLong(p[2])<1||Long.parseLong(p[2])>1_000_000_000L)throw new IllegalArgumentException("Ledger invalido");boolean known=content.all("region").stream().flatMap(r->enemies.views(r.id()).stream()).anyMatch(e->e.spawn().equals(p[1]));if(!known)throw new IllegalArgumentException("Spawn do ledger ausente");key+=":"+p[1];}
++                case "visited"->{if(p.length!=2)throw new IllegalArgumentException("Visita invalida");content.get("region",p[1]);key+=":"+p[1];}
++                case "quest-done"->{if(p.length!=2||!quests.containsKey(p[1])||quests.get(p[1])!=questService.required(p[1]))throw new IllegalArgumentException("Conclusao de quest invalida");key+=":"+p[1];}
++                case "qo"->{if(p.length!=4)throw new IllegalArgumentException("Objetivo invalido");var objectives=questService.definition(p[1]).objectives();int index=Integer.parseInt(p[2]),count=Integer.parseInt(p[3]);if(index<0||index>=objectives.size()||count<0||count>objectives.get(index).count())throw new IllegalArgumentException("Progresso de objetivo invalido");key+=":"+p[1]+":"+index;}
++                case "qe"->{if(p.length!=4||!java.util.Set.of("kill","talk","collect","visit").contains(p[1])||!p[2].matches("[a-z][a-z0-9_]{0,39}")||Long.parseLong(p[3])<1||Long.parseLong(p[3])>1_000_000_001L)throw new IllegalArgumentException("Evento de quest invalido");key+=":"+p[1]+":"+p[2];}
++                case "opened","object-until"->{if(p.length!=(p[0].equals("opened")?2:3))throw new IllegalArgumentException("Objeto invalido");boolean known=content.all("region").stream().flatMap(r->objects.views(r.id(),0,java.util.Set.of()).stream()).anyMatch(o->o.id().equals(p[1]));if(!known||p.length==3&&(Long.parseLong(p[2])<0||Long.parseLong(p[2])>1_000_009_000L))throw new IllegalArgumentException("Objeto ausente/recarga invalida");key+=":"+p[1];}
++                case "dungeon-started","dungeon-completed","boss-defeated"->{if(p.length!=1)throw new IllegalArgumentException("Estado de masmorra invalido");}
++                default->throw new IllegalArgumentException("Flag de save desconhecida: "+p[0]);
++            }
++            if(!keys.add(key))throw new IllegalArgumentException("Estado duplicado: "+key);
++        }
+     }
+     public record View(float x, float y, long ticks, CharacterIdentity identity, RpgSave state, int attack, int defense, String message, int maxHp, int level,List<EnemyService.View> enemies,List<NpcService.View> npcs,String activeNpc,DialogueService.Node dialogue,List<QuestService.View> journal,List<PortalService.Portal> portals,List<WorldObjects.ObjectView> objects) { public View { enemies=List.copyOf(enemies);npcs=List.copyOf(npcs);journal=List.copyOf(journal);portals=List.copyOf(portals);objects=List.copyOf(objects); } }
+     public void tick(float x, float y) {
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/rpg/RpgAudioTest.java
+@@ -0,0 +1,12 @@
++package com.projetok.prototype.rpg;
++import com.projetok.rpg.RpgPreferences;
++import org.junit.jupiter.api.Test;
++import java.util.concurrent.TimeUnit;
++import static org.junit.jupiter.api.Assertions.*;
++class RpgAudioTest {
++    @Test void unavailableDeviceFallsBackAndMuteSkipsOutput()throws Exception{
++        try(var audio=new RpgAudio(RpgPreferences.defaults(),(cue,volume)->{throw new javax.sound.sampled.LineUnavailableException("sem dispositivo");})){
++            audio.play(RpgAudio.Cue.HIT);audio.flush().get(2,TimeUnit.SECONDS);assertEquals(1,audio.unavailableCount());audio.preferences(new RpgPreferences(40,true,true));audio.play(RpgAudio.Cue.UI);audio.flush().get(2,TimeUnit.SECONDS);assertEquals(1,audio.unavailableCount());
++        }
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/rpg/RpgRuntimeSaveTest.java
+@@ -0,0 +1,13 @@
++package com.projetok.prototype.rpg;
++import com.projetok.rpg.*;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import java.nio.file.Path;
++import java.util.concurrent.TimeUnit;
++import static org.junit.jupiter.api.Assertions.*;
++class RpgRuntimeSaveTest {
++    @TempDir Path folder;
++    @Test void closingCapturesQueuedCommandsBeforeIoAndPauses()throws Exception{
++        try(var runtime=new RpgRuntime()) {var store=new LocalSaveStore(folder.resolve("save.properties"));runtime.command(w->w.inventory().add("crystal",4));var future=runtime.saveAndPause(store);runtime.advanceOneTick();future.get(3,TimeUnit.SECONDS);assertEquals(runtime.snapshot().state(),store.load());long tick=runtime.snapshot().ticks();runtime.advanceOneTick();assertEquals(tick,runtime.snapshot().ticks());}
++    }
++}
+--- a/server/src/test/java/com/projetok/rpg/DungeonCycleTest.java
++++ b/server/src/test/java/com/projetok/rpg/DungeonCycleTest.java
+@@ -3,8 +3,8 @@
+ import static org.junit.jupiter.api.Assertions.*;
+ class DungeonCycleTest {
+     static void fight(RpgWorld w,int ticks){for(int i=0;i<ticks;i++){w.attack();if(w.save().hp()<w.maxHp()-45)w.use("potion");w.tick(0,0);}assertTrue(w.save().hp()>0);}
+-    @Test void fullDungeonFromNewCharacterWithoutInjectedProgress() {
+-        var w=new RpgWorld(CharacterIdentity.create("Expedicao","guardian","amber"));w.interact();w.acceptQuest("first_steps");OfflineCycleTest.move(w,855,320);w.interact();fight(w,450);OfflineCycleTest.move(w,80,320);w.interact();OfflineCycleTest.move(w,190,320);w.interact();assertTrue(w.completeQuest("first_steps"));assertTrue(w.acceptQuest("sanctuary"));
++    @org.junit.jupiter.params.ParameterizedTest @org.junit.jupiter.params.provider.ValueSource(strings={"guardian","mystic"}) void fullDungeonFromNewCharacterWithoutInjectedProgress(String archetype) {
++        var w=new RpgWorld(CharacterIdentity.create("Expedicao",archetype,"amber"));w.interact();w.acceptQuest("first_steps");OfflineCycleTest.move(w,855,320);w.interact();fight(w,450);OfflineCycleTest.move(w,80,320);w.interact();OfflineCycleTest.move(w,190,320);w.interact();assertTrue(w.completeQuest("first_steps"));assertTrue(w.acceptQuest("sanctuary"));
+         OfflineCycleTest.move(w,330,440);w.harvest("starter_chest");assertTrue(w.equip("sword"));OfflineCycleTest.move(w,855,320);w.interact();OfflineCycleTest.move(w,855,320);assertTrue(w.interact());assertEquals("ruins",w.save().region());
+         OfflineCycleTest.move(w,270,420);fight(w,120);OfflineCycleTest.move(w,510,420);fight(w,160);OfflineCycleTest.move(w,670,320);fight(w,260);assertTrue(w.save().flags().contains("dungeon-completed"));assertEquals(1,w.inventory().count("relic"));
+         w=RpgWorld.restore(w.save());OfflineCycleTest.move(w,150,350);OfflineCycleTest.move(w,80,320);assertTrue(w.interact());OfflineCycleTest.move(w,80,320);assertTrue(w.interact());OfflineCycleTest.move(w,190,320);w.interact();assertTrue(w.completeQuest("sanctuary"));assertTrue(w.save().flags().contains("quest-done:sanctuary"));
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/RpgFinalReliabilityTest.java
+@@ -0,0 +1,13 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import java.nio.file.*;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++class RpgFinalReliabilityTest {
++    @TempDir Path folder;
++    @Test void preferencesAreSeparateAndPersist()throws Exception{var p=new RpgPreferences(23,true,false);Path file=folder.resolve("preferences.properties");p.save(file);assertEquals(p,RpgPreferences.load(file));assertThrows(IllegalArgumentException.class,()->new RpgPreferences(101,false,true));}
++    @Test void malformedPendingRewardCannotOverwriteValidSave()throws Exception{var w=new RpgWorld();var store=new LocalSaveStore(folder.resolve("save.properties"));store.save(w.save());byte[] original=Files.readAllBytes(store.file());var s=w.save();var flags=new TreeSet<>(s.flags());flags.add("pending:crystal:bad");var invalid=new RpgSave(s.identity(),s.region(),s.x(),s.y(),s.hp(),s.xp(),s.coins(),s.inventory(),s.equipment(),s.quests(),flags,s.ticks());assertThrows(IllegalArgumentException.class,()->store.save(invalid));assertArrayEquals(original,Files.readAllBytes(store.file()));}
++    @Test void facingAndLootContinueDeterministically(){var w=EnemyRpgTest.forest();w.tick(-1,0);var copy=RpgWorld.restore(w.save());for(int i=0;i<100;i++){w.attack();copy.attack();w.tick(0,0);copy.tick(0,0);}assertEquals(w.save(),copy.save());}
++    @Test void prolongedFixedSeedSimulationSurvivesRepeatedReloads()throws Exception{var w=new RpgWorld();var random=new Random(1966);for(int i=0;i<20000;i++){w.tick(random.nextInt(-1,2),random.nextInt(-1,2));if(i%90==0)w.castAbility();if(i%1000==0){var state=w.save();w=RpgWorld.restore(LocalSaveStore.decode(LocalSaveStore.encode(state)));assertEquals(state,w.save());}}assertEquals(20000,w.snapshot().ticks());}
++}
+--- /dev/null
++++ b/tools/auditar_rpg.py
+@@ -0,0 +1,56 @@
++"""Audita o pacote RPG sem executar seu conteudo e sem acessar rede."""
++from pathlib import Path, PurePosixPath
++import argparse
++import hashlib
++import io
++import json
++import zipfile
++
++def audit(path):
++    checks = {}
++    with zipfile.ZipFile(path) as archive:
++        entries = archive.infolist()
++        names = [e.filename for e in entries]
++        assert len(names) == len(set(names)) and len(names) < 2000
++        assert sum(e.file_size for e in entries) < 512 * 1024 * 1024
++        for entry in entries:
++            p = PurePosixPath(entry.filename)
++            assert not p.is_absolute() and '..' not in p.parts and '\\' not in entry.filename
++            assert entry.file_size < 128 * 1024 * 1024
++            assert not entry.filename.lower().endswith(('.env', '.pem', '.key', '.sql', '.py'))
++        checks['zipIntegrity'] = archive.testzip() is None
++        jar_name = next(n for n in names if n.endswith('/app/spirit-gate-rpg.jar'))
++        with zipfile.ZipFile(io.BytesIO(archive.read(jar_name))) as jar:
++            assert 'Main-Class: com.projetok.prototype.rpg.RpgLauncher' in jar.read('META-INF/MANIFEST.MF').decode()
++            classes = 0
++            for name in jar.namelist():
++                assert name.startswith(('META-INF/', 'com/projetok/domain/', 'com/projetok/prototype/', 'com/projetok/rpg/', 'rpg/'))
++                assert not any(x in name for x in ('DatabaseManager', 'KServer', 'Kclient', 'Test.class'))
++                if name.endswith('.class'):
++                    data = jar.read(name)
++                    assert data[:4] == b'\xca\xfe\xba\xbe' and int.from_bytes(data[6:8], 'big') <= 61
++                    classes += 1
++            checks['productionClasses'] = classes
++            checks['contentIncluded'] = 'rpg/content.properties' in jar.namelist()
++        manifest = json.loads(Path(str(path) + '.manifest.json').read_text(encoding='utf-8-sig'))
++        root = jar_name.split('/')[0] + '/'
++        actual = {n[len(root):] for n in names if not n.endswith('/')}
++        assert actual == {item['path'] for item in manifest}
++        for item in manifest:
++            data = archive.read(root + item['path'])
++            assert len(data) == item['bytes'] and hashlib.sha256(data).hexdigest() == item['sha256']
++        checks['manifestHashes'] = True
++        checks['javaIntegrated'] = any(n.endswith('/runtime/release') for n in names)
++    digest = hashlib.sha256(path.read_bytes()).hexdigest()
++    assert Path(str(path) + '.sha256').read_text().strip() == digest
++    return {'schemaVersion': 1, 'package': path.name, 'sha256': digest, 'automatedApproved': True,
++            'humanApproved': False, 'checks': checks}
++
++if __name__ == '__main__':
++    parser = argparse.ArgumentParser()
++    parser.add_argument('zip', type=Path)
++    parser.add_argument('report', type=Path)
++    args = parser.parse_args()
++    report = audit(args.zip)
++    args.report.write_text(json.dumps(report, indent=2), encoding='utf-8')
++    print(json.dumps(report, indent=2))

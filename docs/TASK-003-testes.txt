@@ -1,0 +1,12 @@
+TASK-003 | 18/10/2026
+Estado inicial: mvn clean test -q; 15 testes aprovados.
+Projecao do replay antes dos campos novos: mvn test -q -Dtest=MovementReplayTest; aprovado.
+Estado final: mvn clean test; BUILD SUCCESS.
+Java release 17; 30 testes; 0 falhas; 0 erros; 0 ignorados.
+
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.061 s -- in com.projetok.domain.movement.MovementServiceTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.011 s -- in com.projetok.domain.resource.StaminaServiceTest
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.483 s -- in com.projetok.prototype.DebugWorldTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.116 s -- in com.projetok.prototype.MovementReplayTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.541 s -- in com.projetok.prototype.StaminaInterfaceTest
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.023 s -- in com.projetok.prototype.StaminaWorldTest

@@ -1,0 +1,37 @@
+﻿{
+    "schemaVersion":  1,
+    "offlineExecutable":  true,
+    "offline":  {
+                    "windowShowing":  true,
+                    "ticks":  62,
+                    "region":  "village",
+                    "componentCapture":  true,
+                    "humanApproval":  false
+                },
+    "serverBind":  "127.0.0.1",
+    "serverPort":  63041,
+    "serverExitCode":  0,
+    "clients":  [
+                    {
+                        "windowShowing":  true,
+                        "serverTick":  81,
+                        "session":  1,
+                        "players":  2,
+                        "componentCapture":  true,
+                        "humanApproved":  false
+                    },
+                    {
+                        "windowShowing":  true,
+                        "serverTick":  81,
+                        "session":  2,
+                        "players":  2,
+                        "componentCapture":  true,
+                        "humanApproved":  false
+                    }
+                ],
+    "integratedJava":  true,
+    "captureKind":  "componentes Swing de janelas em execucao",
+    "humanApproved":  false,
+    "lanBetweenMachines":  false,
+    "automatedApproved":  true
+}

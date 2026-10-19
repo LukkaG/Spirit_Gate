@@ -1,0 +1,135 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 2911 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-002 - Extração de movimentação e colisões) Tj T*
+() Tj T*
+(Spirit Gate | 18/10/2026 | Java 17) Tj T*
+() Tj T*
+(## Resultado) Tj T*
+() Tj T*
+(Movimentação e colisões estão no domínio, sem Swing, DebugInput ou DebugSnapshot. O) Tj T*
+(protótipo fornece entrada e cenário. Nenhuma dependência foi adicionada. O processamento) Tj T*
+(continua na thread única de DebugRuntime.) Tj T*
+() Tj T*
+(## Inspeção e decisões) Tj T*
+() Tj T*
+(A entrada WASD é convertida em intenção no DebugWorld. As velocidades continuam) Tj T*
+(configuradas no mundo: jogador 215 e mobs 92 unidades/s. Position é um record imutável) Tj T*
+(armazenado em GameEntity; não foi necessário alterar esses tipos.) Tj T*
+() Tj T*
+(MovementService normaliza a direção e calcula deslocamento com direção * velocidade *) Tj T*
+(dt. moveDirected recebe direção já normalizada. A multiplicação mantém a ordem original,) Tj T*
+(inclusive na perseguição dos mobs. move aceita deslocamento pronto e delega a resolução.) Tj T*
+() Tj T*
+(CollisionService contém a detecção e a resolução X antes de Y. O eixo Y consulta a) Tj T*
+(posição resultante de X. Isso preserva o deslizamento. Space recebe limites, obstáculos) Tj T*
+(retangulares e corpos circulares. As listas são copiadas; posições e HealthComponent) Tj T*
+(permanecem consultados ao vivo na thread da simulação.) Tj T*
+() Tj T*
+(Tangência é permitida. O próprio ator e entidades mortas não bloqueiam. Jogador e mobs) Tj T*
+(usam a mesma regra. DebugWorld apenas monta esse contexto e converte obstáculos para o) Tj T*
+(snapshot visual; não duplica geometria.) Tj T*
+() Tj T*
+(## Arquivos alterados nesta finalização) Tj T*
+() Tj T*
+(- server/src/main/java/com/projetok/domain/movement/MovementService.java: cálculo de) Tj T*
+(deslocamento e delegação, Javadoc em português.) Tj T*
+(- server/src/main/java/com/projetok/domain/movement/CollisionService.java: resolução por) Tj T*
+(eixos, documentação dos dados, métodos e seções de geometria.) Tj T*
+(- server/src/main/java/com/projetok/prototype/DebugWorld.java: jogador e mobs usam) Tj T*
+(moveDirected; comentário do contexto em português.) Tj T*
+(- server/src/test/java/com/projetok/domain/movement/MovementServiceTest.java:) Tj T*
+(deslocamento nos oito sentidos, zero e resolução direta nos limites.) Tj T*
+(- server/src/test/java/com/projetok/prototype/DebugWorldTest.java: regressão explícita) Tj T*
+(de alcance e cone com animação ativa.) Tj T*
+(- README-PROTOTIPO.md: responsabilidades e links para a entrega.) Tj T*
+(- docs/HISTORICO-TECNICO.md: registro da TASK-002.) Tj T*
+(- docs/TASK-002.md e docs/Spirit_Gate_TASK-002.pdf: decisões e resultados.) Tj T*
+(- tools/gerar_pdf_task002.py: geração reproduzível do PDF, sem pacotes externos.) Tj T*
+() Tj T*
+(## Validação executada) Tj T*
+() Tj T*
+(Comando na pasta server: mvn clean test.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-002 - página 1/2) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 2256 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+() Tj T*
+(Resultado: BUILD SUCCESS. 15 testes, zero falhas, zero erros, zero ignorados. Compilação) Tj T*
+(completa com release 17.) Tj T*
+() Tj T*
+(MovementServiceTest: 6 testes. Cobre direção normalizada, deslocamento horizontal,) Tj T*
+(vertical e diagonal, repouso, velocidade e dt, limites nas quatro bordas, tangência,) Tj T*
+(cantos, obstáculos, ordem X/Y, deslizamento, corpos vivos/mortos, exclusão do próprio) Tj T*
+(ator e posições atualizadas.) Tj T*
+() Tj T*
+(DebugWorldTest: 8 testes. Cobre configuração, movimento diagonal, obstáculos, IA e dano) Tj T*
+(recebido, dano de 15 e cooldown, alcance e cone, duração/direção do corte e renderização) Tj T*
+(em imagem sem abrir janela.) Tj T*
+() Tj T*
+(MovementReplayTest: 1 teste com três sequências de 600 ticks. As impressões digitais do) Tj T*
+(estado visual completo, acumuladas a cada tick, coincidem com as registradas antes da) Tj T*
+(extração inicial. Isso cobre posições de jogador e mobs, direção, HP, cooldown e efeitos) Tj T*
+(ao longo de 1.800 ticks. A comparação por hash é uma regressão complementar; as) Tj T*
+(asserções geométricas verificam comportamentos diretamente.) Tj T*
+() Tj T*
+(CombatService, seleção de alvo, alcance, cone, cooldown e desenho do corte não foram) Tj T*
+(modificados nesta finalização. DebugRuntime, DebugLauncher e DebugPanel também) Tj T*
+(permaneceram intactos. Os testes verificam a integração sem janela; não foi realizada) Tj T*
+(inspeção manual interativa da arena nesta etapa.) Tj T*
+() Tj T*
+(## Limites preservados e sugestões futuras) Tj T*
+() Tj T*
+(A colisão considera somente a posição candidata por eixo, como antes. Grandes) Tj T*
+(deslocamentos podem atravessar obstáculos; varredura contínua seria mudança de mecânica) Tj T*
+(e fica para outra tarefa. O chamador deve controlar o passo de simulação e possuir as) Tj T*
+(entidades. Nenhum serviço cria threads ou implementa multiplayer.) Tj T*
+() Tj T*
+(## Reprodução do documento) Tj T*
+() Tj T*
+(Na raiz Projeto-K, executar: python tools/gerar_pdf_task002.py. O PDF é gerado deste) Tj T*
+(arquivo usando somente a biblioteca padrão do Python; o PDF anterior do protótipo foi) Tj T*
+(preservado.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-002 - página 2/2) Tj T*
+ET
+endstream
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000127 00000 n 
+0000000224 00000 n 
+0000000350 00000 n 
+0000003313 00000 n 
+0000003439 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+5747
+%%EOF

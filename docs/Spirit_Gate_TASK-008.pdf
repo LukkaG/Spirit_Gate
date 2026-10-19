@@ -1,0 +1,116 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3053 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-008 - Obstáculos leves visíveis) Tj T*
+() Tj T*
+(18/10/2026. Implementação sobre a TASK-007, sem alterar os algoritmos de colisão,) Tj T*
+(recuperação, dano ou habilidade.) Tj T*
+() Tj T*
+(## Decisão e cenário) Tj T*
+() Tj T*
+(DebugWorld.demo\(\) e demo\(RandomGenerator\) criam a arena demonstrativa. DebugRuntime usa) Tj T*
+(essa fábrica na inicialização e no reinício R; o launcher e os controles permanecem. Os) Tj T*
+(construtores anteriores de DebugWorld preservam o mapa original para testes/replays e) Tj T*
+(ferramentas existentes. Não foi criado menu ou atalho.) Tj T*
+() Tj T*
+(O demo mantém os três sólidos anteriores e acrescenta dois arbustos e um poste, todos) Tj T*
+(SOFT_OBSTACLE. Hitboxes retangulares explícitas em unidades de mundo:) Tj T*
+() Tj T*
+(- Arbusto 1: x=70, y=420, largura=36, altura=40.) Tj T*
+(- Arbusto 2: x=160, y=420, largura=36, altura=40.) Tj T*
+(- Poste: x=250, y=425, largura=14, altura=30.) Tj T*
+() Tj T*
+(O mesmo descritor fornece a geometria à física e os dados visuais ao snapshot.) Tj T*
+(SoftObstacleView informa tipo e retângulo; sua lista é imutável. O record visual) Tj T*
+(Obstacle anterior continua com quatro campos, conservando sua projeção histórica.) Tj T*
+(DebugPanel desenha arbustos verdes e poste com Java2D e destaca o retângulo real ao usar) Tj T*
+(H. A arte não redefine colisões.) Tj T*
+() Tj T*
+(WASD e dash SOLID bloqueiam esses objetos; PHASE_THROUGH_ACTORS_AND_SOFT atravessa.) Tj T*
+(Destino ocupado é corrigido pela implementação anterior. Paredes e limites continuam) Tj T*
+(sólidos. Custo 35, duração 0,25 s, alcance 150 e cooldown 4 s preservados; a travessia) Tj T*
+(não aplica dano. Nenhuma dependência ou sprite externo foi adicionado.) Tj T*
+() Tj T*
+(## Validação) Tj T*
+() Tj T*
+(Base: 171 testes aprovados. A primeira execução inicial de mvn clean test falhou ao) Tj T*
+(remover EXE temporário somente leitura da TASK-007. O problema do build foi corrigido) Tj T*
+(antes de implementar este cenário e a base passou novamente. Log da falha:) Tj T*
+(TASK-008-inicial-limpeza-falhou.log; repetição aprovada: TASK-008-inicial.log.) Tj T*
+() Tj T*
+(Testes novos exercitam as formas reais do demo e a integração com o mundo, além da) Tj T*
+(imutabilidade e renderização. A suíte final, resumo, captura e diff acompanham esta) Tj T*
+(entrega. Testes e baselines anteriores não foram regravados.) Tj T*
+() Tj T*
+(AUTOMATIZADO APROVADO: mvn clean test final, 177 testes, zero falhas/erros/ignorados) Tj T*
+(\(171 anteriores e 6 de SoftObstacleDemoTest\). Log TASK-008-final.log e resumo) Tj T*
+(TASK-008-testes.txt. Captura TASK-008-demo.png gerada pelo renderizador real e) Tj T*
+(inspecionada, mostrando passagem no arbusto e pouso após o poste. Sem sessão humana de) Tj T*
+(jogo nesta etapa. Conferida diretamente a preservação dos 92 fontes de domínio e testes) Tj T*
+(anteriores.) Tj T*
+() Tj T*
+(Arquivos modificados: DebugWorld, DebugRuntime, DebugSnapshot e DebugPanel; novo) Tj T*
+() Tj T*
+(Spirit Gate - TASK-008 - página 1/2) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 1276 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(SoftObstacleDemoTest. Documentação, captura, PDF, logs e diff; ajuste da ferramenta de) Tj T*
+(checkpoints para incluir .gitignore. Nenhum arquivo de combate, habilidade, colisão ou) Tj T*
+(teste anterior foi alterado.) Tj T*
+() Tj T*
+(## Roteiro de três minutos) Tj T*
+() Tj T*
+(HOMOLOGACAO HUMANA PENDENTE. Abrir a arena pelo launcher; usar H para mostrar as) Tj T*
+(hitboxes. Caminhar para a região ao sul do ponto inicial, perto de y=420. Tentar entrar) Tj T*
+(nos dois arbustos e no poste com WASD: devem bloquear. Apontar o mouse além de cada) Tj T*
+(objeto e pressionar Shift uma vez: o dash deve passar, gastar 35, respeitar a recarga e) Tj T*
+(terminar fora da hitbox. Retomar WASD e observar que o objeto voltou a bloquear. Usar as) Tj T*
+(paredes grandes como contraste: Shift continua bloqueado. Testar bordas, ataque básico e) Tj T*
+(R; os três objetos leves devem reaparecer.) Tj T*
+() Tj T*
+(O demo não é um novo mapa de multiplayer. A fábrica original é mantida exclusivamente) Tj T*
+(para preservar cenários anteriores e fornecer uma referência reproduzível. O pacote da) Tj T*
+(TASK-007 permanece histórico; a distribuição consolidada será reconstruída na TASK-011.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-008 - página 2/2) Tj T*
+ET
+endstream
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000127 00000 n 
+0000000224 00000 n 
+0000000350 00000 n 
+0000003455 00000 n 
+0000003581 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+4909
+%%EOF

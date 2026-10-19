@@ -1,0 +1,60 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1791 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-033 - Feedback visual de combate) Tj T*
+() Tj T*
+(Objetivo: tornar impactos e derrotas mais perceptíveis usando eventos reais.) Tj T*
+(Base: TASK-032, 236 JUnit e 25 Python aprovados.) Tj T*
+(Diagnóstico: já existem EffectView emitidos pelos golpes e pulsos de gelo,) Tj T*
+(Freeze visual, gelo/rastros e feedback de bloqueio no HUD. Reutilizados esses dados) Tj T*
+(sem criar outro fluxo de eventos ou duplicar dano. Acrescentados anéis de impacto) Tj T*
+(aos marcadores existentes e marca transitória de derrota no fallback, somente) Tj T*
+(quando ator morto coincide com impacto real ainda vigente. Ambos usam remaining) Tj T*
+(do snapshot, que expira no tick da simulação. Renderizador não altera o mundo.) Tj T*
+(DebugSnapshot passa a copiar todas as listas, reforçando publicação imutável.) Tj T*
+(Não foi inferida atribuição de gelo a partir da proximidade de uma zona; sinais) Tj T*
+(existentes continuam sendo a fonte de verdade. Nenhuma probabilidade mudou.) Tj T*
+(Arquivos: DebugPanel.java, DebugSnapshot.java, CombatFeedbackPresentationTest.java.) Tj T*
+(Testes usam dano real, imutabilidade, render repetido sem dano e expiração por) Tj T*
+(ticks inclusive após derrota. Suite completa: TASK-033-qualidade.json e logs.) Tj T*
+(Reprodução: python tools/qualidade.py --offline --task 033) Tj T*
+(Checkpoints/diff padronizados; próxima TASK-034.) Tj T*
+(Limites: anel de derrota é fallback geométrico e depende do impacto ainda visível;) Tj T*
+(atlas aprovado mantém KO próprio. Sem novos sprites ou aprovação artística.) Tj T*
+(Homologação visual humana pendente.) Tj T*
+() Tj T*
+(## Resultado final observado) Tj T*
+(Validação local aprovada: 237 JUnit e 25 Python; zero falhas.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-033 - página 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2187
+%%EOF

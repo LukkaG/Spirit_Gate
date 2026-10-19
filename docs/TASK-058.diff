@@ -1,0 +1,174 @@
+--- /dev/null
++++ b/docs/TASK-058-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 268,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-058.md
+@@ -0,0 +1,7 @@
++# TASK-058 - Tres regioes jogaveis
++
++Vila da Aurora, Bosque dos Ecos e Santuario Partido conectados por portais F. Ambientacao sintetica legivel, caminhos, pracas, casas/arvores/pedras e pontos de interesse rotulados. Mapas usam LocalArenaMap e DebugPanel existentes; nao ha nova fisica ou renderer. Limites 960x640 e obstaculo central compartilhado garantem compatibilidade de spawns.
++
++Build RPG separado com JDK integrado, JAR com whitelist de pacotes locais e recursos RPG; nenhuma classe de banco/Kryonet. Builder legado foi ajustado para ignorar explicitamente o subpacote RPG e seus recursos, preservando pacote de arena independente. Arte pendente nao incorporada.
++
++Testes do contrato dos tres mapas e suite completa. Distribuicao e evidencias do marco integrado registradas apos executar builder, sem alegar homologacao humana.
+--- a/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
+@@ -18,6 +18,7 @@
+         RpgRuntime runtime = new RpgRuntime(new com.projetok.rpg.RpgWorld(identity));
+         DebugSnapshot template = DebugWorld.demo().snapshot();
+         DebugPanel panel = new DebugPanel(() -> adapt(runtime.snapshot(), template));
++        panel.setLocalMap(RpgMaps.region("village"));
+         JFrame frame = new JFrame("Spirit Gate | RPG offline");
+         JPanel root=new JPanel(new java.awt.BorderLayout());RpgHud hud=new RpgHud(runtime);root.add(panel,java.awt.BorderLayout.CENTER);root.add(hud,java.awt.BorderLayout.SOUTH);
+         frame.setContentPane(root); frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+@@ -40,7 +41,8 @@
+                 });
+             }
+         }
+-        Timer timer = new Timer(33, e -> {panel.repaint();hud.update(runtime.snapshot());});
++        String[] displayedRegion={"village"};
++        Timer timer = new Timer(33, e -> {var view=runtime.snapshot();if(!displayedRegion[0].equals(view.state().region())){displayedRegion[0]=view.state().region();panel.setLocalMap(RpgMaps.region(displayedRegion[0]));}panel.repaint();hud.update(view);});
+         frame.addWindowListener(new WindowAdapter() { public void windowClosed(WindowEvent e) { timer.stop(); runtime.close(); } });
+         frame.addWindowFocusListener(new WindowAdapter() { public void windowLostFocus(WindowEvent e) { java.util.Arrays.fill(held, false); runtime.input(0, 0); } });
+         runtime.start(); timer.start(); frame.setVisible(true);
+--- /dev/null
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgMaps.java
+@@ -0,0 +1,21 @@
++package com.projetok.prototype.rpg;
++import com.projetok.prototype.*;
++import com.projetok.domain.movement.CollisionCategory;
++import java.util.*;
++/** Autoria sintetica reutilizando o mapa e renderer ja existentes. */
++public final class RpgMaps {
++    private RpgMaps() { }
++    public static LocalArenaMap region(String id) {
++        int floor=switch(id){case "village"->0x31594c;case "forest"->0x183e2c;case "ruins"->0x28263d;default->throw new IllegalArgumentException("Regiao ausente");};
++        List<LocalArenaMap.Visual> visuals=new ArrayList<>();
++        visuals.add(new LocalArenaMap.Visual("floor",0,0,960,640,0,floor));
++        visuals.add(new LocalArenaMap.Visual("road",0,303,960,34,1,id.equals("ruins")?0x777080:0x9b8a62));
++        visuals.add(new LocalArenaMap.Visual("plaza",110,280,155,190,1,id.equals("village")?0x8e9174:floor));
++        visuals.add(new LocalArenaMap.Visual("solid",380,180,120,120,2,id.equals("village")?0xad8060:id.equals("forest")?0x617969:0x847999));
++        visuals.add(new LocalArenaMap.Visual("roof",370,170,140,24,3,id.equals("village")?0x733f3e:0x42584d));
++        if(id.equals("forest"))for(int i=0;i<9;i++)visuals.add(new LocalArenaMap.Visual("tree"+i,50+i*95,70,36,45,2,0x286346));
++        if(id.equals("ruins"))for(int i=0;i<5;i++)visuals.add(new LocalArenaMap.Visual("stone"+i,580+i*65,120,24,30,2,0x817689));
++        var physical=List.of(new LocalArenaMap.Physical("boundary",0,0,960,640,CollisionCategory.WORLD_BOUNDARY,null),new LocalArenaMap.Physical("solid",380,180,120,120,CollisionCategory.SOLID_OBSTACLE,null));
++        return new LocalArenaMap(960,640,140,320,visuals,physical);
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/rpg/RpgMapsTest.java
+@@ -0,0 +1,6 @@
++package com.projetok.prototype.rpg;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class RpgMapsTest {
++    @Test void threeRegionsUseExistingMapContract(){for(String id:new String[]{"village","forest","ruins"}){var map=RpgMaps.region(id);assertEquals(960,map.width());assertEquals(2,map.physical().size());assertFalse(map.visuals().isEmpty());}assertNotEquals(RpgMaps.region("village").visuals(),RpgMaps.region("forest").visuals());}
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/OfflineCycleTest.java
+@@ -0,0 +1,22 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import java.nio.file.Path;
++import static org.junit.jupiter.api.Assertions.*;
++/** Fluxo real: nenhuma injecao de XP, moeda, item, posicao ou conclusao de quest. */
++class OfflineCycleTest {
++    @TempDir Path folder;
++    static void move(RpgWorld w,float x,float y) {
++        for(int i=0;i<600;i++){var v=w.snapshot();float dx=x-v.x(),dy=y-v.y();if(Math.hypot(dx,dy)<8)return;w.attack();w.tick(dx,dy);}
++        fail("Nao chegou ao ponto "+x+","+y);
++    }
++    @Test void createQuestFightLootTradeEquipSaveAndResume() throws Exception {
++        var w=new RpgWorld(CharacterIdentity.create("Aurora Teste","guardian","azure"));assertTrue(w.interact());assertTrue(w.acceptQuest("first_steps"));
++        move(w,855,320);assertTrue(w.interact());assertEquals("forest",w.save().region());
++        for(int i=0;i<800&&w.save().quests().get("first_steps")<2;i++){w.attack();w.tick(0,0);}
++        assertEquals(2,w.save().quests().get("first_steps"));assertTrue(w.inventory().count("crystal")>=2);assertTrue(w.save().hp()>0);
++        move(w,80,320);assertTrue(w.interact());move(w,190,320);assertTrue(w.interact());assertTrue(w.completeQuest("first_steps"));assertTrue(w.level()>=2);
++        move(w,230,410);assertTrue(w.interact());assertTrue(w.trade("sword",1,true));assertTrue(w.equip("sword"));
++        var store=new LocalSaveStore(folder.resolve("offline.properties"));store.save(w.save());var restored=RpgWorld.restore(store.load());assertEquals(w.save(),restored.save());assertEquals(w.attackPower(),restored.attackPower());
++    }
++}
+--- /dev/null
++++ b/tools/build-rpg-portable.ps1
+@@ -0,0 +1,31 @@
++param([string]$Version='0.58.0-rc1')
++Set-StrictMode -Version Latest
++$ErrorActionPreference='Stop'
++if($Version -notmatch '^0[.]\d+[.]\d+-rc\d+$'){throw 'Versao invalida'}
++$project=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
++$jdkBin=Split-Path (Get-Command java.exe).Source
++$buildId=$Version+'-'+[DateTime]::UtcNow.ToString('yyyyMMddTHHmmssZ')+'-'+[Guid]::NewGuid().ToString('N').Substring(0,8)
++$build=Join-Path $project ('server\target\rpg-portable-'+$buildId)
++$inputDir=Join-Path $build 'input'
++$destination=Join-Path $build 'output'
++$runtimeDir=Join-Path $build 'runtime'
++$classes=Join-Path $project 'server\target\classes'
++New-Item -ItemType Directory -Path $inputDir,$destination | Out-Null
++function Checked([string]$tool,[string[]]$arguments){ & (Join-Path $jdkBin $tool) @arguments; if($LASTEXITCODE -ne 0){throw "$tool falhou: $LASTEXITCODE"} }
++$jar=Join-Path $inputDir 'spirit-gate-rpg.jar'
++Checked 'jar.exe' @('--create','--file',$jar,'--main-class','com.projetok.prototype.rpg.RpgLauncher','-C',$classes,'com/projetok/domain','-C',$classes,'com/projetok/prototype','-C',$classes,'com/projetok/rpg','-C',$classes,'rpg')
++Checked 'jdeps.exe' @('--multi-release','17','--print-module-deps',$jar)
++Checked 'jlink.exe' @('--add-modules','java.base,java.desktop,java.logging,jdk.random','--strip-debug','--no-man-pages','--no-header-files','--compress=2','--output',$runtimeDir)
++$windowsVersion=($Version -split '-')[0]
++Checked 'jpackage.exe' @('--type','app-image','--dest',$destination,'--name','SpiritGateRPG','--input',$inputDir,'--main-jar','spirit-gate-rpg.jar','--main-class','com.projetok.prototype.rpg.RpgLauncher','--runtime-image',$runtimeDir,'--app-version',$windowsVersion,'--vendor','Spirit Gate','--description','Spirit Gate RPG offline - teste privado')
++$image=Join-Path $destination 'SpiritGateRPG'
++foreach($file in Get-ChildItem -LiteralPath $build -Recurse -File){if($file.IsReadOnly){$file.IsReadOnly=$false}}
++$notice="SPIRIT GATE RPG OFFLINE $Version`r`nExtraia todo o ZIP. Abra SpiritGateRPG.exe. Java integrado; sem banco ou rede.`r`nWASD mover; F interagir/portal; SPACE atacar; Q habilidade; 1 pocao; F5 salvar.`r`nArena historica continua disponivel separadamente. Arte geometrica provisoria.`r`nBuild usa classes da ultima suite completa; execute qualidade.py antes de empacotar."
++[IO.File]::WriteAllText((Join-Path $image 'LEIA-ME.txt'),$notice,(New-Object Text.UTF8Encoding($false)))
++$manifest=@(Get-ChildItem -LiteralPath $image -Recurse -File | Sort-Object FullName | ForEach-Object { [ordered]@{path=$_.FullName.Substring($image.Length+1).Replace('\','/');bytes=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()} })
++$zip=Join-Path $project ('dist\SpiritGate-RPG-'+$buildId+'.zip')
++Compress-Archive -LiteralPath $image -DestinationPath $zip -CompressionLevel Optimal
++$manifest | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath ($zip+'.manifest.json') -Encoding UTF8
++(Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant() | Set-Content -LiteralPath ($zip+'.sha256') -Encoding ASCII
++Write-Output "RPG_EXE=$image\SpiritGateRPG.exe"
++Write-Output "RPG_ZIP=$zip"
+--- a/tools/build-windows-portable.ps1
++++ b/tools/build-windows-portable.ps1
+@@ -173,7 +173,7 @@
+     # futuro exige whitelist explicita; evita omissao silenciosa ou copia de config.
+     $resourcesDirectory = Join-Path $serverDirectory 'src\main\resources'
+     if ((Test-Path -LiteralPath $resourcesDirectory) -and
+-        @(Get-ChildItem -LiteralPath $resourcesDirectory -Recurse -File).Count -gt 0) {
++        @(Get-ChildItem -LiteralPath $resourcesDirectory -Recurse -File | Where-Object { -not $_.FullName.StartsWith((Join-Path $resourcesDirectory 'rpg') + '\', [StringComparison]::OrdinalIgnoreCase) }).Count -gt 0) {
+         throw 'Foram encontrados recursos novos. Revise a whitelist de staging antes de distribuir.'
+     }
+     $buildRoot = Assert-ChildPath (Join-Path $serverDirectory ('target\portable-build-' + $buildId)) (Join-Path $serverDirectory 'target')
+@@ -185,10 +185,15 @@
+     New-Item -ItemType Directory -Path $packageOutput -Force | Out-Null
+     $jarName = 'spirit-gate-arena.jar'
+     $jarPath = Join-Path $jarInput $jarName
++    # O modo legado exclui explicitamente o subpacote RPG e seus recursos.
++    $arenaClasses = Join-Path $buildRoot 'arena-classes'
++    New-Item -ItemType Directory -Path (Join-Path $arenaClasses 'com\projetok\prototype') -Force | Out-Null
++    Copy-Item -LiteralPath (Join-Path $classesDirectory 'com\projetok\domain') -Destination (Join-Path $arenaClasses 'com\projetok\domain') -Recurse
++    Get-ChildItem -LiteralPath (Join-Path $classesDirectory 'com\projetok\prototype') -File | Copy-Item -Destination (Join-Path $arenaClasses 'com\projetok\prototype')
+     Invoke-CheckedTool (Join-Path $jdkBin 'jar.exe') @('--create', '--file', $jarPath,
+         '--main-class', 'com.projetok.prototype.DebugLauncher',
+-        '-C', $classesDirectory, 'com/projetok/domain',
+-        '-C', $classesDirectory, 'com/projetok/prototype')
++        '-C', $arenaClasses, 'com/projetok/domain',
++        '-C', $arenaClasses, 'com/projetok/prototype')
+     # jdeps falha caso uma classe incluida passe a exigir biblioteca externa.
+     $dependencyArguments = @('--multi-release', '17', '--print-module-deps', $jarPath)
+     $dependencyLines = @(Invoke-CheckedTool (Join-Path $jdkBin 'jdeps.exe') $dependencyArguments -Capture)

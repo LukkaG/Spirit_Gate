@@ -1,0 +1,449 @@
+{
+  "source": "Projeto-K\\assets\\tilesets\\karakura-environment-v3-blend.aseprite",
+  "canvas": [
+    1672,
+    941
+  ],
+  "sprites": [
+    {
+      "name": "sprite-001",
+      "x": 35,
+      "y": 29,
+      "width": 64,
+      "height": 68,
+      "visible_pixels": 4322
+    },
+    {
+      "name": "sprite-002",
+      "x": 115,
+      "y": 29,
+      "width": 65,
+      "height": 68,
+      "visible_pixels": 4305
+    },
+    {
+      "name": "sprite-003",
+      "x": 196,
+      "y": 29,
+      "width": 65,
+      "height": 68,
+      "visible_pixels": 4394
+    },
+    {
+      "name": "sprite-004",
+      "x": 277,
+      "y": 29,
+      "width": 66,
+      "height": 68,
+      "visible_pixels": 4400
+    },
+    {
+      "name": "sprite-005",
+      "x": 376,
+      "y": 29,
+      "width": 66,
+      "height": 68,
+      "visible_pixels": 4401
+    },
+    {
+      "name": "sprite-006",
+      "x": 458,
+      "y": 29,
+      "width": 66,
+      "height": 68,
+      "visible_pixels": 4411
+    },
+    {
+      "name": "sprite-007",
+      "x": 541,
+      "y": 29,
+      "width": 66,
+      "height": 67,
+      "visible_pixels": 4405
+    },
+    {
+      "name": "sprite-008",
+      "x": 622,
+      "y": 29,
+      "width": 67,
+      "height": 68,
+      "visible_pixels": 4486
+    },
+    {
+      "name": "sprite-009",
+      "x": 722,
+      "y": 29,
+      "width": 67,
+      "height": 68,
+      "visible_pixels": 2456
+    },
+    {
+      "name": "sprite-010",
+      "x": 806,
+      "y": 29,
+      "width": 66,
+      "height": 68,
+      "visible_pixels": 3553
+    },
+    {
+      "name": "sprite-011",
+      "x": 890,
+      "y": 29,
+      "width": 69,
+      "height": 68,
+      "visible_pixels": 4240
+    },
+    {
+      "name": "sprite-012",
+      "x": 988,
+      "y": 29,
+      "width": 67,
+      "height": 68,
+      "visible_pixels": 4524
+    },
+    {
+      "name": "sprite-013",
+      "x": 1070,
+      "y": 29,
+      "width": 68,
+      "height": 68,
+      "visible_pixels": 4536
+    },
+    {
+      "name": "sprite-014",
+      "x": 1152,
+      "y": 30,
+      "width": 68,
+      "height": 67,
+      "visible_pixels": 4556
+    },
+    {
+      "name": "sprite-015",
+      "x": 1271,
+      "y": 29,
+      "width": 92,
+      "height": 86,
+      "visible_pixels": 7911
+    },
+    {
+      "name": "sprite-016",
+      "x": 1378,
+      "y": 29,
+      "width": 53,
+      "height": 86,
+      "visible_pixels": 4558
+    },
+    {
+      "name": "sprite-017",
+      "x": 1463,
+      "y": 29,
+      "width": 54,
+      "height": 86,
+      "visible_pixels": 4644
+    },
+    {
+      "name": "sprite-018",
+      "x": 1531,
+      "y": 29,
+      "width": 101,
+      "height": 114,
+      "visible_pixels": 9524
+    },
+    {
+      "name": "sprite-019",
+      "x": 34,
+      "y": 114,
+      "width": 65,
+      "height": 67,
+      "visible_pixels": 4246
+    },
+    {
+      "name": "sprite-020",
+      "x": 115,
+      "y": 114,
+      "width": 65,
+      "height": 66,
+      "visible_pixels": 4259
+    },
+    {
+      "name": "sprite-021",
+      "x": 196,
+      "y": 114,
+      "width": 66,
+      "height": 67,
+      "visible_pixels": 4319
+    },
+    {
+      "name": "sprite-022",
+      "x": 277,
+      "y": 114,
+      "width": 66,
+      "height": 67,
+      "visible_pixels": 4341
+    },
+    {
+      "name": "sprite-023",
+      "x": 376,
+      "y": 114,
+      "width": 66,
+      "height": 67,
+      "visible_pixels": 4334
+    },
+    {
+      "name": "sprite-024",
+      "x": 458,
+      "y": 114,
+      "width": 66,
+      "height": 66,
+      "visible_pixels": 4356
+    },
+    {
+      "name": "sprite-025",
+      "x": 541,
+      "y": 114,
+      "width": 66,
+      "height": 67,
+      "visible_pixels": 4348
+    },
+    {
+      "name": "sprite-026",
+      "x": 622,
+      "y": 114,
+      "width": 67,
+      "height": 67,
+      "visible_pixels": 4387
+    },
+    {
+      "name": "sprite-027",
+      "x": 722,
+      "y": 114,
+      "width": 66,
+      "height": 67,
+      "visible_pixels": 3606
+    },
+    {
+      "name": "sprite-028",
+      "x": 806,
+      "y": 114,
+      "width": 66,
+      "height": 67,
+      "visible_pixels": 4402
+    },
+    {
+      "name": "sprite-029",
+      "x": 890,
+      "y": 114,
+      "width": 68,
+      "height": 67,
+      "visible_pixels": 3338
+    },
+    {
+      "name": "sprite-030",
+      "x": 988,
+      "y": 114,
+      "width": 67,
+      "height": 67,
+      "visible_pixels": 4488
+    },
+    {
+      "name": "sprite-031",
+      "x": 1070,
+      "y": 114,
+      "width": 67,
+      "height": 67,
+      "visible_pixels": 4476
+    },
+    {
+      "name": "sprite-032",
+      "x": 1152,
+      "y": 114,
+      "width": 68,
+      "height": 68,
+      "visible_pixels": 4556
+    },
+    {
+      "name": "sprite-033",
+      "x": 1271,
+      "y": 129,
+      "width": 92,
+      "height": 103,
+      "visible_pixels": 9298
+    },
+    {
+      "name": "sprite-034",
+      "x": 1378,
+      "y": 129,
+      "width": 53,
+      "height": 103,
+      "visible_pixels": 5354
+    },
+    {
+      "name": "sprite-035",
+      "x": 1463,
+      "y": 130,
+      "width": 54,
+      "height": 102,
+      "visible_pixels": 5392
+    },
+    {
+      "name": "sprite-036",
+      "x": 1548,
+      "y": 156,
+      "width": 84,
+      "height": 88,
+      "visible_pixels": 7309
+    },
+    {
+      "name": "sprite-037",
+      "x": 38,
+      "y": 227,
+      "width": 52,
+      "height": 51,
+      "visible_pixels": 2033
+    },
+    {
+      "name": "sprite-038",
+      "x": 121,
+      "y": 226,
+      "width": 51,
+      "height": 52,
+      "visible_pixels": 2063
+    },
+    {
+      "name": "sprite-039",
+      "x": 203,
+      "y": 226,
+      "width": 52,
+      "height": 52,
+      "visible_pixels": 2063
+    },
+    {
+      "name": "sprite-040",
+      "x": 286,
+      "y": 227,
+      "width": 53,
+      "height": 51,
+      "visible_pixels": 2066
+    },
+    {
+      "name": "sprite-041",
+      "x": 370,
+      "y": 229,
+      "width": 47,
+      "height": 48,
+      "visible_pixels": 1843
+    },
+    {
+      "name": "sprite-042",
+      "x": 437,
+      "y": 226,
+      "width": 130,
+      "height": 54,
+      "visible_pixels": 6388
+    },
+    {
+      "name": "sprite-043",
+      "x": 588,
+      "y": 226,
+      "width": 134,
+      "height": 55,
+      "visible_pixels": 6636
+    },
+    {
+      "name": "sprite-044",
+      "x": 741,
+      "y": 226,
+      "width": 135,
+      "height": 55,
+      "visible_pixels": 6615
+    },
+    {
+      "name": "sprite-045",
+      "x": 867,
+      "y": 270,
+      "width": 364,
+      "height": 263,
+      "visible_pixels": 85224
+    },
+    {
+      "name": "sprite-046",
+      "x": 1263,
+      "y": 270,
+      "width": 374,
+      "height": 266,
+      "visible_pixels": 88638
+    },
+    {
+      "name": "sprite-047",
+      "x": 26,
+      "y": 302,
+      "width": 134,
+      "height": 217,
+      "visible_pixels": 17572
+    },
+    {
+      "name": "sprite-048",
+      "x": 169,
+      "y": 315,
+      "width": 135,
+      "height": 199,
+      "visible_pixels": 16272
+    },
+    {
+      "name": "sprite-049",
+      "x": 314,
+      "y": 298,
+      "width": 152,
+      "height": 221,
+      "visible_pixels": 22123
+    },
+    {
+      "name": "sprite-050",
+      "x": 476,
+      "y": 306,
+      "width": 185,
+      "height": 221,
+      "visible_pixels": 24656
+    },
+    {
+      "name": "sprite-051",
+      "x": 669,
+      "y": 308,
+      "width": 183,
+      "height": 219,
+      "visible_pixels": 24310
+    },
+    {
+      "name": "sprite-052",
+      "x": 26,
+      "y": 541,
+      "width": 459,
+      "height": 358,
+      "visible_pixels": 148336
+    },
+    {
+      "name": "sprite-053",
+      "x": 522,
+      "y": 553,
+      "width": 439,
+      "height": 348,
+      "visible_pixels": 140113
+    },
+    {
+      "name": "sprite-054",
+      "x": 988,
+      "y": 607,
+      "width": 312,
+      "height": 289,
+      "visible_pixels": 79396
+    },
+    {
+      "name": "sprite-055",
+      "x": 1314,
+      "y": 613,
+      "width": 332,
+      "height": 283,
+      "visible_pixels": 80517
+    }
+  ]
+}

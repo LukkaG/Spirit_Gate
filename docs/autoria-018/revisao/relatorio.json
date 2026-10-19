@@ -1,0 +1,865 @@
+{
+  "schemaVersion": 1,
+  "artApproved": false,
+  "assets": [
+    {
+      "path": "template-vazio.png",
+      "kind": "character",
+      "grid": 64,
+      "frames": [
+        {
+          "state": "IDLE",
+          "direction": "FRONT",
+          "index": 0,
+          "x": 0,
+          "y": 0,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "IDLE",
+          "direction": "BACK",
+          "index": 0,
+          "x": 64,
+          "y": 0,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "IDLE",
+          "direction": "LEFT",
+          "index": 0,
+          "x": 128,
+          "y": 0,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "IDLE",
+          "direction": "RIGHT",
+          "index": 0,
+          "x": 192,
+          "y": 0,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "WALK",
+          "direction": "FRONT",
+          "index": 0,
+          "x": 256,
+          "y": 0,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "WALK",
+          "direction": "FRONT",
+          "index": 1,
+          "x": 320,
+          "y": 0,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "WALK",
+          "direction": "FRONT",
+          "index": 2,
+          "x": 384,
+          "y": 0,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "WALK",
+          "direction": "FRONT",
+          "index": 3,
+          "x": 448,
+          "y": 0,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "WALK",
+          "direction": "BACK",
+          "index": 0,
+          "x": 0,
+          "y": 64,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "WALK",
+          "direction": "BACK",
+          "index": 1,
+          "x": 64,
+          "y": 64,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "WALK",
+          "direction": "BACK",
+          "index": 2,
+          "x": 128,
+          "y": 64,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "WALK",
+          "direction": "BACK",
+          "index": 3,
+          "x": 192,
+          "y": 64,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "WALK",
+          "direction": "LEFT",
+          "index": 0,
+          "x": 256,
+          "y": 64,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "WALK",
+          "direction": "LEFT",
+          "index": 1,
+          "x": 320,
+          "y": 64,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "WALK",
+          "direction": "LEFT",
+          "index": 2,
+          "x": 384,
+          "y": 64,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "WALK",
+          "direction": "LEFT",
+          "index": 3,
+          "x": 448,
+          "y": 64,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "WALK",
+          "direction": "RIGHT",
+          "index": 0,
+          "x": 0,
+          "y": 128,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "WALK",
+          "direction": "RIGHT",
+          "index": 1,
+          "x": 64,
+          "y": 128,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "WALK",
+          "direction": "RIGHT",
+          "index": 2,
+          "x": 128,
+          "y": 128,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "WALK",
+          "direction": "RIGHT",
+          "index": 3,
+          "x": 192,
+          "y": 128,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "RUN",
+          "direction": "FRONT",
+          "index": 0,
+          "x": 256,
+          "y": 128,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "RUN",
+          "direction": "FRONT",
+          "index": 1,
+          "x": 320,
+          "y": 128,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "RUN",
+          "direction": "FRONT",
+          "index": 2,
+          "x": 384,
+          "y": 128,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "RUN",
+          "direction": "FRONT",
+          "index": 3,
+          "x": 448,
+          "y": 128,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "RUN",
+          "direction": "BACK",
+          "index": 0,
+          "x": 0,
+          "y": 192,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "RUN",
+          "direction": "BACK",
+          "index": 1,
+          "x": 64,
+          "y": 192,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "RUN",
+          "direction": "BACK",
+          "index": 2,
+          "x": 128,
+          "y": 192,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "RUN",
+          "direction": "BACK",
+          "index": 3,
+          "x": 192,
+          "y": 192,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "RUN",
+          "direction": "LEFT",
+          "index": 0,
+          "x": 256,
+          "y": 192,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "RUN",
+          "direction": "LEFT",
+          "index": 1,
+          "x": 320,
+          "y": 192,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "RUN",
+          "direction": "LEFT",
+          "index": 2,
+          "x": 384,
+          "y": 192,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "RUN",
+          "direction": "LEFT",
+          "index": 3,
+          "x": 448,
+          "y": 192,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "RUN",
+          "direction": "RIGHT",
+          "index": 0,
+          "x": 0,
+          "y": 256,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "RUN",
+          "direction": "RIGHT",
+          "index": 1,
+          "x": 64,
+          "y": 256,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "RUN",
+          "direction": "RIGHT",
+          "index": 2,
+          "x": 128,
+          "y": 256,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "RUN",
+          "direction": "RIGHT",
+          "index": 3,
+          "x": 192,
+          "y": 256,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "PUNCH",
+          "direction": "FRONT",
+          "index": 0,
+          "x": 256,
+          "y": 256,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "PUNCH",
+          "direction": "FRONT",
+          "index": 1,
+          "x": 320,
+          "y": 256,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "PUNCH",
+          "direction": "FRONT",
+          "index": 2,
+          "x": 384,
+          "y": 256,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "PUNCH",
+          "direction": "BACK",
+          "index": 0,
+          "x": 448,
+          "y": 256,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "PUNCH",
+          "direction": "BACK",
+          "index": 1,
+          "x": 0,
+          "y": 320,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "PUNCH",
+          "direction": "BACK",
+          "index": 2,
+          "x": 64,
+          "y": 320,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "PUNCH",
+          "direction": "LEFT",
+          "index": 0,
+          "x": 128,
+          "y": 320,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "PUNCH",
+          "direction": "LEFT",
+          "index": 1,
+          "x": 192,
+          "y": 320,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "PUNCH",
+          "direction": "LEFT",
+          "index": 2,
+          "x": 256,
+          "y": 320,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "PUNCH",
+          "direction": "RIGHT",
+          "index": 0,
+          "x": 320,
+          "y": 320,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "PUNCH",
+          "direction": "RIGHT",
+          "index": 1,
+          "x": 384,
+          "y": 320,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "PUNCH",
+          "direction": "RIGHT",
+          "index": 2,
+          "x": 448,
+          "y": 320,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "HIT",
+          "direction": "FRONT",
+          "index": 0,
+          "x": 0,
+          "y": 384,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "HIT",
+          "direction": "FRONT",
+          "index": 1,
+          "x": 64,
+          "y": 384,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "HIT",
+          "direction": "BACK",
+          "index": 0,
+          "x": 128,
+          "y": 384,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "HIT",
+          "direction": "BACK",
+          "index": 1,
+          "x": 192,
+          "y": 384,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "HIT",
+          "direction": "LEFT",
+          "index": 0,
+          "x": 256,
+          "y": 384,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "HIT",
+          "direction": "LEFT",
+          "index": 1,
+          "x": 320,
+          "y": 384,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "HIT",
+          "direction": "RIGHT",
+          "index": 0,
+          "x": 384,
+          "y": 384,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "HIT",
+          "direction": "RIGHT",
+          "index": 1,
+          "x": 448,
+          "y": 384,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "KO",
+          "direction": "FRONT",
+          "index": 0,
+          "x": 0,
+          "y": 448,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "KO",
+          "direction": "FRONT",
+          "index": 1,
+          "x": 64,
+          "y": 448,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        },
+        {
+          "state": "KO",
+          "direction": "FRONT",
+          "index": 2,
+          "x": 128,
+          "y": 448,
+          "width": 64,
+          "height": 64,
+          "durationMs": 100,
+          "pivot": [
+            32,
+            48
+          ]
+        }
+      ],
+      "pivot": [
+        32,
+        48
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "actors",
+      "origin": "TEMPLATE VAZIO - NAO E ARTE APROVADA",
+      "review": {},
+      "sha256": "b262bd68d44f93637b9949caf7ff7ce0b6b6ed839c3a2468681952b215ec4d95",
+      "width": 512,
+      "height": 512,
+      "alpha": {
+        "transparent": 262144,
+        "partial": 0
+      },
+      "errors": [
+        "frame vazio"
+      ],
+      "warnings": [
+        "aprovacao visual humana vinculada ao SHA ausente"
+      ],
+      "status": "REPROVADO",
+      "reviewToolApprovesArt": false
+    }
+  ]
+}

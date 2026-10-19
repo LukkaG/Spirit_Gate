@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "package": "SpiritGate-RPG-0.66.0-rc2-20261019T055819Z-2c66b899.zip",
+  "sha256": "2f59766f860df6e8db66f2dbc2ca219bad970cffd9e7e0df9f800a13658f8f9e",
+  "automatedApproved": true,
+  "humanApproved": false,
+  "checks": {
+    "zipIntegrity": true,
+    "productionClasses": 218,
+    "contentIncluded": true,
+    "manifestHashes": true,
+    "javaIntegrated": true
+  }
+}

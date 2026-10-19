@@ -1,0 +1,131 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3429 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-007 - Windows portátil com Java integrado) Tj T*
+() Tj T*
+(18/10/2026. Base: checkout local TASK-006.1, incluindo o teste de parede do usuário.) Tj T*
+(Nenhum ZIP anterior foi usado como fonte. Windows 10 amd64, Temurin JDK 17.0.20.1+1,) Tj T*
+(Maven 3.10.0 e jpackage 17.0.20.1.) Tj T*
+() Tj T*
+(## Implementação) Tj T*
+() Tj T*
+(tools/build-windows-portable.cmd encaminha os argumentos ao script PowerShell. O wrapper) Tj T*
+(usa política de execução restrita ao seu processo; não modifica a configuração) Tj T*
+(permanente do Windows. O script confere JDK 17 x64, executa mvn clean test por padrão,) Tj T*
+(gera um JAR com as classes de produção domain/prototype e confirma a dependência apenas) Tj T*
+(do JDK com jdeps. Não é um fat JAR e não precisa das bibliotecas externas declaradas no) Tj T*
+(POM para o servidor legado. Não houve alteração do POM nem novas dependências.) Tj T*
+() Tj T*
+(jlink gera o runtime reduzido e jpackage --type app-image cria SpiritGate.exe, app/ e) Tj T*
+(runtime/. O módulo jdk.random é incluído explicitamente: seus provedores RandomGenerator) Tj T*
+(são carregados por serviço e não aparecem na análise estática de jdeps. O staging é uma) Tj T*
+(lista permitida de pacotes, sem classes legadas de banco/servidor, recursos privados,) Tj T*
+(JUnit ou arquivos de teste. A arena atual não carrega assets externos. Recursos novos) Tj T*
+(fazem o script falhar até revisão explícita da lista permitida.) Tj T*
+() Tj T*
+(O pacote inclui LEIA-ME-TESTER.txt, VERSION.txt, INVENTARIO-SHA256.txt e manifest.json) Tj T*
+(com hashes individuais. O manifest exclui a si próprio; o inventário exclui a si próprio) Tj T*
+(e o manifest para evitar referências circulares. Um arquivo .sha256 externo cobre o ZIP) Tj T*
+(inteiro. O script cria saídas únicas, não remove diretórios e não sobrescreve) Tj T*
+(distribuições anteriores; -SkipMaven exige uma compilação/teste anterior.) Tj T*
+() Tj T*
+(Reconstrução, na pasta Projeto-K: tools\\build-windows-portable.cmd -Version) Tj T*
+(0.7.0-task007. O argumento -JavaHome permite selecionar um JDK 17. A execução real desta) Tj T*
+(entrega usou -SkipMaven depois do teste limpo registrado abaixo.) Tj T*
+() Tj T*
+(## Testes e evidências) Tj T*
+() Tj T*
+(AUTOMATIZADO APROVADO: mvn clean test inicial com 170 testes e final com 171, zero) Tj T*
+(falhas/erros/ignorados. DebugLauncherEntrypointTest verifica por reflexão public static) Tj T*
+(void main\(String[]\) sem abrir JFrame. Os 170 testes e baselines anteriores foram) Tj T*
+(preservados. Log integral: TASK-007-final.log. Resumo: TASK-007-testes.txt.) Tj T*
+() Tj T*
+(O script tools/test-windows-portable.ps1 valida ZIP, manifest, hashes, PE x64, runtime) Tj T*
+(Java 17 com jdk.random e configuração de main. Extrai em uma pasta com espaços fora de) Tj T*
+(Projeto-K, remove Java/Maven do PATH somente no processo de verificação, aponta) Tj T*
+(JAVA_HOME para um caminho inexistente e executa o EXE. Captura sua janela e fecha apenas) Tj T*
+(esse processo por WM_CLOSE. A observação de sockets pertence ao intervalo do teste e não) Tj T*
+(substitui auditoria de tráfego histórico.) Tj T*
+() Tj T*
+(Pacote aprovado da etapa:) Tj T*
+(dist/SpiritGate-0.7.0-task007-20261018T212519Z-bccb553f-portable.zip, 29.341.071 bytes.) Tj T*
+(SHA-256: c786f095445747111270ae7dccff791944a58cc3b689d4e40898f358824326b2.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-007 - página 1/2) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 2332 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+() Tj T*
+(EXECUCAO LOCAL CONFERIDA: EXE extraído fora dos fontes em caminho com espaços, PATH sem) Tj T*
+(Java/Maven e JAVA_HOME inexistente. Janela real capturada em TASK-007-exe.png e) Tj T*
+(processos encerrados normalmente. Evidência: TASK-007-portable-smoke.json. O launcher) Tj T*
+(nativo usa processo filho; o validador foi corrigido para acompanhar essa árvore e) Tj T*
+(manter o handle antes do encerramento. As tentativas de validação anteriores foram) Tj T*
+(guardadas, sem atribuir a falha do harness ao jogo. A inspeção de sockets ficou) Tj T*
+(indisponível por restrição do ambiente e não é declarada como aprovada; o staging e o) Tj T*
+(código do launcher foram inspecionados sem inicialização de banco/rede.) Tj T*
+() Tj T*
+(Uma primeira construção, anterior à inclusão de jdk.random, foi identificada antes da) Tj T*
+(homologação local e movida para dist/rascunhos-nao-entregar. Ela não é o pacote aprovado) Tj T*
+(nem a candidata final. A versão da TASK-011 será reconstruída com o código consolidado,) Tj T*
+(sem substituir esta versão.) Tj T*
+() Tj T*
+(A limpeza inicial da etapa seguinte detectou arquivos somente leitura criados por) Tj T*
+(jpackage em server/target. Atributos foram normalizados somente nas pastas de saída) Tj T*
+(deste build, e o script passou a fazê-lo após empacotar; o JDK instalado não é alterado.) Tj T*
+(A falha e a repetição do clean estão registradas na evidência da TASK-008. Isso não) Tj T*
+(alterou o código ou os hashes do pacote aprovado.) Tj T*
+() Tj T*
+(## Limitações e roteiro manual) Tj T*
+() Tj T*
+(HOMOLOGACAO HUMANA PENDENTE: extrair tudo em outro Windows x64 sem Java/Maven, abrir) Tj T*
+(SpiritGate.exe e conferir WASD, Espaço, E, Q, Shift, H e R. Manter app/ e runtime/ ao) Tj T*
+(lado do EXE. Não há instalador, WiX, assinatura, auto-update, login ou multiplayer. O) Tj T*
+(EXE não é assinado; não é recomendado desativar proteções do Windows.) Tj T*
+() Tj T*
+(Arquivos: scripts de build/smoke, teste de entrada, .gitignore para dist/checkpoints,) Tj T*
+(ferramenta local de checkpoints, este relatório/PDF, resumo/log, diff e evidência) Tj T*
+(JSON/PNG. Checkpoints usam snapshots e patches porque esta pasta não é um repositório) Tj T*
+(Git. Nada foi enviado ou publicado.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-007 - página 2/2) Tj T*
+ET
+endstream
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000127 00000 n 
+0000000224 00000 n 
+0000000350 00000 n 
+0000003831 00000 n 
+0000003957 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+6341
+%%EOF

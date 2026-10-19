@@ -1,0 +1,789 @@
+--- a/CHANGELOG-PROTOTIPO.md
++++ b/CHANGELOG-PROTOTIPO.md
+@@ -49,3 +49,10 @@
+ versionado opcional e fallback; câmera pura e janela redimensionável com mira
+ em coordenadas de mundo. Gameplay preservado. Arte e homologação humana pendentes.
+ 
++# 0.36.0-rc1 - TASK-022 a TASK-036
++
++Mapas V2, culling conservador, camadas, autoria offline, revisão direcional de
++sprites, robustez visual, testes de animação/foco, ajuda F1, diagnóstico local F2,
++feedback de impactos e estresse determinístico. Fallback mantido; sem aprovação
++artística. Homologação humana em outro Windows permanece pendente.
++
+--- a/README-PROTOTIPO.md
++++ b/README-PROTOTIPO.md
+@@ -346,3 +346,16 @@
+ 
+ Build: `powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-windows-portable.ps1 -Version 0.21.0-rc1 -MavenRepository .maven-repository -TesterKitDirectory docs/kit-homologacao-017-021`.
+ 
++# Rodada TASK-022 a TASK-036 - candidata 0.36.0-rc1
++
++Qualidade completa: `python tools/qualidade.py --offline --task local` na raiz
++Projeto-K (Java 17, Maven e Python; dependências no cache local).
++Mapas: `python tools/mapas.py create exemplo.properties` e
++`python tools/mapas.py validate exemplo.properties` (compilar antes).
++V1 mantém 960x640; V2 é reservado a mapas ampliados até 8192x8192, 4096 objetos
++por lista. Camadas 0-4 atrás e 5-10 à frente dos atores. Decoração não colide.
++F1 abre ajuda; F2 salva diagnóstico local explícito com dados por whitelist.
++Não há envio automático ou arte final aprovada. RUN não cria corrida de gameplay.
++Relatório desta rodada em docs/RELATORIO-FINAL-TASK-022_036.md; kit humano em
++docs/kit-homologacao-022-036. Homologação em outro Windows continua pendente.
++
+--- /dev/null
++++ b/docs/CONTINUIDADE-TASK-022_036.md
+@@ -0,0 +1,12 @@
++# Continuidade - 19/10/2026
++
++Última concluída: TASK-036, automação local aprovada.
++Release: dist/SpiritGate-0.36.0-rc1-20261019T042237Z-a006aab1-portable.zip
++SHA-256: 511d59412598be73395391e21a6cfb2315f4855c714059086abc4d02e46cff31
++
++Próximo passo: homologação humana em outro Windows e revisão artística, conforme kit.
++Nenhuma TASK 022-036 precisa ser reimplementada. Não gerar arte aprovada automaticamente.
++Para validar checkout: python tools/qualidade.py --offline --task retomada
++Para auditoria: python tools/auditar_rc.py --zip dist/SpiritGate-0.36.0-rc1-20261019T042237Z-a006aab1-portable.zip --report docs/retomada-auditoria.json
++Ler RELATORIO-FINAL-TASK-022_036.md e os JSON de evidência antes de nova alteração.
++Snapshots recuperáveis em .task-checkpoints, sem Git. Antes de nova tarefa, criar novo checkpoint.
+--- /dev/null
++++ b/docs/RELATORIO-FINAL-TASK-022_036.md
+@@ -0,0 +1,119 @@
++# Relatório final - TASK-022 a TASK-036
++
++Spirit Gate, 19/10/2026 (America/Sao_Paulo). Base: 0.21.0-rc1.
++As quinze tarefas foram concluídas na validação automatizada local, em sequência
++com checkpoint inicial, suíte completa e documentação por etapa. Nenhuma tarefa
++fica bloqueada na implementação. Aprovação artística e homologação humana em outro
++computador Windows permanecem pendentes; não são declaradas executadas.
++
++## Entrega
++
++Candidata local: dist/SpiritGate-0.36.0-rc1-20261019T042237Z-a006aab1-portable.zip
++Tamanho: 29401846 bytes.
++SHA-256: 511d59412598be73395391e21a6cfb2315f4855c714059086abc4d02e46cff31
++Auditoria: docs/TASK-036-auditoria.json. Smokes: TASK-036-smoke.json e
++TASK-036-map-smoke.json. Java 17 integrado, EXE PE x64, novo JAR de build limpo.
++Último release anterior preservado: SpiritGate-0.21.0-rc1-20261019T001737Z-546ce1c5-portable.zip.
++Não houve publicação, upload ou operação Git de commit/push.
++
++## Evolução real dos testes
++
++| TASK | Entrega | Situação | JUnit | Python |
++|---|---|---|---:|---:|
++| 022 | Auditoria e baseline | Concluída na automação local | 223 | 18 |
++| 023 | Orquestrador de qualidade | Concluída na automação local | 223 | 22 |
++| 024 | Mapas V2 ampliados | Concluída na automação local | 226 | 22 |
++| 025 | Culling conservador | Concluída na automação local | 228 | 22 |
++| 026 | Camadas de cenário | Concluída na automação local | 230 | 22 |
++| 027 | Autoria offline de mapas | Concluída na automação local | 230 | 24 |
++| 028 | Prévia e comparação de sprites | Concluída na automação local | 230 | 25 |
++| 029 | Robustez de pacotes visuais | Concluída na automação local | 231 | 25 |
++| 030 | Regressões de animação | Concluída na automação local | 233 | 25 |
++| 031 | Foco e mira | Concluída na automação local | 235 | 25 |
++| 032 | Ajuda F1 e HUD | Concluída na automação local | 236 | 25 |
++| 033 | Feedback de combate | Concluída na automação local | 237 | 25 |
++| 034 | Diagnóstico local F2 | Concluída na automação local | 239 | 25 |
++| 035 | Estresse determinístico | Concluída na automação local | 241 | 25 |
++| 036 | Release portátil | Concluída na automação local | 241 | 25 |
++
++Evolução: 223 para 241 JUnit (+18), 18 para 25 Python (+7).
++Todos os resultados finais: zero falhas/erros/ignorados em JUnit; Python OK.
++TASK-035 teve um erro inicial de sintaxe no teste novo, corrigido sem alterar
++asserções. O log da tentativa recusada foi preservado. A primeira invocação Maven
++da baseline falhou ao selecionar o cache; a repetição com argumento completo
++entre aspas usou o cache do projeto e passou. Não se ocultaram falhas de gameplay.
++
++## Alterações e decisões
++
++- Mapas: Properties V1 960x640 compatível; V2 reservado a mapas ampliados,
++  960x640 até 8192x8192, máximo 4096 elementos por lista, validações físicas
++  preservadas. Mundo, Criostase, câmera e clipping usam as dimensões reais.
++- Render: culling conservador por clipping Java2D e comparação de pixels;
++  camadas 0-4 traseiras e 5-10 frontais, ordenação estável. Sem índice paralelo.
++- Autoria: CLI Python gera exportação determinística e reutiliza o validador
++  Java autoritativo. Revisão de sprites inclui prévias direcionais e comparação
++  de dimensões, alfa e SHA, preservando contrato de 59 frames e revisão humana.
++- Assets: carregador único com fallback, limites de arquivo/dimensões, rejeição
++  de chave duplicada, caminho externo e offset extremo. Sem IO por frame.
++- Entrada/animação: prioridades históricas mantidas, deltas inválidos recusados,
++  testes de transição; perda de foco limpa held/mira sem apagar casts FIFO.
++- Apresentação: F1 mostra ajuda e valores publicados; impactos/derrotas usam
++  efeitos reais com expiração da simulação; listas do snapshot são copiadas.
++- Diagnóstico: F2 salva ZIP local explícito com um JSON e campos por whitelist;
++  sem nome pessoal, caminho completo, mensagens livres ou transmissão externa.
++- Qualidade: comando único offline, logs individuais, JSON/TXT e códigos de
++  ambiente/teste/build, sem instalação de dependências ou mudanças globais.
++
++## Preservação e estresse
++
++82 arquivos históricos de domínio e seus testes comparados com
++checkpoint inicial: nenhuma alteração. 228 PNGs conferidos contra
++inventário histórico: nenhum alterado. ZIP 0.21 original com hash preservado.
++Fórmulas, vigor, cooldowns, Freeze/Criostase, SOLID/SOFT, dash seletivo,
++recuperação de posição, FIFO e três replays históricos preservados pela suíte.
++Estresse: dois runtimes, 6000 ticks cada e 6000 comparações completas, dez R por
++runtime, 780 ticks com Freeze, 3000 com gelo e 80 com dash; 4096 visuais em mapa
++8192x8192, câmera extrema e 32 repetições de dash sólido. Métricas observadas,
++sem limiar temporal para aprovar gameplay. Ver TASK-035-estresse.json.
++
++## Inventário e recuperação
++
++Cada tarefa tem docs/TASK-NNN.md, Spirit_Gate_TASK-NNN.pdf, TASK-NNN-testes.txt,
++TASK-NNN.diff e logs. Checkpoints em .task-checkpoints/TASK-NNN-before.json
++(conteúdo textual recuperável) e TASK-NNN-after.json (hashes/arquivos alterados).
++O diff reconstrói o estado posterior a partir do snapshot anterior. Não existe Git
++neste checkout e não foi criado repositório. Inventário completo com hashes em
++    docs/INVENTARIO-TASK-022_036.json (fontes locais); o consolidado JSON lista alterações por tarefa.
++Snapshots locais conservam fontes; pacote documental inclui metadados e evidências,
++separado do ZIP do jogo. Os logs textuais exportados têm caminhos pessoais redigidos.
++Continuar por docs/CONTINUIDADE-TASK-022_036.md, sem repetir tarefas aprovadas.
++
++## Reprodução
++
++Na raiz Projeto-K: python tools/qualidade.py --offline --task local
++Requer Java 17, Maven, Python e cache .maven-repository existente.
++Somente Python: python -m unittest discover -s tools -p "test_*.py" -v
++(os testes de autoria de mapas requerem classes Java compiladas).
++Mapa: python tools/mapas.py create nome-novo.properties; depois validate nome-novo.properties.
++Build: powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-windows-portable.ps1
++-Version 0.36.0-rc1 -MavenRepository .maven-repository
++-TesterKitDirectory docs/kit-homologacao-022-036
++O build cria outra saída única, preservando releases anteriores.
++Auditar ZIP: python tools/auditar_rc.py --zip dist/SpiritGate-0.36.0-rc1-20261019T042237Z-a006aab1-portable.zip --report docs/re-auditoria.json
++Executável opcional: SpiritGate.exe --map mapa-demo.properties
++
++## Limitações e roteiro humano por tarefa
++
++Roteiro separado por TASK em docs/kit-homologacao-022-036/ROTEIRO-HOMOLOGACAO.md,
++incluído também no jogo. Revisar F1/F2, foco, colisões seletivas, mapa ampliado,
++R, camadas e sessão prolongada; em outro Windows sem Java, conferir abertura e SHA.
++Capturas do EXE na TASK-036 são reais. Template/autoria e cenários de teste são
++sintéticos identificados, sem aprovação artística. Não há sprites definitivos.
++EXE não assinado; sem teste Linux ou homologação em outro computador. Inspeção
++de sockets por CIM é indisponível neste ambiente; não se declarou medição negativa.
++Não há multiplayer, autenticação, migração de banco ou mudança de protocolo.
++Zoom inteiro continua API de integração; não foi inventado atalho novo.
++Fonte escala com janela e precisa de revisão humana de legibilidade em tamanhos
++muito pequenos. Culling conserva efeitos/atlas com offsets e ainda percorre fundo;
++não foi alegada eliminação de todo custo fora da viewport. Estresse sintético não
++prova ausência de todo vazamento e não substitui sessão humana longa.
+--- a/docs/TASK-022.md
++++ b/docs/TASK-022.md
+@@ -55,3 +55,6 @@
+ Sem smoke de EXE nesta tarefa; a evidência da TASK-021 é histórica, não reexecutada.
+ Sem homologação em outro Windows e sem aprovação de arte final.
+ Próximo passo: TASK-023, orquestrador de qualidade, com testes próprios.
++
++## Resultado final observado
++Validação local aprovada: 223 JUnit e 18 Python; zero falhas.
+--- a/docs/TASK-023.md
++++ b/docs/TASK-023.md
+@@ -23,3 +23,6 @@
+ não são o pacote de diagnóstico sanitizado da TASK-034. Não realiza homologação
+ humana nem certifica arte final. Falhas Maven não classificadas como teste são
+ tratadas como build. O modo online não foi necessário nesta validação.
++
++## Resultado final observado
++Validação local aprovada: 223 JUnit e 22 Python; zero falhas.
+--- a/docs/TASK-024.md
++++ b/docs/TASK-024.md
+@@ -30,3 +30,6 @@
+ Limites: mobs mantêm seus três spawns históricos; não foi introduzida autoria
+ de entidades. Sem arte final ou homologação humana. O render ainda percorre todos
+ os objetos; otimização de culling pertence à próxima tarefa.
++
++## Resultado final observado
++Validação local aprovada: 226 JUnit e 22 Python; zero falhas.
+--- a/docs/TASK-025.md
++++ b/docs/TASK-025.md
+@@ -23,3 +23,6 @@
+ rígido ou arte aprovada. Homologação visual humana permanece pendente.
+ Checkpoint recuperável antes/depois e diff em caminhos padronizados. Próximo:
+ TASK-026, camadas explícitas. Não há mudanças de regras de gameplay.
++
++## Resultado final observado
++Validação local aprovada: 228 JUnit e 22 Python; zero falhas.
+--- a/docs/TASK-026.md
++++ b/docs/TASK-026.md
+@@ -21,3 +21,6 @@
+ Checkpoints e diff padronizados; próximo passo TASK-027.
+ Limites: sem árvores definitivas ou aprovação artística; homologação humana
+ visual pendente. Camadas são numéricas por compatibilidade com Properties.
++
++## Resultado final observado
++Validação local aprovada: 230 JUnit e 22 Python; zero falhas.
+--- a/docs/TASK-027.md
++++ b/docs/TASK-027.md
+@@ -24,3 +24,6 @@
+ Criação repetida recusa sobrescrita. Cenário sintético não substitui o padrão.
+ Limites: CLI sem editor gráfico; IDs de spawn fixos da arena histórica; sem
+ aprovação humana de arte ou teste interativo em outro Windows. Próxima TASK-028.
++
++## Resultado final observado
++Validação local aprovada: 230 JUnit e 24 Python; zero falhas.
+--- a/docs/TASK-028.md
++++ b/docs/TASK-028.md
+@@ -21,3 +21,6 @@
+ Template vazio é sintético e permanece fora do pacote de produção. Comparação
+ reporta metadados/hashes, sem avaliar qualidade estética. Homologação Aseprite
+ humana pendente. Checkpoints/diff padronizados; próxima TASK-029.
++
++## Resultado final observado
++Validação local aprovada: 230 JUnit e 25 Python; zero falhas.
+--- a/docs/TASK-029.md
++++ b/docs/TASK-029.md
+@@ -22,3 +22,6 @@
+ arte real foi aprovada ou integrada. Execução sem pacote continua com fallback.
+ Homologação artística e em outro Windows permanece pendente. Limites documentados
+ podem recusar pacotes antigos excessivos; os contratos 59 frames usuais cabem.
++
++## Resultado final observado
++Validação local aprovada: 231 JUnit e 25 Python; zero falhas.
+--- a/docs/TASK-030.md
++++ b/docs/TASK-030.md
+@@ -20,3 +20,6 @@
+ Diff/checkpoints padronizados; próximo passo TASK-031.
+ Limites: sem nova mecânica de corrida ou arte final. Homologação artística e
+ interativa humana permanece pendente. Aceite técnico depende dos logs aprovados.
++
++## Resultado final observado
++Validação local aprovada: 233 JUnit e 25 Python; zero falhas.
+--- a/docs/TASK-031.md
++++ b/docs/TASK-031.md
+@@ -17,3 +17,6 @@
+ Limites: eventos de janela são ligados ao callback real, mas alternância física
+ de janelas requer homologação humana. Uma transição anterior ao foco mantém sua
+ posição FIFO; não são apagados comandos para produzir aprovação artificial.
++
++## Resultado final observado
++Validação local aprovada: 235 JUnit e 25 Python; zero falhas.
+--- a/docs/TASK-032.md
++++ b/docs/TASK-032.md
+@@ -15,3 +15,6 @@
+ Limites: fonte acompanha escala da janela, podendo ficar pequena em janelas muito
+ reduzidas; legibilidade final e homologação humana continuam pendentes. Sem novos
+ custos, cooldowns, comandos de gameplay ou dependências.
++
++## Resultado final observado
++Validação local aprovada: 236 JUnit e 25 Python; zero falhas.
+--- a/docs/TASK-033.md
++++ b/docs/TASK-033.md
+@@ -19,3 +19,6 @@
+ Limites: anel de derrota é fallback geométrico e depende do impacto ainda visível;
+ atlas aprovado mantém KO próprio. Sem novos sprites ou aprovação artística.
+ Homologação visual humana pendente.
++
++## Resultado final observado
++Validação local aprovada: 237 JUnit e 25 Python; zero falhas.
+--- a/docs/TASK-034.md
++++ b/docs/TASK-034.md
+@@ -20,3 +20,6 @@
+ Limites: versão de desenvolvimento será consolidada na TASK-036. Não coleta crash
+ automaticamente. Seletor F2 requer teste humano; API de exportação foi automatizada.
+ Para relato, anexar passos de reprodução manualmente, após revisão pessoal do ZIP.
++
++## Resultado final observado
++Validação local aprovada: 239 JUnit e 25 Python; zero falhas.
+--- a/docs/TASK-035.md
++++ b/docs/TASK-035.md
+@@ -23,3 +23,6 @@
+ Falha inicial: erro de sintaxe no incremento do laço de zoom do teste novo.
+ Corrigido sem mudar asserções. Log original preservado em
+ TASK-035-primeira-compilacao.log e TASK-035-primeira-qualidade.json.
++
++## Resultado final observado
++Validação local aprovada: 241 JUnit e 25 Python; zero falhas.
+--- /dev/null
++++ b/docs/TASK-036-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 241,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-036.md
+@@ -0,0 +1,44 @@
++# TASK-036 - Release candidate consolidada
++
++Objetivo: candidata portátil Windows x64 construída dos fontes consolidados.
++Base: TASK-035 aprovada, 241 JUnit e 25 Python.
++Versão 0.36.0-rc1 sem conflito anterior no diretório dist.
++Situação: AUTOMAÇÃO LOCAL APROVADA; homologação humana pendente.
++
++Implementação: versão do diagnóstico consolidada; README/changelog e aviso do
++pacote atualizados; kit novo com roteiro por tarefa, modelo de bug, notas e mapa
++V2 opcional. Build limpo real com Maven offline, sem SkipMaven; JAR novo criado
++somente de domain/prototype; jdeps, jlink, jpackage e JVM Java 17 integrada.
++Não foram incluídas artes pendentes, fontes de teste ou configurações privadas.
++Revisão final corrigiu o comando do mapa opcional no kit e tornou os caminhos
++dos previews HTML relativos, para portabilidade do pacote documental.
++
++Artefato: dist/SpiritGate-0.36.0-rc1-20261019T042237Z-a006aab1-portable.zip
++Bytes: 29401846
++SHA-256: 511d59412598be73395391e21a6cfb2315f4855c714059086abc4d02e46cff31
++Auditoria oficial PASS: ZIP original, inventário, whitelist, hashes, PE x64 e
++bytecode de todas as classes atuais. Controle negativo e distribuição visual
++sintética testados em cópias, sem promoção de arte. Ver logs/JSON TASK-036.
++Smokes reais do EXE padrão e --map em extrações distintas fora de Projeto-K,
++PATH sem Java externo, JVM integrada comprovada, fechamento normal e códigos 0.
++Capturas TASK-036-exe.png e TASK-036-mapa-exe.png são reais, não simulações.
++Inspeção de sockets por CIM pode estar indisponível: ver JSON, sem afirmar o
++que esse controle não conseguiu medir. Não houve teste em outro computador.
++
++Preservação: 82 fontes/testes históricos de domínio idênticos;
++228 PNGs idênticos ao inventário histórico; ZIP 0.21 original intacto.
++Todos os releases anteriores mantidos. Sem commit, push, publicação ou upload.
++Arquivos modificados/adicionados e inventário estão no relatório final e diff.
++
++Reprodução: python tools/qualidade.py --offline --task 036
++Build: tools/build-windows-portable.ps1 -Version 0.36.0-rc1 -MavenRepository
++.maven-repository -TesterKitDirectory docs/kit-homologacao-022-036
++Auditoria: python tools/auditar_rc.py --zip dist/SpiritGate-0.36.0-rc1-20261019T042237Z-a006aab1-portable.zip --report docs/re-auditoria.json
++Smoke: tools/test-windows-portable.ps1 -ZipPath dist/SpiritGate-0.36.0-rc1-20261019T042237Z-a006aab1-portable.zip
++
++Limites: sem assinatura do executável, sem arte final aprovada, sem homologação
++humana em outro Windows. Não é lançamento público. Próximo passo humano: kit de
++homologação por tarefa. Continuidade em docs/CONTINUIDADE-TASK-022_036.md.
++
++## Resultado final observado
++Validação local aprovada: 241 JUnit e 25 Python; zero falhas.
+--- /dev/null
++++ b/docs/kit-homologacao-022-036/CHANGELOG-RESUMIDO.md
+@@ -0,0 +1,10 @@
++# 0.36.0-rc1 - TASK-022 a TASK-036
++
++Mapas V2 ampliados, câmera com dimensões reais, culling conservador e camadas de
++cenário; CLI offline de autoria; prévias direcionais e comparação de sprites;
++validação visual reforçada; regressões de animação/foco/mira; ajuda F1; anéis de
++impacto/derrota; diagnóstico local F2; estresse determinístico e qualidade unificada.
++
++Preservados combate, vigor, cooldowns, Freeze/Criostase, colisões seletivas, fila
++FIFO e replays. Sem arte definitiva aprovada, multiplayer, autenticação ou banco.
++Java 17 integrado. Executável sem assinatura. Homologação humana pendente.
+--- /dev/null
++++ b/docs/kit-homologacao-022-036/MODELO-RELATO-BUG.md
+@@ -0,0 +1,15 @@
++# Relato de bug - Spirit Gate 0.36.0-rc1
++
++Versão e SHA do ZIP:
++Windows/arquitetura:
++TASK relacionada e etapa:
++Mapa padrão ou opcional:
++Tamanho da janela:
++Passos mínimos para reproduzir:
++Resultado esperado:
++Resultado observado:
++Frequência e recuperação por R:
++Diagnóstico F2 revisado antes de anexar (opcional):
++
++Não inclua credenciais, nomes pessoais, caminhos privados ou dados de terceiros.
++O jogo não envia este relato; o compartilhamento é manual.
+--- /dev/null
++++ b/docs/kit-homologacao-022-036/ROTEIRO-HOMOLOGACAO.md
+@@ -0,0 +1,34 @@
++# Spirit Gate 0.36.0-rc1 - homologação humana pendente
++
++Nenhum item abaixo foi homologado em outro computador pelo agente.
++Em outro Windows x64, sem Java/Maven: extrair ZIP inteiro em pasta gravável com
++espaços, conferir SHA externo e VERSION.txt. Abrir SpiritGate.exe; fechar e reabrir.
++Preservar app/ e runtime/. Executável sem assinatura. Sem rede, login ou banco.
++
++- TASK-022: conferir versão/base e inventário da entrega.
++- TASK-023: no ambiente de desenvolvimento, rodar python tools/qualidade.py --offline.
++- TASK-024: abrir mapa opcional com SpiritGate.exe --map mapa-demo.properties;
++  andar além do cenário histórico e usar R. Câmera deve acompanhar e R restaura spawn.
++- TASK-025: observar objetos cruzando bordas da câmera, sem desaparecimento precoce.
++- TASK-026: conferir tiles sintéticos atrás/à frente do personagem, com H mostrando
++  que decoração não altera hitboxes. Arte final não está integrada.
++- TASK-027: na fonte, criar mapa com tools/mapas.py e validar com o mesmo carregador.
++- TASK-028: abrir docs/autoria-028-sintetica/revisao/preview.html no pacote de evidências;
++  template vazio é apenas sintético. Importar exportação real do Aseprite para revisão.
++- TASK-029: iniciar sem pacote visual: fallback deve funcionar. Não aprovar arte pelo
++  resultado de fixtures. Revisar cada exportação real antes de staging.
++- TASK-030: caminhar/atacar, receber dano, morrer, congelar mob e usar R durante ação.
++- TASK-031: segurar WASD/E, alternar janela, voltar e testar nova pressão; verificar
++  Q/Shift após resize e cursor no HUD. Shift mantido não repete sozinho após recarga.
++- TASK-032: F1 abre/fecha ajuda; conferir HP, vigor, custos, recargas e estados.
++- TASK-033: no mapa padrão, combater e observar impactos, Freeze e derrota, sem
++  alteração dos valores. A chance de Freeze continua probabilística.
++- TASK-034: F2 salva ZIP com nome novo. Abrir diagnostico.json, revisar e só então
++  anexar manualmente ao relato. Nenhum envio é automático.
++- TASK-035: jogar sessão prolongada, repetir R e habilidades; relatar travamentos
++  com versão e passos. O estresse sintético não substitui este teste.
++- TASK-036: conferir JVM integrada e abertura em outro Windows sem Java instalado.
++
++Mapa opcional é sintético 1920x1280, spawn 1500,1000, sólido à direita e leve acima.
++Use o mapa padrão para combate próximo aos mobs. Na fonte, o zoom 1-4 é API de
++integração testada; nenhum atalho novo de zoom foi criado nesta rodada.
+--- /dev/null
++++ b/docs/kit-homologacao-022-036/mapa-demo.properties
+@@ -0,0 +1,41 @@
++# CENARIO SINTETICO - SEM ARTE APROVADA
++height=1280
++physical.0.category=WORLD_BOUNDARY
++physical.0.height=1280
++physical.0.id=boundary
++physical.0.width=1920
++physical.0.x=0
++physical.0.y=0
++physical.count=3
++schemaVersion=2
++spawnX=1500
++spawnY=1000
++visual.0.height=64
++visual.0.id=synthetic-0
++visual.0.layer=0
++visual.0.rgb=245342
++visual.0.width=64
++visual.0.x=1472
++visual.0.y=960
++visual.1.height=64
++visual.1.id=synthetic-1
++visual.1.layer=6
++visual.1.rgb=245342
++visual.1.width=64
++visual.1.x=1536
++visual.1.y=960
++physical.1.id=solid
++physical.1.x=1650
++physical.1.y=900
++physical.1.width=32
++physical.1.height=200
++physical.1.category=SOLID_OBSTACLE
++physical.2.id=soft
++physical.2.x=1450
++physical.2.y=900
++physical.2.width=32
++physical.2.height=32
++physical.2.category=SOFT_OBSTACLE
++physical.2.kind=BUSH
++visual.count=2
++width=1920
+--- a/server/src/main/java/com/projetok/prototype/DiagnosticReport.java
++++ b/server/src/main/java/com/projetok/prototype/DiagnosticReport.java
+@@ -10,7 +10,7 @@
+ 
+ /** Diagnóstico local por lista permitida; nunca lê ambiente, nomes ou caminhos pessoais. */
+ public final class DiagnosticReport {
+-    public static final String VERSION="0.34.0-dev";
++    public static final String VERSION="0.36.0-rc1";
+     public enum Stage { ARENA, MAP_LOADING, RENDERING }
+     private DiagnosticReport() { }
+ 
+--- a/tools/build-windows-portable.ps1
++++ b/tools/build-windows-portable.ps1
+@@ -238,6 +238,8 @@
+ 1. Extraia o ZIP inteiro para uma pasta gravavel.
+ 2. Abra SpiritGate.exe dentro da pasta SpiritGate. Nao mova somente o EXE.
+ 3. Nao e necessario instalar Java, Maven, PostgreSQL ou conectar a um servidor.
++4. F1 mostra ajuda; F2 permite salvar diagnostico ZIP local, sem envio automatico.
++   Revise o JSON antes de compartilhar. Escolha nome novo para evitar sobrescrita.
+ 
+ Controles: WASD mover; Espaco atacar; E esforco (20 vigor);
+ Q Criostase (55 vigor); Shift Passo Relampago (35 vigor), mirando com mouse;
+--- /dev/null
++++ b/tools/consolidar_rodada.py
+@@ -0,0 +1,255 @@
++"""Consolida somente evidências realmente executadas das TASK-022 a TASK-036."""
++from pathlib import Path
++import hashlib
++import json
++import re
++import zipfile
++from gerar_pdf_task002 import gerar_pdf
++from checkpoint_rodada import checkpoint
++
++ROOT=Path(__file__).resolve().parents[1]
++DOCS=ROOT/'docs'
++
++def read(path):
++    return json.loads(path.read_text(encoding='utf-8-sig'))
++
++def digest(path):
++    return hashlib.sha256(path.read_bytes()).hexdigest()
++
++def main():
++    release=max((ROOT/'dist').glob('SpiritGate-0.36.0-rc1-*-portable.zip'),key=lambda p:p.stat().st_mtime_ns)
++    audit=read(DOCS/'TASK-036-auditoria.json')
++    smoke=read(DOCS/'TASK-036-smoke.json');map_smoke=read(DOCS/'TASK-036-map-smoke.json')
++    assert audit['status']=='PASS'
++    assert Path(audit['zip']).name==release.name
++    for result in (smoke,map_smoke):
++        assert result.get('bundledJvmVerified') and result.get('exitCode')==0 and result.get('windowExitCode')==0
++        assert Path(result['zip']).name==release.name
++    rows=[('022',223,18)]
++    for number in range(23,37):
++        task=f'{number:03}'
++        result=read(DOCS/f'TASK-{task}-qualidade.json')
++        assert result['exitCode']==0,task
++        rows.append((task,result['checks']['java']['totals']['tests'],result['checks']['python']['tests']))
++    previous=read(ROOT/'.task-checkpoints/TASK-022-before.json')
++    historical=[name for name in previous if name.startswith(('server/src/main/java/com/projetok/domain/',
++                                                               'server/src/test/java/com/projetok/domain/'))]
++    changed=[name for name in historical if (ROOT/name).read_text(encoding='utf-8-sig')!=previous[name]]
++    assert not changed
++    assets=read(DOCS/'TASK-016-assets.json')['assets']
++    art_changes=[a['path'] for a in assets if digest(ROOT/'assets'/a['path'])!=a['sha256']]
++    assert not art_changes
++    original=ROOT/'dist/SpiritGate-0.21.0-rc1-20261019T001737Z-546ce1c5-portable.zip'
++    assert digest(original)=='303f469b87aa0752d6dcd44e21ae5efef78295cf971884976939b1d8ae6cc534'
++    preservation={'historicalDomainAndTestFilesCompared':len(historical),'changedHistoricalDomainFiles':changed,
++                  'sourcePngCompared':len(assets),'changedSourcePng':art_changes,
++                  'baseline021ZipPreserved':True,'baseline021Sha256':digest(original)}
++    (DOCS/'TASK-036-preservacao.json').write_text(json.dumps(preservation,indent=2),encoding='utf-8')
++    task36=f'''# TASK-036 - Release candidate consolidada
++
++Objetivo: candidata portátil Windows x64 construída dos fontes consolidados.
++Base: TASK-035 aprovada, 241 JUnit e 25 Python.
++Versão 0.36.0-rc1 sem conflito anterior no diretório dist.
++Situação: AUTOMAÇÃO LOCAL APROVADA; homologação humana pendente.
++
++Implementação: versão do diagnóstico consolidada; README/changelog e aviso do
++pacote atualizados; kit novo com roteiro por tarefa, modelo de bug, notas e mapa
++V2 opcional. Build limpo real com Maven offline, sem SkipMaven; JAR novo criado
++somente de domain/prototype; jdeps, jlink, jpackage e JVM Java 17 integrada.
++Não foram incluídas artes pendentes, fontes de teste ou configurações privadas.
++Revisão final corrigiu o comando do mapa opcional no kit e tornou os caminhos
++dos previews HTML relativos, para portabilidade do pacote documental.
++
++Artefato: dist/{release.name}
++Bytes: {release.stat().st_size}
++SHA-256: {digest(release)}
++Auditoria oficial PASS: ZIP original, inventário, whitelist, hashes, PE x64 e
++bytecode de todas as classes atuais. Controle negativo e distribuição visual
++sintética testados em cópias, sem promoção de arte. Ver logs/JSON TASK-036.
++Smokes reais do EXE padrão e --map em extrações distintas fora de Projeto-K,
++PATH sem Java externo, JVM integrada comprovada, fechamento normal e códigos 0.
++Capturas TASK-036-exe.png e TASK-036-mapa-exe.png são reais, não simulações.
++Inspeção de sockets por CIM pode estar indisponível: ver JSON, sem afirmar o
++que esse controle não conseguiu medir. Não houve teste em outro computador.
++
++Preservação: {len(historical)} fontes/testes históricos de domínio idênticos;
++{len(assets)} PNGs idênticos ao inventário histórico; ZIP 0.21 original intacto.
++Todos os releases anteriores mantidos. Sem commit, push, publicação ou upload.
++Arquivos modificados/adicionados e inventário estão no relatório final e diff.
++
++Reprodução: python tools/qualidade.py --offline --task 036
++Build: tools/build-windows-portable.ps1 -Version 0.36.0-rc1 -MavenRepository
++.maven-repository -TesterKitDirectory docs/kit-homologacao-022-036
++Auditoria: python tools/auditar_rc.py --zip dist/{release.name} --report docs/re-auditoria.json
++Smoke: tools/test-windows-portable.ps1 -ZipPath dist/{release.name}
++
++Limites: sem assinatura do executável, sem arte final aprovada, sem homologação
++humana em outro Windows. Não é lançamento público. Próximo passo humano: kit de
++homologação por tarefa. Continuidade em docs/CONTINUIDADE-TASK-022_036.md.
++'''
++    (DOCS/'TASK-036.md').write_text(task36,encoding='utf-8')
++    for task,java,python in rows:
++        path=DOCS/f'TASK-{task}.md'
++        text=path.read_text(encoding='utf-8')
++        marker='\n## Resultado final observado\n'
++        text=text.split(marker)[0]+marker+f'Validação local aprovada: {java} JUnit e {python} Python; zero falhas.\n'
++        path.write_text(text,encoding='utf-8')
++        gerar_pdf(path,DOCS/f'Spirit_Gate_TASK-{task}.pdf',f'TASK-{task}')
++    descriptions=['Auditoria e baseline','Orquestrador de qualidade','Mapas V2 ampliados',
++                  'Culling conservador','Camadas de cenário','Autoria offline de mapas',
++                  'Prévia e comparação de sprites','Robustez de pacotes visuais',
++                  'Regressões de animação','Foco e mira','Ajuda F1 e HUD',
++                  'Feedback de combate','Diagnóstico local F2','Estresse determinístico','Release portátil']
++    table='\n'.join(f'| {task} | {description} | Concluída na automação local | {java} | {python} |'
++                    for (task,java,python),description in zip(rows,descriptions))
++    report=f'''# Relatório final - TASK-022 a TASK-036
++
++Spirit Gate, 19/10/2026 (America/Sao_Paulo). Base: 0.21.0-rc1.
++As quinze tarefas foram concluídas na validação automatizada local, em sequência
++com checkpoint inicial, suíte completa e documentação por etapa. Nenhuma tarefa
++fica bloqueada na implementação. Aprovação artística e homologação humana em outro
++computador Windows permanecem pendentes; não são declaradas executadas.
++
++## Entrega
++
++Candidata local: dist/{release.name}
++Tamanho: {release.stat().st_size} bytes.
++SHA-256: {digest(release)}
++Auditoria: docs/TASK-036-auditoria.json. Smokes: TASK-036-smoke.json e
++TASK-036-map-smoke.json. Java 17 integrado, EXE PE x64, novo JAR de build limpo.
++Último release anterior preservado: {original.name}.
++Não houve publicação, upload ou operação Git de commit/push.
++
++## Evolução real dos testes
++
++| TASK | Entrega | Situação | JUnit | Python |
++|---|---|---|---:|---:|
++{table}
++
++Evolução: 223 para 241 JUnit (+18), 18 para 25 Python (+7).
++Todos os resultados finais: zero falhas/erros/ignorados em JUnit; Python OK.
++TASK-035 teve um erro inicial de sintaxe no teste novo, corrigido sem alterar
++asserções. O log da tentativa recusada foi preservado. A primeira invocação Maven
++da baseline falhou ao selecionar o cache; a repetição com argumento completo
++entre aspas usou o cache do projeto e passou. Não se ocultaram falhas de gameplay.
++
++## Alterações e decisões
++
++- Mapas: Properties V1 960x640 compatível; V2 reservado a mapas ampliados,
++  960x640 até 8192x8192, máximo 4096 elementos por lista, validações físicas
++  preservadas. Mundo, Criostase, câmera e clipping usam as dimensões reais.
++- Render: culling conservador por clipping Java2D e comparação de pixels;
++  camadas 0-4 traseiras e 5-10 frontais, ordenação estável. Sem índice paralelo.
++- Autoria: CLI Python gera exportação determinística e reutiliza o validador
++  Java autoritativo. Revisão de sprites inclui prévias direcionais e comparação
++  de dimensões, alfa e SHA, preservando contrato de 59 frames e revisão humana.
++- Assets: carregador único com fallback, limites de arquivo/dimensões, rejeição
++  de chave duplicada, caminho externo e offset extremo. Sem IO por frame.
++- Entrada/animação: prioridades históricas mantidas, deltas inválidos recusados,
++  testes de transição; perda de foco limpa held/mira sem apagar casts FIFO.
++- Apresentação: F1 mostra ajuda e valores publicados; impactos/derrotas usam
++  efeitos reais com expiração da simulação; listas do snapshot são copiadas.
++- Diagnóstico: F2 salva ZIP local explícito com um JSON e campos por whitelist;
++  sem nome pessoal, caminho completo, mensagens livres ou transmissão externa.
++- Qualidade: comando único offline, logs individuais, JSON/TXT e códigos de
++  ambiente/teste/build, sem instalação de dependências ou mudanças globais.
++
++## Preservação e estresse
++
++{len(historical)} arquivos históricos de domínio e seus testes comparados com
++checkpoint inicial: nenhuma alteração. {len(assets)} PNGs conferidos contra
++inventário histórico: nenhum alterado. ZIP 0.21 original com hash preservado.
++Fórmulas, vigor, cooldowns, Freeze/Criostase, SOLID/SOFT, dash seletivo,
++recuperação de posição, FIFO e três replays históricos preservados pela suíte.
++Estresse: dois runtimes, 6000 ticks cada e 6000 comparações completas, dez R por
++runtime, 780 ticks com Freeze, 3000 com gelo e 80 com dash; 4096 visuais em mapa
++8192x8192, câmera extrema e 32 repetições de dash sólido. Métricas observadas,
++sem limiar temporal para aprovar gameplay. Ver TASK-035-estresse.json.
++
++## Inventário e recuperação
++
++Cada tarefa tem docs/TASK-NNN.md, Spirit_Gate_TASK-NNN.pdf, TASK-NNN-testes.txt,
++TASK-NNN.diff e logs. Checkpoints em .task-checkpoints/TASK-NNN-before.json
++(conteúdo textual recuperável) e TASK-NNN-after.json (hashes/arquivos alterados).
++O diff reconstrói o estado posterior a partir do snapshot anterior. Não existe Git
++neste checkout e não foi criado repositório. Inventário completo com hashes em
++    docs/INVENTARIO-TASK-022_036.json (fontes locais); o consolidado JSON lista alterações por tarefa.
++Snapshots locais conservam fontes; pacote documental inclui metadados e evidências,
++separado do ZIP do jogo. Os logs textuais exportados têm caminhos pessoais redigidos.
++Continuar por docs/CONTINUIDADE-TASK-022_036.md, sem repetir tarefas aprovadas.
++
++## Reprodução
++
++Na raiz Projeto-K: python tools/qualidade.py --offline --task local
++Requer Java 17, Maven, Python e cache .maven-repository existente.
++Somente Python: python -m unittest discover -s tools -p "test_*.py" -v
++(os testes de autoria de mapas requerem classes Java compiladas).
++Mapa: python tools/mapas.py create nome-novo.properties; depois validate nome-novo.properties.
++Build: powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-windows-portable.ps1
++-Version 0.36.0-rc1 -MavenRepository .maven-repository
++-TesterKitDirectory docs/kit-homologacao-022-036
++O build cria outra saída única, preservando releases anteriores.
++Auditar ZIP: python tools/auditar_rc.py --zip dist/{release.name} --report docs/re-auditoria.json
++Executável opcional: SpiritGate.exe --map mapa-demo.properties
++
++## Limitações e roteiro humano por tarefa
++
++Roteiro separado por TASK em docs/kit-homologacao-022-036/ROTEIRO-HOMOLOGACAO.md,
++incluído também no jogo. Revisar F1/F2, foco, colisões seletivas, mapa ampliado,
++R, camadas e sessão prolongada; em outro Windows sem Java, conferir abertura e SHA.
++Capturas do EXE na TASK-036 são reais. Template/autoria e cenários de teste são
++sintéticos identificados, sem aprovação artística. Não há sprites definitivos.
++EXE não assinado; sem teste Linux ou homologação em outro computador. Inspeção
++de sockets por CIM é indisponível neste ambiente; não se declarou medição negativa.
++Não há multiplayer, autenticação, migração de banco ou mudança de protocolo.
++Zoom inteiro continua API de integração; não foi inventado atalho novo.
++Fonte escala com janela e precisa de revisão humana de legibilidade em tamanhos
++muito pequenos. Culling conserva efeitos/atlas com offsets e ainda percorre fundo;
++não foi alegada eliminação de todo custo fora da viewport. Estresse sintético não
++prova ausência de todo vazamento e não substitui sessão humana longa.
++'''
++    final=DOCS/'RELATORIO-FINAL-TASK-022_036.md';final.write_text(report,encoding='utf-8')
++    gerar_pdf(final,DOCS/'Spirit_Gate_Relatorio_Final_TASK-022_036.pdf','TASK-022 a TASK-036')
++    (DOCS/'CONTINUIDADE-TASK-022_036.md').write_text(
++        '# Continuidade - 19/10/2026\n\nÚltima concluída: TASK-036, automação local aprovada.\n'
++        f'Release: dist/{release.name}\nSHA-256: {digest(release)}\n\n'
++        'Próximo passo: homologação humana em outro Windows e revisão artística, conforme kit.\n'
++        'Nenhuma TASK 022-036 precisa ser reimplementada. Não gerar arte aprovada automaticamente.\n'
++        'Para validar checkout: python tools/qualidade.py --offline --task retomada\n'
++        'Para auditoria: python tools/auditar_rc.py --zip dist/'+release.name+' --report docs/retomada-auditoria.json\n'
++        'Ler RELATORIO-FINAL-TASK-022_036.md e os JSON de evidência antes de nova alteração.\n'
++        'Snapshots recuperáveis em .task-checkpoints, sem Git. Antes de nova tarefa, criar novo checkpoint.\n',encoding='utf-8')
++    checkpoint('036',True)
++    changes={f'{n:03}':read(ROOT/f'.task-checkpoints/TASK-{n:03}-after.json')['changed'] for n in range(22,37)}
++    (DOCS/'ALTERACOES-TASK-022_036.json').write_text(json.dumps(changes,indent=2),encoding='utf-8')
++    selected=[]
++    for path in DOCS.rglob('*'):
++        if not path.is_file():continue
++        rel=path.relative_to(DOCS).as_posix()
++        if (re.match(r'(?:Spirit_Gate_)?TASK-0(?:2[2-9]|3[0-6])(?:[.-]|$)',rel)
++            or rel.startswith(('kit-homologacao-022-036/','autoria-028-sintetica/','mapas/'))
++            or path.name in ('RELATORIO-FINAL-TASK-022_036.md','Spirit_Gate_Relatorio_Final_TASK-022_036.pdf',
++                            'CONTINUIDADE-TASK-022_036.md','ALTERACOES-TASK-022_036.json')):
++            selected.append(path)
++    selected+=list((ROOT/'.task-checkpoints').glob('TASK-0*-after.json'))
++    selected=[p for p in selected if not p.parent.name=='.task-checkpoints' or 22<=int(p.stem.split('-')[1])<=36]
++    inventory=[{'path':p.relative_to(ROOT).as_posix(),'sizeBytes':p.stat().st_size,'sha256':digest(p)} for p in sorted(selected)]
++    inv=DOCS/'INVENTARIO-TASK-022_036.json';inv.write_text(json.dumps(inventory,indent=2),encoding='utf-8');selected.append(inv)
++    destination=ROOT/'dist/SpiritGate-Documentos-TASK-022_036.zip'
++    if destination.exists():raise FileExistsError(destination)
++    package_inventory=[]
++    with zipfile.ZipFile(destination,'x',zipfile.ZIP_DEFLATED) as archive:
++        for path in sorted(selected):
++            data=path.read_bytes()
++            if path.suffix.lower() in ('.md','.log','.txt','.json','.diff','.html','.properties'):
++                text=data.decode('utf-16' if data.startswith((b'\xff\xfe',b'\xfe\xff')) else 'utf-8-sig')
++                text=re.sub(r'C:(?:\\+|/)Users(?:\\+|/)[^\\/\r\n"]+',r'C:/Users/<USER>',text,flags=re.I)
++                data=text.encode('utf-8')
++            name=path.relative_to(ROOT).as_posix()
++            archive.writestr(name,data)
++            package_inventory.append({'path':name,'sizeBytes':len(data),'sha256':hashlib.sha256(data).hexdigest()})
++        archive.writestr('INVENTARIO-PACOTE.json',json.dumps(package_inventory,indent=2).encode('utf-8'))
++    Path(str(destination)+'.sha256').write_text(digest(destination)+'  '+destination.name+'\n',encoding='utf-8')
++    print(destination.name)
++
++if __name__=='__main__':main()
+--- a/tools/revisar_sprites.py
++++ b/tools/revisar_sprites.py
+@@ -4,7 +4,9 @@
+ import hashlib
+ import html
+ import json
++import os
+ from pathlib import Path
++from urllib.parse import quote
+ from separar_sprites import write_png
+ from validar_assets import CONTRACT, DIRECTIONS, inspect, read_png
+ 
+@@ -113,7 +115,7 @@
+                 result['errors'].append('pivot/duracao por frame inconsistente')
+         result['status'] = 'REPROVADO' if result['errors'] else 'PENDENTE_REVISAO_HUMANA'
+         results.append(result)
+-        src = html.escape((root/entry['path']).resolve().as_uri(), quote=True)
++        src = html.escape(quote(Path(os.path.relpath((root/entry['path']).resolve(),output)).as_posix()), quote=True)
+         labels = ' | '.join(html.escape(f"{i}: {f['state']}.{f['direction']}.{f['index']} pivot={f.get('pivot',entry.get('pivot'))}") for i,f in enumerate(actual))
+         markers=[]
+         for i,f in enumerate(actual):
+--- a/tools/test_sprite_review.py
++++ b/tools/test_sprite_review.py
+@@ -18,6 +18,8 @@
+         for name in ('IDLE.FRONT','WALK.LEFT','RUN.RIGHT','PUNCH.BACK','KO.FRONT'):
+             self.assertIn(name,preview)
+         self.assertIn('@keyframes',preview)
++        self.assertIn('../hero.png',preview)
++        self.assertNotIn(self.root.as_uri(),preview)
+         comparison=compare(self.root/'hero.png',self.root/'hero.png',self.root/'same.json')
+         self.assertTrue(comparison['sameBytes']);self.assertFalse(comparison['artApproved'])
+         self.pixels[(32*512+32)*4]=10

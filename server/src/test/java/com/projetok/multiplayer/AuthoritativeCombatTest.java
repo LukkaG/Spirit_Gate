@@ -1,0 +1,9 @@
+package com.projetok.multiplayer;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+class AuthoritativeCombatTest {
+    static Protocol.Actor actor(CoopWorld world,int id){return world.snapshot().actors().stream().filter(a->a.id()==id).findFirst().orElseThrow();}
+    static void move(CoopWorld world,int id,float x,float y,long[] seq){for(int i=0;i<300;i++){var p=actor(world,id);var boss=actor(world,CoopWorld.BOSS_ID);float dx=x-p.x(),dy=y-p.y();if(Math.hypot(dx,dy)<8||x>500&&Math.hypot(p.x()-boss.x(),p.y()-boss.y())<80){world.accept(id,new Protocol.Intent(++seq[0],Protocol.Action.MOVE,0,0));return;}world.accept(id,new Protocol.Intent(++seq[0],Protocol.Action.MOVE,Math.signum(dx),Math.signum(dy)));world.step();}fail("Destino bloqueado");}
+    @Test void serverResolvesDamageCooldownAndReplays(){var w=new CoopWorld();w.join(1,"Jogador Um");long[] seq={0};move(w,1,140,340,seq);move(w,1,650,340,seq);int before=actor(w,CoopWorld.BOSS_ID).hp();var attack=new Protocol.Intent(++seq[0],Protocol.Action.ATTACK,0,0);assertTrue(w.accept(1,attack));assertTrue(actor(w,CoopWorld.BOSS_ID).hp()<before);int after=actor(w,CoopWorld.BOSS_ID).hp();assertFalse(w.accept(1,attack));assertFalse(w.accept(1,new Protocol.Intent(++seq[0],Protocol.Action.ATTACK,0,0)));assertEquals(after,actor(w,CoopWorld.BOSS_ID).hp());}
+    @Test void realSkillServicesOwnCostsAndCooldowns(){var w=new CoopWorld();w.join(1,"Jogador Um");assertTrue(w.accept(1,new Protocol.Intent(1,Protocol.Action.LIGHTNING_STEP,800,300)));assertEquals(65,actor(w,1).stamina());assertFalse(w.accept(1,new Protocol.Intent(2,Protocol.Action.LIGHTNING_STEP,800,300)));for(int i=0;i<10;i++)w.step();float stamina=actor(w,1).stamina();assertTrue(w.accept(1,new Protocol.Intent(3,Protocol.Action.CRYOSTASIS,700,320)));assertEquals(stamina-55,actor(w,1).stamina(),0.001);assertFalse(w.accept(1,new Protocol.Intent(4,Protocol.Action.CRYOSTASIS,700,320)));}
+}

@@ -1,0 +1,80 @@
+--- /dev/null
++++ b/docs/TASK-044-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 252,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-044.md
+@@ -0,0 +1,5 @@
++# TASK-044 - Equipamento RPG
++
++Slots weapon, torso, legs e accessory validados por catalogo. Equipar remove uma unidade, devolve equipamento anterior e publica somente quando a transacao inteira cabe. Desequipar recusa inventario cheio sem perder item. Ataque/defesa recalculados a partir do estado atual, sem acumular modificadores.
++
++Espada adiciona 8 ataque; manto adiciona 5 defesa. Formulas exclusivas do RPG; nenhuma alteracao na arena. Save valida compatibilidade dos slots ao restaurar. Testes incluem item ausente/incompativel, atributos apos save, cheio e rollback.
+--- a/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -19,6 +19,21 @@
+     private final java.util.Map<String,Integer> quests=new java.util.TreeMap<>();
+     private final java.util.Set<String> flags=new java.util.TreeSet<>();
+     public InventoryService inventory() { return inventory; }
++    public int attackPower() { return identity.baseAttack()+equipmentPower("weapon"); }
++    public int defense() { return equipmentPower("torso")+equipmentPower("legs")+equipmentPower("accessory"); }
++    private int equipmentPower(String slot) { return equipment.containsKey(slot)?items.get(equipment.get(slot)).power():0; }
++    public boolean equip(String id) {
++        ItemCatalog.Item item=items.get(id);
++        if(hp==0 || item.category()!=ItemCatalog.Category.EQUIPMENT || item.minimumLevel()>1) return false;
++        InventoryService copy=inventory.copy(); if(!copy.remove(id,1)) return false;
++        String old=equipment.get(item.slot()); if(old!=null && !copy.add(old,1)) return false;
++        inventory.replace(copy); equipment.put(item.slot(),id); return true;
++    }
++    public boolean unequip(String slot) {
++        if(hp==0 || !equipment.containsKey(slot)) return false;
++        InventoryService copy=inventory.copy(); if(!copy.add(equipment.get(slot),1)) return false;
++        inventory.replace(copy); equipment.remove(slot); return true;
++    }
+     private final GameEntity body;
+     public RpgWorld() { this(CharacterIdentity.create("Viajante", "guardian", "azure")); }
+     public RpgWorld(CharacterIdentity identity) {
+@@ -38,6 +53,7 @@
+         world.body.setPosition(new Position(state.x(),state.y())); world.ticks=state.ticks();
+         world.inventory.replace(InventoryService.restore(world.items,20,state.inventory()));
+         world.hp=state.hp(); world.xp=state.xp(); world.coins=state.coins(); world.region=state.region();
++        for(var entry:state.equipment().entrySet()) if(!world.items.get(entry.getValue()).slot().equals(entry.getKey())) throw new IllegalArgumentException("Equipamento incompativel no save");
+         world.equipment.putAll(state.equipment()); world.quests.putAll(state.quests()); world.flags.addAll(state.flags()); return world;
+     }
+     public record View(float x, float y, long ticks, CharacterIdentity identity) { }
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/EquipmentRpgTest.java
+@@ -0,0 +1,14 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class EquipmentRpgTest {
++    @Test void equipsRecalculatesAndRollsBackFullInventory() {
++        var w=new RpgWorld(); int base=w.attackPower();
++        assertFalse(w.equip("potion")); assertFalse(w.equip("sword"));
++        w.inventory().add("sword",1); assertTrue(w.equip("sword")); assertEquals(base+8,w.attackPower());
++        assertEquals(w.attackPower(),RpgWorld.restore(w.save()).attackPower());
++        assertTrue(w.inventory().add("robe",19)); var before=w.save();
++        assertFalse(w.unequip("weapon")); assertEquals(before,w.save());
++        w.inventory().remove("robe",1); assertTrue(w.unequip("weapon")); assertEquals(base,w.attackPower());
++    }
++}

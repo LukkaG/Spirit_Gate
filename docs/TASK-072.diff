@@ -1,0 +1,141 @@
+--- /dev/null
++++ b/docs/TASK-072-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 291,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-072.md
+@@ -0,0 +1,5 @@
++# TASK-072 - Combate autoritativo
++
++Servidor integra ataque basico via CombatService e os servicos REAIS LightningStepService/CryostasisService/StaminaService, sem alterar constantes historicas. Alvo, alcance, linha livre, vida, custo, recarga e colisao resolvidos pelo servidor. Intencoes duplicadas/antigas recusadas; ate oito comandos por sessao/tick.
++
++Chefe compartilhado de teste criado via MobFactory, ainda sem IA/recompensa nesta etapa. Cliente observa HP/posicao/vigor do snapshot e nao envia dano ou HP. Ataque basico tem alcance 82 e recarga 12 ticks; habilidades preservam 35/55 vigor e recargas existentes. Testes comprovam dano unico, recarga e consumo real dos servicos. Testes de duas sessoes passaram a contar jogadores separadamente do chefe, sem alterar baselines da arena.
+--- a/server/src/main/java/com/projetok/multiplayer/CoopWorld.java
++++ b/server/src/main/java/com/projetok/multiplayer/CoopWorld.java
+@@ -6,20 +6,34 @@
+ import com.projetok.domain.race.RaceRegistry;
+ import com.projetok.domain.network.PlayerConnection;
+ import com.projetok.domain.movement.*;
++import com.projetok.domain.skill.*;
++import com.projetok.domain.resource.StaminaService;
++import com.projetok.domain.combat.CombatService;
++import com.projetok.domain.event.GameEventBus;
++import com.projetok.domain.effect.StatusEffectService;
++import com.projetok.domain.probability.ProbabilityService;
++import com.projetok.domain.item.LootTable;
++import com.projetok.domain.ai.PassiveBehavior;
+ import java.util.*;
+ /** Simulacao experimental transitoria. Nunca importa ou escreve saves offline. */
+ public final class CoopWorld {
+-    static final class Session {
+-        final Player player;long sequence,inputTick,commandTick=-1;int commands,coins;float dx,dy;
+-        Session(Player player){this.player=player;}
++    public static final int BOSS_ID=900_000_001;
++    final class Session {
++        final Player player;long sequence,inputTick,commandTick=-1,attackReady;int commands,coins;float dx,dy;
++        final LightningStepService dash;final CryostasisService cryo;
++        Session(Player player){this.player=player;dash=new LightningStepService(movement,stamina,collisions,CollisionPolicy.PHASE_THROUGH_ACTORS_AND_SOFT);cryo=new CryostasisService(combat,stamina,status,new ProbabilityService(new Random(17L+player.getId())));}
+     }
+     private final Map<Integer,Session> sessions=new TreeMap<>();
+     private final CollisionService collisions=new CollisionService();
+     private final MovementService movement=new MovementService(collisions);
++    private final StaminaService stamina=new StaminaService();
++    private final StatusEffectService status=new StatusEffectService();
++    private final CombatService combat=new CombatService(new GameEventBus());
+     private final List<CollisionService.Obstacle> obstacles=List.of(new CollisionService.Obstacle(380,180,120,120));
++    private final Mob boss=new MobFactory(new VitalityService()).spawn(BOSS_ID,new MobArchetype(RaceRegistry.withDefaults().get("demon"),"Guardiao Cooperativo",14,8,4,8,null,LootTable.of(),new PassiveBehavior()),new Position(720,320));
+     private long tick;
+     public boolean join(int id,String name){
+-        new Protocol.Hello(1,name);if(id<1||sessions.containsKey(id)||sessions.size()>=2)return false;
++        new Protocol.Hello(1,name);if(id<1||id>1_000_000||sessions.containsKey(id)||sessions.size()>=2)return false;
+         Position spawn=new Position(140,sessions.values().stream().anyMatch(s->s.player.getPosition().y()<350)?410:300);
+         var player=new PlayerFactory(new VitalityService()).create(id,name,new PlayerArchetype(RaceRegistry.withDefaults().get("human"),30,8,14,null,null),spawn,new PlayerConnection(){public void send(Object ignored){}public void disconnect(){}});
+         if(!collisions.isFree(player,spawn.x(),spawn.y(),18,space()))return false;sessions.put(id,new Session(player));return true;
+@@ -27,14 +41,26 @@
+     public void leave(int id){sessions.remove(id);}
+     public boolean accept(int id,Protocol.Intent intent){
+         Session s=sessions.get(id);if(s==null||intent.sequence()<=s.sequence||s.player.isDead())return false;
+-        if(intent.action()!=Protocol.Action.MOVE||Math.abs(intent.x())>1||Math.abs(intent.y())>1)return false;
++        if(intent.action()==Protocol.Action.MOVE&&(Math.abs(intent.x())>1||Math.abs(intent.y())>1))return false;
+         if(s.commandTick!=tick){s.commandTick=tick;s.commands=0;}if(++s.commands>8)return false;
+-        s.sequence=intent.sequence();s.dx=intent.x();s.dy=intent.y();s.inputTick=tick;return true;
++        s.sequence=intent.sequence();
++        return switch(intent.action()){
++            case MOVE->{s.dx=intent.x();s.dy=intent.y();s.inputTick=tick;yield true;}
++            case ATTACK->{if(boss.isDead()||s.dash.active()||s.dash.awaitingLanding()||tick<s.attackReady||distance(s.player.getPosition(),boss.getPosition())>82||!lineClear(s.player))yield false;s.attackReady=tick+12;combat.attack(s.player,boss);yield true;}
++            case LIGHTNING_STEP->s.dash.cast(s.player,new SkillCastCommand(LightningStepService.ID,intent.x(),intent.y()),18,space())==LightningStepService.Status.STARTED;
++            case CRYOSTASIS->{if(s.dash.active()||s.dash.awaitingLanding())yield false;yield s.cryo.cast(s.player,new SkillCastCommand(CryostasisService.ID,intent.x(),intent.y()),960,640,targets()).status()==CryostasisService.Status.CAST;}
++        };
+     }
+-    private CollisionService.Space space(){return new CollisionService.Space(960,640,obstacles,sessions.values().stream().map(s->new CollisionService.Body(s.player,18)).toList());}
++    private List<CryostasisService.Target> targets(){return List.of(new CryostasisService.Target(boss,24));}
++    private static double distance(Position a,Position b){return Math.hypot(a.x()-b.x(),a.y()-b.y());}
++    private boolean lineClear(Player player){Position a=player.getPosition(),b=boss.getPosition();var geometry=new CollisionService.Space(960,640,obstacles,List.of());int steps=Math.max(1,(int)(distance(a,b)/6));for(int i=1;i<steps;i++)if(!collisions.isFree(player,a.x()+(b.x()-a.x())*i/steps,a.y()+(b.y()-a.y())*i/steps,1,geometry))return false;return true;}
++    private CollisionService.Space space(){var bodies=new ArrayList<CollisionService.Body>();sessions.values().forEach(s->bodies.add(new CollisionService.Body(s.player,18)));bodies.add(new CollisionService.Body(boss,24));return new CollisionService.Space(960,640,obstacles,bodies);}
+     public void step(){
+-        tick++;var space=space();
+-        for(Session s:sessions.values())if(!s.player.isDead()&&tick-s.inputTick<=15){var d=movement.direction(s.dx,s.dy);movement.moveContinuous(s.player,d.x()*215/30,d.y()*215/30,18,space);}
++        tick++;var space=space();status.update(boss,1f/30);
++        for(Session s:sessions.values()){
++            stamina.regenerate(s.player,1f/30);boolean active=s.dash.active()||s.dash.awaitingLanding();s.dash.update(s.player,1f/30,18,space);s.cryo.update(1f/30,targets());
++            if(!s.player.isDead()&&!active&&tick-s.inputTick<=15){var d=movement.direction(s.dx,s.dy);movement.moveContinuous(s.player,d.x()*215/30,d.y()*215/30,18,space);}
++        }
+     }
+-    public Protocol.State snapshot(){return new Protocol.State(tick,sessions.values().stream().map(s->{var p=s.player;var hp=p.require(HealthComponent.class);return new Protocol.Actor(p.getId(),p.getName(),p.getPosition().x(),p.getPosition().y(),hp.current(),hp.max(),p.require(StaminaComponent.class).current(),s.coins,false);}).toList());}
++    public Protocol.State snapshot(){var actors=new ArrayList<Protocol.Actor>();for(Session s:sessions.values()){var p=s.player;var hp=p.require(HealthComponent.class);actors.add(new Protocol.Actor(p.getId(),p.getName(),p.getPosition().x(),p.getPosition().y(),hp.current(),hp.max(),p.require(StaminaComponent.class).current(),s.coins,false));}var hp=boss.require(HealthComponent.class);actors.add(new Protocol.Actor(BOSS_ID,boss.getName(),boss.getPosition().x(),boss.getPosition().y(),hp.current(),hp.max(),0,0,true));return new Protocol.State(tick,actors);}
+ }
+--- a/server/src/main/java/com/projetok/multiplayer/NetworkClientLauncher.java
++++ b/server/src/main/java/com/projetok/multiplayer/NetworkClientLauncher.java
+@@ -19,7 +19,7 @@
+     });}
+     private static void open(LocalClient client,String endpoint,String capture){
+         var template=DebugWorld.demo().snapshot();Protocol.State[] display={new Protocol.State(0,java.util.List.of())};
+-        DebugPanel panel=new DebugPanel(()->adapt(display[0],client.id(),template));panel.setActorPalette(id->id==client.id()?new Color(65,190,220):id==900?new Color(220,90,90):new Color(90,200,160));
++        DebugPanel panel=new DebugPanel(()->adapt(display[0],client.id(),template));panel.setActorPalette(id->id==client.id()?new Color(65,190,220):id==CoopWorld.BOSS_ID?new Color(220,90,90):new Color(90,200,160));
+         JFrame frame=new JFrame("Spirit Gate | Coop experimental | "+client.id());frame.setContentPane(panel);frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);frame.setSize(1200,800);frame.setLocationRelativeTo(null);
+         Set<String> held=new HashSet<>();float[] direction={0,0},aim={650,320};
+         Runnable movement=()->{direction[0]=(held.contains("D")?1:0)-(held.contains("A")?1:0);direction[1]=(held.contains("S")?1:0)-(held.contains("W")?1:0);};
+--- /dev/null
++++ b/server/src/test/java/com/projetok/multiplayer/AuthoritativeCombatTest.java
+@@ -0,0 +1,9 @@
++package com.projetok.multiplayer;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class AuthoritativeCombatTest {
++    static Protocol.Actor actor(CoopWorld world,int id){return world.snapshot().actors().stream().filter(a->a.id()==id).findFirst().orElseThrow();}
++    static void move(CoopWorld world,int id,float x,float y,long[] seq){for(int i=0;i<300;i++){var p=actor(world,id);float dx=x-p.x(),dy=y-p.y();if(Math.hypot(dx,dy)<8){world.accept(id,new Protocol.Intent(++seq[0],Protocol.Action.MOVE,0,0));return;}world.accept(id,new Protocol.Intent(++seq[0],Protocol.Action.MOVE,Math.signum(dx),Math.signum(dy)));world.step();}fail("Destino bloqueado");}
++    @Test void serverResolvesDamageCooldownAndReplays(){var w=new CoopWorld();w.join(1,"Jogador Um");long[] seq={0};move(w,1,140,340,seq);move(w,1,650,340,seq);int before=actor(w,CoopWorld.BOSS_ID).hp();var attack=new Protocol.Intent(++seq[0],Protocol.Action.ATTACK,0,0);assertTrue(w.accept(1,attack));assertTrue(actor(w,CoopWorld.BOSS_ID).hp()<before);int after=actor(w,CoopWorld.BOSS_ID).hp();assertFalse(w.accept(1,attack));assertFalse(w.accept(1,new Protocol.Intent(++seq[0],Protocol.Action.ATTACK,0,0)));assertEquals(after,actor(w,CoopWorld.BOSS_ID).hp());}
++    @Test void realSkillServicesOwnCostsAndCooldowns(){var w=new CoopWorld();w.join(1,"Jogador Um");assertTrue(w.accept(1,new Protocol.Intent(1,Protocol.Action.LIGHTNING_STEP,800,300)));assertEquals(65,actor(w,1).stamina());assertFalse(w.accept(1,new Protocol.Intent(2,Protocol.Action.LIGHTNING_STEP,800,300)));for(int i=0;i<10;i++)w.step();float stamina=actor(w,1).stamina();assertTrue(w.accept(1,new Protocol.Intent(3,Protocol.Action.CRYOSTASIS,700,320)));assertEquals(stamina-55,actor(w,1).stamina(),0.001);assertFalse(w.accept(1,new Protocol.Intent(4,Protocol.Action.CRYOSTASIS,700,320)));}
++}
+--- a/server/src/test/java/com/projetok/multiplayer/TwoClientsTest.java
++++ b/server/src/test/java/com/projetok/multiplayer/TwoClientsTest.java
+@@ -6,8 +6,8 @@
+ class TwoClientsTest {
+     @Test void twoDistinctSessionsSeeMovementLeaveAndReconnect()throws Exception{
+         try(var server=new LocalSimulationServer(InetAddress.getLoopbackAddress(),0)){server.start();try(var one=new LocalClient(InetAddress.getLoopbackAddress(),server.port(),"Jogador Um");var two=new LocalClient(InetAddress.getLoopbackAddress(),server.port(),"Jogador Dois")){
+-            assertNotEquals(one.id(),two.id());one.await(s->s.actors().size()==2,Duration.ofSeconds(3));two.await(s->s.actors().size()==2,Duration.ofSeconds(3));one.send(Protocol.Action.MOVE,1,0);var seen=two.await(s->s.actors().stream().anyMatch(a->a.id()==one.id()&&a.x()>150),Duration.ofSeconds(3));assertEquals(140,seen.actors().stream().filter(a->a.id()==two.id()).findFirst().orElseThrow().x());
+-            int old=one.id();one.close();two.await(s->s.actors().size()==1,Duration.ofSeconds(3));try(var reconnect=new LocalClient(InetAddress.getLoopbackAddress(),server.port(),"Retorno")){assertNotEquals(old,reconnect.id());two.await(s->s.actors().size()==2,Duration.ofSeconds(3));}assertNull(server.failure());
++            assertNotEquals(one.id(),two.id());one.await(s->s.actors().stream().filter(a->!a.boss()).count()==2,Duration.ofSeconds(3));two.await(s->s.actors().stream().filter(a->!a.boss()).count()==2,Duration.ofSeconds(3));one.send(Protocol.Action.MOVE,1,0);var seen=two.await(s->s.actors().stream().anyMatch(a->a.id()==one.id()&&a.x()>150),Duration.ofSeconds(3));assertEquals(140,seen.actors().stream().filter(a->a.id()==two.id()).findFirst().orElseThrow().x());
++            int old=one.id();one.close();two.await(s->s.actors().stream().filter(a->!a.boss()).count()==1,Duration.ofSeconds(3));try(var reconnect=new LocalClient(InetAddress.getLoopbackAddress(),server.port(),"Retorno")){assertNotEquals(old,reconnect.id());two.await(s->s.actors().stream().filter(a->!a.boss()).count()==2,Duration.ofSeconds(3));}assertNull(server.failure());
+         }}
+     }
+ }

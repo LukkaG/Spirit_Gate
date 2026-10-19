@@ -1,0 +1,1258 @@
+--- a/CHANGELOG-PROTOTIPO.md
++++ b/CHANGELOG-PROTOTIPO.md
+@@ -43,3 +43,9 @@
+ - Não existe física contínua, rollback, XP, skills especiais, movimentação em rede, inventário visual, persistência ou PvP nesta entrega.
+ - Escala de depuração em pixels, ainda sem conversão física para metros.
+ - Autenticação antiga deve ser substituída antes de publicar qualquer servidor na internet.
++# 0.21.0-rc1 — TASK-017 a TASK-021
++
++Auditoria reproduzível da base; autoria/revisão de 59 frames; pacote visual
++versionado opcional e fallback; câmera pura e janela redimensionável com mira
++em coordenadas de mundo. Gameplay preservado. Arte e homologação humana pendentes.
++
+--- a/README-PROTOTIPO.md
++++ b/README-PROTOTIPO.md
+@@ -324,3 +324,25 @@
+ Build: tools\build-windows-portable.ps1 -Version 0.16.0-rc1 -MavenRepository .maven-repository -TesterKitDirectory docs\kit-homologacao-012-016.
+ Python 3 (biblioteca padrao) e ferramenta de build/auditoria; nao dependencia do jogo.
+ Homologacao humana, outro Windows e arte final permanecem pendentes.
++# Rodada TASK-017 a TASK-021 — 0.21.0-rc1
++
++Relatórios individuais em `docs/TASK-017.md` a `docs/TASK-021.md`; kit humano em
++`docs/kit-homologacao-017-021`. A janela aceita redimensionamento proporcional,
++com nearest-neighbor e conversão de mira em coordenadas de mundo. HUD/margens
++não recebem mira. Arena padrão continua 960x640; mapas maiores só nos testes.
++
++Autoria: `python tools/revisar_sprites.py template NOVA_PASTA`. Revisão:
++`python tools/revisar_sprites.py review RAIZ MANIFEST NOVA_PASTA`. Importação
++Aseprite: `python tools/revisar_sprites.py aseprite PNG JSON NOVO_MANIFEST`.
++Exportação aceita json-array, nomes ACTION.DIRECTION.INDEX, 100ms, 64x64,
++sem trim/rotate/pack. Prévia e relatórios não aprovam arte.
++
++Pacote visual opcional v1: `python tools/pacote_visual.py RAIZ MANIFEST NOVA_PASTA`.
++Manifest JSON exige packageVersion=1, assetId estável e um assets[] character
++validado pelo pipeline TASK-013, com review.origin e approvedSha256 do arquivo
++exato aprovado pelo humano. Build admite `-VisualManifest MANIFEST -VisualRoot RAIZ`.
++Sem pacote, ou com pacote inválido, o launcher usa fallback. Nenhuma arte
++existente foi aprovada. Zoom 1 a 4: API `DebugPanel.setCameraZoom`, sem atalho novo.
++
++Build: `powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-windows-portable.ps1 -Version 0.21.0-rc1 -MavenRepository .maven-repository -TesterKitDirectory docs/kit-homologacao-017-021`.
++
+--- /dev/null
++++ b/docs/RELATORIO-TASK-017_021.md
+@@ -0,0 +1,57 @@
++# Spirit Gate - Relatório consolidado TASK-017 a TASK-021
++
++18/10/2026. Trabalho concluído no Projeto-K local. Todas as etapas passaram pelos controles automatizados disponíveis. Aprovação artística e homologação humana continuam pendentes.
++
++## Entrega executável
++
++ZIP final: dist/SpiritGate-0.21.0-rc1-20261019T001737Z-546ce1c5-portable.zip
++
++Tamanho: 29.391.539 bytes.
++
++SHA-256: 303f469b87aa0752d6dcd44e21ae5efef78295cf971884976939b1d8ae6cc534
++
++Extraia integralmente e abra SpiritGate/SpiritGate.exe. Java 17 está integrado. Preserve app/ e runtime/. O EXE não tem assinatura. Kit de teste acompanha o ZIP. O candidato intermediário 539628a7 permanece no dist, mas não é o indicado para entrega.
++
++## O que foi realizado
++
++TASK-017: reexecutada a auditoria da base original 0.16.0-rc1. Confirmados tamanho, hash documentado, manifest, inventário, classes do JAR, runtime e PE x64. 216 JUnit e 12 Python verdes. Controle negativo rejeitado e dois smokes Windows locais aprovados. Sem correção de gameplay necessária.
++
++TASK-018: ferramenta de autoria/revisão baseada no pipeline TASK-013, template transparente vazio com exatamente 59 posições 64x64, índice com ação/direção/frame/duração/pivot, previews HTML e relatório por arquivo. Importação Aseprite estrita, sem autocorreção. Testes de ordem, direção, ausência, pivots, alfa, sobreposição e hash. 216 JUnit e 16 Python verdes.
++
++TASK-019: estendido o loader existente para pacote visual v1, com identidade estável, SHA e origem de revisão, 59 recortes, pivots/offsets e dimensões. Ativação opcional junto ao EXE, uma vez na inicialização; corrupção/ausência mantém fallback. Staging por whitelist e auditoria do pacote. Fixtures exclusivamente sintéticas nos testes. 219 JUnit e 18 Python verdes.
++
++TASK-020: ArenaViewport pura para mundo/tela, limites da câmera, zoom inteiro 1 a 4, escala proporcional e letterbox. Renderer aplica câmera ao mundo e mantém HUD fixo no canvas. Janela redimensionável. Shift/Q convertem mira no momento do comando. 223 JUnit e 18 Python verdes, incluindo comparação integral dos snapshots, colisões, reinício e render puro.
++
++TASK-021: clean rebuild de 0.21.0-rc1, repetição offline, auditoria do ZIP original, controle negativo, teste de distribuição visual sintética e smokes Windows padrão/mapa. Kit humano, documentação, PDFs, diffs, checkpoints e inventário de entregas consolidados.
++
++## Preservação e ajustes
++
++99 arquivos Java históricos de domínio/testes comparados sem alteração. Os 216 testes da base foram mantidos; sete novos testes Java e seis Python acrescentados ao total. Movimento, SOLID/SOFT, dash seletivo, retorno, vigor, Criostase, Freeze, custos/danos/cooldowns, FIFO, morte, R e replays continuam cobertos pela suíte.
++
++Os 228 PNGs preservaram seus SHA-256 e continuam sem aprovação; nenhuma imagem artística foi redimensionada, recortada ou substituída. Produção segue no fallback geométrico. Template vazio e capturas sintéticas estão identificados. Não foi gerado atlas de produção.
++
++Ocorrências resolvidas: argumento Maven passou a ser invocado com aspas no PowerShell; BOM de relatório removido para o gerador PDF; corrigida codificação textual de relatórios; fixture nova de câmera ajustada para alvo visível relativo ao spawn real, após recusa correta de alvo fora da viewport. Nenhuma asserção ou baseline histórico alterado. Logs da primeira execução foram preservados.
++
++## Evidências e reprodução
++
++Relatórios por etapa: docs/TASK-017.md a TASK-021.md e Spirit_Gate_TASK-NNN.pdf. Diffs por etapa: docs/TASK-NNN.diff. Referências da base e estados finais: .task-checkpoints/TASK-NNN-before.json e after.json; sem Git/push.
++
++Logs de Java/Python por etapa, TASK-021-build-final.log e TASK-021-offline.log. Auditoria final TASK-021-auditoria.json; controle negativo TASK-021-negativo.json; pacote sintético TASK-021-visual-distribuicao.json; preservação TASK-021-preservacao.json.
++
++Smokes finais: TASK-021-smoke.json e TASK-021-map-smoke.json. Capturas TASK-021-exe.png, TASK-021-mapa-exe.png e TASK-020-camera-sintetica.png. Template: docs/autoria-018; preview final: autoria-018/revisao-final/preview.html. Revisão dos PNGs: docs/revisao-fontes-021/preview.html e relatorio.json, com referências locais aos originais.
++
++Java: mvn.cmd -o '-Dmaven.repo.local=.maven-repository' -f server/pom.xml clean test
++
++Python: python -m unittest discover -s tools -p 'test_*.py'
++
++Build: powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-windows-portable.ps1 -Version 0.21.0-rc1 -MavenRepository .maven-repository -TesterKitDirectory docs/kit-homologacao-017-021
++
++Auditar: python tools/auditar_rc.py --zip ARQUIVO --report RELATORIO
++
++## Limites e pendências
++
++Smokes ocorreram neste Windows, em pasta com espaços fora do checkout, PATH sem Java/Maven e JVM integrada comprovada. Ambas as variantes encerraram com código 0. Não houve homologação em outro computador, sessão humana de jogabilidade ou auditoria Linux. Inspeção de sockets por CIM indisponível. Hashes verificam integridade; não substituem assinatura/autenticidade ou auditoria absoluta de segredos.
++
++Mapa de produção continua 960x640. Mundo maior foi exercitado somente na transformação sintética. Zoom opcional existe como API de integração, sem atalho novo. Em janelas muito pequenas, redução prejudica legibilidade. Rota de retorno totalmente ocupada pode continuar aguardando saída, comportamento histórico.
++
++Aprovação real de arte exige revisão humana do SHA exato e origem registrada. Qualquer edição invalida aprovação anterior. Nenhum trabalho foi deixado como exercício obrigatório para concluir automação; permanecem somente os limites humanos/externos documentados. Sem rede, banco, credenciais, publicação ou multiplayer alterados. Rodada encerrada na TASK-021.
+--- /dev/null
++++ b/docs/TASK-017-testes.txt
+@@ -0,0 +1,36 @@
++TASK-017 - mvn clean test - BUILD SUCCESS
++{'tests': 216, 'failures': 0, 'errors': 0, 'skipped': 0}
++Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.
++
++com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.DomainSequenceRegressionTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaSequenceRegressionTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugLauncherEntrypointTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.DirectionalAnimationTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudPrecisionRegressionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudSkillFeedbackTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.prototype.LocalArenaMapTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SoftObstacleDemoTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
+--- /dev/null
++++ b/docs/TASK-017.md
+@@ -0,0 +1,13 @@
++# TASK-017 - Auditoria reproduzível da base
++
++18/10/2026. APROVADA nos controles automatizados Windows locais.
++
++Documentos anexos tratados como especificação das TASK-017 a 021 dentro do pedido do usuário. Pacote original extraído em docs/pacote-TASK-017_021. Sem Git; base textual exata em .task-checkpoints/TASK-017-before.json.
++
++ZIP original: SpiritGate-0.16.0-rc1-20261018T230252Z-a6150a66-portable.zip, 29.386.343 bytes. SHA-256 confirmado: 9bc425107d23ccfd9a4d36279be4da23c7f016a74c92fe03a9bb1f0d36eb79c1.
++
++Reexecução offline: 216 JUnit, zero falhas, erros ou ignorados; 12 Python verdes. Auditor oficial repetido DEPOIS do clean build: PASS, incluindo igualdade de todas as classes, runtime Java 17, PE x64, whitelist, inventário e manifest. ZIP original não foi reescrito. Controle negativo em cópia descartável: adulteração do JAR rejeitada. Testes Python cobrem traversal, duplicatas, links e nomes Windows inseguros.
++
++Smokes reais Windows padrão e --map aprovados, com JVM integrada e PATH controlado: TASK-017-smoke.json e TASK-017-map-smoke.json. Homologação humana e outro computador NÃO EXECUTADOS. Linux NÃO EXECUTADO: sem ambiente Linux comprovado nesta rodada.
++
++Ocorrência operacional: argumento Maven sem aspas foi interpretado incorretamente pelo PowerShell; reexecutado com '-Dmaven.repo.local=.maven-repository', sem alterar configuração global. Resultado final registrado em TASK-017-java.log. Nenhuma correção de gameplay necessária. Arte e fontes preservadas. Dependências legadas do pom não entram no JAR portátil, conforme auditoria.
+--- /dev/null
++++ b/docs/TASK-018-testes.txt
+@@ -0,0 +1,36 @@
++TASK-018 - mvn clean test - BUILD SUCCESS
++{'tests': 216, 'failures': 0, 'errors': 0, 'skipped': 0}
++Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.
++
++com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.DomainSequenceRegressionTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaSequenceRegressionTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugLauncherEntrypointTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.DirectionalAnimationTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudPrecisionRegressionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudSkillFeedbackTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.prototype.LocalArenaMapTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SoftObstacleDemoTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
+--- /dev/null
++++ b/docs/TASK-018.md
+@@ -0,0 +1,13 @@
++# TASK-018 - Autoria e revisão de sprites
++
++18/10/2026. 216 JUnit e 16 Python verdes; logs TASK-018-java.log e TASK-018-python.log.
++
++Criada tools/revisar_sprites.py reutilizando contrato e inspetor TASK-013. Template transparente vazio 512x512: 59 posições 64x64 e cinco células não usadas. Índice JSON: ação, direção, frame, duração 100ms, pivot 32,48. Arquivos reproduzíveis em docs/autoria-018. Template vazio é intencionalmente reprovado como personagem; não é arte de produção.
++
++CLI review produz HTML com grade, fundo quadriculado, índices, pivots, tamanho, alfa, bordas e SHA por arquivo. Reutiliza inspect e acrescenta ordem/direção/pivot/duração. Saídas fora de assets, sem alterar fontes. Relatório e preview dos 228 PNGs em docs/revisao-fontes-018: todos continuam reprovados. Nenhum atlas de produção.
++
++Aseprite: nomear ACTION.DIRECTION.INDEX; direções FRONT/BACK/LEFT/RIGHT. Exportar json-array e PNG, duração 100ms, sourceSize e spriteSourceSize 64x64; sem trim/rotate/pack. CLI aseprite PNG JSON NOVO_MANIFEST rejeita incompatibilidade. Orientação visual exige revisão humana.
++
++Comandos: python tools/revisar_sprites.py template NOVA_PASTA; python tools/revisar_sprites.py review RAIZ MANIFEST NOVA_PASTA; python tools/revisar_sprites.py aseprite PNG JSON NOVO_MANIFEST. Após aprovação humana expressa, registrar SHA exato em review.approvedSha256 e executar validar_assets.py. Edição exige nova revisão.
++
++Testes novos: template vazio/59/reprodução, direção invertida, ordem, ausência, pivot, sobreposição, alfa parcial, hash alterado, importação Aseprite válida e rejeição de trim/ordem. Fixtures sintéticas temporárias. Nenhuma aprovação de arte existente.--- /dev/null
++++ b/docs/TASK-019-testes.txt
+@@ -0,0 +1,37 @@
++TASK-019 - mvn clean test - BUILD SUCCESS
++{'tests': 219, 'failures': 0, 'errors': 0, 'skipped': 0}
++Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.
++
++com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.DomainSequenceRegressionTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaSequenceRegressionTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugLauncherEntrypointTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.DirectionalAnimationTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudPrecisionRegressionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudSkillFeedbackTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.prototype.LocalArenaMapTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SoftObstacleDemoTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.VisualPackageTest: tests=3, failures=0, errors=0, skipped=0
+--- /dev/null
++++ b/docs/TASK-019.md
+@@ -0,0 +1,13 @@
++# TASK-019 - Integração controlada de pacote visual
++
++18/10/2026. 219 JUnit e 18 Python verdes. Logs TASK-019-java.log e TASK-019-python.log.
++
++ValidatedSpriteAtlas estendido sem duplicar loader. Legado mantém fallback por frame; pacote v1 exige 59 frames, ID estável, tileSize 32, frameSize 64, origem da revisão, SHA aprovado igual ao arquivo, pivots e offsets válidos. Caminhos externos e links diretos recusados. Metadados malformados viram IOException controlada. loadOptional retorna fallback para ausência/corrupção. Imagem e recortes carregados uma vez, render sem IO.
++
++Launcher procura visual/character.properties junto ao EXE por jpackage.app-path; em desenvolvimento, relativo ao diretório corrente. Pacote ausente mantém geometria.
++
++tools/pacote_visual.py reutiliza inspect TASK-013. JSON de entrada: packageVersion=1, assetId estável e um único assets[] de kind character, com review.origin e approvedSha256. Saída: character.png, character.properties e review.json. Build admite VisualManifest e VisualRoot explícitos. Auditor revalida pacote e igualdade da exportação. Sem esses argumentos, release usa fallback e não inclui arte.
++
++Procedimento futuro: autoria e revisão TASK-018; aprovação humana expressa do SHA; registrar review.origin e approvedSha256; executar pacote_visual.py RAIZ MANIFEST NOVA_PASTA; build com -VisualManifest MANIFEST -VisualRoot RAIZ. Edição exige nova aprovação. Fixtures não são arte de produção.
++
++Testes Java: pacote completo, carga única após remover fonte, fallback de hash/revisão/frame/dimensão/arquivo/pivot/versão/origem inválidos e caminho do launcher. Python: staging com whitelist, ZIP sintético, exclusão de PNG pendente e recusa de pacotes inválidos. Fixtures exclusivamente temporárias. Gameplay e fontes artísticas preservados.--- /dev/null
++++ b/docs/TASK-020-testes.txt
+@@ -0,0 +1,38 @@
++TASK-020 - mvn clean test - BUILD SUCCESS
++{'tests': 223, 'failures': 0, 'errors': 0, 'skipped': 0}
++Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.
++
++com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.DomainSequenceRegressionTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaSequenceRegressionTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaViewportTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugLauncherEntrypointTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.DirectionalAnimationTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudPrecisionRegressionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudSkillFeedbackTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.prototype.LocalArenaMapTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SoftObstacleDemoTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.VisualPackageTest: tests=3, failures=0, errors=0, skipped=0
+--- /dev/null
++++ b/docs/TASK-020.md
+@@ -0,0 +1,15 @@
++# TASK-020 - Câmera, viewport e entrada
++
++18/10/2026. Plano apresentado antes das edições: preservar mapa 960x640, criar transformação pura, aplicar câmera somente ao mundo, converter mouse no momento do comando e adaptar canvas à janela.
++
++ArenaViewport implementa ida/volta mundo/tela, câmera com origem inteira e limites, zoom inteiro 1 a 4, escala inteira quando cabe e redução proporcional quando a janela é menor. Canvas lógico completo permanece 1260x750 (arena 960x640 e HUD). Letterbox centralizado; interpolação nearest-neighbor. A janela agora permite redimensionamento.
++
++DebugPanel separa desenho do mundo e HUD. Toda geometria, mapa, efeitos, trails, sprites e hitboxes usa a mesma câmera e recorte. HUD acompanha escala do canvas, sem deslocamento pela câmera. Câmera calculada do snapshot, sem timers ou mutação. Padrão zoom=1 mantém origem zero e coordenadas históricas; setCameraZoom habilita zoom de integração/teste, sem novo atalho.
++
++Mouse permanece em tela até Shift/Q: conversão usa câmera atual no momento do comando, mesmo sem novo evento de mouse. HUD e letterbox são alvos inválidos. Física, custos, dano, alcance, FIFO e replays preservados.
++
++Schema de mapa exige 960x640 e foi preservado. Transformação para mundo sintético 1920x1280 testada, sem mapas maiores em produção. Reinício deriva câmera novamente do spawn.
++
++Validação: 223 JUnit e 18 Python, zero falhas finais. Testes: identidade padrão, resize/letterbox, zoom 1 a 4, limites/diagonais e ida/volta em mundo maior, Shift/Q com câmera deslocada e resize, comparação integral dos snapshots incluindo colisões e reinício, render repetido puro e HUD fixo. Evidência TASK-020-camera-sintetica.png.
++
++Primeira execução: fixture nova escolheu alvo fora da região visível em zoom 4, corretamente recusado. Corrigido cenário para alvo visível relativo ao spawn real; preservada comparação integral com comando direto. Log inicial TASK-020-java-primeira-tentativa.log; resultado final TASK-020-java.log. Nenhum teste antigo removido ou alterado.--- /dev/null
++++ b/docs/TASK-021-testes.txt
+@@ -0,0 +1,38 @@
++TASK-021 - mvn clean test - BUILD SUCCESS
++{'tests': 223, 'failures': 0, 'errors': 0, 'skipped': 0}
++Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.
++
++com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.DomainSequenceRegressionTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaSequenceRegressionTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaViewportTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugLauncherEntrypointTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.DirectionalAnimationTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudPrecisionRegressionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudSkillFeedbackTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.prototype.LocalArenaMapTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SoftObstacleDemoTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.VisualPackageTest: tests=3, failures=0, errors=0, skipped=0
+--- /dev/null
++++ b/docs/TASK-021.md
+@@ -0,0 +1,19 @@
++# TASK-021 - Consolidação e kit de homologação
++
++18/10/2026. Validação automatizada local aprovada. Homologação humana pendente.
++
++Release final: dist/SpiritGate-0.21.0-rc1-20261019T001737Z-546ce1c5-portable.zip
++
++Tamanho: 29.391.539 bytes. SHA-256: 303f469b87aa0752d6dcd44e21ae5efef78295cf971884976939b1d8ae6cc534.
++
++Clean build real, sem reutilizar JAR anterior: 223 JUnit, zero falhas/erros/ignorados. Repetição offline: mesmos 223 verdes. Python: 18 testes verdes. Auditor oficial do ZIP original repetido após compilação offline: PASS. Inventário, manifest, Java 17, PE x64 e bytecode corrente conferidos. Controle negativo em cópia nova rejeitado. ZIP 0.16.0-rc1 preservado.
++
++Smokes reais Windows em pasta com espaços fora de Projeto-K, padrão e --map: JVM integrada comprovada, PATH somente Windows/System32, saídas 0, sem fechamento forçado. Evidências TASK-021-smoke.json, TASK-021-map-smoke.json e capturas correspondentes. Inspeção de rede por CIM indisponível; não afirmada ausência de sockets por esse controle. Sem teste em outro computador. Linux NÃO EXECUTADO.
++
++Distribuição sintética testada em cópia temporária: pacote revisado fictício aceito pelo auditor completo, imagem adulterada recusada mesmo com SHA externo recalculado. Cópia eliminada pelo TemporaryDirectory; não é release. Release real contém zero PNG/atlas/personagem aprovado. Os 228 PNGs conservaram seus hashes; 99 arquivos Java históricos de domínio/testes comparados sem alteração.
++
++Revisão final acrescentou marcadores de índice/pivot ao preview e recusou duração/pivot por frame incompatíveis com runtime no staging. Testes negativos de pacote foram isolados para cada caso. Regeneradas prévias em docs/revisao-fontes-021 e docs/autoria-018/revisao-final. Corrigida codificação dos relatórios 018/019 sem mudar resultados.
++
++Atualizados README-PROTOTIPO, changelog, LEIA-ME do pacote e kit humano: roteiro, modelo de bug, notas e mapa opcional. Novo LEIA-ME explica resize, mira, fallback e limites da câmera. O primeiro candidato intermediário 539628a7 foi preservado para rastreabilidade; somente o candidato 546ce1c5 é indicado para entrega.
++
++Artefatos finais: relatório consolidado MD/PDF, PDF/diff/checkpoint por task, logs, auditorias, inventário SHA e ZIP de entregas. Não houve push, publicação, acesso remoto, banco, credenciais ou mudança de multiplayer. Nenhuma TASK-022 iniciada.
+--- /dev/null
++++ b/docs/kit-homologacao-017-021/CHANGELOG-RESUMIDO.md
+@@ -0,0 +1,9 @@
++# 0.21.0-rc1 - TASK-017 a TASK-021
++
++- Auditoria da base 0.16.0-rc1 reproduzida, sem reescrever ZIP original.
++- Template vazio de 59 frames, revisão HTML/JSON e importação Aseprite estrita.
++- Integração opcional de pacote visual v1, com SHA/revisão e fallback para arquivo ausente ou inválido.
++- Câmera pura, zoom inteiro de integração, janela redimensionável e mira convertida para coordenadas de mundo.
++- Java 17 integrado, distribuição por whitelist e auditoria do ZIP real.
++
++Preservados física, combate, custos, cooldowns, Freeze, FIFO e replays. Sem arte aprovada; fallback geométrico. Sem mapas maiores em produção, rede, banco ou multiplayer. EXE sem assinatura. Homologação em outro computador e revisão humana pendentes. Linux não executado.
+--- /dev/null
++++ b/docs/kit-homologacao-017-021/MODELO-RELATO-BUG.md
+@@ -0,0 +1,14 @@
++# Relato de teste
++
++- Versão e SHA-256 do ZIP:
++- Windows/arquitetura, resolução e escala do sistema:
++- Modo padrão ou --map:
++- Resultado: aprovado / problema / não executado:
++- Passos exatos e frequência:
++- Resultado esperado:
++- Resultado observado:
++- Captura ou vídeo:
++- Mensagem de erro:
++- Java/Maven ausentes no computador de teste? Integridade conferida?
++
++Não incluir credenciais ou dados pessoais. Separar aprovação de jogabilidade de aprovação artística por SHA.
+--- /dev/null
++++ b/docs/kit-homologacao-017-021/ROTEIRO-HOMOLOGACAO.md
+@@ -0,0 +1,14 @@
++# Homologação humana - 0.21.0-rc1
++
++PENDENTE. Testes locais automatizados não equivalem a jogar ou testar outro PC.
++
++1. Conferir SHA externo e extrair todo o ZIP em pasta com espaços. Em outro Windows x64 sem Java/Maven, abrir SpiritGate/SpiritGate.exe. Preservar app/ e runtime/. EXE sem assinatura; não desativar proteções.
++2. WASD, Espaço, E (20 vigor), Q (55) e Shift (35): conferir custos, cooldowns e feedback, mira por mouse em quatro direções e diagonais. H: hitboxes. R: reinício. Sem nova mecânica de corrida.
++3. Colisões: andar bloqueia leves; dash atravessa leves/atores, bloqueia paredes e bordas, pousa em posição livre. Testar congelamento, morte e reinício. Rota de retorno inteiramente ocupada pode aguardar saída, limitação histórica.
++4. Redimensionar a janela para maior e menor; conferir proporção, barras laterais, mouse sobre arena, hitboxes, efeitos e HUD. HUD e margens não são alvos. A resolução padrão mantém arena 960x640. Redução muito pequena diminui legibilidade.
++5. Variante de mapa: em PowerShell na pasta SpiritGate, executar .\SpiritGate.exe --map mapa-demo.properties. Conferir aviso de tiles sintéticos e R retornando ao mesmo mapa. Reabrir sem argumentos retorna ao padrão. Schema continua 960x640.
++6. Fallback geométrico é intencional. Nenhum dos 228 PNGs foi aprovado. Pacotes futuros precisam revisão humana por SHA e origem documentada; nenhuma aprovação por nome do arquivo.
++
++Câmera/zoom 1 a 4 disponíveis como API de integração em DebugPanel.setCameraZoom; padrão 1, sem novo atalho. Mapas maiores exercitados somente por transformação sintética, sem habilitar schema de produção.
++
++Registrar resultado com MODELO-RELATO-BUG.md, versão e hash. Aprovação visual, jogabilidade e outro Windows continuam dependentes de relato humano. Não publicar automaticamente.
+--- /dev/null
++++ b/docs/kit-homologacao-017-021/mapa-demo.properties
+@@ -0,0 +1,74 @@
++# DEMONSTRACAO SINTETICA - sem arte Karakura ativada
++schemaVersion=1
++width=960
++height=640
++spawnX=135
++spawnY=340
++visual.count=3
++physical.count=7
++visual.0.id=piso
++visual.0.x=32
++visual.0.y=32
++visual.0.width=256
++visual.0.height=256
++visual.0.layer=0
++visual.0.rgb=245342
++visual.1.id=fachada-placeholder
++visual.1.x=320
++visual.1.y=80
++visual.1.width=160
++visual.1.height=288
++visual.1.layer=1
++visual.1.rgb=444c73
++visual.2.id=arbusto-placeholder
++visual.2.x=48
++visual.2.y=400
++visual.2.width=96
++visual.2.height=96
++visual.2.layer=1
++visual.2.rgb=467642
++physical.0.id=limite
++physical.0.x=0
++physical.0.y=0
++physical.0.width=960
++physical.0.height=640
++physical.0.category=WORLD_BOUNDARY
++physical.1.id=predio-a
++physical.1.x=346
++physical.1.y=112
++physical.1.width=110
++physical.1.height=228
++physical.1.category=SOLID_OBSTACLE
++physical.2.id=predio-b
++physical.2.x=594
++physical.2.y=310
++physical.2.width=112
++physical.2.height=174
++physical.2.category=SOLID_OBSTACLE
++physical.3.id=muro
++physical.3.x=275
++physical.3.y=500
++physical.3.width=145
++physical.3.height=44
++physical.3.category=SOLID_OBSTACLE
++physical.4.id=arbusto-a
++physical.4.x=70
++physical.4.y=420
++physical.4.width=36
++physical.4.height=40
++physical.4.category=SOFT_OBSTACLE
++physical.4.kind=BUSH
++physical.5.id=arbusto-b
++physical.5.x=160
++physical.5.y=420
++physical.5.width=36
++physical.5.height=40
++physical.5.category=SOFT_OBSTACLE
++physical.5.kind=BUSH
++physical.6.id=poste
++physical.6.x=250
++physical.6.y=425
++physical.6.width=14
++physical.6.height=30
++physical.6.category=SOFT_OBSTACLE
++physical.6.kind=POST
+--- /dev/null
++++ b/server/src/main/java/com/projetok/prototype/ArenaViewport.java
+@@ -0,0 +1,34 @@
++package com.projetok.prototype;
++
++import java.awt.geom.Point2D;
++
++/** Transformacao pura; sem relogio, entidades ou estado de camera acumulado. */
++public record ArenaViewport(double originX, double originY, int zoom,
++                            double scale, double offsetX, double offsetY) {
++    public ArenaViewport {
++        if(!Double.isFinite(originX+originY+scale+offsetX+offsetY) || scale<=0 || zoom<1 || zoom>4)
++            throw new IllegalArgumentException("Viewport invalida");
++    }
++    /** Canvas completo preserva HUD; camera recorta apenas a arena logica. */
++    public static ArenaViewport fit(int screenWidth,int screenHeight,int worldWidth,int worldHeight,
++                                    double targetX,double targetY,int zoom) {
++        if(screenWidth<=0 || screenHeight<=0 || worldWidth<DebugWorld.WIDTH || worldHeight<DebugWorld.HEIGHT ||
++                !Double.isFinite(targetX+targetY) || zoom<1 || zoom>4) throw new IllegalArgumentException("Limites invalidos");
++        double fit=Math.min((double)screenWidth/DebugPanel.PANEL_WIDTH,(double)screenHeight/DebugPanel.PANEL_HEIGHT);
++        double scale=fit>=1?Math.floor(fit):fit;
++        double visibleW=(double)DebugWorld.WIDTH/zoom,visibleH=(double)DebugWorld.HEIGHT/zoom;
++        double x=Math.floor(Math.max(0,Math.min(worldWidth-visibleW,targetX-visibleW/2)));
++        double y=Math.floor(Math.max(0,Math.min(worldHeight-visibleH,targetY-visibleH/2)));
++        return new ArenaViewport(x,y,zoom,scale,(screenWidth-DebugPanel.PANEL_WIDTH*scale)/2,
++                (screenHeight-DebugPanel.PANEL_HEIGHT*scale)/2);
++    }
++    public Point2D.Double worldToScreen(double x,double y) {
++        return new Point2D.Double(offsetX+(x-originX)*zoom*scale,offsetY+(y-originY)*zoom*scale);
++    }
++    public Point2D.Double screenToWorld(double x,double y) {
++        return new Point2D.Double((x-offsetX)/(zoom*scale)+originX,(y-offsetY)/(zoom*scale)+originY);
++    }
++    public boolean containsScreen(double x,double y) {
++        return x>=offsetX && y>=offsetY && x<offsetX+DebugWorld.WIDTH*scale && y<offsetY+DebugWorld.HEIGHT*scale;
++    }
++}
+--- a/server/src/main/java/com/projetok/prototype/DebugLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/DebugLauncher.java
+@@ -47,11 +47,11 @@
+                 () -> DebugWorld.forMap(map, java.util.random.RandomGenerator.getDefault()));
+         DebugPanel panel = new DebugPanel(runtime::snapshot);
+         panel.setLocalMap(map);
+-        panel.setPresentation(runtime::presentation, null);
++        panel.setPresentation(runtime::presentation, ValidatedSpriteAtlas.loadOptional(defaultVisualManifest()));
+         JFrame frame = new JFrame("Spirit Gate | Arena de Debug 2D");
+         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+         frame.setContentPane(panel);
+-        frame.setResizable(false);
++        frame.setResizable(true);
+         frame.pack();
+         frame.setLocationRelativeTo(null);
+         Set<String> held = new HashSet<>();
+@@ -76,6 +76,14 @@
+ 
+     // --- Atalhos: Key Bindings funcionam melhor que KeyListener ao trocar foco ---
+ 
++    /** Pacote portatil resolve a arte junto ao EXE, independente do diretorio corrente. */
++    static java.nio.file.Path defaultVisualManifest() {
++        String launcher = System.getProperty("jpackage.app-path");
++        java.nio.file.Path base = launcher == null ? java.nio.file.Path.of("") :
++                java.nio.file.Path.of(launcher).toAbsolutePath().getParent();
++        return base.resolve("visual/character.properties");
++    }
++
+     /** Liga teclas ao estado de entrada; acessível aos testes sem criar JFrame. */
+     static void configureKeys(DebugPanel panel, DebugRuntime runtime, Set<String> held) {
+         InputMap inputs = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+@@ -91,7 +99,10 @@
+         bindKey(inputs, "Q", "press_Q", "release_Q");
+         actions.put("press_Q", new AbstractAction() {
+             @Override public void actionPerformed(ActionEvent event) {
+-                if (held.add("Q")) runtime.cast(new SkillCastCommand(CryostasisService.ID, aim[0], aim[1]));
++                if (held.add("Q")) {
++                    var target=panel.aimAt(aim[0],aim[1]);
++                    runtime.cast(new SkillCastCommand(CryostasisService.ID, (float)target.x, (float)target.y));
++                }
+             }
+         });
+         actions.put("release_Q", new AbstractAction() {
+@@ -100,7 +111,10 @@
+         bindKey(inputs, "SHIFT", "press_SHIFT", "release_SHIFT");
+         actions.put("press_SHIFT", new AbstractAction() {
+             @Override public void actionPerformed(ActionEvent event) {
+-                if (held.add("SHIFT")) runtime.cast(new SkillCastCommand(LightningStepService.ID, aim[0], aim[1]));
++                if (held.add("SHIFT")) {
++                    var target=panel.aimAt(aim[0],aim[1]);
++                    runtime.cast(new SkillCastCommand(LightningStepService.ID, (float)target.x, (float)target.y));
++                }
+             }
+         });
+         actions.put("release_SHIFT", new AbstractAction() {
+--- a/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ b/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -28,6 +28,24 @@
+     private Supplier<DirectionalAnimation.Presentation> presentationSource;
+     private ValidatedSpriteAtlas spriteAtlas;
+     private LocalArenaMap.Renderer mapRenderer;
++    private int cameraZoom=1;
++
++    /** Zoom inteiro opcional; padrao preserva coordenadas historicas. */
++    public void setCameraZoom(int zoom) {
++        if(zoom<1 || zoom>4) throw new IllegalArgumentException("Zoom invalido");
++        cameraZoom=zoom; repaint();
++    }
++    ArenaViewport viewport(DebugSnapshot snapshot) {
++        var player=snapshot.actors().stream().filter(DebugSnapshot.ActorView::player).findFirst();
++        double x=player.map(a->(double)a.x()).orElse(480d),y=player.map(a->(double)a.y()).orElse(320d);
++        return ArenaViewport.fit(getWidth()>0?getWidth():PANEL_WIDTH,getHeight()>0?getHeight():PANEL_HEIGHT,
++                DebugWorld.WIDTH,DebugWorld.HEIGHT,x,y,cameraZoom);
++    }
++    /** Conversao no instante do comando evita mira obsoleta se a camera se moveu. */
++    java.awt.geom.Point2D.Double aimAt(float x,float y) {
++        var v=viewport(source.get());
++        return v.containsScreen(x,y)?v.screenToWorld(x,y):new java.awt.geom.Point2D.Double(Double.NaN,Double.NaN);
++    }
+ 
+     /** Seletor visual opcional de demonstracao, sem modificar o mundo a partir da imagem. */
+     public void setLocalMap(LocalArenaMap map) { mapRenderer = map == null ? null : map.renderer(); }
+@@ -79,6 +97,25 @@
+     }
+ 
+     private void renderScene(Graphics2D g, DebugSnapshot s, java.util.List<DirectionalAnimation.View> animations) {
++        var viewport=viewport(s);
++        Graphics2D canvas=(Graphics2D)g.create();
++        try {
++        canvas.translate(viewport.offsetX(),viewport.offsetY());
++        canvas.scale(viewport.scale(),viewport.scale());
++        canvas.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
++        Graphics2D world=(Graphics2D)canvas.create();
++        try {
++        world.clipRect(0,0,DebugWorld.WIDTH,DebugWorld.HEIGHT);
++        world.scale(viewport.zoom(),viewport.zoom());
++        world.translate(-viewport.originX(),-viewport.originY());
++        renderWorld(world,s,animations);
++        } finally {world.dispose();}
++        drawSidebar(canvas,s);
++        drawBottom(canvas,s);
++        } finally {canvas.dispose();}
++    }
++
++    private void renderWorld(Graphics2D g,DebugSnapshot s,java.util.List<DirectionalAnimation.View> animations) {
+         drawWorld(g);
+         if (mapRenderer != null) mapRenderer.draw(g);
+         drawObstacles(g, s);
+@@ -92,8 +129,6 @@
+         }
+         drawAttack(g, s.attack());
+         drawEffects(g, s);
+-        drawSidebar(g, s);
+-        drawBottom(g, s);
+     }
+ 
+     // --- Cenário ---
+--- a/server/src/main/java/com/projetok/prototype/ValidatedSpriteAtlas.java
++++ b/server/src/main/java/com/projetok/prototype/ValidatedSpriteAtlas.java
+@@ -27,10 +27,32 @@
+     }
+     /** Recusa status, hash, tamanho ou coordenadas inconsistentes antes de ativar o recurso. */
+     public static ValidatedSpriteAtlas load(Path manifest) throws IOException {
++        try { return loadChecked(manifest); }
++        catch (IllegalArgumentException | NullPointerException error) { throw new IOException("Manifest visual invalido", error); }
++    }
++    /** Ausencia ou corrupcao opcional conserva o fallback, sem IO durante render. */
++    public static ValidatedSpriteAtlas loadOptional(Path manifest) {
++        if (!Files.exists(manifest)) return null;
++        try { return load(manifest); }
++        catch (IOException error) {
++            System.err.println("[Spirit Gate] Pacote visual recusado; usando fallback: " + error.getMessage());
++            return null;
++        }
++    }
++    private static ValidatedSpriteAtlas loadChecked(Path manifest) throws IOException {
+         Properties p=new Properties();
+         try (var reader=Files.newBufferedReader(manifest)) { p.load(reader); }
+         if (!"VALIDADO".equals(p.getProperty("status"))) throw new IOException("Asset sem validacao");
++        boolean versioned=p.getProperty("packageVersion")!=null;
++        if(versioned && (!"1".equals(p.getProperty("packageVersion")) ||
++                !p.getProperty("assetId", "").matches("[a-z][a-z0-9._-]{0,63}") ||
++                !"64".equals(p.getProperty("frameSize")) || !"32".equals(p.getProperty("tileSize")) ||
++                p.getProperty("reviewOrigin", "").isBlank() ||
++                !p.getProperty("sha256", "").equals(p.getProperty("approvedSha256"))))
++            throw new IOException("Contrato versionado ou revisao invalida");
+         Path png=manifest.toAbsolutePath().getParent().resolve(p.getProperty("image")).normalize();
++        if(versioned && (!png.startsWith(manifest.toAbsolutePath().getParent()) || Files.isSymbolicLink(png)))
++            throw new IOException("Caminho visual inseguro");
+         byte[] data=Files.readAllBytes(png);
+         try {
+             String sha=HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(data));
+@@ -43,7 +65,10 @@
+             if (state==DirectionalAnimation.State.FAINT && direction!=DirectionalAnimation.Direction.FRONT) continue;
+             for (int i=0;i<DirectionalAnimation.count(state);i++) {
+                 String key=key(state,direction,i), value=p.getProperty(key);
+-                if (value==null) continue; // frame ausente usa geometria de depuracao.
++                if (value==null) {
++                    if(versioned) throw new IOException("Pacote versionado incompleto");
++                    continue; // contrato legado admite fallback por frame.
++                }
+                 String[] parts=value.split(",");
+                 if(parts.length!=4) throw new IOException("Recorte invalido");
+                 int[] r=new int[4];
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/ArenaViewportTest.java
+@@ -0,0 +1,73 @@
++package com.projetok.prototype;
++
++import org.junit.jupiter.api.Test;
++import java.awt.event.*;
++import java.awt.image.BufferedImage;
++import java.nio.file.Path;
++import java.util.*;
++import javax.imageio.ImageIO;
++import javax.swing.SwingUtilities;
++import static org.junit.jupiter.api.Assertions.*;
++
++class ArenaViewportTest {
++    @Test void defaultIdentityAndResizeLetterbox() {
++        var v=ArenaViewport.fit(1260,750,960,640,135,148,1);
++        assertEquals(0,v.originX());assertEquals(0,v.originY());assertEquals(1,v.scale());
++        assertEquals(135,v.worldToScreen(135,148).x);assertEquals(148,v.screenToWorld(135,148).y);
++        var large=ArenaViewport.fit(2600,1600,960,640,135,148,1);
++        assertEquals(2,large.scale());assertTrue(large.offsetX()>0);
++        assertFalse(large.containsScreen(0,0));
++        assertFalse(v.containsScreen(1000,100)); // HUD nao vira alvo.
++        assertFalse(v.containsScreen(Double.NaN,Double.NaN));
++    }
++    @Test void largeSyntheticWorldClampedRoundTripsAllSizesAndZooms() {
++        for(int zoom=1;zoom<=4;zoom++) for(int width:new int[]{630,1260,2600})
++            for(double target:new double[]{0,500,2000}) {
++                var v=ArenaViewport.fit(width,width*750/1260,1920,1280,target,target,zoom);
++                assertTrue(v.originX()>=0 && v.originX()+960d/zoom<=1920);
++                assertTrue(v.originY()>=0 && v.originY()+640d/zoom<=1280);
++                for(double[] p:new double[][]{{0,0},{1919,1279},{783.25,432.75}}) {
++                    var screen=v.worldToScreen(p[0],p[1]);var world=v.screenToWorld(screen.x,screen.y);
++                    assertEquals(p[0],world.x,1e-9);assertEquals(p[1],world.y,1e-9);
++                }
++            }
++        assertThrows(IllegalArgumentException.class,()->ArenaViewport.fit(0,750,960,640,0,0,1));
++        assertThrows(IllegalArgumentException.class,()->ArenaViewport.fit(1260,750,960,640,0,0,0));
++    }
++    private void mouse(DebugPanel panel,double x,double y) throws Exception {
++        SwingUtilities.invokeAndWait(()->{
++            var e=new MouseEvent(panel,MouseEvent.MOUSE_MOVED,0,0,(int)x,(int)y,0,false);
++            for(var listener:panel.getMouseMotionListeners()) listener.mouseMoved(e);
++        });
++    }
++    private void action(DebugPanel panel,String key) throws Exception {
++        SwingUtilities.invokeAndWait(()->panel.getActionMap().get(key).actionPerformed(new ActionEvent(panel,0,key)));
++    }
++    @Test void qAndShiftUseWorldAfterZoomResizeAndRestart() throws Exception {
++        for(String key:new String[]{"Q","SHIFT"}) try(var actual=new DebugRuntime(()->DebugWorld.demo(new Random(5)));
++                                                    var reference=new DebugRuntime(()->DebugWorld.demo(new Random(5)))) {
++            var panel=new DebugPanel(actual::snapshot);panel.setCameraZoom(4);panel.setSize(2520,1500);
++            SwingUtilities.invokeAndWait(()->DebugLauncher.configureKeys(panel,actual,new HashSet<>()));
++            var v=panel.viewport(actual.snapshot());assertTrue(v.originX()>0 && v.originY()>0);
++            float targetX=actual.snapshot().actors().get(0).x()+80,targetY=actual.snapshot().actors().get(0).y();
++            var screen=v.worldToScreen(targetX,targetY);assertTrue(v.containsScreen(screen.x,screen.y));mouse(panel,screen.x,screen.y);
++            action(panel,"press_"+key);
++            reference.cast(new com.projetok.domain.skill.SkillCastCommand(key.equals("Q")?"cryostasis":"lightning_step",targetX,targetY));
++            actual.advanceOneTick();reference.advanceOneTick();
++            assertEquals(reference.snapshot(),actual.snapshot());
++            action(panel,"restart");actual.advanceOneTick();reference.restart();reference.advanceOneTick();
++            assertEquals(reference.snapshot(),actual.snapshot());
++        }
++    }
++    @Test void renderingRepeatedIsPureAndHudDoesNotFollowCamera() throws Exception {
++        var world=DebugWorld.demo(new Random(2));var snapshot=world.snapshot();var panel=new DebugPanel(()->snapshot);
++        var normal=new BufferedImage(1260,750,2);var g=normal.createGraphics();panel.render(g,snapshot);g.dispose();
++        panel.setCameraZoom(4);panel.setShowHitboxes(true);
++        var zoomed=new BufferedImage(1260,750,2);g=zoomed.createGraphics();panel.render(g,snapshot);panel.render(g,snapshot);g.dispose();
++        assertEquals(snapshot,world.snapshot());
++        // HUD pixels remain identical despite camera and world zoom.
++        for(int y=0;y<640;y+=17)for(int x=980;x<1260;x+=17)assertEquals(normal.getRGB(x,y),zoomed.getRGB(x,y));
++        g=zoomed.createGraphics();g.setColor(java.awt.Color.MAGENTA);g.drawString("CENARIO SINTETICO - CAMERA 4X / HITBOXES",20,730);g.dispose();
++        ImageIO.write(zoomed,"png",Path.of("../docs/TASK-020-camera-sintetica.png").toFile());
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/VisualPackageTest.java
+@@ -0,0 +1,57 @@
++package com.projetok.prototype;
++
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import java.nio.file.*;
++import java.util.*;
++import java.security.MessageDigest;
++import java.awt.image.BufferedImage;
++import javax.imageio.ImageIO;
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Somente dados sinteticos: nenhuma aprovacao de arte real. */
++class VisualPackageTest {
++    @TempDir Path temp;
++    private Path fixture() throws Exception {
++        var image=new BufferedImage(512,512,BufferedImage.TYPE_INT_ARGB);
++        Path png=temp.resolve("synthetic.png");ImageIO.write(image,"png",png.toFile());
++        String sha=HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(png)));
++        var p=new Properties();
++        for(String[] pair:new String[][]{{"status","VALIDADO"},{"packageVersion","1"},{"assetId","synthetic.hero"},
++                {"frameSize","64"},{"tileSize","32"},{"reviewOrigin","FIXTURE SINTETICA"},{"image","synthetic.png"},
++                {"sha256",sha},{"approvedSha256",sha},{"pivotX","32"},{"pivotY","48"},{"offsetX","0"},{"offsetY","0"}})
++            p.setProperty(pair[0],pair[1]);
++        int slot=0;
++        for(var state:DirectionalAnimation.State.values()) for(var d:DirectionalAnimation.Direction.values()) {
++            if(state==DirectionalAnimation.State.FAINT && d!=DirectionalAnimation.Direction.FRONT) continue;
++            String action=switch(state){case ATTACK->"PUNCH";case FAINT->"KO";default->state.name();};
++            for(int i=0;i<DirectionalAnimation.count(state);i++,slot++) p.setProperty(action+"."+d+"."+i,(slot%8)*64+","+(slot/8)*64+",64,64");
++        }
++        Path path=temp.resolve("character.properties");try(var out=Files.newBufferedWriter(path)){p.store(out,"SINTETICO");}return path;
++    }
++    private void alter(Path path,String key,String value) throws Exception {
++        var p=new Properties();try(var r=Files.newBufferedReader(path)){p.load(r);}
++        if(value==null)p.remove(key);else p.setProperty(key,value);
++        try(var out=Files.newBufferedWriter(path)){p.store(out,"SINTETICO");}
++    }
++    @Test void validLoadsOnceAndSurvivesSourceRemoval() throws Exception {
++        Path p=fixture();var atlas=ValidatedSpriteAtlas.load(p);Files.delete(temp.resolve("synthetic.png"));
++        var s=DebugWorld.demo(new Random(1)).snapshot();var image=new BufferedImage(960,640,2);var g=image.createGraphics();
++        assertTrue(atlas.draw(g,s.actors().get(0),new DirectionalAnimation.View(1,DirectionalAnimation.State.IDLE,DirectionalAnimation.Direction.FRONT,0)));g.dispose();
++    }
++    @Test void invalidPackagesAlwaysFallback() throws Exception {
++        for(String[] change:new String[][]{{"sha256","0"},{"approvedSha256","0"},{"IDLE.FRONT.0",null},
++                {"IDLE.FRONT.0","0,0,32,64"},{"image","missing.png"},{"image","../outside.png"},
++                {"pivotX","bad"},{"packageVersion","2"},{"reviewOrigin",""}}) {
++            Path p=fixture();alter(p,change[0],change[1]);assertNull(ValidatedSpriteAtlas.loadOptional(p),Arrays.toString(change));
++        }
++        Path p=fixture();Files.write(temp.resolve("synthetic.png"),new byte[]{1,2,3});assertNull(ValidatedSpriteAtlas.loadOptional(p));
++        assertNull(ValidatedSpriteAtlas.loadOptional(temp.resolve("absent.properties")));
++    }
++    @Test void portablePathIndependentOfWorkingDirectory() {
++        String old=System.getProperty("jpackage.app-path");
++        try {System.setProperty("jpackage.app-path",temp.resolve("SpiritGate.exe").toString());
++            assertEquals(temp.resolve("visual/character.properties"),DebugLauncher.defaultVisualManifest());
++        } finally {if(old==null)System.clearProperty("jpackage.app-path");else System.setProperty("jpackage.app-path",old);}
++    }
++}
+--- a/tools/auditar_rc.py
++++ b/tools/auditar_rc.py
+@@ -17,6 +17,7 @@
+ import stat
+ import struct
+ import sys
++import tempfile
+ import zipfile
+ 
+ 
+@@ -212,6 +213,24 @@
+ 
+         def read(name: str) -> bytes:
+             return archive.read(relative[name])
++
++        visual_names = {name for name in relative if name.startswith('visual/')}
++        if visual_names:
++            require(visual_names == {'visual/character.png', 'visual/character.properties', 'visual/review.json'},
++                    'Whitelist do pacote visual divergente.')
++            from pacote_visual import stage
++            with tempfile.TemporaryDirectory(prefix='spirit-visual-audit-') as directory:
++                base = Path(directory)
++                for name in ('character.png', 'character.properties', 'review.json'):
++                    (base/name).write_bytes(read('visual/'+name))
++                config = json_object((base/'review.json').read_bytes())
++                require(len(config.get('assets', [])) == 1 and config['assets'][0].get('path') == 'character.png',
++                        'Manifest visual deve usar imagem local fixa.')
++                stage(base, base/'review.json', base/'checked')
++                for name in ('character.png', 'character.properties', 'review.json'):
++                    require((base/name).read_bytes() == (base/'checked'/name).read_bytes(),
++                            'Pacote visual diverge da revisao por SHA.')
++            passed('pacote_visual_aprovado_sha', files=3)
+ 
+         # --- Manifest cobre o inventario; o inventario evita a circularidade. ---
+         manifest_bytes = read("manifest.json")
+--- a/tools/build-windows-portable.ps1
++++ b/tools/build-windows-portable.ps1
+@@ -19,6 +19,8 @@
+     [string] $JavaHome = '',
+     [string] $TesterKitDirectory = '',
+     [string] $MavenRepository = '',
++    [string] $VisualManifest = '',
++    [string] $VisualRoot = '',
+     [switch] $SkipMaven
+ )
+ 
+@@ -217,6 +219,14 @@
+ 
+     # --- Kit do tester, inventario verificavel e distribuicao sem sobrescrita. ---
+ 
++    if ($VisualManifest) {
++        if (-not $VisualRoot) { throw 'VisualRoot obrigatorio com VisualManifest.' }
++        Invoke-CheckedTool (Get-Command python -ErrorAction Stop).Source @(
++            (Join-Path $projectDirectory 'tools\pacote_visual.py'),
++            ([IO.Path]::GetFullPath($VisualRoot)), ([IO.Path]::GetFullPath($VisualManifest)),
++            (Join-Path $appImage 'visual'))
++    }
++
+     $releaseNotice = if ($Version -match '(?i)(^|[._-])rc\d*($|[._-])') {
+         'CANDIDATO A HOMOLOGACAO; NAO RELEASE PUBLICA'
+     } else { 'PACOTE DE TESTES LOCAIS' }
+@@ -232,6 +242,12 @@
+ Controles: WASD mover; Espaco atacar; E esforco (20 vigor);
+ Q Criostase (55 vigor); Shift Passo Relampago (35 vigor), mirando com mouse;
+ H mostrar hitboxes; R reiniciar. Feche a janela para sair.
++
++Janela redimensionavel: arena logica 960x640, proporcao preservada e margens.
++Mira Shift/Q usa coordenadas do mundo; HUD e margens nao sao alvos.
++Mapa opcional: .\SpiritGate.exe --map mapa-demo.properties, se incluido no kit.
++Camera/zoom de integracao nao altera fisica; mapas maiores apenas em testes.
++Arte nao aprovada permanece fora do pacote; fallback geometrico e intencional.
+ 
+ Mantenha app/ e runtime/ junto ao EXE. O runtime Java 17 esta integrado.
+ O executavel nao e assinado; avisos do Windows podem ocorrer. Nao desative
+--- /dev/null
++++ b/tools/pacote_visual.py
+@@ -0,0 +1,46 @@
++"""Staging explicito de um personagem aprovado por SHA; sem alteracao da fonte."""
++import argparse
++import json
++from pathlib import Path
++import shutil
++from validar_assets import inspect
++
++
++def stage(root, manifest, output):
++    config=json.loads(manifest.read_text(encoding='utf-8-sig'))
++    if config.get('packageVersion') != 1 or len(config.get('assets',[])) != 1:
++        raise ValueError('pacote visual v1 exige exatamente um personagem')
++    asset_id=config.get('assetId','')
++    import re
++    if not re.fullmatch('[a-z][a-z0-9._-]{0,63}',asset_id):
++        raise ValueError('assetId estavel invalido')
++    entry=config['assets'][0]
++    if entry.get('kind') != 'character' or not entry.get('review',{}).get('origin','').strip():
++        raise ValueError('personagem e origem da revisao obrigatorios')
++    result,_=inspect(root,entry)
++    if result['status'] != 'VALIDADO':
++        raise ValueError('arte nao aprovada ou invalida: '+ '; '.join(result['errors']+result['warnings']))
++    if any(f.get('durationMs',100)!=100 or f.get('pivot',entry['pivot'])!=entry['pivot'] for f in entry['frames']):
++        raise ValueError('pivot/duracao por frame incompativel com runtime')
++    # Pacote duravel usa nomes fixos, sem caminhos externos e sem fontes pendentes.
++    output.mkdir(parents=True,exist_ok=False)
++    shutil.copyfile(root/entry['path'],output/'character.png')
++    entry=dict(entry,path='character.png')
++    config=dict(config,assets=[entry])
++    (output/'review.json').write_text(json.dumps(config,ensure_ascii=False,indent=2),encoding='utf-8')
++    values=dict(status='VALIDADO',packageVersion=1,assetId=asset_id,image='character.png',
++                sha256=result['sha256'],approvedSha256=result['sha256'],
++                reviewOrigin=entry['review']['origin'],frameSize=64,tileSize=32,
++                pivotX=entry['pivot'][0],pivotY=entry['pivot'][1],offsetX=entry['offset'][0],offsetY=entry['offset'][1])
++    for frame in entry['frames']:
++        values[f"{frame['state']}.{frame['direction']}.{frame['index']}"]=','.join(str(frame[k]) for k in ('x','y','width','height'))
++    # Properties: escapar controles, separadores e unicode evita reinterpretacao.
++    def escape(value):
++        return str(value).replace('\\','\\\\').replace('\n','\\n').replace('\r','\\r').replace('=','\\=').replace(':','\\:')
++    (output/'character.properties').write_text('\n'.join(f'{k}={escape(v)}' for k,v in sorted(values.items()))+'\n',encoding='utf-8')
++
++
++if __name__ == '__main__':
++    p=argparse.ArgumentParser(description=__doc__)
++    for name in ('root','manifest','output'): p.add_argument(name,type=Path)
++    a=p.parse_args(); stage(a.root,a.manifest,a.output)
+--- /dev/null
++++ b/tools/revisar_sprites.py
+@@ -0,0 +1,109 @@
++"""Autoria/revisao apenas; reutiliza o contrato e inspetor TASK-013. Nunca aprova arte."""
++import argparse
++import copy
++import hashlib
++import html
++import json
++from pathlib import Path
++from separar_sprites import write_png
++from validar_assets import CONTRACT, DIRECTIONS, inspect, read_png
++
++
++def frames():
++    result = []
++    for action, count in list(CONTRACT.items()) + [('KO', 3)]:
++        for direction in (('FRONT',) if action == 'KO' else DIRECTIONS):
++            for index in range(count):
++                slot = len(result)
++                result.append(dict(state=action, direction=direction, index=index,
++                                   x=(slot % 8)*64, y=(slot // 8)*64, width=64, height=64,
++                                   durationMs=100, pivot=[32, 48]))
++    return result
++
++
++def template(output):
++    output.mkdir(parents=True, exist_ok=False)
++    write_png(output/'template-vazio.png', 512, 512, bytearray(512*512*4))
++    entry = dict(path='template-vazio.png', kind='character', grid=64, frames=frames(),
++                 pivot=[32, 48], offset=[0, 0], layer='actors',
++                 origin='TEMPLATE VAZIO - NAO E ARTE APROVADA', review={})
++    (output/'manifest.json').write_text(json.dumps({'schemaVersion': 1, 'assets': [entry]}, indent=2), encoding='utf-8')
++    review(output, output/'manifest.json', output/'revisao')
++
++
++def aseprite(png, metadata, output):
++    """Importa --format json-array, sem trim/rotate/pack, nomes ACTION.DIRECTION.INDEX."""
++    data = json.loads(metadata.read_text(encoding='utf-8'))
++    exported = data.get('frames')
++    expected = frames()
++    if not isinstance(exported, list) or len(exported) != 59:
++        raise ValueError('Aseprite exige json-array com exatamente 59 frames')
++    w, h, _ = read_png(png)
++    if data.get('meta', {}).get('size') != {'w': w, 'h': h}:
++        raise ValueError('dimensoes Aseprite divergentes')
++    for source, target in zip(exported, expected):
++        name = f"{target['state']}.{target['direction']}.{target['index']}"
++        if source.get('filename') != name or source.get('rotated') is not False or source.get('trimmed') is not False:
++            raise ValueError('ordem/direcao, rotacao ou trim incompativel: ' + name)
++        if source.get('duration') != 100 or source.get('sourceSize') != {'w':64, 'h':64} or source.get('spriteSourceSize') != {'x':0,'y':0,'w':64,'h':64}:
++            raise ValueError('duracao/origem/tamanho incompativel')
++        rect = source['frame']
++        target.update(x=rect['x'], y=rect['y'], width=rect['w'], height=rect['h'])
++    entry = dict(path=png.name, kind='character', grid=64, frames=expected, pivot=[32,48],
++                 offset=[0,0], layer='actors', origin='Aseprite: ' + metadata.name, review={})
++    result, _ = inspect(png.parent, entry)
++    if result['errors']:
++        raise ValueError('; '.join(result['errors']))
++    if output.exists():
++        raise FileExistsError(output)
++    output.write_text(json.dumps({'schemaVersion':1, 'assets':[entry]}, indent=2), encoding='utf-8')
++
++
++def review(root, manifest, output):
++    """Le fontes sem modifica-las; relatorio/preview fora dos assets de producao."""
++    output = output.resolve()
++    production = Path(__file__).resolve().parents[1]/'assets'
++    if output.is_relative_to(production):
++        raise ValueError('saida de revisao deve ficar fora de assets')
++    output.mkdir(parents=True, exist_ok=False)
++    entries = json.loads(manifest.read_text(encoding='utf-8-sig'))['assets']
++    results, sections = [], []
++    for entry in entries:
++        result, _ = inspect(root, copy.deepcopy(entry))
++        # A ferramenta nao promove nem exporta atlas, mesmo se um SHA constar no manifest.
++        result['reviewToolApprovesArt'] = False
++        expected = frames()
++        actual = entry.get('frames', [])
++        if entry['kind'] == 'character':
++            if [(f['state'],f['direction'],f['index']) for f in actual] != [(f['state'],f['direction'],f['index']) for f in expected]:
++                result['errors'].append('ordem ou direcao incoerente')
++            if any(f.get('pivot',entry.get('pivot')) != entry.get('pivot') or f.get('durationMs',100) != 100 for f in actual):
++                result['errors'].append('pivot/duracao por frame inconsistente')
++        result['status'] = 'REPROVADO' if result['errors'] else 'PENDENTE_REVISAO_HUMANA'
++        results.append(result)
++        src = html.escape((root/entry['path']).resolve().as_uri(), quote=True)
++        labels = ' | '.join(html.escape(f"{i}: {f['state']}.{f['direction']}.{f['index']} pivot={f.get('pivot',entry.get('pivot'))}") for i,f in enumerate(actual))
++        markers=[]
++        for i,f in enumerate(actual):
++            pivot=f.get('pivot',entry.get('pivot',[0,0]))
++            x,y=f['x']+pivot[0],f['y']+pivot[1]
++            markers.append(f"<text x='{f['x']+2}' y='{f['y']+9}' fill='red' font-size='8'>{i}</text><path d='M{x-4},{y}h8 M{x},{y-4}v8' stroke='magenta'/>")
++        overlay=f"<svg style='position:absolute;inset:0' width='{result.get('width',0)}' height='{result.get('height',0)}'>{''.join(markers)}</svg>"
++        sections.append(f"<section><h2>{html.escape(entry['path'])}</h2><p>{result['sha256']} — {result['status']}</p><div class='sheet'><img src='{src}'>{overlay}</div><p>{labels}</p><pre>{html.escape(json.dumps(result,ensure_ascii=False,indent=2))}</pre></section>")
++    (output/'relatorio.json').write_text(json.dumps({'schemaVersion':1,'artApproved':False,'assets':results},ensure_ascii=False,indent=2),encoding='utf-8')
++    (output/'preview.html').write_text("<!doctype html><meta charset='utf-8'><title>Revisao humana - sem aprovacao automatica</title><style>body{font:14px sans-serif;background:#ddd}section{border:1px solid #444;padding:12px}.sheet{width:max-content;background:repeating-conic-gradient(#aaa 0% 25%,#eee 0% 50%) 0/16px 16px;position:relative}.sheet:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#f008 1px,transparent 1px),linear-gradient(#f008 1px,transparent 1px);background-size:64px 64px;pointer-events:none}img{display:block;image-rendering:pixelated;max-width:none}pre{white-space:pre-wrap}</style><h1>REVISAO: nenhuma arte aprovada</h1><p>Grade 64px. Indices em ordem abaixo de cada imagem; pivot e alfa no relatorio. Originais preservados.</p>" + ''.join(sections),encoding='utf-8')
++    return results
++
++
++if __name__ == '__main__':
++    parser = argparse.ArgumentParser(description=__doc__)
++    sub = parser.add_subparsers(dest='command', required=True)
++    t = sub.add_parser('template'); t.add_argument('output', type=Path)
++    r = sub.add_parser('review')
++    for name in ('root','manifest','output'): r.add_argument(name,type=Path)
++    a = sub.add_parser('aseprite')
++    for name in ('png','metadata','output'): a.add_argument(name,type=Path)
++    args = parser.parse_args()
++    if args.command == 'template': template(args.output)
++    elif args.command == 'review': review(args.root,args.manifest,args.output)
++    else: aseprite(args.png,args.metadata,args.output)
+--- /dev/null
++++ b/tools/test_sprite_review.py
+@@ -0,0 +1,67 @@
++"""Revisao usa apenas fixtures sinteticas temporarias."""
++import copy
++import hashlib
++import json
++from pathlib import Path
++import tempfile
++import unittest
++from revisar_sprites import frames, template, review, aseprite
++from separar_sprites import write_png
++from validar_assets import read_png
++
++
++class SpriteReviewTest(unittest.TestCase):
++    def setUp(self):
++        self.temp = tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
++        self.root = Path(self.temp.name)
++        self.pixels = bytearray(512*512*4)
++        for f in frames():
++            i = ((f['y']+32)*512+f['x']+32)*4
++            self.pixels[i:i+4] = bytes([255,0,0,255])
++        write_png(self.root/'hero.png',512,512,self.pixels)
++        self.entry = dict(path='hero.png',kind='character',grid=64,frames=frames(),pivot=[32,48],offset=[0,0],layer='actors',origin='FIXTURE SINTETICA',review={})
++        self.count = 0
++
++    def check(self, entry=None):
++        self.count += 1
++        m = self.root/'manifest.json'; m.write_text(json.dumps({'assets':[entry or self.entry]}))
++        return review(self.root,m,self.root/f'out{self.count}')[0]
++
++    def test_template_59_empty_reproducible(self):
++        template(self.root/'a'); template(self.root/'b')
++        self.assertEqual((self.root/'a/template-vazio.png').read_bytes(),(self.root/'b/template-vazio.png').read_bytes())
++        w,h,p = read_png(self.root/'a/template-vazio.png')
++        self.assertEqual((w,h),(512,512)); self.assertFalse(any(p))
++        self.assertEqual(len(frames()),59)
++        self.assertEqual(len({(f['state'],f['direction'],f['index']) for f in frames()}),59)
++
++    def test_direction_order_missing_pivot_overlap(self):
++        for mutation in ('direction','order','missing','pivot','overlap'):
++            e = copy.deepcopy(self.entry)
++            if mutation == 'direction': e['frames'][0]['direction']='RIGHT'
++            if mutation == 'order': e['frames'][0],e['frames'][1]=e['frames'][1],e['frames'][0]
++            if mutation == 'missing': e['frames'].pop()
++            if mutation == 'pivot': e['frames'][0]['pivot']=[0,0]
++            if mutation == 'overlap': e['frames'][1]['x']=0
++            with self.subTest(mutation=mutation): self.assertEqual(self.check(e)['status'],'REPROVADO')
++
++    def test_alpha_border_and_hash_after_review(self):
++        self.entry['review']['approvedSha256']=hashlib.sha256((self.root/'hero.png').read_bytes()).hexdigest()
++        self.assertEqual(self.check()['status'],'PENDENTE_REVISAO_HUMANA')
++        self.pixels[3]=128
++        write_png(self.root/'hero.png',512,512,self.pixels)
++        result=self.check()
++        self.assertIn('alfa parcial: revisar antialiasing/fundo irregular',result['errors'])
++        self.assertNotEqual(result['sha256'],self.entry['review']['approvedSha256'])
++        self.assertFalse(result['reviewToolApprovesArt'])
++
++    def test_aseprite_exact_export_and_reject_trim_order(self):
++        exported=[]
++        for f in frames():
++            exported.append(dict(filename=f"{f['state']}.{f['direction']}.{f['index']}",rotated=False,trimmed=False,duration=100,sourceSize={'w':64,'h':64},spriteSourceSize={'x':0,'y':0,'w':64,'h':64},frame={'x':f['x'],'y':f['y'],'w':64,'h':64}))
++        data={'frames':exported,'meta':{'size':{'w':512,'h':512}}}
++        p=self.root/'ase.json'; p.write_text(json.dumps(data))
++        aseprite(self.root/'hero.png',p,self.root/'import.json')
++        for field,value in [('trimmed',True),('filename','IDLE.RIGHT.0')]:
++            bad=copy.deepcopy(data); bad['frames'][0][field]=value; p.write_text(json.dumps(bad))
++            with self.assertRaises(ValueError): aseprite(self.root/'hero.png',p,self.root/'bad.json')
+--- /dev/null
++++ b/tools/test_visual_distribution.py
+@@ -0,0 +1,57 @@
++"""Teste de integracao explicito: python tools/test_visual_distribution.py ZIP REPORT.
++
++Adiciona fixture sintetica SOMENTE em copia temporaria de um RC; recalcula todos
++os inventarios e exige auditoria completa. A copia nunca e entregue como release.
++"""
++import copy
++import hashlib
++import json
++from pathlib import Path
++import sys
++import tempfile
++import zipfile
++from auditar_rc import audit, AuditFailure
++from pacote_visual import stage
++import test_sprite_review
++
++
++def run(source, report):
++    fixture=test_sprite_review.SpriteReviewTest()
++    fixture.setUp()
++    try:
++        root=fixture.root
++        entry=copy.deepcopy(fixture.entry)
++        entry['review']={'origin':'FIXTURE SINTETICA EXCLUSIVA DE TESTE',
++            'approvedSha256':hashlib.sha256((root/'hero.png').read_bytes()).hexdigest()}
++        manifest=root/'source.json'
++        manifest.write_text(json.dumps(dict(packageVersion=1,assetId='synthetic.hero',assets=[entry])),encoding='utf-8')
++        stage(root,manifest,root/'visual')
++        with zipfile.ZipFile(source) as z:
++            contents={i.filename.removeprefix('SpiritGate/'):z.read(i) for i in z.infolist() if not i.is_dir()}
++        for p in (root/'visual').iterdir(): contents['visual/'+p.name]=p.read_bytes()
++        config=json.loads(contents.pop('manifest.json').decode('utf-8-sig'))
++        contents.pop('INVENTARIO-SHA256.txt')
++        contents['INVENTARIO-SHA256.txt']=''.join(hashlib.sha256(data).hexdigest()+'  '+name+'\n' for name,data in sorted(contents.items())).encode()
++        config['files']=[dict(path=name,sizeBytes=len(data),sha256=hashlib.sha256(data).hexdigest()) for name,data in sorted(contents.items())]
++        contents['manifest.json']=json.dumps(config).encode()
++        out=root/'synthetic-test-only.zip'
++        def write():
++            with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED) as z:
++                for name,data in contents.items():z.writestr('SpiritGate/'+name,data)
++            Path(str(out)+'.sha256').write_text(hashlib.sha256(out.read_bytes()).hexdigest()+'  '+out.name+'\n')
++            Path(str(out)+'.manifest.json').write_bytes(contents['manifest.json'])
++        write()
++        result={'checks':[]};audit(out,result)
++        assert any(c['id']=='pacote_visual_aprovado_sha' for c in result['checks'])
++        # Troca de hash revisado com ZIP/sidecar recalculado continua recusada.
++        contents['visual/character.png']+=b'ALTERADO'
++        write()
++        try: audit(out,{'checks':[]})
++        except (AuditFailure,ValueError): result['alteredVisualRejected']=True
++        else:raise AssertionError('Auditor aceitou arte alterada')
++        result.update(status='PASS',syntheticOnly=True,temporaryArchiveDestroyed=True)
++        report.write_text(json.dumps(result,indent=2),encoding='utf-8')
++    finally:fixture.doCleanups()
++
++
++if __name__=='__main__':run(Path(sys.argv[1]),Path(sys.argv[2]))
+--- /dev/null
++++ b/tools/test_visual_package.py
+@@ -0,0 +1,45 @@
++"""Distribuicao visual exercitada apenas em diretorios temporarios sinteticos."""
++import hashlib
++import copy
++import json
++import unittest
++import zipfile
++import test_sprite_review
++from pacote_visual import stage
++
++
++class VisualPackageTest(unittest.TestCase):
++    def setUp(self):
++        test_sprite_review.SpriteReviewTest.setUp(self)
++
++    def config(self):
++        self.entry['review']={'origin':'FIXTURE SINTETICA - teste, nao aprovacao humana',
++            'approvedSha256':hashlib.sha256((self.root/'hero.png').read_bytes()).hexdigest()}
++        return dict(packageVersion=1,assetId='synthetic.hero',assets=[self.entry])
++
++    def test_stage_approved_fixture_exact_whitelist(self):
++        p=self.root/'package.json'; p.write_text(json.dumps(self.config()))
++        (self.root/'pending.png').write_bytes(b'NAO INCLUIR')
++        stage(self.root,p,self.root/'visual')
++        self.assertEqual({p.name for p in (self.root/'visual').iterdir()}, {'review.json','character.properties','character.png'})
++        self.assertEqual((self.root/'hero.png').read_bytes(),(self.root/'visual/character.png').read_bytes())
++        self.assertIn('packageVersion=1',(self.root/'visual/character.properties').read_text())
++        with zipfile.ZipFile(self.root/'synthetic-distribution.zip','w') as z:
++            for p in (self.root/'visual').iterdir(): z.write(p,'SpiritGate/visual/'+p.name)
++        with zipfile.ZipFile(self.root/'synthetic-distribution.zip') as z:
++            self.assertEqual(set(z.namelist()),{'SpiritGate/visual/'+n for n in ('review.json','character.properties','character.png')})
++
++    def test_reject_pending_missing_corrupt_hash_no_output(self):
++        original=copy.deepcopy(self.entry)
++        for case in ('pending','missing','hash','pivot','duration','corrupt'):
++            self.entry=copy.deepcopy(original)
++            config=self.config()
++            if case=='pending': self.entry['review']={}
++            if case=='missing': self.entry['frames'].pop()
++            if case=='hash': self.entry['review']['approvedSha256']='0'*64
++            if case=='pivot': self.entry['frames'][0]['pivot']=[0,0]
++            if case=='duration': self.entry['frames'][0]['durationMs']=200
++            if case=='corrupt': (self.root/'hero.png').write_bytes(b'corrupt')
++            p=self.root/'package.json'; p.write_text(json.dumps(config))
++            with self.subTest(case=case),self.assertRaises(ValueError): stage(self.root,p,self.root/case)
++            self.assertFalse((self.root/case).exists())

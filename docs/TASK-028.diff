@@ -1,0 +1,133 @@
+--- /dev/null
++++ b/docs/TASK-028-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 230,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-028.md
+@@ -0,0 +1,23 @@
++# TASK-028 - Autoria e revisão de sprites
++
++Objetivo: facilitar revisão direcional e comparação de versões no pipeline Aseprite.
++Base: TASK-027 aprovada, 230 JUnit e 24 Python.
++Diagnóstico: ferramentas existentes já verificavam 59 frames, ordem/direção,
++duplicação, bordas, pivots, duração, transparência, dimensões e SHA; preview anterior
++era somente folha estática com grade e pivots. Preservados esses verificadores.
++Implementação: revisar_sprites.py agora inclui animações CSS por estado e direção
++em preview.html, usando os recortes sem redimensionar os originais. Adicionado
++comando compare, saída JSON com dimensões, alfa e hashes das duas versões.
++Saída exclusiva, sem sobrescrita. Relatório sempre artApproved=false.
++Arquivos: revisar_sprites.py, test_sprite_review.py e evidências sintéticas.
++Testes novos: presença de estados/direções, keyframes, versões iguais/diferentes e
++recusa de sobrescrita; regressões prévias continuam verificando negativos Aseprite.
++Resultado real: TASK-028-qualidade.json e logs completos. Reprodução:
++python tools/qualidade.py --offline --task 028
++python tools/revisar_sprites.py template docs/autoria-028-sintetica
++python tools/revisar_sprites.py compare antes.png depois.png comparacao.json
++
++Limites: preview é apoio visual, não aprovação da arte nem captura do jogo.
++Template vazio é sintético e permanece fora do pacote de produção. Comparação
++reporta metadados/hashes, sem avaliar qualidade estética. Homologação Aseprite
++humana pendente. Checkpoints/diff padronizados; próxima TASK-029.
+--- a/tools/revisar_sprites.py
++++ b/tools/revisar_sprites.py
+@@ -18,6 +18,38 @@
+                 result.append(dict(state=action, direction=direction, index=index,
+                                    x=(slot % 8)*64, y=(slot // 8)*64, width=64, height=64,
+                                    durationMs=100, pivot=[32, 48]))
++    return result
++
++
++def animation_preview(entry, src):
++    """Prévia CSS por estado/direção, com recortes originais e passos de 100 ms."""
++    groups = {}
++    for frame in entry.get('frames', []):
++        groups.setdefault((frame['state'], frame['direction']), []).append(frame)
++    output = []
++    prefix = hashlib.sha256(json.dumps(entry.get('frames',[]),sort_keys=True).encode()).hexdigest()[:12]
++    for index, ((state, direction), sequence) in enumerate(groups.items()):
++        sequence = sorted(sequence, key=lambda f:f['index'])
++        steps = ''.join(f"{i*100/len(sequence):.6f}%{{background-position:-{f['x']}px -{f['y']}px}}"
++                        for i,f in enumerate(sequence))
++        safe = html.escape(f'{state}.{direction}')
++        output.append(f'<figure><figcaption>{safe}</figcaption><style>@keyframes anim{prefix}_{index}{{{steps}}}</style>'
++                      f'<div class="animation" style="width:64px;height:64px;background-image:url(&quot;{src}&quot;);'
++                      f'animation:anim{prefix}_{index} {len(sequence)*.1}s steps(1,end) infinite;image-rendering:pixelated"></div></figure>')
++    return ''.join(output)
++
++
++def compare(before, after, output):
++    """Compara versões sem alterar imagens e sem conceder aprovação artística."""
++    def describe(path):
++        w,h,pixels=read_png(path)
++        return {'file':path.name,'width':w,'height':h,'transparent':pixels[3::4].count(0),
++                'partial':sum(0<a<255 for a in pixels[3::4]),
++                'sha256':hashlib.sha256(path.read_bytes()).hexdigest()}
++    a,b=describe(before),describe(after)
++    result={'before':a,'after':b,'sameBytes':a['sha256']==b['sha256'],'artApproved':False}
++    with output.open('x',encoding='utf-8') as stream:
++        json.dump(result,stream,ensure_ascii=False,indent=2)
+     return result
+ 
+ 
+@@ -89,7 +121,7 @@
+             x,y=f['x']+pivot[0],f['y']+pivot[1]
+             markers.append(f"<text x='{f['x']+2}' y='{f['y']+9}' fill='red' font-size='8'>{i}</text><path d='M{x-4},{y}h8 M{x},{y-4}v8' stroke='magenta'/>")
+         overlay=f"<svg style='position:absolute;inset:0' width='{result.get('width',0)}' height='{result.get('height',0)}'>{''.join(markers)}</svg>"
+-        sections.append(f"<section><h2>{html.escape(entry['path'])}</h2><p>{result['sha256']} — {result['status']}</p><div class='sheet'><img src='{src}'>{overlay}</div><p>{labels}</p><pre>{html.escape(json.dumps(result,ensure_ascii=False,indent=2))}</pre></section>")
++        sections.append(f"<section><h2>{html.escape(entry['path'])}</h2><p>{result['sha256']} — {result['status']}</p><div class='sheet'><img src='{src}'>{overlay}</div><p>{labels}</p>{animation_preview(entry,src)}<pre>{html.escape(json.dumps(result,ensure_ascii=False,indent=2))}</pre></section>")
+     (output/'relatorio.json').write_text(json.dumps({'schemaVersion':1,'artApproved':False,'assets':results},ensure_ascii=False,indent=2),encoding='utf-8')
+     (output/'preview.html').write_text("<!doctype html><meta charset='utf-8'><title>Revisao humana - sem aprovacao automatica</title><style>body{font:14px sans-serif;background:#ddd}section{border:1px solid #444;padding:12px}.sheet{width:max-content;background:repeating-conic-gradient(#aaa 0% 25%,#eee 0% 50%) 0/16px 16px;position:relative}.sheet:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#f008 1px,transparent 1px),linear-gradient(#f008 1px,transparent 1px);background-size:64px 64px;pointer-events:none}img{display:block;image-rendering:pixelated;max-width:none}pre{white-space:pre-wrap}</style><h1>REVISAO: nenhuma arte aprovada</h1><p>Grade 64px. Indices em ordem abaixo de cada imagem; pivot e alfa no relatorio. Originais preservados.</p>" + ''.join(sections),encoding='utf-8')
+     return results
+@@ -103,7 +135,10 @@
+     for name in ('root','manifest','output'): r.add_argument(name,type=Path)
+     a = sub.add_parser('aseprite')
+     for name in ('png','metadata','output'): a.add_argument(name,type=Path)
++    c = sub.add_parser('compare')
++    for name in ('before','after','output'): c.add_argument(name,type=Path)
+     args = parser.parse_args()
+     if args.command == 'template': template(args.output)
+     elif args.command == 'review': review(args.root,args.manifest,args.output)
++    elif args.command == 'compare': compare(args.before,args.after,args.output)
+     else: aseprite(args.png,args.metadata,args.output)
+--- a/tools/test_sprite_review.py
++++ b/tools/test_sprite_review.py
+@@ -11,6 +11,20 @@
+ 
+ 
+ class SpriteReviewTest(unittest.TestCase):
++    def test_directional_preview_and_version_comparison(self):
++        from revisar_sprites import compare
++        result=self.check()
++        preview=(self.root/'out1/preview.html').read_text(encoding='utf-8')
++        for name in ('IDLE.FRONT','WALK.LEFT','RUN.RIGHT','PUNCH.BACK','KO.FRONT'):
++            self.assertIn(name,preview)
++        self.assertIn('@keyframes',preview)
++        comparison=compare(self.root/'hero.png',self.root/'hero.png',self.root/'same.json')
++        self.assertTrue(comparison['sameBytes']);self.assertFalse(comparison['artApproved'])
++        self.pixels[(32*512+32)*4]=10
++        write_png(self.root/'other.png',512,512,self.pixels)
++        self.assertFalse(compare(self.root/'hero.png',self.root/'other.png',self.root/'different.json')['sameBytes'])
++        with self.assertRaises(FileExistsError):compare(self.root/'hero.png',self.root/'other.png',self.root/'same.json')
++
+     def setUp(self):
+         self.temp = tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
+         self.root = Path(self.temp.name)

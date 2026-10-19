@@ -1,0 +1,177 @@
+--- /dev/null
++++ b/docs/TASK-061-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 271,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-061.md
+@@ -0,0 +1,5 @@
++# TASK-061 - Primeira masmorra
++
++Santuario exige missao aceita, possui entrada/retorno, dois sentinelas sem respawn e chefe adormecido ate derrota dos guardas. Reutiliza inimigos, combate, loot, quests e portais. Conclusao persistente dungeon-completed; guardas e chefe mortos permanecem mortos apos save. Reliquia entregue a Ancia conclui a campanha inicial.
++
++R recupera personagem morto na vila, preservando progresso; nao reinicia nem altera arena legada. Teste DungeonCycleTest percorre desde personagem novo ate retorno e entrega final, sem injecao de XP/moeda/itens/posicao. Teste isolado de chefe passou a usar fixture com guardas ja derrotados; nao altera baselines historicos.
+--- a/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
+@@ -34,6 +34,7 @@
+         bind(panel,"SPACE",()->runtime.command(w->w.attack()));
+         bind(panel,"Q",()->runtime.command(w->w.castAbility()));
+         bind(panel,"ESCAPE",()->runtime.command(w->w.closeDialogue()));
++        bind(panel,"R",()->runtime.command(w->w.returnHome()));
+         bind(panel,"1",()->runtime.command(w->w.use("potion")));
+         bind(panel,"F5",()->runtime.save(new com.projetok.rpg.LocalSaveStore(java.nio.file.Path.of("saves","offline.properties"))).whenComplete((unused,error)->SwingUtilities.invokeLater(()->JOptionPane.showMessageDialog(frame,error==null?"Progresso salvo":"Falha ao salvar: "+error.getMessage()))));
+         String[] keys = {"W", "S", "A", "D"};
+--- a/server/src/main/java/com/projetok/rpg/EnemyService.java
++++ b/server/src/main/java/com/projetok/rpg/EnemyService.java
+@@ -45,9 +45,11 @@
+     void respawn(long tick,String region) {
+         for(Enemy e:current(region))if(e.hp==0&&e.definition.respawn()>0&&tick>=e.readyTick){e.hp=e.definition.hp();e.generation++;e.setPosition(e.home);e.behavior="PATROL";}
+     }
+-    void update(String region,long tick,Position player,boolean alive,MovementService movement,CollisionService.Space space,java.util.function.IntConsumer damage,java.util.function.Predicate<Position> visible) {
++    void update(String region,long tick,Position player,boolean alive,MovementService movement,CollisionService.Space space,java.util.function.IntConsumer damage,java.util.function.Predicate<Position> visible,boolean bossUnlocked) {
+         for(Enemy e:current(region)) {
+             if(e.hp==0)continue;
++            if(e.definition.id().equals("warden")&&!bossUnlocked){e.behavior="DORMANT";continue;}
++            if(e.behavior.equals("DORMANT"))e.behavior="PATROL";
+             double d=distance(e.getPosition(),player),homeDistance=distance(e.getPosition(),e.home);
+             if(e.definition.id().equals("warden") && alive) {
+                 boolean enraged=e.hp*2<=e.definition.hp();
+@@ -97,7 +99,7 @@
+             if(e.hp<0||e.hp>e.definition.hp()||e.generation<1||e.readyTick<0||!new CollisionService().isFree(e,x,y,19,space))throw new IllegalArgumentException("Estado de inimigo invalido");
+             e.setPosition(new Position(x,y));
+             if(v.length==9) {
+-                if(!Set.of("PATROL","CHASE","ATTACK","RETURN","PREPARE","RECOVER").contains(v[7]))throw new IllegalArgumentException("IA invalida");
++                if(!Set.of("PATROL","CHASE","ATTACK","RETURN","PREPARE","RECOVER","DORMANT").contains(v[7]))throw new IllegalArgumentException("IA invalida");
+                 e.behavior=v[7];e.attackTick=Long.parseLong(v[8]);if(e.attackTick<0)throw new IllegalArgumentException("Recarga invalida");
+             }
+         }
+--- a/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -93,10 +93,13 @@
+     public boolean travel(String id) {
+         var portal=portals.get(id);
+         if(hp==0||transitioning||ticks<portalReadyTick||!portal.region().equals(region)||distance(body.getPosition(),new Position(portal.x(),portal.y()))>65)return false;
++        if(portal.destination().equals("ruins")&&!quests.containsKey("sanctuary")){message="Conclua Ecos no bosque e aceite a missao do Santuario com a Ancia";return false;}
+         if(!new CollisionService().isFree(body,portal.arrivalX(),portal.arrivalY(),18,space))return false;
+         transitioning=true;
+-        try{region=portal.destination();body.setPosition(new Position(portal.arrivalX(),portal.arrivalY()));closeDialogue();portalReadyTick=ticks+30;questService.refresh(quests,flags,inventory,region);message="Chegou a "+content.get("region",region).name();return true;}finally{transitioning=false;}
+-    }
++        try{region=portal.destination();body.setPosition(new Position(portal.arrivalX(),portal.arrivalY()));closeDialogue();portalReadyTick=ticks+30;if(region.equals("ruins"))flags.add("dungeon-started");questService.refresh(quests,flags,inventory,region);message="Chegou a "+content.get("region",region).name();return true;}finally{transitioning=false;}
++    }
++    private boolean bossUnlocked(){return enemies.current("ruins").stream().filter(e->!e.definition.id().equals("warden")).allMatch(e->e.hp==0);}
++    public boolean returnHome(){if(hp>0)return false;region="village";body.setPosition(new Position(140,320));hp=maxHp();stamina=1000;closeDialogue();message="Recuperado em Aurora. Progresso preservado.";return true;}
+     private String activeNpc="";
+     public boolean trade(String id,int amount,boolean buying) {
+         var item=items.get(id);if(amount<1||amount>99)throw new IllegalArgumentException("Quantidade de comercio invalida");
+@@ -138,7 +141,7 @@
+     public RpgWorld(CharacterIdentity identity,java.util.random.RandomGenerator random) { this(identity);this.random=java.util.Objects.requireNonNull(random); }
+     public boolean attack() {
+         if(hp==0||transitioning||ticks<attackReadyTick)return false;
+-        EnemyService.Enemy target=enemies.current(region).stream().filter(e->e.hp>0&&distance(body.getPosition(),e.getPosition())<= (identity.archetype().equals("mystic")?145:82))
++        EnemyService.Enemy target=enemies.current(region).stream().filter(e->e.hp>0&&(!e.definition.id().equals("warden")||bossUnlocked())&&distance(body.getPosition(),e.getPosition())<= (identity.archetype().equals("mystic")?145:82))
+             .min(java.util.Comparator.comparingDouble(e->distance(body.getPosition(),e.getPosition()))).orElse(null);
+         if(target==null||!lineClear(body.getPosition(),target.getPosition()))return false;
+         attackReadyTick=ticks+12;target.hp=Math.max(0,target.hp-attackPower());
+@@ -150,7 +153,7 @@
+                 questService.refresh(quests,flags,inventory,region);
+                 awardExperience(content.get("enemy",target.definition.id()).value());coins=Math.min(1_000_000,coins+5);
+                 message="Derrotado: +XP, loot e moedas";
+-                if(target.definition.id().equals("warden")){flags.add("boss-defeated");message="Guardiao derrotado! Reliquia conquistada.";}
++                if(target.definition.id().equals("warden")){flags.add("boss-defeated");flags.add("dungeon-completed");message="Santuario concluido! Volte a Ancia com a reliquia.";}
+             }
+         }
+         return true;
+@@ -196,7 +199,7 @@
+         ticks++;
+         enemies.respawn(ticks,region);
+         questService.refresh(quests,flags,inventory,region);
+-        enemies.update(region,ticks,body.getPosition(),hp>0,movement,space,n->receiveDamage(Math.max(1,n-defense())),p->lineClear(body.getPosition(),p));
++        enemies.update(region,ticks,body.getPosition(),hp>0,movement,space,n->receiveDamage(Math.max(1,n-defense())),p->lineClear(body.getPosition(),p),bossUnlocked());
+     }
+     public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message,maxHp(),level(),enemies.views(region),npcs.views(region),activeNpc,dialogue(),questService.views(quests,flags),portals.views(region),objects.views(region,ticks,flags)); }
+ }
+--- a/server/src/main/resources/rpg/content.properties
++++ b/server/src/main/resources/rpg/content.properties
+@@ -10,6 +10,7 @@
+ enemy.slime=Eco errante|forest|20
+ enemy.wolf=Lobo do bosque|forest|35
+ enemy.warden=Guardiao do Santuario|ruins|180
++enemy.sentinel=Sentinela do Santuario|ruins|45
+ npc.elder=Ancia da Aurora|village|0
+ npc.trader=Comerciante Nilo|village|0
+ quest.first_steps=Ecos no bosque|forest|80
+--- a/server/src/main/resources/rpg/enemies.properties
++++ b/server/src/main/resources/rpg/enemies.properties
+@@ -1,3 +1,4 @@
+ slime=40|6|65|230|360|240
+ wolf=65|9|90|260|400|330
+ warden=320|14|60|420|600|0
++sentinel=55|7|80|230|350|0
+--- a/server/src/main/resources/rpg/loot.properties
++++ b/server/src/main/resources/rpg/loot.properties
+@@ -2,3 +2,4 @@
+ slime=crystal|1.0|1|2
+ wolf=crystal|0.75|2|3
+ warden=relic|1.0|1|1
++sentinel=crystal|1.0|2|2
+--- a/server/src/main/resources/rpg/spawns.properties
++++ b/server/src/main/resources/rpg/spawns.properties
+@@ -2,3 +2,5 @@
+ forest_b=slime|forest|620|440
+ forest_c=wolf|forest|710|240
+ sanctuary=warden|ruins|720|320
++ruins_guard_a=sentinel|ruins|320|420
++ruins_guard_b=sentinel|ruins|530|420
+--- a/server/src/test/java/com/projetok/rpg/BossEncounterTest.java
++++ b/server/src/test/java/com/projetok/rpg/BossEncounterTest.java
+@@ -2,12 +2,13 @@
+ import org.junit.jupiter.api.Test;
+ import static org.junit.jupiter.api.Assertions.*;
+ class BossEncounterTest {
+-    static RpgWorld ruins() {var s=new RpgWorld().save();return RpgWorld.restore(new RpgSave(s.identity(),"ruins",650,320,s.hp(),s.xp(),s.coins(),s.inventory(),s.equipment(),s.quests(),s.flags(),s.ticks()));}
++    static RpgWorld ruins() {var s=new RpgWorld().save();var flags=new java.util.TreeSet<String>();for(String flag:s.flags()){if(flag.startsWith("mob:ruins_guard_")){var v=flag.split(":");v[2]="0";flag=String.join(":",v);}flags.add(flag);}return RpgWorld.restore(new RpgSave(s.identity(),"ruins",650,320,s.hp(),s.xp(),s.coins(),s.inventory(),s.equipment(),s.quests(),flags,s.ticks()));}
++    private EnemyService.View boss(RpgWorld w){return w.snapshot().enemies().stream().filter(EnemyService.View::boss).findFirst().orElseThrow();}
+     @Test void telegraphsThenExecutesAndNeverAttacksAfterDeath() {
+-        var w=ruins();w.tick(0,0);assertEquals("PREPARE",w.snapshot().enemies().get(0).state());int hp=w.save().hp();
++        var w=ruins();w.tick(0,0);assertEquals("PREPARE",boss(w).state());int hp=w.save().hp();
+         for(int i=0;i<29;i++)w.tick(0,0);assertEquals(hp,w.save().hp());w.tick(0,0);assertTrue(w.save().hp()<hp);
+-        w.awardExperience(3600);for(int i=0;i<12&&w.snapshot().enemies().get(0).hp()>0;i++){w.attack();for(int t=0;t<12;t++)w.tick(0,0);}
+-        assertEquals(0,w.snapshot().enemies().get(0).hp());assertTrue(w.save().flags().contains("boss-defeated"));
++        w.awardExperience(3600);for(int i=0;i<12&&boss(w).hp()>0;i++){w.attack();for(int t=0;t<12;t++)w.tick(0,0);}
++        assertEquals(0,boss(w).hp());assertTrue(w.save().flags().contains("boss-defeated"));
+         long xp=w.save().xp();hp=w.save().hp();for(int t=0;t<180;t++)w.tick(0,0);assertEquals(hp,w.save().hp());assertEquals(xp,w.save().xp());
+     }
+ }
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/DungeonCycleTest.java
+@@ -0,0 +1,12 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class DungeonCycleTest {
++    static void fight(RpgWorld w,int ticks){for(int i=0;i<ticks;i++){w.attack();if(w.save().hp()<w.maxHp()-45)w.use("potion");w.tick(0,0);}assertTrue(w.save().hp()>0);}
++    @Test void fullDungeonFromNewCharacterWithoutInjectedProgress() {
++        var w=new RpgWorld(CharacterIdentity.create("Expedicao","guardian","amber"));w.interact();w.acceptQuest("first_steps");OfflineCycleTest.move(w,855,320);w.interact();fight(w,450);OfflineCycleTest.move(w,80,320);w.interact();OfflineCycleTest.move(w,190,320);w.interact();assertTrue(w.completeQuest("first_steps"));assertTrue(w.acceptQuest("sanctuary"));
++        OfflineCycleTest.move(w,330,440);w.harvest("starter_chest");assertTrue(w.equip("sword"));OfflineCycleTest.move(w,855,320);w.interact();OfflineCycleTest.move(w,855,320);assertTrue(w.interact());assertEquals("ruins",w.save().region());
++        OfflineCycleTest.move(w,270,420);fight(w,120);OfflineCycleTest.move(w,510,420);fight(w,160);OfflineCycleTest.move(w,670,320);fight(w,260);assertTrue(w.save().flags().contains("dungeon-completed"));assertEquals(1,w.inventory().count("relic"));
++        w=RpgWorld.restore(w.save());OfflineCycleTest.move(w,150,350);OfflineCycleTest.move(w,80,320);assertTrue(w.interact());OfflineCycleTest.move(w,80,320);assertTrue(w.interact());OfflineCycleTest.move(w,190,320);w.interact();assertTrue(w.completeQuest("sanctuary"));assertTrue(w.save().flags().contains("quest-done:sanctuary"));
++    }
++}

@@ -1,0 +1,62 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1720 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-067 - Fronteira autoritativa e protocolo V1) Tj T*
+() Tj T*
+(Inspecionados KServer, Network e Kryonet legados: startup tenta banco e mensagens de) Tj T*
+(movimento carregam coordenadas vindas do cliente. Nenhum desses entrypoints foi) Tj T*
+(executado. O experimento novo fica em com.projetok.multiplayer e nao acessa PostgreSQL) Tj T*
+(nem reutiliza login/senhas legados.) Tj T*
+() Tj T*
+(Cliente envia somente intencoes MOVE/ATTACK/LIGHTNING_STEP/CRYOSTASIS com sequencia e) Tj T*
+(alvo/direcao. Identidade e vinculada ao socket pelo servidor; cliente nao envia ID de) Tj T*
+(outro jogador, HP, dano ou moedas. Sessao transitoria nao representa autenticacao de) Tj T*
+(conta.) Tj T*
+() Tj T*
+(Frames TCP: int32 big-endian de tamanho 2..4096, byte versao=1, byte tipo \(1 Hello, 2) Tj T*
+(Welcome, 3 Intent, 4 State, 5 Bye, 6 Error\). Strings UTF-8 prefixadas por byte, maximo) Tj T*
+(240 bytes; nomes 3..24 caracteres. State: tick int64, contagem byte <=8, atores tipados.) Tj T*
+(A ordem dos quatro codigos de acao e parte do contrato V1 e nao deve ser reordenada sem) Tj T*
+(nova versao.) Tj T*
+() Tj T*
+(DTOs imutaveis validam finitude, IDs, limites e duplicatas. Codec recusa truncamento,) Tj T*
+(desconhecidos, dados excedentes e versoes incompativeis. Sem ObjectInputStream. Fila de) Tj T*
+(comandos e limites de sessao serao implementados no servidor; IO nao pertence a thread) Tj T*
+(de simulacao.) Tj T*
+() Tj T*
+(RPG offline 0.66.0-rc2 congelado em ZIP auditado, SHA-256) Tj T*
+(2f59766f860df6e8db66f2dbc2ca219bad970cffd9e7e0df9f800a13658f8f9e. Nenhum save offline) Tj T*
+(sera compartilhado automaticamente.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-067 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2116
+%%EOF

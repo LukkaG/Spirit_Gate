@@ -1,0 +1,31 @@
+TASK-009 - mvn clean test - BUILD SUCCESS
+{'tests': 189, 'failures': 0, 'errors': 0, 'skipped': 0}
+Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.
+
+com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
+com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
+com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
+com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
+com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
+com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
+com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
+com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
+com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
+com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
+com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
+com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
+com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=12, failures=0, errors=0, skipped=0
+com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
+com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
+com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
+com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
+com.projetok.prototype.DebugLauncherEntrypointTest: tests=1, failures=0, errors=0, skipped=0
+com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
+com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
+com.projetok.prototype.HudSkillFeedbackTest: tests=12, failures=0, errors=0, skipped=0
+com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
+com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
+com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
+com.projetok.prototype.SoftObstacleDemoTest: tests=6, failures=0, errors=0, skipped=0
+com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
+com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
