@@ -8,6 +8,7 @@ import com.projetok.domain.entity.component.HealthComponent;
 import com.projetok.domain.entity.component.InventoryComponent;
 import com.projetok.domain.entity.component.RaceComponent;
 import com.projetok.domain.entity.component.StatsComponent;
+import com.projetok.domain.entity.component.StaminaComponent;
 import com.projetok.domain.item.EquipmentSlot;
 import com.projetok.domain.network.PlayerConnection;
 import com.projetok.domain.progression.VitalityService;
@@ -39,6 +40,7 @@ public final class PlayerFactory {
         player.attach(new InventoryComponent());
         player.attach(new CombatComponent(archetype.startingStyle()));
         player.attach(new HealthComponent(archetype.race().hpGrowth().baseHp()));
+        player.attach(new StaminaComponent());
 
         if (archetype.startingWeapon() != null) {
             player.require(EquipmentComponent.class).equip(EquipmentSlot.WEAPON, archetype.startingWeapon());

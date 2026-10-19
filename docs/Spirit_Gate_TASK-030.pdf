@@ -1,0 +1,61 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1816 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-030 - Estabilidade das animações) Tj T*
+() Tj T*
+(Objetivo: validar transições direcionais sem alterar combate.) Tj T*
+(Base aprovada: TASK-029, 231 JUnit e 25 Python.) Tj T*
+(Diagnóstico: sequenciador já trata prioridades e pausa por Freeze; não foi) Tj T*
+(encontrada regressão reproduzível que justifique alterar sua política.) Tj T*
+(Política existente preservada: morte vence tudo e usa FRONT; HIT vence ATTACK;) Tj T*
+(animações pontuais persistem até sua duração; direção nova reinicia o frame;) Tj T*
+(Freeze segura tempo/estado enquanto não há sinal novo; R limpa tracks; WALK) Tj T*
+(exige deslocamento real. RUN continua sem emissão porque não existe corrida real.) Tj T*
+(Contrato temporal aceita dt finito entre 0 e 0.1; valores grandes são recusados) Tj T*
+(explicitamente. Não há avanço silencioso ou alteração do relógio de combate.) Tj T*
+() Tj T*
+(Implementação: ampliados testes em DirectionalAnimationTest.java, sem mudança) Tj T*
+(funcional desnecessária. Cobrem deltas variáveis, ciclos completos, limites e) Tj T*
+(grandes/NaN/infinito, ataque caminhando, dano durante ataque, morte, direção e R.) Tj T*
+(Testes anteriores mantêm Freeze/retomada, KO final, sinais reais e fallback atlas.) Tj T*
+(Suíte completa e totais: TASK-030-qualidade.json, TASK-030-testes.txt e logs.) Tj T*
+(Reprodução: python tools/qualidade.py --offline --task 030) Tj T*
+(Diff/checkpoints padronizados; próximo passo TASK-031.) Tj T*
+(Limites: sem nova mecânica de corrida ou arte final. Homologação artística e) Tj T*
+(interativa humana permanece pendente. Aceite técnico depende dos logs aprovados.) Tj T*
+() Tj T*
+(## Resultado final observado) Tj T*
+(Validação local aprovada: 233 JUnit e 25 Python; zero falhas.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-030 - página 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2212
+%%EOF

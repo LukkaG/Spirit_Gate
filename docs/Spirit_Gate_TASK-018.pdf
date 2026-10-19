@@ -1,0 +1,65 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1990 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-018 - Autoria e revisão de sprites) Tj T*
+() Tj T*
+(18/10/2026. 216 JUnit e 16 Python verdes; logs TASK-018-java.log e TASK-018-python.log.) Tj T*
+() Tj T*
+(Criada tools/revisar_sprites.py reutilizando contrato e inspetor TASK-013. Template) Tj T*
+(transparente vazio 512x512: 59 posições 64x64 e cinco células não usadas. Índice JSON:) Tj T*
+(ação, direção, frame, duração 100ms, pivot 32,48. Arquivos reproduzíveis em) Tj T*
+(docs/autoria-018. Template vazio é intencionalmente reprovado como personagem; não é) Tj T*
+(arte de produção.) Tj T*
+() Tj T*
+(CLI review produz HTML com grade, fundo quadriculado, índices, pivots, tamanho, alfa,) Tj T*
+(bordas e SHA por arquivo. Reutiliza inspect e acrescenta ordem/direção/pivot/duração.) Tj T*
+(Saídas fora de assets, sem alterar fontes. Relatório e preview dos 228 PNGs em) Tj T*
+(docs/revisao-fontes-018: todos continuam reprovados. Nenhum atlas de produção.) Tj T*
+() Tj T*
+(Aseprite: nomear ACTION.DIRECTION.INDEX; direções FRONT/BACK/LEFT/RIGHT. Exportar json-) Tj T*
+(array e PNG, duração 100ms, sourceSize e spriteSourceSize 64x64; sem trim/rotate/pack.) Tj T*
+(CLI aseprite PNG JSON NOVO_MANIFEST rejeita incompatibilidade. Orientação visual exige) Tj T*
+(revisão humana.) Tj T*
+() Tj T*
+(Comandos: python tools/revisar_sprites.py template NOVA_PASTA; python) Tj T*
+(tools/revisar_sprites.py review RAIZ MANIFEST NOVA_PASTA; python) Tj T*
+(tools/revisar_sprites.py aseprite PNG JSON NOVO_MANIFEST. Após aprovação humana) Tj T*
+(expressa, registrar SHA exato em review.approvedSha256 e executar validar_assets.py.) Tj T*
+(Edição exige nova revisão.) Tj T*
+() Tj T*
+(Testes novos: template vazio/59/reprodução, direção invertida, ordem, ausência, pivot,) Tj T*
+(sobreposição, alfa parcial, hash alterado, importação Aseprite válida e rejeição de) Tj T*
+(trim/ordem. Fixtures sintéticas temporárias. Nenhuma aprovação de arte existente.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-018 - página 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2386
+%%EOF

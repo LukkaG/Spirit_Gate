@@ -1,0 +1,160 @@
+--- /dev/null
++++ b/docs/TASK-073-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 292,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-073.md
+@@ -0,0 +1,7 @@
++# TASK-073 - Encontro cooperativo
++
++Chefe compartilhado criado por MobFactory, nivel 14 da curva demon (302 HP), persegue/ataca com MovementService/CombatService e respeita Freeze. Dois jogadores podem causar dano no mesmo alvo; quem contribuiu dano positivo e permanece conectado recebe 20 moedas transitorias uma unica vez. Desconectar cancela habilidades da sessao e perde elegibilidade; reconectar cria identidade nova sem recompensa retroativa.
++
++Nenhum inventario/save offline importado ou sincronizado. Ledger do encontro e autoritativo, nao ha mensagem cliente para pedir recompensa. Teste deterministico executa combate de dois controladores reais por intencoes, derrota compartilhada, repeticao de ataques e reconexao sem duplicacao.
++
++Fechamento do contrato V1 antes da primeira distribuicao de rede: Actor tambem carrega facingX/facingY float e flags byte (1 dash ativo, 2 aguardando pouso, 4 Freeze). DTO/interpolacao preservam esses dados. Nao existe compatibilidade declarada com prototipos intermediarios ainda nao distribuidos.
+--- a/server/src/main/java/com/projetok/multiplayer/CoopWorld.java
++++ b/server/src/main/java/com/projetok/multiplayer/CoopWorld.java
+@@ -11,6 +11,7 @@
+ import com.projetok.domain.combat.CombatService;
+ import com.projetok.domain.event.GameEventBus;
+ import com.projetok.domain.effect.StatusEffectService;
++import com.projetok.domain.effect.StatusEffectType;
+ import com.projetok.domain.probability.ProbabilityService;
+ import com.projetok.domain.item.LootTable;
+ import com.projetok.domain.ai.PassiveBehavior;
+@@ -19,7 +20,7 @@
+ public final class CoopWorld {
+     public static final int BOSS_ID=900_000_001;
+     final class Session {
+-        final Player player;long sequence,inputTick,commandTick=-1,attackReady;int commands,coins;float dx,dy;
++        final Player player;long sequence,inputTick,commandTick=-1,attackReady;int commands,coins,damage;float dx,dy,fx=1,fy;
+         final LightningStepService dash;final CryostasisService cryo;
+         Session(Player player){this.player=player;dash=new LightningStepService(movement,stamina,collisions,CollisionPolicy.PHASE_THROUGH_ACTORS_AND_SOFT);cryo=new CryostasisService(combat,stamina,status,new ProbabilityService(new Random(17L+player.getId())));}
+     }
+@@ -32,6 +33,7 @@
+     private final List<CollisionService.Obstacle> obstacles=List.of(new CollisionService.Obstacle(380,180,120,120));
+     private final Mob boss=new MobFactory(new VitalityService()).spawn(BOSS_ID,new MobArchetype(RaceRegistry.withDefaults().get("demon"),"Guardiao Cooperativo",14,8,4,8,null,LootTable.of(),new PassiveBehavior()),new Position(720,320));
+     private long tick;
++    private long bossAttackReady;private boolean rewarded;
+     public boolean join(int id,String name){
+         new Protocol.Hello(1,name);if(id<1||id>1_000_000||sessions.containsKey(id)||sessions.size()>=2)return false;
+         Position spawn=new Position(140,sessions.values().stream().anyMatch(s->s.player.getPosition().y()<350)?410:300);
+@@ -45,10 +47,10 @@
+         if(s.commandTick!=tick){s.commandTick=tick;s.commands=0;}if(++s.commands>8)return false;
+         s.sequence=intent.sequence();
+         return switch(intent.action()){
+-            case MOVE->{s.dx=intent.x();s.dy=intent.y();s.inputTick=tick;yield true;}
+-            case ATTACK->{if(boss.isDead()||s.dash.active()||s.dash.awaitingLanding()||tick<s.attackReady||distance(s.player.getPosition(),boss.getPosition())>82||!lineClear(s.player))yield false;s.attackReady=tick+12;combat.attack(s.player,boss);yield true;}
++            case MOVE->{s.dx=intent.x();s.dy=intent.y();s.inputTick=tick;if(s.dx!=0||s.dy!=0){var d=movement.direction(s.dx,s.dy);s.fx=d.x();s.fy=d.y();}yield true;}
++            case ATTACK->{if(boss.isDead()||s.dash.active()||s.dash.awaitingLanding()||tick<s.attackReady||distance(s.player.getPosition(),boss.getPosition())>82||!lineClear(s.player))yield false;s.attackReady=tick+12;s.damage+=combat.attack(s.player,boss);reward();yield true;}
+             case LIGHTNING_STEP->s.dash.cast(s.player,new SkillCastCommand(LightningStepService.ID,intent.x(),intent.y()),18,space())==LightningStepService.Status.STARTED;
+-            case CRYOSTASIS->{if(s.dash.active()||s.dash.awaitingLanding())yield false;yield s.cryo.cast(s.player,new SkillCastCommand(CryostasisService.ID,intent.x(),intent.y()),960,640,targets()).status()==CryostasisService.Status.CAST;}
++            case CRYOSTASIS->{if(s.dash.active()||s.dash.awaitingLanding())yield false;var result=s.cryo.cast(s.player,new SkillCastCommand(CryostasisService.ID,intent.x(),intent.y()),960,640,targets());s.damage+=result.hits().stream().mapToInt(CryostasisService.Hit::damage).sum();reward();yield result.status()==CryostasisService.Status.CAST;}
+         };
+     }
+     private List<CryostasisService.Target> targets(){return List.of(new CryostasisService.Target(boss,24));}
+@@ -58,9 +60,20 @@
+     public void step(){
+         tick++;var space=space();status.update(boss,1f/30);
+         for(Session s:sessions.values()){
+-            stamina.regenerate(s.player,1f/30);boolean active=s.dash.active()||s.dash.awaitingLanding();s.dash.update(s.player,1f/30,18,space);s.cryo.update(1f/30,targets());
++            stamina.regenerate(s.player,1f/30);boolean active=s.dash.active()||s.dash.awaitingLanding();s.dash.update(s.player,1f/30,18,space);s.damage+=s.cryo.update(1f/30,targets()).stream().mapToInt(CryostasisService.Hit::damage).sum();
+             if(!s.player.isDead()&&!active&&tick-s.inputTick<=15){var d=movement.direction(s.dx,s.dy);movement.moveContinuous(s.player,d.x()*215/30,d.y()*215/30,18,space);}
+         }
++        reward();updateBoss(space);
+     }
+-    public Protocol.State snapshot(){var actors=new ArrayList<Protocol.Actor>();for(Session s:sessions.values()){var p=s.player;var hp=p.require(HealthComponent.class);actors.add(new Protocol.Actor(p.getId(),p.getName(),p.getPosition().x(),p.getPosition().y(),hp.current(),hp.max(),p.require(StaminaComponent.class).current(),s.coins,false));}var hp=boss.require(HealthComponent.class);actors.add(new Protocol.Actor(BOSS_ID,boss.getName(),boss.getPosition().x(),boss.getPosition().y(),hp.current(),hp.max(),0,0,true));return new Protocol.State(tick,actors);}
++    private void reward(){if(!boss.isDead()||rewarded)return;rewarded=true;for(Session s:sessions.values())if(s.damage>0)s.coins=Math.min(1_000_000,s.coins+20);}
++    private void updateBoss(CollisionService.Space space){
++        if(boss.isDead()||boss.require(StatusEffectsComponent.class).has(StatusEffectType.FREEZE))return;
++        var target=sessions.values().stream().filter(s->!s.player.isDead()).min(Comparator.comparingDouble(s->distance(s.player.getPosition(),boss.getPosition()))).orElse(null);
++        Position home=new Position(720,320);boolean returning=distance(boss.getPosition(),home)>420;
++        Position destination=target==null||returning||distance(target.player.getPosition(),boss.getPosition())>300?home:target.player.getPosition();
++        double distance=distance(boss.getPosition(),destination);
++        if(destination!=home&&distance<=66&&lineClear(target.player)){if(tick>=bossAttackReady){combat.attack(boss,target.player);bossAttackReady=tick+36;}}
++        else if(distance>3){var d=movement.direction(destination.x()-boss.getPosition().x(),destination.y()-boss.getPosition().y());movement.moveContinuous(boss,d.x()*2,d.y()*2,24,space);}
++    }
++    public Protocol.State snapshot(){var actors=new ArrayList<Protocol.Actor>();for(Session s:sessions.values()){var p=s.player;var hp=p.require(HealthComponent.class);actors.add(new Protocol.Actor(p.getId(),p.getName(),p.getPosition().x(),p.getPosition().y(),hp.current(),hp.max(),p.require(StaminaComponent.class).current(),s.coins,false,s.fx,s.fy,(s.dash.active()?1:0)|(s.dash.awaitingLanding()?2:0)));}var hp=boss.require(HealthComponent.class);actors.add(new Protocol.Actor(BOSS_ID,boss.getName(),boss.getPosition().x(),boss.getPosition().y(),hp.current(),hp.max(),0,0,true,1,0,boss.require(StatusEffectsComponent.class).has(StatusEffectType.FREEZE)?4:0));return new Protocol.State(tick,actors);}
+ }
+--- a/server/src/main/java/com/projetok/multiplayer/Protocol.java
++++ b/server/src/main/java/com/projetok/multiplayer/Protocol.java
+@@ -10,8 +10,9 @@
+     public record Hello(int version,String name)implements Message{public Hello{if(version<0||version>65535)throw new IllegalArgumentException("Versao invalida");Protocol.name(name);}}
+     public record Welcome(int id)implements Message{public Welcome{if(id<1)throw new IllegalArgumentException("ID invalido");}}
+     public record Intent(long sequence,Action action,float x,float y)implements Message{public Intent{if(sequence<1||sequence>1_000_000_000_000L||action==null||!Float.isFinite(x)||!Float.isFinite(y)||Math.abs(x)>8192||Math.abs(y)>8192)throw new IllegalArgumentException("Intencao invalida");}}
+-    public record Actor(int id,String name,float x,float y,int hp,int maxHp,float stamina,int coins,boolean boss) {
+-        public Actor{Protocol.name(name);if(id<1||!Float.isFinite(x)||!Float.isFinite(y)||x<18||x>942||y<18||y>622||hp<0||hp>maxHp||maxHp<1||maxHp>10000||!Float.isFinite(stamina)||stamina<0||stamina>1000||coins<0||coins>1_000_000)throw new IllegalArgumentException("Ator invalido");}
++    public record Actor(int id,String name,float x,float y,int hp,int maxHp,float stamina,int coins,boolean boss,float facingX,float facingY,int flags) {
++        public Actor(int id,String name,float x,float y,int hp,int maxHp,float stamina,int coins,boolean boss){this(id,name,x,y,hp,maxHp,stamina,coins,boss,1,0,0);}
++        public Actor{Protocol.name(name);if(id<1||!Float.isFinite(x)||!Float.isFinite(y)||x<18||x>942||y<18||y>622||hp<0||hp>maxHp||maxHp<1||maxHp>10000||!Float.isFinite(stamina)||stamina<0||stamina>1000||coins<0||coins>1_000_000||!Float.isFinite(facingX)||!Float.isFinite(facingY)||Math.hypot(facingX,facingY)>1.001||flags<0||flags>7)throw new IllegalArgumentException("Ator invalido");}
+     }
+     public record State(long tick,List<Actor> actors)implements Message{
+         public State{actors=List.copyOf(actors);if(tick<0||tick>1_000_000_000||actors.size()>MAX_ACTORS||actors.stream().map(Actor::id).distinct().count()!=actors.size())throw new IllegalArgumentException("Snapshot invalido");}
+@@ -25,7 +26,7 @@
+         if(message instanceof Hello m){out.writeByte(1);out.writeInt(m.version());text(out,m.name());}
+         else if(message instanceof Welcome m){out.writeByte(2);out.writeInt(m.id());}
+         else if(message instanceof Intent m){out.writeByte(3);out.writeLong(m.sequence());out.writeByte(m.action().ordinal()+1);out.writeFloat(m.x());out.writeFloat(m.y());}
+-        else if(message instanceof State m){out.writeByte(4);out.writeLong(m.tick());out.writeByte(m.actors().size());for(Actor a:m.actors()){out.writeInt(a.id());text(out,a.name());out.writeFloat(a.x());out.writeFloat(a.y());out.writeInt(a.hp());out.writeInt(a.maxHp());out.writeFloat(a.stamina());out.writeInt(a.coins());out.writeBoolean(a.boss());}}
++        else if(message instanceof State m){out.writeByte(4);out.writeLong(m.tick());out.writeByte(m.actors().size());for(Actor a:m.actors()){out.writeInt(a.id());text(out,a.name());out.writeFloat(a.x());out.writeFloat(a.y());out.writeInt(a.hp());out.writeInt(a.maxHp());out.writeFloat(a.stamina());out.writeInt(a.coins());out.writeBoolean(a.boss());out.writeFloat(a.facingX());out.writeFloat(a.facingY());out.writeByte(a.flags());}}
+         else if(message instanceof Bye){out.writeByte(5);}
+         else if(message instanceof Error m){out.writeByte(6);text(out,m.reason());}
+         else throw new IOException("Mensagem desconhecida");
+@@ -38,7 +39,7 @@
+             Message message=switch(in.readUnsignedByte()){
+                 case 1->new Hello(in.readInt(),text(in));case 2->new Welcome(in.readInt());
+                 case 3->{long sequence=in.readLong();int action=in.readUnsignedByte();if(action<1||action>4)throw new IOException("Acao desconhecida");yield new Intent(sequence,Action.values()[action-1],in.readFloat(),in.readFloat());}
+-                case 4->{long tick=in.readLong();int count=in.readUnsignedByte();if(count>MAX_ACTORS)throw new IOException("Atores excessivos");List<Actor> actors=new ArrayList<>();for(int i=0;i<count;i++)actors.add(new Actor(in.readInt(),text(in),in.readFloat(),in.readFloat(),in.readInt(),in.readInt(),in.readFloat(),in.readInt(),in.readBoolean()));yield new State(tick,actors);}
++                case 4->{long tick=in.readLong();int count=in.readUnsignedByte();if(count>MAX_ACTORS)throw new IOException("Atores excessivos");List<Actor> actors=new ArrayList<>();for(int i=0;i<count;i++)actors.add(new Actor(in.readInt(),text(in),in.readFloat(),in.readFloat(),in.readInt(),in.readInt(),in.readFloat(),in.readInt(),in.readBoolean(),in.readFloat(),in.readFloat(),in.readUnsignedByte()));yield new State(tick,actors);}
+                 case 5->new Bye();case 6->new Error(text(in));default->throw new IOException("Tipo desconhecido");};
+             if(in.available()!=0)throw new IOException("Dados excedentes");return message;
+         }catch(IllegalArgumentException error){throw new IOException("Mensagem malformada",error);}
+--- a/server/src/main/java/com/projetok/multiplayer/RemotePresentation.java
++++ b/server/src/main/java/com/projetok/multiplayer/RemotePresentation.java
+@@ -5,6 +5,6 @@
+     public RemotePresentation{Objects.requireNonNull(previous);Objects.requireNonNull(current);if(previous.tick()>current.tick())throw new IllegalArgumentException("Frames fora de ordem");}
+     public Protocol.State sample(double alpha,int localId){
+         if(!Double.isFinite(alpha)||alpha<0||alpha>1)throw new IllegalArgumentException("Interpolacao invalida");Map<Integer,Protocol.Actor> before=new HashMap<>();previous.actors().forEach(a->before.put(a.id(),a));
+-        return new Protocol.State(current.tick(),current.actors().stream().map(a->{var p=before.get(a.id());if(a.id()==localId||p==null||p.hp()==0||a.hp()==0)return a;return new Protocol.Actor(a.id(),a.name(),(float)(p.x()+(a.x()-p.x())*alpha),(float)(p.y()+(a.y()-p.y())*alpha),a.hp(),a.maxHp(),a.stamina(),a.coins(),a.boss());}).toList());
++        return new Protocol.State(current.tick(),current.actors().stream().map(a->{var p=before.get(a.id());if(a.id()==localId||p==null||p.hp()==0||a.hp()==0)return a;return new Protocol.Actor(a.id(),a.name(),(float)(p.x()+(a.x()-p.x())*alpha),(float)(p.y()+(a.y()-p.y())*alpha),a.hp(),a.maxHp(),a.stamina(),a.coins(),a.boss(),a.facingX(),a.facingY(),a.flags());}).toList());
+     }
+ }
+--- a/server/src/test/java/com/projetok/multiplayer/AuthoritativeCombatTest.java
++++ b/server/src/test/java/com/projetok/multiplayer/AuthoritativeCombatTest.java
+@@ -3,7 +3,7 @@
+ import static org.junit.jupiter.api.Assertions.*;
+ class AuthoritativeCombatTest {
+     static Protocol.Actor actor(CoopWorld world,int id){return world.snapshot().actors().stream().filter(a->a.id()==id).findFirst().orElseThrow();}
+-    static void move(CoopWorld world,int id,float x,float y,long[] seq){for(int i=0;i<300;i++){var p=actor(world,id);float dx=x-p.x(),dy=y-p.y();if(Math.hypot(dx,dy)<8){world.accept(id,new Protocol.Intent(++seq[0],Protocol.Action.MOVE,0,0));return;}world.accept(id,new Protocol.Intent(++seq[0],Protocol.Action.MOVE,Math.signum(dx),Math.signum(dy)));world.step();}fail("Destino bloqueado");}
++    static void move(CoopWorld world,int id,float x,float y,long[] seq){for(int i=0;i<300;i++){var p=actor(world,id);var boss=actor(world,CoopWorld.BOSS_ID);float dx=x-p.x(),dy=y-p.y();if(Math.hypot(dx,dy)<8||x>500&&Math.hypot(p.x()-boss.x(),p.y()-boss.y())<80){world.accept(id,new Protocol.Intent(++seq[0],Protocol.Action.MOVE,0,0));return;}world.accept(id,new Protocol.Intent(++seq[0],Protocol.Action.MOVE,Math.signum(dx),Math.signum(dy)));world.step();}fail("Destino bloqueado");}
+     @Test void serverResolvesDamageCooldownAndReplays(){var w=new CoopWorld();w.join(1,"Jogador Um");long[] seq={0};move(w,1,140,340,seq);move(w,1,650,340,seq);int before=actor(w,CoopWorld.BOSS_ID).hp();var attack=new Protocol.Intent(++seq[0],Protocol.Action.ATTACK,0,0);assertTrue(w.accept(1,attack));assertTrue(actor(w,CoopWorld.BOSS_ID).hp()<before);int after=actor(w,CoopWorld.BOSS_ID).hp();assertFalse(w.accept(1,attack));assertFalse(w.accept(1,new Protocol.Intent(++seq[0],Protocol.Action.ATTACK,0,0)));assertEquals(after,actor(w,CoopWorld.BOSS_ID).hp());}
+     @Test void realSkillServicesOwnCostsAndCooldowns(){var w=new CoopWorld();w.join(1,"Jogador Um");assertTrue(w.accept(1,new Protocol.Intent(1,Protocol.Action.LIGHTNING_STEP,800,300)));assertEquals(65,actor(w,1).stamina());assertFalse(w.accept(1,new Protocol.Intent(2,Protocol.Action.LIGHTNING_STEP,800,300)));for(int i=0;i<10;i++)w.step();float stamina=actor(w,1).stamina();assertTrue(w.accept(1,new Protocol.Intent(3,Protocol.Action.CRYOSTASIS,700,320)));assertEquals(stamina-55,actor(w,1).stamina(),0.001);assertFalse(w.accept(1,new Protocol.Intent(4,Protocol.Action.CRYOSTASIS,700,320)));}
+ }
+--- /dev/null
++++ b/server/src/test/java/com/projetok/multiplayer/CooperativeEncounterTest.java
+@@ -0,0 +1,7 @@
++package com.projetok.multiplayer;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class CooperativeEncounterTest {
++    static void control(CoopWorld w,int id,long[] seq){var p=AuthoritativeCombatTest.actor(w,id);var boss=AuthoritativeCombatTest.actor(w,CoopWorld.BOSS_ID);double distance=Math.hypot(p.x()-boss.x(),p.y()-boss.y());if(distance<=80){w.accept(id,new Protocol.Intent(++seq[0],Protocol.Action.MOVE,0,0));w.accept(id,new Protocol.Intent(++seq[0],Protocol.Action.ATTACK,0,0));}else{float tx=p.x()<530?550:boss.x(),ty=p.x()<530?(id==1?345:410):boss.y();w.accept(id,new Protocol.Intent(++seq[0],Protocol.Action.MOVE,Math.abs(tx-p.x())<5?0:Math.signum(tx-p.x()),Math.abs(ty-p.y())<5?0:Math.signum(ty-p.y())));}}
++    @Test void sharedEnemyAndParticipationRewardOnlyOnce(){var w=new CoopWorld();w.join(1,"Jogador Um");w.join(2,"Jogador Dois");long[] one={0},two={0};for(int i=0;i<600&&AuthoritativeCombatTest.actor(w,CoopWorld.BOSS_ID).hp()>0;i++){control(w,1,one);control(w,2,two);w.step();}assertEquals(0,AuthoritativeCombatTest.actor(w,CoopWorld.BOSS_ID).hp());assertEquals(20,AuthoritativeCombatTest.actor(w,1).coins());assertEquals(20,AuthoritativeCombatTest.actor(w,2).coins());for(int i=0;i<100;i++){w.accept(1,new Protocol.Intent(++one[0],Protocol.Action.ATTACK,0,0));w.step();}assertEquals(20,AuthoritativeCombatTest.actor(w,1).coins());w.leave(1);assertTrue(w.join(3,"Novo Jogador"));assertEquals(0,AuthoritativeCombatTest.actor(w,3).coins());}
++}

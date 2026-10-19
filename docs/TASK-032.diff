@@ -1,0 +1,128 @@
+--- /dev/null
++++ b/docs/TASK-032-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 236,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-032.md
+@@ -0,0 +1,17 @@
++# TASK-032 - HUD e ajuda
++
++Objetivo: tornar controles e estados existentes compreensíveis ao testador.
++Base aprovada: TASK-031, 235 JUnit e 25 Python.
++Diagnóstico: HUD já publicava HP, vigor, recargas, indisponibilidade, Freeze e
++colisão sólida; evitada duplicação de regras. Adicionado painel F1, sem conflito
++com atalhos, com controles, significado dos recursos, dash seletivo e estados reais.
++Ajuda usa o mesmo canvas escalonado da viewport e não pausa a simulação.
++Arquivos: DebugPanel.java, DebugLauncher.java, HelpPresentationTest.java.
++Teste verifica binding, alternância, valores publicados, três dimensões e igualdade
++com runtime de referência. Regressões HUD anteriores permanecem intactas.
++Comando: python tools/qualidade.py --offline --task 032
++Totais reais, logs e aceite técnico: TASK-032-qualidade.json e TASK-032-testes.txt.
++Checkpoints/diff padronizados; próxima TASK-033.
++Limites: fonte acompanha escala da janela, podendo ficar pequena em janelas muito
++reduzidas; legibilidade final e homologação humana continuam pendentes. Sem novos
++custos, cooldowns, comandos de gameplay ou dependências.
+--- a/server/src/main/java/com/projetok/prototype/DebugLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/DebugLauncher.java
+@@ -138,6 +138,10 @@
+             });
+         }
+         bindKey(inputs, "H", "hitboxes", null);
++        bindKey(inputs, "F1", "help", null);
++        actions.put("help", new AbstractAction() {
++            @Override public void actionPerformed(ActionEvent e) { panel.toggleHelp(); }
++        });
+         actions.put("hitboxes", new AbstractAction() {
+             @Override public void actionPerformed(ActionEvent e) {
+                 panel.setShowHitboxes(!panel.isShowHitboxes());
+--- a/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ b/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -25,6 +25,22 @@
+     private static final Color ACCENT = new Color(70, 219, 235);
+     private final Supplier<DebugSnapshot> source;
+     private boolean showHitboxes;
++    private boolean showHelp;
++    /** Alterna ajuda sem pausar ou enviar comandos ao mundo. */
++    public void toggleHelp() { showHelp=!showHelp;repaint(); }
++    public boolean isHelpVisible() { return showHelp; }
++    /** Texto de apresentação usa somente os valores já publicados pela simulação. */
++    static java.util.List<String> helpLines(DebugSnapshot snapshot) {
++        return java.util.List.of("SPIRIT GATE - AJUDA (F1 para fechar)",
++                "WASD: mover | ESPACO: golpe | E: vigor fisico",
++                "SHIFT: Passo Relampago | Q: Criostase | mouse: mirar na arena",
++                "R: reiniciar | H: hitboxes | F1: ajuda",
++                "HP: vida | VIGOR: recurso para acoes e habilidades",
++                "SHIFT atravessa obstaculos leves; solidos e bordas interrompem.",
++                "Congelamento e recargas aparecem no HUD; mire fora do HUD.",
++                "HP "+snapshot.playerHp()+"/"+snapshot.playerMaxHp()+" | VIGOR "+Math.round(snapshot.stamina())+"/"+Math.round(snapshot.maxStamina()),
++                "Q: "+snapshot.cryostasisHud().stateText()+" | SHIFT: "+snapshot.lightningStepHud().stateText());
++    }
+     private Supplier<DirectionalAnimation.Presentation> presentationSource;
+     private ValidatedSpriteAtlas spriteAtlas;
+     private LocalArenaMap.Renderer mapRenderer;
+@@ -124,6 +140,11 @@
+         } finally {world.dispose();}
+         drawSidebar(canvas,s);
+         drawBottom(canvas,s);
++        if(showHelp) {
++            canvas.setColor(new Color(8,15,28,240));canvas.fillRoundRect(20,20,920,330,20,20);
++            canvas.setColor(TEXT);canvas.setFont(new Font("SansSerif",Font.BOLD,16));
++            int y=55;for(String line:helpLines(s)) {canvas.drawString(line,40,y);y+=31;}
++        }
+         } finally {canvas.dispose();}
+     }
+ 
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/HelpPresentationTest.java
+@@ -0,0 +1,32 @@
++package com.projetok.prototype;
++
++import java.awt.event.ActionEvent;
++import java.awt.image.BufferedImage;
++import java.util.HashSet;
++import java.util.Random;
++import javax.swing.SwingUtilities;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++
++class HelpPresentationTest {
++    @Test void helpBindingPublishesExistingValuesAndDoesNotInterfereWithWorld() throws Exception {
++        try(var actual=new DebugRuntime(()->DebugWorld.demo(new Random(4)));
++            var reference=new DebugRuntime(()->DebugWorld.demo(new Random(4)))) {
++            var panel=new DebugPanel(actual::snapshot);
++            SwingUtilities.invokeAndWait(()->{
++                DebugLauncher.configureKeys(panel,actual,new HashSet<>());
++                panel.getActionMap().get("help").actionPerformed(new ActionEvent(panel,0,"help"));
++            });
++            assertTrue(panel.isHelpVisible());
++            var lines=DebugPanel.helpLines(actual.snapshot());
++            assertTrue(lines.stream().anyMatch(s->s.contains("HP "+actual.snapshot().playerHp())));
++            assertTrue(lines.stream().anyMatch(s->s.contains(actual.snapshot().cryostasisHud().stateText())));
++            for(int[] size:new int[][]{{630,375},{1260,750},{2600,1600}}) {
++                panel.setSize(size[0],size[1]);var image=new BufferedImage(size[0],size[1],2);var g=image.createGraphics();
++                panel.render(g,actual.presentation());g.dispose();
++            }
++            actual.advanceOneTick();reference.advanceOneTick();assertEquals(reference.presentation(),actual.presentation());
++            panel.toggleHelp();assertFalse(panel.isHelpVisible());
++        }
++    }
++}

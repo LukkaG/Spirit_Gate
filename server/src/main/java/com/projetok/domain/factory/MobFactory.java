@@ -8,6 +8,7 @@ import com.projetok.domain.entity.component.EquipmentComponent;
 import com.projetok.domain.entity.component.HealthComponent;
 import com.projetok.domain.entity.component.RaceComponent;
 import com.projetok.domain.entity.component.StatsComponent;
+import com.projetok.domain.entity.component.StatusEffectsComponent;
 import com.projetok.domain.progression.VitalityService;
 
 import java.util.Objects;
@@ -31,6 +32,7 @@ public final class MobFactory {
         mob.attach(new CombatComponent(archetype.combatStyle()));
         mob.attach(new AiComponent(archetype.behavior()));
         mob.attach(new HealthComponent(archetype.race().hpGrowth().baseHp()));
+        mob.attach(new StatusEffectsComponent());
 
         vitalityService.recalculate(mob);
         return mob;

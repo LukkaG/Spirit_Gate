@@ -1,0 +1,54 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1417 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-066 - Audio, preferencias e marco offline B) Tj T*
+() Tj T*
+(Audio JDK javax.sound.sampled com tons originais sintetizados para UI, golpe, dano,) Tj T*
+(cura, nivel e ambiente. Volume/mudo e ciclo visual configuraveis, preferencias separadas) Tj T*
+(dos personagens. Fila de oito eventos, executor proprio, fallback silencioso sem) Tj T*
+(dispositivo; nenhum arquivo de origem/licenca desconhecida.) Tj T*
+() Tj T*
+(Integracao final: salvamento captura comandos pendentes na thread da simulacao antes do) Tj T*
+(IO, pausa ao sair e mantem sessao diante de erro. Direcao, recargas e RNG deterministico) Tj T*
+(por spawn/geracao preservam continuidade. Catalogos/atributos usados por tick ficam em) Tj T*
+(memoria. Estado semantico de flags validado antes de sobrescrever save; limite de loot) Tj T*
+(pendente impede derrota sem recompensa.) Tj T*
+() Tj T*
+(UI: atalhos efetivos no HUD/hotbar, labels legiveis, botoes de dialogo em grade, dados) Tj T*
+(de missao/consumiveis/equipamento reais. Audio e iluminacao nao alteram dominio. Testes) Tj T*
+(incluem dispositivo indisponivel, mudo, preferencias, fila/save, corrupcao sem) Tj T*
+(sobrescrita, direcao/RNG, 20000 ticks e campanha integral para guardian e mystic. Build,) Tj T*
+(auditoria e smoke do pacote registrados no marco B antes de qualquer trabalho de rede.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-066 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1813
+%%EOF

@@ -1,0 +1,831 @@
+--- a/docs/HISTORICO-TECNICO.md
++++ b/docs/HISTORICO-TECNICO.md
+@@ -1,4 +1,14 @@
+ # Histórico técnico
++
++## 18/10/2026 - TASK-003
++
++Adicionados StaminaComponent e StaminaService independentes de interface e rede. PlayerFactory anexa 100/100 de vigor; regeneração provisória de 15/s e esforço E de custo 20, uma vez por pressão, com recusa sem gasto quando insuficiente. Mortos não executam esforço nem regeneram. Reinício restaura vigor e exige nova pressão quando E estiver mantido.
++
++DebugInput mantém o construtor antigo. Snapshot e painel exibem vigor. O runtime continua sendo o único proprietário das entidades. Combate básico permanece gratuito e os serviços de movimento/colisão não foram alterados.
++
++Antes dos campos novos, a projeção dos campos antigos foi conferida em 1.800 ticks contra o snapshot original. Os três baselines do replay foram preservados. Validação inicial: 15 testes; validação final: `mvn clean test`, BUILD SUCCESS, 30 testes sem falhas ou erros. Ligações de E e reinício foram testadas com EDT e thread real da simulação, sem JFrame. Imagem da barra renderizada inspecionada; sessão manual interativa não realizada.
++
++Entrega: [relatório e arquivos](TASK-003.md), [PDF](Spirit_Gate_TASK-003.pdf), [diff textual](TASK-003.diff) e [resultados](TASK-003-testes.txt).
+ 
+ ## 18/10/2026 - TASK-002
+ 
+--- /dev/null
++++ b/docs/TASK-003-testes.txt
+@@ -0,0 +1,12 @@
++TASK-003 | 18/10/2026
++Estado inicial: mvn clean test -q; 15 testes aprovados.
++Projecao do replay antes dos campos novos: mvn test -q -Dtest=MovementReplayTest; aprovado.
++Estado final: mvn clean test; BUILD SUCCESS.
++Java release 17; 30 testes; 0 falhas; 0 erros; 0 ignorados.
++
++Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.061 s -- in com.projetok.domain.movement.MovementServiceTest
++Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.011 s -- in com.projetok.domain.resource.StaminaServiceTest
++Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.483 s -- in com.projetok.prototype.DebugWorldTest
++Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.116 s -- in com.projetok.prototype.MovementReplayTest
++Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.541 s -- in com.projetok.prototype.StaminaInterfaceTest
++Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.023 s -- in com.projetok.prototype.StaminaWorldTest
+--- /dev/null
++++ b/docs/TASK-003.md
+@@ -0,0 +1,90 @@
++# TASK-003 - Implementação do Vigor Físico
++
++Spirit Gate | 18/10/2026 | Java 17 e Maven
++
++## Resultado e parâmetros provisórios
++
++Jogadores criados por PlayerFactory recebem 100/100 pontos de vigor. A arena exibe a barra amarela e o valor numérico. A tecla E executa um esforço temporário de custo 20, sem dano. A regeneração é de 15 pontos/s, limitada ao máximo. Os valores são provisórios e não representam balanceamento definitivo.
++
++Ataque básico e movimentação não gastam vigor. Nenhuma skill de combate, stamina de XP, integração de rede ou alteração de banco foi introduzida. Nenhuma dependência foi adicionada.
++
++## Preparação e proposta
++
++Foram inspecionados PlayerFactory, componentes, Position, DebugInput, DebugWorld, DebugSnapshot, DebugRuntime, DebugLauncher, DebugPanel e MovementReplayTest antes de modificar arquivos. O comando inicial mvn clean test -q passou com os 15 testes existentes.
++
++A proposta apresentada separou armazenamento e invariantes no componente, consumo e regeneração no serviço, entrada por transição no mundo e leitura da barra por snapshot. O processamento permanece na thread proprietária da simulação, sem mutações de entidades no EDT.
++
++## Arquitetura do domínio
++
++StaminaComponent implementa Component, armazena valores float e inicia cheio. O construtor padrão usa 100; o construtor com máximo explícito exige valor finito e positivo. Não há setter de saldo ou máximo. tryConsume valida custo e só subtrai se houver saldo. restore valida quantidade e limita a recuperação ao máximo. Custos ou quantidades negativos, NaN e infinitos lançam IllegalArgumentException antes de qualquer mutação.
++
++StaminaService recebe GameEntity com HealthComponent e StaminaComponent. tryConsume recusa entidade morta, inclusive custo zero, e delega o consumo ao componente. O chamador executa a ação apenas se o método retornar true. regenerate valida dt finito e não negativo, recusa mortos e aplica 15 * dt. O cálculo intermediário usa double e saturação para evitar overflow com deltas finitos grandes. Delta zero não altera o recurso.
++
++O componente é armazenamento protegido por invariantes numéricas; elegibilidade por vida pertence ao serviço. Ações do jogo devem usar StaminaService. O serviço não agenda tarefas, não cria threads e não depende do protótipo, Swing, PostgreSQL ou Kryonet.
++
++## Ordem do tick e entrada
++
++DebugWorld valida dt antes de alterar estado, incluindo rejeição explícita de NaN. Mantém atualização dos efeitos e cooldowns existentes; se morto, retorna. Para jogador vivo, regenera antes das ações, detecta a transição de E, processa movimento, ataque básico e inimigos na ordem anterior. Ao final, executa o esforço somente se houver nova pressão e o jogador continuar vivo.
++
++O custo é verificado antes da execução do esforço; sucesso e insuficiência publicam mensagens no log. A ação provisória é somente essa confirmação e o consumo, sem dano ou mudança de movimento. Se ocorrer morte no tick, o esforço não sobrescreve a mensagem de derrota.
++
++Segurar E não repete consumo. Uma recusa por saldo insuficiente também exige soltar e pressionar novamente, mesmo que o saldo se recupere. O runtime sincroniza o estado de E ao criar o mundo no reinício: a arena volta a 100/100, sem gasto automático por tecla mantida. O construtor antigo de cinco booleanos de DebugInput continua disponível e define effort=false.
++
++DebugSnapshot acrescenta somente stamina e maxStamina. DebugPanel lê esses campos, desenha a barra e mostra o controle E. O domínio não depende do formato visual. As configurações de velocidade, colisão, hitboxes e dano foram preservadas.
++
++## Replay e equivalência do comportamento anterior
++
++Os três baselines originais de MovementReplayTest foram mantidos. Antes de acrescentar campos ao snapshot, uma projeção explícita dos campos antigos foi comparada por igualdade textual com o toString original em todos os 1.800 ticks; o teste passou. Após a mudança, o replay aplica hash à mesma projeção, ignorando apenas os campos novos de vigor. Nenhum baseline foi recalculado ou teste eliminado.
++
++A projeção inclui atores, obstáculos, efeitos, HP, derrotas, morte, ticks, mensagem, direção, cooldown e corte. O teste continua complementar às asserções de comportamento, e permanece sensível à apresentação textual dos campos antigos. Mudanças futuras precisam de justificativa, nunca de atualização automática dos hashes.
++
++## Validação real
++
++Comando final: mvn clean test, executado na pasta server, com compilação release 17. Resultado: BUILD SUCCESS; 30 testes, zero falhas, zero erros e zero ignorados.
++
++- MovementServiceTest: 6 testes existentes preservados.
++- DebugWorldTest: 8 testes existentes preservados, incluindo dano, cone, alcance, cooldown e renderização do corte.
++- MovementReplayTest: 1 teste com três sequências de 600 ticks e baselines inalterados.
++- StaminaServiceTest: 5 testes para valores iniciais, consumo válido/zero/insuficiente, regeneração fracionária, saturação, entradas inválidas e morte.
++- StaminaWorldTest: 8 testes para fábrica, compatibilidade de entrada, gasto único, recusa sem consumo, reinício, ataque e movimento com vigor baixo, dano de 15 preservado, morte e dt inválido.
++- StaminaInterfaceTest: 2 testes para ligações reais de E no EDT, repetição de teclado, reinício com a thread real da simulação e largura da barra em renderização sem janela.
++
++O resumo Surefire está em TASK-003-testes.txt. A imagem TASK-003-vigor.png foi produzida pelo teste e inspecionada: mostra 80/100 de vigor, barra parcial, tecla E e mensagem de esforço sem sobreposição. Não houve sessão interativa de jogo com JFrame nesta etapa.
++
++## Relação de arquivos alterados ou criados
++
++Domínio:
++- server/src/main/java/com/projetok/domain/entity/component/StaminaComponent.java (novo).
++- server/src/main/java/com/projetok/domain/resource/StaminaService.java (novo).
++- server/src/main/java/com/projetok/domain/factory/PlayerFactory.java.
++
++Protótipo, sob server/src/main/java/com/projetok/prototype/:
++- DebugInput.java, DebugSnapshot.java, DebugWorld.java.
++- DebugRuntime.java, DebugLauncher.java, DebugPanel.java.
++
++Testes:
++- server/src/test/java/com/projetok/domain/resource/StaminaServiceTest.java (novo).
++- server/src/test/java/com/projetok/prototype/StaminaWorldTest.java (novo).
++- server/src/test/java/com/projetok/prototype/StaminaInterfaceTest.java (novo).
++- server/src/test/java/com/projetok/prototype/MovementReplayTest.java.
++
++Documentação e ferramentas:
++- README-PROTOTIPO.md e docs/HISTORICO-TECNICO.md.
++- docs/TASK-003.md, docs/TASK-003-testes.txt, docs/TASK-003-vigor.png.
++- docs/Spirit_Gate_TASK-003.pdf e docs/TASK-003.diff.
++- tools/gerar_pdf_task002.py (parâmetro opcional do rodapé; comportamento anterior preservado).
++- tools/gerar_pdf_task003.py (novo, reutiliza o gerador sem dependências).
++
++O diff textual é relativo ao estado inicial desta tarefa, capturado antes das alterações. Esta pasta não é um checkout Git acessível; não foi realizado commit ou merge. O patch não contém server/target, dados locais sensíveis ou binários. PDF e PNG são entregues como artefatos separados. O próprio diff não se inclui recursivamente.
++
++## Limitações e próximos passos
++
++O esforço de E é uma ação provisória, sem animação própria e sem efeito de gameplay além do consumo. A regeneração não tem atraso após consumo. Deltas e saldos usam precisão float; a interface mostra uma casa decimal. O máximo é fixo durante a vida do componente, sem progressão ou modificadores nesta tarefa.
++
++A entrada conserva o modelo de estado amostrado por tick do protótipo: uma pressão e soltura completas entre dois ticks podem não ser observadas. Uma futura fila de comandos pode tratar isso junto à evolução da entrada; não há previsão de rede aqui.
++
++MovementService, CollisionService, CombatService, Position, pom.xml e as regras da TASK-001/TASK-002 não foram alterados. Tunelamento, validação numérica da colisão e otimização espacial permanecem fora desta tarefa.
++
++## Reprodução
++
++Na pasta server: mvn clean test. Na pasta Projeto-K: python -B tools/gerar_pdf_task003.py. Para conferência manual, executar rodar-prototipo.cmd, pressionar e segurar E, soltar e pressionar novamente, observar regeneração e insuficiência, testar R com E mantido, mover e atacar com pouco vigor e conferir a derrota.
+--- a/README-PROTOTIPO.md
++++ b/README-PROTOTIPO.md
+@@ -130,3 +130,31 @@
+ - [Documentação em PDF](docs/Spirit_Gate_TASK-002.pdf)
+ 
+ Regenerar o PDF: `python tools/gerar_pdf_task002.py` na pasta `Projeto-K`.
++
++## TASK-003 - Vigor físico
++
++O jogador começa com **100/100** de vigor e regenera **15 pontos/s** enquanto vivo.
++Pressione **E** para um esforço provisório de **20 pontos**, sem dano. Segurar E
++não repete o gasto: solte e pressione novamente. Se o saldo for insuficiente,
++a ação é recusada sem consumo e o log informa o motivo. A regeneração ocorre
++antes das ações do tick, sem atraso adicional; nunca ultrapassa 100.
++
++Ataque básico e movimentação continuam gratuitos. Mortos não agem nem regeneram.
++R reinicia com vigor cheio; manter E durante o reinício exige soltar e pressionar
++novamente. Esses números são provisórios e não são balanceamento definitivo.
++
++`StaminaComponent` mantém os limites e `StaminaService` controla consumo e
++regeneração no domínio, sem Swing ou Kryonet. O construtor anterior de
++`DebugInput` permanece compatível. Movimento, colisões e CombatService estão intactos.
++
++Validação final: `mvn clean test`, **30 testes aprovados**, sem falhas ou erros.
++Os três baselines anteriores do replay foram preservados mediante projeção
++verificada dos campos antigos do snapshot.
++
++- [Decisões, arquivos e limitações](docs/TASK-003.md)
++- [PDF](docs/Spirit_Gate_TASK-003.pdf)
++- [Diff da tarefa](docs/TASK-003.diff)
++- [Resumo dos testes](docs/TASK-003-testes.txt)
++- [Imagem da barra de vigor](docs/TASK-003-vigor.png)
++
++Gerar o PDF: `python -B tools/gerar_pdf_task003.py` na pasta `Projeto-K`.
+--- /dev/null
++++ b/server/src/main/java/com/projetok/domain/entity/component/StaminaComponent.java
+@@ -0,0 +1,46 @@
++package com.projetok.domain.entity.component;
++
++/** Vigor físico fracionário, sempre finito e no intervalo de zero ao máximo. */
++public final class StaminaComponent implements Component {
++    private final float maximum;
++    private float current;
++
++    /** Cria o recurso cheio com o valor provisório de 100 pontos. */
++    public StaminaComponent() {
++        this(100f);
++    }
++
++    /** Cria o recurso cheio; o máximo deve ser finito e estritamente positivo. */
++    public StaminaComponent(float maximum) {
++        if (!Float.isFinite(maximum) || maximum <= 0f)
++            throw new IllegalArgumentException("Vigor máximo deve ser finito e positivo");
++        this.maximum = maximum;
++        this.current = maximum;
++    }
++
++    /** Retorna o vigor disponível. */
++    public float current() { return current; }
++
++    /** Retorna o limite do recurso. */
++    public float max() { return maximum; }
++
++    /** Consome somente se houver saldo; custo inválido lança exceção sem mutação. */
++    public boolean tryConsume(float cost) {
++        validateAmount(cost);
++        if (cost > current) return false;
++        current -= cost;
++        return true;
++    }
++
++    /** Restaura uma quantidade finita e não negativa, sem ultrapassar o máximo. */
++    public void restore(float amount) {
++        validateAmount(amount);
++        current = (float) Math.min(maximum, (double) current + amount);
++    }
++
++    /** Valida uma quantidade antes de qualquer alteração de estado. */
++    private static void validateAmount(float amount) {
++        if (!Float.isFinite(amount) || amount < 0f)
++            throw new IllegalArgumentException("Quantidade de vigor deve ser finita e não negativa");
++    }
++}
+--- a/server/src/main/java/com/projetok/domain/factory/PlayerFactory.java
++++ b/server/src/main/java/com/projetok/domain/factory/PlayerFactory.java
+@@ -8,6 +8,7 @@
+ import com.projetok.domain.entity.component.InventoryComponent;
+ import com.projetok.domain.entity.component.RaceComponent;
+ import com.projetok.domain.entity.component.StatsComponent;
++import com.projetok.domain.entity.component.StaminaComponent;
+ import com.projetok.domain.item.EquipmentSlot;
+ import com.projetok.domain.network.PlayerConnection;
+ import com.projetok.domain.progression.VitalityService;
+@@ -39,6 +40,7 @@
+         player.attach(new InventoryComponent());
+         player.attach(new CombatComponent(archetype.startingStyle()));
+         player.attach(new HealthComponent(archetype.race().hpGrowth().baseHp()));
++        player.attach(new StaminaComponent());
+ 
+         if (archetype.startingWeapon() != null) {
+             player.require(EquipmentComponent.class).equip(EquipmentSlot.WEAPON, archetype.startingWeapon());
+--- /dev/null
++++ b/server/src/main/java/com/projetok/domain/resource/StaminaService.java
+@@ -0,0 +1,41 @@
++package com.projetok.domain.resource;
++
++import com.projetok.domain.entity.GameEntity;
++import com.projetok.domain.entity.component.HealthComponent;
++import com.projetok.domain.entity.component.StaminaComponent;
++
++/** Controla vigor sem interface ou rede, na thread proprietária das entidades. */
++public final class StaminaService {
++    /** Taxa provisória do protótipo em pontos por segundo. */
++    public static final float REGENERATION_PER_SECOND = 15f;
++
++    // --- Elegibilidade e consumo ---
++
++    /**
++     * Verifica vida e saldo antes de consumir. O chamador só executa a ação quando
++     * retornar true. Custo inválido lança exceção mesmo para entidade morta.
++     */
++    public boolean tryConsume(GameEntity entity, float cost) {
++        validateNonNegative(cost);
++        if (entity.require(HealthComponent.class).isDead()) return false;
++        return entity.require(StaminaComponent.class).tryConsume(cost);
++    }
++
++    // --- Regeneração ---
++
++    /** Regenera por delta de tempo finito e não negativo; mortos não regeneram. */
++    public void regenerate(GameEntity entity, float dt) {
++        validateNonNegative(dt);
++        if (entity.require(HealthComponent.class).isDead()) return;
++        StaminaComponent stamina = entity.require(StaminaComponent.class);
++        // Double evita overflow na multiplicação de deltas finitos muito grandes.
++        float amount = (float) Math.min(stamina.max(), (double) REGENERATION_PER_SECOND * dt);
++        stamina.restore(amount);
++    }
++
++    /** Rejeita valores inválidos antes de consultar ou modificar o recurso. */
++    private static void validateNonNegative(float amount) {
++        if (!Float.isFinite(amount) || amount < 0f)
++            throw new IllegalArgumentException("Valor deve ser finito e não negativo");
++    }
++}
+--- a/server/src/main/java/com/projetok/prototype/DebugInput.java
++++ b/server/src/main/java/com/projetok/prototype/DebugInput.java
+@@ -4,6 +4,11 @@
+  * Estado de entrada de um cliente local, coletado pela interface e lido pelo loop.
+  * Nenhuma classe de domínio depende de Swing ou de eventos de teclado.
+  */
+-public record DebugInput(boolean up, boolean down, boolean left, boolean right, boolean attack) {
++public record DebugInput(boolean up, boolean down, boolean left, boolean right, boolean attack,
++                         boolean effort) {
++    /** Mantém compatibilidade com entradas anteriores, sem esforço físico. */
++    public DebugInput(boolean up, boolean down, boolean left, boolean right, boolean attack) {
++        this(up, down, left, right, attack, false);
++    }
+     public static final DebugInput NONE = new DebugInput(false, false, false, false, false);
+ }
+--- a/server/src/main/java/com/projetok/prototype/DebugLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/DebugLauncher.java
+@@ -57,10 +57,11 @@
+ 
+     // --- Atalhos: Key Bindings funcionam melhor que KeyListener ao trocar foco ---
+ 
+-    private static void configureKeys(DebugPanel panel, DebugRuntime runtime, Set<String> held) {
++    /** Liga teclas ao estado de entrada; acessível aos testes sem criar JFrame. */
++    static void configureKeys(DebugPanel panel, DebugRuntime runtime, Set<String> held) {
+         InputMap inputs = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+         ActionMap actions = panel.getActionMap();
+-        for (String key : new String[] {"W", "A", "S", "D", "SPACE"}) {
++        for (String key : new String[] {"W", "A", "S", "D", "SPACE", "E"}) {
+             inputs.put(KeyStroke.getKeyStroke("pressed " + key), "press_" + key);
+             inputs.put(KeyStroke.getKeyStroke("released " + key), "release_" + key);
+             actions.put("press_" + key, new AbstractAction() {
+@@ -90,6 +91,6 @@
+ 
+     private static void sendInput(DebugRuntime runtime, Set<String> held) {
+         runtime.setInput(new DebugInput(held.contains("W"), held.contains("S"),
+-                held.contains("A"), held.contains("D"), held.contains("SPACE")));
++                held.contains("A"), held.contains("D"), held.contains("SPACE"), held.contains("E")));
+     }
+ }
+--- a/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ b/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -233,8 +233,14 @@
+         g.setColor(new Color(180, 209, 220));
+         g.setFont(new Font("SansSerif", Font.PLAIN, 12));
+         g.drawString("VIDA  " + s.playerHp() + " / " + s.playerMaxHp(), x + 27, 174);
+-        g.drawString("ESPIRITOS DERROTADOS   " + s.defeated() + " / 3", x + 27, 206);
+-        g.drawString("SIMULACAO   " + (s.ticks() / 30) + " s", x + 27, 233);
++        drawBar(g, x + 27, 190, 239, 12,
++                s.stamina() / s.maxStamina(), new Color(235, 190, 65));
++        g.setColor(new Color(235, 210, 145));
++        g.drawString(String.format(java.util.Locale.ROOT, "VIGOR  %.1f / %.0f",
++                s.stamina(), s.maxStamina()), x + 27, 221);
++        g.setColor(new Color(180, 209, 220));
++        g.drawString("ESPIRITOS DERROTADOS   " + s.defeated() + " / 3", x + 27, 245);
++        g.drawString("SIMULACAO   " + (s.ticks() / 30) + " s", x + 29, 93);
+         g.setColor(new Color(46, 76, 94));
+         g.drawLine(x + 27, 258, x + 266, 258);
+         g.setFont(new Font("SansSerif", Font.BOLD, 15));
+@@ -242,10 +248,11 @@
+         g.drawString("CONTROLES", x + 27, 295);
+         g.setFont(new Font("SansSerif", Font.PLAIN, 14));
+         g.setColor(TEXT);
+-        g.drawString("W  A  S  D      Mover", x + 27, 330);
+-        g.drawString("ESPACO          Atacar", x + 27, 363);
+-        g.drawString("H                      Hitboxes", x + 27, 396);
+-        g.drawString("R                      Reiniciar", x + 27, 429);
++        g.drawString("W  A  S  D      Mover", x + 27, 326);
++        g.drawString("ESPACO          Atacar", x + 27, 353);
++        g.drawString("E                      Esforco (20)", x + 27, 380);
++        g.drawString("H                      Hitboxes", x + 27, 407);
++        g.drawString("R                      Reiniciar", x + 27, 434);
+         g.setColor(new Color(46, 76, 94));
+         g.drawLine(x + 27, 455, x + 266, 455);
+         g.setColor(new Color(155, 187, 202));
+--- a/server/src/main/java/com/projetok/prototype/DebugRuntime.java
++++ b/server/src/main/java/com/projetok/prototype/DebugRuntime.java
+@@ -24,11 +24,13 @@
+     public void start() {
+         gameThread.scheduleAtFixedRate(() -> {
+             try {
++                DebugInput frameInput = input.get();
+                 if (resetRequested) {
+                     world = new DebugWorld();
++                    world.synchronizeEffort(frameInput.effort());
+                     resetRequested = false;
+                 }
+-                world.tick(input.get(), 1f / 30f);
++                world.tick(frameInput, 1f / 30f);
+                 lastSnapshot = world.snapshot();
+             } catch (RuntimeException exception) {
+                 System.err.println("[Spirit Gate] Falha no tick de debug:");
+--- a/server/src/main/java/com/projetok/prototype/DebugSnapshot.java
++++ b/server/src/main/java/com/projetok/prototype/DebugSnapshot.java
+@@ -6,7 +6,8 @@
+ public record DebugSnapshot(
+         List<ActorView> actors, List<Obstacle> obstacles, List<EffectView> effects,
+         int playerHp, int playerMaxHp, int defeated, boolean gameOver, long ticks,
+-        String lastEvent, float facingX, float facingY, float cooldown, AttackView attack) {
++        String lastEvent, float facingX, float facingY, float cooldown, AttackView attack,
++        float stamina, float maxStamina) {
+ 
+     /** Informações suficientes para desenhar um personagem sem expor componentes mutáveis. */
+     public record ActorView(int id, String name, float x, float y, float radius,
+--- a/server/src/main/java/com/projetok/prototype/DebugWorld.java
++++ b/server/src/main/java/com/projetok/prototype/DebugWorld.java
+@@ -9,6 +9,8 @@
+ import com.projetok.domain.entity.Player;
+ import com.projetok.domain.entity.Position;
+ import com.projetok.domain.entity.component.HealthComponent;
++import com.projetok.domain.entity.component.StaminaComponent;
++import com.projetok.domain.resource.StaminaService;
+ import com.projetok.domain.event.GameEventBus;
+ import com.projetok.domain.event.events.EntityDeathEvent;
+ import com.projetok.domain.factory.MobArchetype;
+@@ -49,6 +51,8 @@
+     private final GameEventBus events = new GameEventBus();
+     private final CombatService combat = new CombatService(events);
+     private final MovementService movement = new MovementService(new CollisionService());
++    private final StaminaService staminaService = new StaminaService();
++    private boolean effortHeld;
+     private final Player player;
+     private final List<Mob> mobs = new ArrayList<>();
+     private final List<CollisionService.Obstacle> obstacles = List.of(
+@@ -98,7 +102,7 @@
+      * pelo proprietário do estado do mundo. Input nunca inclui posição absoluta.
+      */
+     public void tick(DebugInput input, float dt) {
+-        if (dt <= 0f || dt > 0.1f) throw new IllegalArgumentException("dt fora do intervalo (0, 0.1]");
++        if (!Float.isFinite(dt) || dt <= 0f || dt > 0.1f) throw new IllegalArgumentException("dt fora do intervalo (0, 0.1]");
+         ticks++;
+         if (attack != null) {
+             float remaining = attack.remaining() - dt;
+@@ -117,9 +121,29 @@
+                     effect.damage(), remaining, effect.received()));
+         }
+         if (player.isDead()) return;
++        staminaService.regenerate(player, dt);
++        boolean effortPressed = input.effort() && !effortHeld;
++        effortHeld = input.effort();
+         movePlayer(input, dt);
+         if (input.attack()) attackNearest();
+         updateEnemies(dt);
++        if (effortPressed && !player.isDead()) performEffort();
++    }
++
++    // --- Vigor físico: ação temporária, sem dano ---
++
++    /** Sincroniza a tecla ao reiniciar para exigir uma nova pressão após soltá-la. */
++    void synchronizeEffort(boolean held) {
++        effortHeld = held;
++    }
++
++    /** Verifica o custo antes de executar a ação provisória de esforço. */
++    private void performEffort() {
++        if (staminaService.tryConsume(player, 20f)) {
++            lastEvent = "Esforco fisico realizado: 20 de vigor.";
++        } else {
++            lastEvent = "Vigor insuficiente para esforco fisico (20).";
++        }
+     }
+ 
+     // --- Movimento e colisões ---
+@@ -222,7 +246,9 @@
+         return new DebugSnapshot(List.copyOf(actors), obstacles.stream().map(o ->
+                         new DebugSnapshot.Obstacle(o.x(), o.y(), o.width(), o.height())).toList(), List.copyOf(effects),
+                 hp.current(), hp.max(), defeated, player.isDead(), ticks,
+-                lastEvent, facingX, facingY, attackCooldown, attack);
++                lastEvent, facingX, facingY, attackCooldown, attack,
++                player.require(StaminaComponent.class).current(),
++                player.require(StaminaComponent.class).max());
+     }
+ 
+     /** Extrai apenas os campos visuais de uma entidade do domínio. */
+--- /dev/null
++++ b/server/src/test/java/com/projetok/domain/resource/StaminaServiceTest.java
+@@ -0,0 +1,90 @@
++package com.projetok.domain.resource;
++
++import com.projetok.domain.entity.GameEntity;
++import com.projetok.domain.entity.Position;
++import com.projetok.domain.entity.component.HealthComponent;
++import com.projetok.domain.entity.component.StaminaComponent;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Regressões do recurso sem Swing, rede ou mundo de prototipagem. */
++class StaminaServiceTest {
++    private final StaminaService service = new StaminaService();
++
++    /** Cria uma entidade mínima com vida e vigor. */
++    private GameEntity actor() {
++        GameEntity entity = new GameEntity(1, "Teste", new Position(0, 0)) { };
++        entity.attach(new HealthComponent(100));
++        entity.attach(new StaminaComponent());
++        return entity;
++    }
++
++    /** Valores iniciais e máximo configurável permanecem válidos. */
++    @Test
++    void valoresIniciais() {
++        var stamina = new StaminaComponent();
++        assertEquals(100f, stamina.current());
++        assertEquals(100f, stamina.max());
++        assertEquals(50f, new StaminaComponent(50f).current());
++    }
++
++    /** Custo zero é aceito inclusive sem saldo; recusa não modifica o recurso. */
++    @Test
++    void consumoValidoZeroEInsuficiente() {
++        var entity = actor();
++        var stamina = entity.require(StaminaComponent.class);
++        assertTrue(service.tryConsume(entity, 20));
++        assertEquals(80, stamina.current());
++        assertFalse(service.tryConsume(entity, 81));
++        assertEquals(80, stamina.current());
++        assertTrue(service.tryConsume(entity, 80));
++        assertTrue(service.tryConsume(entity, 0));
++        assertFalse(service.tryConsume(entity, 1));
++        assertEquals(0, stamina.current());
++    }
++
++    /** Regeneração fracionária, delta zero e saturação no máximo. */
++    @Test
++    void regeneracaoPorTempoELimite() {
++        var entity = actor();
++        var stamina = entity.require(StaminaComponent.class);
++        service.tryConsume(entity, 100);
++        service.regenerate(entity, 0.5f);
++        assertEquals(7.5f, stamina.current());
++        service.regenerate(entity, 0);
++        assertEquals(7.5f, stamina.current());
++        service.regenerate(entity, Float.MAX_VALUE);
++        assertEquals(100, stamina.current());
++        stamina.restore(Float.MAX_VALUE);
++        assertEquals(100, stamina.current());
++    }
++
++    /** Toda entrada numérica inválida falha antes de modificar o componente. */
++    @Test
++    void rejeitaInvalidosSemMutacao() {
++        var entity = actor();
++        var stamina = entity.require(StaminaComponent.class);
++        for (float invalid : new float[] {-1, Float.NaN, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY}) {
++            assertThrows(IllegalArgumentException.class, () -> new StaminaComponent(invalid));
++            assertThrows(IllegalArgumentException.class, () -> stamina.tryConsume(invalid));
++            assertThrows(IllegalArgumentException.class, () -> stamina.restore(invalid));
++            assertThrows(IllegalArgumentException.class, () -> service.tryConsume(entity, invalid));
++            assertThrows(IllegalArgumentException.class, () -> service.regenerate(entity, invalid));
++            assertEquals(100, stamina.current());
++        }
++        assertThrows(IllegalArgumentException.class, () -> new StaminaComponent(0));
++    }
++
++    /** Mortos não consomem nem regeneram, mesmo que haja saldo ou custo zero. */
++    @Test
++    void mortoNaoExecutaNemRegenera() {
++        var entity = actor();
++        service.tryConsume(entity, 20);
++        entity.require(HealthComponent.class).applyDamage(100);
++        assertFalse(service.tryConsume(entity, 20));
++        assertFalse(service.tryConsume(entity, 0));
++        service.regenerate(entity, 10);
++        assertEquals(80, entity.require(StaminaComponent.class).current());
++        assertThrows(IllegalArgumentException.class, () -> service.tryConsume(entity, Float.NaN));
++    }
++}
+--- a/server/src/test/java/com/projetok/prototype/MovementReplayTest.java
++++ b/server/src/test/java/com/projetok/prototype/MovementReplayTest.java
+@@ -24,9 +24,21 @@
+                     input = new DebugInput(dy < -4, dy > 4, dx < -4, dx > 4, true);
+                 }
+                 world.tick(input, 1f / 30f);
+-                fingerprint = fingerprint * 31 + world.snapshot().toString().hashCode();
++                // Projeção validada contra toString antes de acrescentar vigor ao snapshot.
++                fingerprint = fingerprint * 31 + legacyState(world.snapshot()).hashCode();
+             }
+             assertEquals(expected[scenario], fingerprint, "Scenario " + scenario);
+         }
+     }
++
++    /** Projeta o contrato anterior à TASK-003, mantendo os baselines existentes. */
++    private static String legacyState(DebugSnapshot s) {
++        return "DebugSnapshot[actors=" + s.actors() + ", obstacles=" + s.obstacles()
++                + ", effects=" + s.effects() + ", playerHp=" + s.playerHp()
++                + ", playerMaxHp=" + s.playerMaxHp() + ", defeated=" + s.defeated()
++                + ", gameOver=" + s.gameOver() + ", ticks=" + s.ticks()
++                + ", lastEvent=" + s.lastEvent() + ", facingX=" + s.facingX()
++                + ", facingY=" + s.facingY() + ", cooldown=" + s.cooldown()
++                + ", attack=" + s.attack() + "]";
++    }
+ }
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/StaminaInterfaceTest.java
+@@ -0,0 +1,90 @@
++package com.projetok.prototype;
++
++import org.junit.jupiter.api.Test;
++import javax.swing.JComponent;
++import javax.swing.KeyStroke;
++import javax.swing.SwingUtilities;
++import java.awt.Color;
++import java.awt.event.ActionEvent;
++import java.awt.image.BufferedImage;
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.util.HashSet;
++import java.util.function.BooleanSupplier;
++import javax.imageio.ImageIO;
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Integração da interface sem JFrame, com a thread real da simulação. */
++class StaminaInterfaceTest {
++    /** Ligações de E, repetição do teclado e reinício usam a entrada real do runtime. */
++    @Test
++    void teclaEReinicioERepeticaoDoTeclado() throws Exception {
++        try (DebugRuntime runtime = new DebugRuntime()) {
++            DebugPanel panel = new DebugPanel(runtime::snapshot);
++            SwingUtilities.invokeAndWait(() -> DebugLauncher.configureKeys(panel, runtime, new HashSet<>()));
++            assertEquals("press_E", panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
++                    .get(KeyStroke.getKeyStroke("pressed E")));
++            assertEquals("release_E", panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
++                    .get(KeyStroke.getKeyStroke("released E")));
++            runtime.start();
++            await(() -> runtime.snapshot().ticks() >= 2);
++            action(panel, "press_E");
++            await(() -> runtime.snapshot().stamina() < 90);
++            float spent = runtime.snapshot().stamina();
++            long tick = runtime.snapshot().ticks();
++            for (int i = 0; i < 10; i++) action(panel, "press_E");
++            await(() -> runtime.snapshot().ticks() >= tick + 3);
++            assertTrue(runtime.snapshot().stamina() >= spent);
++            action(panel, "restart");
++            await(() -> runtime.snapshot().stamina() == 100);
++            long restartedTick = runtime.snapshot().ticks();
++            await(() -> runtime.snapshot().ticks() >= restartedTick + 3);
++            assertEquals(100, runtime.snapshot().stamina());
++            action(panel, "release_E");
++            long releaseTick = runtime.snapshot().ticks();
++            await(() -> runtime.snapshot().ticks() >= releaseTick + 2);
++            action(panel, "press_E");
++            await(() -> runtime.snapshot().stamina() < 90);
++        }
++    }
++
++    /** Barra muda de largura após consumo e produz uma imagem para revisão visual. */
++    @Test
++    void barraRefleteVigorDoSnapshot() throws Exception {
++        var world = new DebugWorld();
++        BufferedImage full = render(world.snapshot());
++        world.tick(new DebugInput(false, false, false, false, false, true), 1f / 30f);
++        BufferedImage depleted = render(world.snapshot());
++        int yellow = new Color(235, 190, 65).getRGB();
++        int x = DebugWorld.WIDTH + 27;
++        assertEquals(yellow, full.getRGB(x + 215, 196));
++        assertNotEquals(yellow, depleted.getRGB(x + 215, 196));
++        assertEquals(yellow, depleted.getRGB(x + 100, 196));
++        Files.createDirectories(Path.of("target"));
++        ImageIO.write(depleted, "png", Path.of("target/task003-vigor.png").toFile());
++    }
++
++    /** Renderiza somente os dados publicados, sem tocar nas entidades. */
++    private BufferedImage render(DebugSnapshot snapshot) {
++        var image = new BufferedImage(DebugPanel.PANEL_WIDTH, DebugPanel.PANEL_HEIGHT,
++                BufferedImage.TYPE_INT_ARGB);
++        var g = image.createGraphics();
++        try {
++            new DebugPanel(() -> snapshot).render(g, snapshot);
++        } finally { g.dispose(); }
++        return image;
++    }
++
++    /** Executa o mesmo atalho da janela no EDT. */
++    private void action(DebugPanel panel, String name) throws Exception {
++        SwingUtilities.invokeAndWait(() -> panel.getActionMap().get(name)
++                .actionPerformed(new ActionEvent(panel, ActionEvent.ACTION_PERFORMED, name)));
++    }
++
++    /** Aguarda publicação pela simulação com prazo finito, sem acessar seu estado mutável. */
++    private void await(BooleanSupplier condition) throws InterruptedException {
++        long deadline = System.nanoTime() + 3_000_000_000L;
++        while (!condition.getAsBoolean() && System.nanoTime() < deadline) Thread.sleep(5);
++        assertTrue(condition.getAsBoolean(), "A simulação deve publicar o estado esperado em 3 s");
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/StaminaWorldTest.java
+@@ -0,0 +1,142 @@
++package com.projetok.prototype;
++
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Verifica entrada, vigor e preservação das mecânicas na simulação local. */
++class StaminaWorldTest {
++    private static final float DT = 1f / 30f;
++    private static final DebugInput E = new DebugInput(false, false, false, false, false, true);
++
++    /** A fábrica anexa o recurso e a entrada antiga continua sem esforço. */
++    @Test
++    void fabricaECompatibilidadeDaEntrada() {
++        var world = new DebugWorld();
++        assertEquals(100, world.snapshot().stamina());
++        assertEquals(100, world.snapshot().maxStamina());
++        assertFalse(new DebugInput(false, false, false, false, true).effort());
++    }
++
++    /** Manter a tecla não repete o gasto; soltar e pressionar habilita outro. */
++    @Test
++    void gastoUnicoPorPressao() {
++        var world = new DebugWorld();
++        world.tick(E, DT);
++        assertEquals(80, world.snapshot().stamina());
++        for (int i = 0; i < 10; i++) world.tick(E, DT);
++        assertEquals(85, world.snapshot().stamina());
++        world.tick(DebugInput.NONE, DT);
++        world.tick(E, DT);
++        assertEquals(66, world.snapshot().stamina());
++    }
++
++    /** Falta de saldo só regenera e mantém a ação rejeitada até nova pressão. */
++    @Test
++    void insuficienteNaoConsomeNemRepeteAutomaticamente() {
++        var world = new DebugWorld();
++        for (int i = 0; i < 5; i++) {
++            world.tick(E, DT);
++            world.tick(DebugInput.NONE, DT);
++        }
++        assertEquals(4.5f, world.snapshot().stamina());
++        world.tick(E, DT);
++        assertEquals(5, world.snapshot().stamina());
++        assertTrue(world.snapshot().lastEvent().contains("Vigor insuficiente"));
++        for (int i = 0; i < 40; i++) world.tick(E, DT);
++        assertEquals(25, world.snapshot().stamina());
++        world.tick(DebugInput.NONE, DT);
++        world.tick(E, DT);
++        assertEquals(6, world.snapshot().stamina());
++    }
++
++    /** Reinício restaura o recurso sem consumir por uma tecla já mantida. */
++    @Test
++    void reinicioRestauraVigorEExigeNovaPressao() {
++        var old = new DebugWorld();
++        old.tick(E, DT);
++        var restarted = new DebugWorld();
++        restarted.synchronizeEffort(true);
++        restarted.tick(E, DT);
++        assertEquals(100, restarted.snapshot().stamina());
++        restarted.tick(DebugInput.NONE, DT);
++        restarted.tick(E, DT);
++        assertEquals(80, restarted.snapshot().stamina());
++        assertEquals(80, old.snapshot().stamina());
++    }
++
++    /** Sem vigor, ataque básico e movimento continuam ativos com as mesmas regras. */
++    @Test
++    void ataqueEMovimentoIndependemDoVigor() {
++        var world = new DebugWorld();
++        for (int i = 0; i < 5; i++) {
++            world.tick(E, DT);
++            world.tick(DebugInput.NONE, DT);
++        }
++        var before = world.snapshot();
++        world.tick(new DebugInput(false, false, false, true, true), DT);
++        var after = world.snapshot();
++        assertEquals(before.stamina() + 0.5f, after.stamina());
++        assertNotNull(after.attack());
++        assertEquals(1, after.attack().facingX());
++        assertEquals(0.38f, after.cooldown());
++        assertEquals(before.actors().get(0).x() + DebugWorld.WALK_SPEED * DT,
++                after.actors().get(0).x());
++    }
++
++    /** Esforço físico não causa dano; ataque básico continua causando 15 com vigor baixo. */
++    @Test
++    void danoDoAtaqueBasicoPreservadoComVigorBaixo() {
++        var world = new DebugWorld();
++        for (int i = 0; i < 5; i++) {
++            world.tick(E, DT);
++            world.tick(DebugInput.NONE, DT);
++        }
++        assertEquals(120, world.snapshot().actors().get(1).hp());
++        boolean hit = false;
++        for (int i = 0; i < 100; i++) {
++            var before = world.snapshot();
++            var p = before.actors().get(0);
++            var mob = before.actors().get(1);
++            float dx = mob.x() - p.x(), dy = mob.y() - p.y();
++            world.tick(new DebugInput(dy < -4, dy > 4, dx < -4, dx > 4, true), DT);
++            if (world.snapshot().actors().get(1).hp() < 120) {
++                assertEquals(105, world.snapshot().actors().get(1).hp());
++                assertTrue(world.snapshot().stamina() < 20);
++                hit = true;
++                break;
++            }
++        }
++        assertTrue(hit);
++    }
++
++    /** Após morrer, nem esforço, movimento, ataque ou regeneração são processados. */
++    @Test
++    void morteBloqueiaAcoesERegeneracao() {
++        var world = new DebugWorld();
++        for (int i = 0; i < 2000 && !world.snapshot().gameOver(); i++) {
++            // Gasta vigor perto da morte para detectar regeneração indevida após morrer.
++            boolean effort = world.snapshot().playerHp() <= 20 && i % 2 == 0;
++            world.tick(new DebugInput(false, false, false, false, false, effort), DT);
++        }
++        assertTrue(world.snapshot().gameOver());
++        var before = world.snapshot();
++        assertTrue(before.stamina() < 100);
++        for (int i = 0; i < 20; i++)
++            world.tick(new DebugInput(false, false, false, true, true, i % 2 == 0), DT);
++        var after = world.snapshot();
++        assertEquals(before.stamina(), after.stamina());
++        assertEquals(before.actors().get(0), after.actors().get(0));
++        assertNull(after.attack());
++        assertEquals(before.lastEvent(), after.lastEvent());
++    }
++
++    /** Delta não finito é recusado antes de alterar tick, vigor ou posição. */
++    @Test
++    void rejeitaDeltaNaoFinitoAntesDoTick() {
++        var world = new DebugWorld();
++        var before = world.snapshot();
++        for (float dt : new float[] {Float.NaN, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY})
++            assertThrows(IllegalArgumentException.class, () -> world.tick(E, dt));
++        assertEquals(before, world.snapshot());
++    }
++}
+--- a/tools/gerar_pdf_task002.py
++++ b/tools/gerar_pdf_task002.py
+@@ -4,7 +4,7 @@
+ import textwrap
+ 
+ 
+-def gerar_pdf(origem: Path, destino: Path):
++def gerar_pdf(origem: Path, destino: Path, tarefa="TASK-002"):
+     """Converte o relatório textual em páginas A4 com fonte PDF padrão."""
+     linhas = []
+     for linha in origem.read_text(encoding="utf-8").splitlines():
+@@ -19,7 +19,7 @@
+         objetos.append((f"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] "
+                         f"/Resources << /Font << /F1 3 0 R >> >> /Contents {fluxo_id} 0 R >>").encode())
+         comandos = [b"BT /F1 10 Tf 14 TL 42 795 Td"]
+-        for linha in pagina + ["", f"Spirit Gate - TASK-002 - página {numero}/{len(paginas)}"]:
++        for linha in pagina + ["", f"Spirit Gate - {tarefa} - página {numero}/{len(paginas)}"]:
+             texto = linha.encode("cp1252", errors="strict").replace(b"\\", b"\\\\").replace(b"(", b"\\(").replace(b")", b"\\)")
+             comandos.append(b"(" + texto + b") Tj T*")
+         comandos.append(b"ET")
+--- /dev/null
++++ b/tools/gerar_pdf_task003.py
+@@ -0,0 +1,9 @@
++"""Gera a documentação da TASK-003 sem dependências externas."""
++
++from pathlib import Path
++from gerar_pdf_task002 import gerar_pdf
++
++
++if __name__ == "__main__":
++    docs = Path(__file__).resolve().parents[1] / "docs"
++    gerar_pdf(docs / "TASK-003.md", docs / "Spirit_Gate_TASK-003.pdf", "TASK-003")

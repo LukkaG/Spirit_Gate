@@ -1,0 +1,49 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 976 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-062 - Menu e personagens) Tj T*
+() Tj T*
+(Menu principal: criar, continuar selecionado, arena historica e sair. Criacao escolhe) Tj T*
+(nome/arquetipo/aparencia e grava identidade inicial em arquivo por UUID, sem) Tj T*
+(sobrescrever outro personagem. Listagem e IO em SwingWorker. Saves invalidos ficam) Tj T*
+(visiveis/preservados; backup valido pode ser continuado em novo arquivo de recuperacao.) Tj T*
+(Nenhuma exclusao automatica.) Tj T*
+() Tj T*
+(Fechar RPG ou botao Menu salva assincronamente antes de voltar. Falha preserva sessao) Tj T*
+(aberta. Pasta portatil de saves resolvida junto ao EXE; execucao por classes usa raiz) Tj T*
+(atual. Testes de catalogo, corrupcao, backup e preservacao. Diagnostico distingue) Tj T*
+(captura de desktop de captura dos componentes Swing da janela em execucao, com JSON de) Tj T*
+(ticks/visibilidade; nenhuma e homologacao humana.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-062 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1371
+%%EOF

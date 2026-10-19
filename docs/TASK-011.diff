@@ -1,0 +1,853 @@
+--- a/README-PROTOTIPO.md
++++ b/README-PROTOTIPO.md
+@@ -36,7 +36,7 @@
+ 
+ - Não é um multiplayer conectado ao Kryonet (execução local e isolada).
+ - Não autentica usuários ou persiste personagens no PostgreSQL.
+-- Ainda não usa zonas persistentes, skills, loot, XP, navmesh ou pathfinding avançado.
++- Não implementa zonas persistentes de servidor, loot, XP, navmesh ou pathfinding avançado.
+ - O loop é de prototipagem a 30 Hz, não o game loop definitivo de produção.
+ 
+ ## 4. Separação de threads
+@@ -62,11 +62,11 @@
+ 
+ ## 7. Estado de validação
+ 
+-As classes do domínio + protótipo foram compiladas com `javac --release 17` e os
+-smoke tests sem dependências externas foram executados. Veja o PDF de entrega para
+-o resultado preciso das verificações. A build Maven integral com Kryonet/JUnit deve
+-ser executada no ambiente Windows, pois Maven e os JARs não estão disponíveis
+-no ambiente de entrega.
++Estado consolidado da rodada TASK-007 a TASK-011: **202 testes aprovados** com
++`mvn clean test`, incluindo repetição offline estável. O EXE portátil foi aberto
++fora dos fontes usando seu Java integrado. A homologação em outro Windows e a
++revisão humana jogando continuam pendentes. Veja
++[relatório consolidado](docs/RELATORIO-FINAL-RODADA.md) e [changelog RC](docs/CHANGELOG-RC.md).
+ 
+ 
+ ## TASK-001 ? Anima??o de ataque b?sico
+@@ -290,3 +290,22 @@
+ [captura](docs/TASK-006-1-colisao-seletiva.png) e [diff](docs/TASK-006-1.diff).
+ 
+ Gerar PDF: `python -B tools/gerar_pdf_task006_1.py` na pasta `Projeto-K`.
++
++## Rodada TASK-007 a TASK-011 - RC para homologação
++
++As cinco tarefas foram implementadas: Windows portátil com Java integrado,
++demo com dois arbustos e um poste leves, HUD contextual e regressão determinística.
++Resultado consolidado: **202 testes aprovados**, sem alterar os baselines anteriores.
++
++O ZIP `dist/SpiritGate-0.11.0-rc1-20261018T220040Z-b2e659ed-portable.zip` contém a
++pasta inteira do aplicativo. Extraia tudo e abra `SpiritGate.exe`, mantendo
++`app/` e `runtime/` ao lado. A abertura local com Java integrado foi conferida;
++outro Windows sem Java/Maven e a avaliação jogando aguardam homologação humana.
++
++[Relatório consolidado](docs/RELATORIO-FINAL-RODADA.md),
++[PDF consolidado](docs/Spirit_Gate_Relatorio_Final_TASK-007_011.pdf),
++[changelog e hash](docs/CHANGELOG-RC.md) e
++[roteiro por tarefa](docs/kit-homologacao/ROTEIRO-HOMOLOGACAO.md).
++
++Reconstrução: `tools\build-windows-portable.cmd -Version 0.11.0-rc1 -TesterKitDirectory docs\kit-homologacao`.
++O script usa o JDK 17 e executa testes antes de gerar o pacote. Não exige WiX/MSI.
+--- /dev/null
++++ b/docs/CHANGELOG-RC.md
+@@ -0,0 +1,41 @@
++# Spirit Gate 0.11.0-rc1
++
++18/10/2026. CANDIDATO A HOMOLOGACAO LOCAL. Não é release pública ou homologação em outra máquina.
++
++## Conteúdo desde a TASK-006.1
++
++- TASK-007: executável Windows x64 com runtime Java integrado, build reproduzível por script, inventário e hashes.
++- TASK-008: dois arbustos e um poste SOFT_OBSTACLE no demo usado pela arena; mapa histórico e replay preservados.
++- TASK-009: estados/contexto de Q e Shift, vigor insuficiente, recarga, atividade, espera e bloqueio sólido/borda medido pela física.
++- TASK-010: treze testes de sequências e limites; tick real acessível internamente a testes, sem mudar agendador. Corrigido texto que arredondava recurso insuficiente para saldo igual ao custo.
++- TASK-011: build novo consolidado, kit, auditoria de arquivos e conferência do EXE fora dos fontes.
++
++Base: 170 testes. Consolidado: 202 testes, zero falhas/erros/ignorados. As duas execuções da TASK-010, uma offline, concordaram por classe. O build limpo final da RC repetiu os 202 testes. Os 26 arquivos de teste originais e baselines estão intactos.
++
++## Pacote e reprodução
++
++Arquivo: dist/SpiritGate-0.11.0-rc1-20261018T220040Z-b2e659ed-portable.zip.
++
++Tamanho: 29.359.239 bytes (aproximadamente 28 MiB).
++
++SHA-256: 7484f90f5de5ca0475c8d73a918a8868b20a089d5a3fb3a12dd2e40f5fc19d01.
++
++Gerado em 2026-10-18T22:00 UTC. Java/jpackage Temurin 17.0.20.1+1; Maven 3.10.0; Windows 10 amd64. Versão PE numérica: 0.11.0; identificação completa no manifest/VERSION/README: 0.11.0-rc1. Identificadores de build novos evitam sobrescrever versões anteriores.
++
++Na pasta Projeto-K, executar: tools\build-windows-portable.cmd -Version 0.11.0-rc1 -TesterKitDirectory docs\kit-homologacao. O padrão executa mvn clean test antes de gerar o pacote. O JDK 17 pode ser selecionado com -JavaHome. Os hashes de builds separados podem variar com metadados/horários; cada distribuição recebe o próprio sidecar SHA-256.
++
++Auditoria: python -B tools/auditar_rc.py --zip dist/SpiritGate-0.11.0-rc1-20261018T220040Z-b2e659ed-portable.zip --report docs/TASK-011-auditoria.json. Smoke do EXE: powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/test-windows-portable.ps1 -ZipPath dist/SpiritGate-0.11.0-rc1-20261018T220040Z-b2e659ed-portable.zip -EvidencePath docs/TASK-011-portable-smoke.json.
++
++## Inventário e validação
++
++O ZIP contém uma pasta SpiritGate com SpiritGate.exe, app/SpiritGate.cfg, app/spirit-gate-arena.jar, runtime/, VERSION.txt, LEIA-ME-TESTER.txt, INVENTARIO-SHA256.txt, manifest.json e três documentos do kit. O manifest cobre 148 arquivos; exclui a si próprio por circularidade. O inventário textual exclui a si e o manifest; o SHA externo cobre o ZIP inteiro. Manifest e SHA também têm cópias externas junto ao ZIP.
++
++O JAR contém 122 classes de produção domain/prototype, comparadas byte a byte com target/classes atual. Sem classes de teste, servidor legado, DatabaseManager, dependências JDBC/Kryonet ou configurações locais. O runtime inclui java.base/java.desktop/jdk.random e suas dependências transitivas. A análise de padrões é limitada e não prova ausência absoluta de qualquer dado sensível; nenhum padrão concreto proibido foi encontrado.
++
++EXECUCAO LOCAL CONFERIDA: EXE extraído em pasta com espaços fora de Projeto-K, PATH sem Java/Maven e JAVA_HOME inexistente. jvm.dll carregada do runtime integrado, confirmada pelos módulos do processo. Janela e processo launcher encerraram com código 0. Captura real: TASK-011-exe.png; captura dos estados do HUD recompilado: TASK-011-hud.png. Evidências JSON em TASK-011-portable-smoke.json e TASK-011-auditoria.json.
++
++## Pendências
++
++HOMOLOGACAO HUMANA PENDENTE: outro Windows x64 sem Java/Maven e avaliação jogando por tarefa, conforme kit-homologacao/ROTEIRO-HOMOLOGACAO.md. Inspeção de sockets por CIM ficou indisponível neste ambiente; código e pacote não iniciam servidor/banco, mas não se alega auditoria dinâmica de rede concluída.
++
++Limitações conhecidas: EXE sem assinatura; espera de saída pode persistir enquanto toda a trajetória estiver ocupada; mapa histórico e demo são variantes deliberadas. Relatar problemas usando o modelo do kit. Nenhuma TASK-012 foi iniciada, nem houve push ou publicação.
+--- a/docs/HISTORICO-TECNICO.md
++++ b/docs/HISTORICO-TECNICO.md
+@@ -1,4 +1,22 @@
+ # Histórico técnico
++
++## 18/10/2026 - TASK-011: candidata 0.11.0-rc1 e rodada encerrada
++
++Build limpo final com 202 testes aprovados; pacote Windows x64 reconstruído com
++código das TASK-007 a TASK-010, Java 17 integrado, kit, manifesto e SHA-256.
++Auditoria comparou 122 classes byte a byte e recusou cópia adulterada,
++preservando o original. O EXE abriu fora dos fontes em pasta com espaços, com
++PATH sem Java, usando jvm.dll do runtime integrado; fechou com código 0.
++Captura real inspecionada, sem publicação.
++
++ZIP de 29.359.239 bytes; SHA-256:
++7484f90f5de5ca0475c8d73a918a8868b20a089d5a3fb3a12dd2e40f5fc19d01.
++Homologação em outro Windows e revisão humana por tarefa pendentes. Inspeção
++de sockets indisponível no ambiente; limitações registradas. Sem TASK-012,
++push ou alterações de banco/rede.
++
++Entrega: [TASK-011](TASK-011.md), [consolidado](RELATORIO-FINAL-RODADA.md), PDFs,
++ZIP em dist, changelog RC, kit do tester, testes/logs, diffs e evidências JSON/PNG.
+ 
+ ## 18/10/2026 - TASK-010: regressão determinística
+ 
+--- /dev/null
++++ b/docs/LEIA-ME-TESTER.txt
+@@ -0,0 +1,20 @@
++SPIRIT GATE - ARENA LOCAL PORTATIL
++Versao: 0.11.0-rc1 | Windows x64
++CANDIDATO A HOMOLOGACAO; NAO RELEASE PUBLICA
++
++1. Extraia o ZIP inteiro para uma pasta gravavel.
++2. Abra SpiritGate.exe dentro da pasta SpiritGate. Nao mova somente o EXE.
++3. Nao e necessario instalar Java, Maven, PostgreSQL ou conectar a um servidor.
++
++Controles: WASD mover; Espaco atacar; E esforco (20 vigor);
++Q Criostase (55 vigor); Shift Passo Relampago (35 vigor), mirando com mouse;
++H mostrar hitboxes; R reiniciar. Feche a janela para sair.
++
++Mantenha app/ e runtime/ junto ao EXE. O runtime Java 17 esta integrado.
++O executavel nao e assinado; avisos do Windows podem ocorrer. Nao desative
++protecoes. Confira a origem e o SHA-256 fornecido com a distribuicao.
++
++Ao relatar um problema, informe versao, Windows, passos para reproduzir,
++resultado esperado/obtido e captura se possivel. Nao envie credenciais.
++Este pacote e candidato a testes locais, sem multiplayer e sem instalador.
++Teste em outro Windows sem Java/Maven: PENDENTE DE HOMOLOGACAO HUMANA.--- a/docs/RELATORIO-FINAL-RODADA.md
++++ b/docs/RELATORIO-FINAL-RODADA.md
+@@ -1,6 +1,18 @@
+ # Rodada autônoma Spirit Gate - TASK-007 a TASK-011
+ 
+ Planejamento fornecido pelo usuário em 18/10/2026. Fonte de verdade: checkout local, base TASK-006.1 com 170 testes aprovados e teste de parede presente. Windows 10 amd64, Java/jpackage Temurin 17.0.20.1, Maven 3.10.0. Sem Git nesta pasta; checkpoints locais e diffs isolados em cada etapa. Sem push, publicação, banco ou integração de rede.
++
++Rodada concluída na TASK-011. Todas as cinco tarefas estão IMPLEMENTADAS, com automação aprovada. A conferência local do EXE foi realizada; a homologação humana posterior continua pendente.
++
++| Task | Testes inicial -> final | Resultado |
++|---|---|---|
++| 007 | 170 -> 171 | Pacote e EXE local aprovados |
++| 008 | 171 -> 177 | Demo e colisões aprovados |
++| 009 | 177 -> 189 | Estados e feedback do HUD aprovados |
++| 010 | 189 -> 202 | Sequências e repetição offline aprovadas |
++| 011 | 202 -> 202 | RC reconstruída, auditada e executada |
++
++Todos os resultados finais têm zero falhas, erros ou ignorados. São 32 testes novos; os 26 arquivos de teste originais e os baselines históricos foram preservados.
+ 
+ ## TASK-007 - Pacote Windows portátil
+ 
+@@ -41,3 +53,23 @@
+ Artefatos: [relatório e lacunas antes/depois](TASK-010.md), [PDF](Spirit_Gate_TASK-010.pdf), [testes](TASK-010-testes.txt), [diff](TASK-010.diff), logs completos final/offline e reprodução/correção do bug.
+ 
+ Pendências manuais: apenas conferência de sensação e transições jogando. Reinício e manutenção dos objetos do demo agora estão cobertos pelo caminho de produção sem sleep/JFrame. Nenhum bloqueio automatizado permanece.
++
++## TASK-011 - RC e kit de homologação
++
++Status: IMPLEMENTADA. AUTOMATIZADO APROVADO; EXECUCAO LOCAL CONFERIDA. Base e build final com 202 testes, zero falhas/erros/ignorados. O pacote foi gerado dos fontes consolidados, sem reaproveitar o JAR histórico.
++
++RC: dist/SpiritGate-0.11.0-rc1-20261018T220040Z-b2e659ed-portable.zip, 29.359.239 bytes. SHA-256: 7484f90f5de5ca0475c8d73a918a8868b20a089d5a3fb3a12dd2e40f5fc19d01. Sidecar e manifest externo junto ao ZIP. Versão anterior preservada.
++
++Auditoria independente: ZIP íntegro, 149 arquivos, manifest com 148, inventário com 147; 122 classes idênticas à compilação atual, sem arquivos de teste/privados ou legado de banco/servidor. Verificador recusou uma cópia adulterada, sem alterar o original. Limitações de busca de credenciais são explícitas.
++
++EXE executado em pasta com espaços fora dos fontes e com PATH sem Java/Maven. Módulos do processo confirmam jvm.dll do runtime integrado; janela e processo filho fecharam com código 0. Captura real mostra objetos leves e HUD atualizados. Inspeção de sockets por CIM indisponível; não se declara validação dinâmica de rede.
++
++Artefatos: [relatório](TASK-011.md), [PDF](Spirit_Gate_TASK-011.pdf), [testes](TASK-011-testes.txt), [log completo](TASK-011-final.log), [diff](TASK-011.diff), [auditoria](TASK-011-auditoria.json), [smoke](TASK-011-portable-smoke.json), [captura real](TASK-011-exe.png), [estados do HUD](TASK-011-hud.png), [changelog RC](CHANGELOG-RC.md) e [guia do tester](LEIA-ME-TESTER.txt).
++
++Pendências manuais: seguir [roteiro por tarefa](kit-homologacao/ROTEIRO-HOMOLOGACAO.md) em outro Windows x64 sem Java/Maven; usar [modelo de bug](kit-homologacao/MODELO-RELATO-BUG.md). EXE sem assinatura e espera de saída ocupada permanecem limitações. Nenhuma pendência de implementação foi transferida ao usuário.
++
++## Integridade da entrega e encerramento
++
++PDFs e diffs individuais estão em docs/TASK-007 a TASK-011. Os JSON locais em .task-checkpoints preservam preimagens e hashes das etapas; não integram o pacote portátil. O diff é textual e os PDFs/capturas são entregues separadamente. Falhas intermediárias de harness/limpeza foram corrigidas, mantidas em logs e explicadas; a falha de precisão do HUD foi reproduzida antes da correção, sem mudar o teste para mascará-la.
++
++Não há bloqueios automatizados em aberto, nova dependência externa de runtime ou alteração em PostgreSQL/Kryonet/login. A suíte offline estável confirma execução com dependências locais. O pacote inclui apenas a arena e runtime necessários. Não se iniciou TASK-012 ou outra mecânica. O próximo passo é a revisão humana das cinco entregas, sem exigir implementação adicional do usuário.
+--- a/docs/TASK-010.md
++++ b/docs/TASK-010.md
+@@ -14,7 +14,7 @@
+ 
+ O HUD anterior formatava o saldo insuficiente com zero casas decimais. Math.nextDown(35f) continua insuficiente para custo 35, mas aparecia como 35/35; o mesmo ocorria com custo 55. HudPrecisionRegressionTest foi escrito primeiro e falhou de fato, registrado em TASK-010-hud-reproducao-falha.log. Após a correção mínima, o mesmo teste passou em TASK-010-hud-correcao.log.
+ 
+-A correção remove apenas essa contagem redundante do aviso, mantendo VIGOR INSUFICIENTE, custo e dados numéricos do snapshot/barra. Não houve alteração no saldo, na comparação do domínio, no consumo ou na regeneração. A suíte completa será executada após as sequências novas e repetida para conferir estabilidade.
++A correção remove apenas essa contagem redundante do aviso, mantendo VIGOR INSUFICIENTE, custo e dados numéricos do snapshot/barra. Não houve alteração no saldo, na comparação do domínio, no consumo ou na regeneração. A suíte completa foi executada após as sequências novas e repetida para conferir estabilidade.
+ 
+ ## Cobertura depois
+ 
+--- /dev/null
++++ b/docs/TASK-011-testes.txt
+@@ -0,0 +1,34 @@
++TASK-011 - mvn clean test - BUILD SUCCESS
++{'tests': 202, 'failures': 0, 'errors': 0, 'skipped': 0}
++Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.
++
++com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.DomainSequenceRegressionTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaSequenceRegressionTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugLauncherEntrypointTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudPrecisionRegressionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudSkillFeedbackTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SoftObstacleDemoTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
+--- /dev/null
++++ b/docs/TASK-011.md
+@@ -0,0 +1,33 @@
++# TASK-011 - Release candidate e kit de homologação
++
++18/10/2026. Candidata 0.11.0-rc1, Windows x64. Não é publicação, release pública, instalador, multiplayer ou homologação externa concluída.
++
++## Preparação
++
++TASK-007 a TASK-010 conferidas: código, PDFs, resumos, logs e diffs. Nenhum bloqueio automatizado permanece. Base inicial da TASK-011: mvn clean test, 202 testes, zero falhas/erros/ignorados. Java/jpackage Temurin 17.0.20.1 e Maven 3.10.0 no Windows 10 amd64.
++
++O pacote foi reconstruído a partir dos fontes consolidados com o build limpo e a suíte completa. Não foi reaproveitado o JAR da TASK-007. O build mantém runtime integrado, lista permitida de produção, jdk.random, inventário e SHA-256, sem substituir a versão anterior.
++
++O kit contém roteiro de homologação por task, modelo de relato de bug e changelog resumido. A cópia para o app-image permite apenas esses três nomes, antes de gerar inventário e manifest. LEIA-ME-TESTER.txt e VERSION.txt são gerados pelo próprio build.
++
++## Evidências reais
++
++AUTOMATIZADO APROVADO: mvn clean test inicial e novamente no build final, 202 testes, zero falhas/erros/ignorados. O log completo do build e da suíte está em TASK-011-final.log; resumo em TASK-011-testes.txt. Nenhum teste novo foi necessário para mecânicas nesta etapa; foram validados os scripts e os artefatos reais.
++
++tools/auditar_rc.py verificou ZIP/manifest/inventário/hashes, PE x64, versões, ponto de entrada, runtime 17 com jdk.random e todas as 122 classes do JAR, byte a byte contra a compilação atual. São 149 arquivos no ZIP; o manifest cobre os outros 148 e o inventário textual cobre 147, evitando circularidade. O staging só contém o conteúdo permitido, sem teste, servidor/banco legado ou padrão concreto de credencial detectado nas classes do jogo. Relatório: TASK-011-auditoria.json.
++
++Controle negativo: uma cópia do ZIP em saída de build recebeu um byte alterado no JAR e um SHA externo recalculado. O verificador recusou essa cópia por divergência no manifest, antes de qualquer execução; exit code 1 era o resultado esperado do controle. Evidência: TASK-011-auditoria-negativa.json. O original e seu hash foram preservados.
++
++EXECUCAO LOCAL CONFERIDA: EXE extraído em pasta com espaços fora de Projeto-K, com PATH sem Java/Maven e JAVA_HOME inexistente. A janela mostrou os três objetos leves e o HUD atualizado. A DLL jvm.dll efetivamente carregada fica sob SpiritGate/runtime; bundledJvmVerified=true. Launcher e processo filho fecharam normalmente com código 0. Evidência TASK-011-portable-smoke.json e captura real TASK-011-exe.png; TASK-011-hud.png mostra quatro estados renderizados a partir da compilação final. Não houve homologação humana externa.
++
++## Distribuição e reprodução
++
++ZIP: dist/SpiritGate-0.11.0-rc1-20261018T220040Z-b2e659ed-portable.zip. Tamanho 29.359.239 bytes. SHA-256: 7484f90f5de5ca0475c8d73a918a8868b20a089d5a3fb3a12dd2e40f5fc19d01. Sidecar .sha256 e manifest externo estão junto ao ZIP. A versão anterior 0.7.0-task007 foi preservada.
++
++Reconstruir na pasta Projeto-K: tools\build-windows-portable.cmd -Version 0.11.0-rc1 -TesterKitDirectory docs\kit-homologacao. O build padrão executa a suíte limpa. Novos horários/identificadores geram nomes e hashes próprios, sem sobrescrita. Comandos completos da auditoria e do smoke estão em CHANGELOG-RC.md.
++
++Entregas: relatório/PDF, resumo/log, diff/checkpoint, ZIP/SHA/manifest, CHANGELOG-RC.md, LEIA-ME-TESTER.txt, modelo de bug e roteiro de homologação por task no kit, scripts de build/smoke/auditoria e RELATORIO-FINAL-RODADA.md/PDF. Nenhum arquivo Java ou teste foi modificado na TASK-011. README atualizado para o estado consolidado.
++
++Limites: a análise de arquivos e padrões não é prova absoluta de ausência de qualquer segredo. Runtime inclui os arquivos normais do JDK, como certificados públicos e avisos legais. Não se inclui banco, conexão JDBC, configuração privada, teste ou bibliotecas legadas da aplicação. Nenhuma migração, rede/protocolo ou dependência externa nova foi adicionada.
++
++HOMOLOGACAO HUMANA PENDENTE: outro Windows x64 sem Java/Maven, usabilidade e roteiro por task. Inspeção de sockets por CIM indisponível por restrição do ambiente, explicitamente registrada. EXE não assinado e espera de saída totalmente ocupada continuam limitações conhecidas. Não há bloqueio automatizado em aberto. Rodada encerrada na TASK-011, sem push/publicação ou trabalho além do escopo.
+--- /dev/null
++++ b/docs/kit-homologacao/CHANGELOG-RESUMIDO.md
+@@ -0,0 +1,17 @@
++# Spirit Gate 0.11.0-rc1 - Candidata a homologação
++
++Data: 18/10/2026. Windows x64, Java 17 integrado. Candidata local de testes; não é release pública, instalador ou cliente multiplayer.
++
++Base: TASK-006.1 com 170 testes aprovados.
++
++- TASK-007: SpiritGate.exe portátil com app/ e runtime/, inventário e hashes.
++- TASK-008: dois arbustos e um poste leves demonstram WASD bloqueante e dash seletivo.
++- TASK-009: Q/Shift mostram disponibilidade, custo, recarga, vigor insuficiente e feedback real.
++- TASK-010: sequências determinísticas de comandos, colisões, Freeze e reinício; corrigido aviso de vigor que arredondava um saldo insuficiente para o custo.
++- TASK-011: compilação consolidada, pacote novo e kit de homologação posterior.
++
++Suíte consolidada: 202 testes, zero falhas, erros ou ignorados; repetição offline estável. Fórmulas de dano e sistemas anteriores preservados. Não há novas dependências externas de runtime.
++
++O SHA-256 do ZIP fica no arquivo externo .sha256; manifest.json contém os hashes individuais. O hash do próprio ZIP não é incluído dentro dele para evitar referência circular. Consulte o relatório consolidado da rodada para logs e limitações.
++
++Pendências: outro Windows sem Java/Maven e revisão humana de cada tarefa. Uma espera por saída livre pode persistir se todos os pontos da trajetória ficarem ocupados por atores. O EXE não é assinado.
+--- /dev/null
++++ b/docs/kit-homologacao/MODELO-RELATO-BUG.md
+@@ -0,0 +1,15 @@
++# Relato de problema - Spirit Gate 0.11.0-rc1
++
++- Windows e arquitetura (x64):
++- Versão em VERSION.txt:
++- SHA-256 do ZIP, se disponível:
++- O problema ocorreu no EXE portátil ou no ambiente de desenvolvimento?
++- Tarefa/área: 007 pacote / 008 objetos leves / 009 HUD / 010 regressão / 006.1 colisão.
++- Passos numerados para reproduzir:
++- Resultado esperado:
++- Resultado observado:
++- Frequência: sempre / às vezes / uma vez.
++- Captura ou vídeo, se possível:
++- Reiniciar com R ou reabrir o jogo resolveu?
++
++Não inclua senhas, tokens, arquivos .env ou dados privados. Relate a mensagem exata se o EXE não abrir. Não é necessário configurar servidor, login ou banco de dados.
+--- /dev/null
++++ b/docs/kit-homologacao/ROTEIRO-HOMOLOGACAO.md
+@@ -0,0 +1,29 @@
++# Homologação posterior - Spirit Gate 0.11.0-rc1
++
++Todos os itens abaixo estão PENDENTES DE HOMOLOGACAO HUMANA. Os testes automatizados e o smoke local estão documentados separadamente. Esta é uma candidata a avaliação local, sem publicação ou multiplayer.
++
++## TASK-007 - Abrir sem Java/Maven
++
++Em outro Windows x64, sem Java e Maven instalados, extrair o ZIP inteiro para uma pasta com espaços. Abrir SpiritGate.exe mantendo app/ e runtime/ juntos. Conferir abertura, fechamento e nova abertura. Verificar VERSION.txt. Não mover somente o EXE e não desativar proteções do Windows. O executável não é assinado.
++
++## TASK-008 - Arbustos e poste (três minutos)
++
++Ativar H para hitboxes. Ir ao sul do ponto inicial até a faixa y=420. Dois arbustos verdes e um poste devem estar visíveis. Tentar atravessar cada objeto com WASD: bloqueia. Apontar além deles e pressionar Shift: atravessa os leves, respeita vigor/recarga e termina em posição livre. Depois, WASD volta a colidir. Testar Shift contra uma parede grande e contra bordas: continuam bloqueantes. R restaura os três leves.
++
++## TASK-009 - Estados no HUD
++
++Observar Q e Shift prontos, gastar vigor com E e tentar lançar sem saldo. Conferir aviso de recurso insuficiente, recusa sem gasto/cooldown e desaparecimento do feedback breve. Lançar Q e Shift, observar recargas e indicador de movimento. Um alvo além de parede fora do alcance do dash não deve ser rotulado como contato. Ao alcançar efetivamente uma parede/borda, o aviso deve indicar bloqueio sólido/borda. R limpa estados transitórios.
++
++A saída pendente aparece somente se atores móveis ocuparem toda a trajetória do dash; não há um atalho de teste para forçar esse caso. Se ocorrer, o movimento aguarda uma mudança do espaço sem novo consumo/cooldown; o jogador continua vulnerável. R deve recuperar a arena. Registrar o caso se a espera persistir.
++
++## TASK-010 - Sequências de jogo
++
++Tocar e soltar Shift rapidamente; segurar Shift; esperar a recarga sem soltar: não deve ativar sozinho. Soltar e pressionar de novo deve permitir nova tentativa. Repetir Q/Shift em ordens diferentes com pouco vigor. Caminhar durante o dash e conferir retorno de WASD ao fim. Usar Q sobre mob: Freeze pode ocorrer, impede movimento e permite ataques em alcance. A probabilidade é 30%, portanto uma tentativa manual sem Freeze não é falha. Morrer e usar R; verificar vida/vigor restaurados, recargas/rastros/zonas limpos e nenhuma repetição automática de tecla mantida.
++
++## TASK-006.1 - Colisão seletiva de atores e paredes
++
++Aproximar um mob, apontar além dele e usar Shift: o jogador pode atravessá-lo sem causar dano automático. Ataques recebidos continuam possíveis. Mirar contra uma parede: o corpo não ultrapassa a face considerando seu raio. O dash deve terminar normalmente livre ou recuar pela trajetória em caso de destino ocupado.
++
++## TASK-011 - Integridade e relato
++
++Conferir o SHA-256 do ZIP com o arquivo .sha256 externo. Guardar versão, Windows, passos e resultado ao preencher MODELO-RELATO-BUG.md. Revisar cada task separadamente. Nenhum item deste roteiro foi marcado como homologado pelo agente.
+--- /dev/null
++++ b/tools/auditar_rc.py
+@@ -0,0 +1,402 @@
++"""Audita o pacote portatil local sem extrair nem executar seu conteudo.
++
++Uso: python tools/auditar_rc.py --zip dist/pacote.zip --report docs/auditoria.json
++Requer somente a biblioteca padrao do Python. Os hashes verificam integridade,
++nao autenticidade; o relatorio explicita os limites da inspecao de segredos.
++"""
++
++from __future__ import annotations
++
++import argparse
++from datetime import datetime, timezone
++import hashlib
++import io
++import json
++from pathlib import Path, PurePosixPath
++import re
++import stat
++import struct
++import sys
++import zipfile
++
++
++ENTRYPOINT = "com.projetok.prototype.DebugLauncher"
++MAIN_JAR = "app/spirit-gate-arena.jar"
++CLASS_PREFIXES = ("com/projetok/domain/", "com/projetok/prototype/")
++HEX_SHA256 = re.compile(r"^[0-9a-fA-F]{64}$")
++PRIVATE_PARTS = {
++    ".git", ".svn", ".hg", ".ssh", ".aws", ".codex", ".agents", ".m2",
++    "target", "test", "tests", "test-classes", "node_modules",
++}
++PRIVATE_SUFFIXES = {".pem", ".key", ".p12", ".pfx", ".jks", ".keystore"}
++SECRET_PATTERNS = {
++    "marcador_de_chave_privada": re.compile(
++        rb"-----BEGIN (?:RSA |EC |DSA |OPENSSH |ENCRYPTED )?PRIVATE KEY-----"
++    ),
++    "identificador_aws": re.compile(rb"(?<![A-Z0-9])(?:AKIA|ASIA)[A-Z0-9]{16}(?![A-Z0-9])"),
++    "jdbc_com_credenciais_na_url": re.compile(
++        rb"jdbc:[a-zA-Z0-9]+://[^\x00\s\"']{1,160}:[^\x00\s\"']{1,160}@"
++    ),
++    "jdbc_com_senha_na_query": re.compile(
++        rb"jdbc:[^\x00\r\n]{1,500}[?;&](?:password|passwd|pwd)=[^\x00\s;&]+",
++        re.IGNORECASE,
++    ),
++}
++LIMITATIONS = [
++    "Hashes e inventarios detectam divergencias, mas nao substituem assinatura "
++    "digital nem autenticam um pacote e sidecars adulterados em conjunto.",
++    "A busca de credenciais inspeciona somente o bytecode das classes do jogo, "
++    "com padroes concretos; nao comprova ausencia absoluta de segredos, "
++    "ofuscacao ou credenciais em outros formatos.",
++    "A comparacao prova igualdade com server/target/classes no instante da "
++    "auditoria; a compilacao recente dos fontes depende do mvn clean test "
++    "registrado separadamente no processo de release.",
++    "A auditoria nao executa o EXE e nao substitui a homologacao interativa "
++    "em outro Windows sem Java ou Maven instalados.",
++]
++
++
++class AuditFailure(Exception):
++    """Representa uma recusa de auditoria com mensagem sem dados sensiveis."""
++
++
++def require(condition: bool, message: str) -> None:
++    """Interrompe a verificacao quando uma garantia necessaria nao e atendida."""
++    if not condition:
++        raise AuditFailure(message)
++
++
++def sha256_stream(stream) -> str:
++    """Calcula SHA-256 por blocos, sem carregar o runtime inteiro na memoria."""
++    digest = hashlib.sha256()
++    for block in iter(lambda: stream.read(1024 * 1024), b""):
++        digest.update(block)
++    return digest.hexdigest()
++
++
++def sha256_file(path: Path) -> str:
++    """Calcula o resumo de um arquivo local somente para leitura."""
++    with path.open("rb") as stream:
++        return sha256_stream(stream)
++
++
++def relative_name(name: str) -> str:
++    """Valida um caminho de ZIP para extracao segura inclusive no Windows."""
++    require(isinstance(name, str) and bool(name), "Caminho vazio no pacote.")
++    require("\\" not in name and "\x00" not in name and ":" not in name,
++            "Caminho nao portatil ou com fluxo alternativo no pacote.")
++    require(not name.startswith("/"), "Caminho absoluto no pacote.")
++    cleaned = name[:-1] if name.endswith("/") else name
++    parts = cleaned.split("/")
++    require(all(part not in ("", ".", "..") for part in parts),
++            "Caminho relativo inseguro no pacote.")
++    for part in parts:
++        require(part.rstrip(" .") == part and not any(ord(c) < 32 for c in part) and
++                not any(c in '<>"|?*' for c in part),
++                "Nome incompativel com extracao segura no Windows.")
++        stem = part.split(".", 1)[0].upper()
++        require(not re.fullmatch(r"CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9]", stem),
++                "Nome de dispositivo reservado no pacote.")
++    return "/".join(parts)
++
++
++def reject_private_path(name: str) -> None:
++    """Recusa arquivos privados, fontes de teste e saidas de desenvolvimento."""
++    for part in PurePosixPath(name).parts:
++        lowered = part.casefold()
++        require(lowered not in PRIVATE_PARTS and not lowered.startswith(".env"),
++                f"Entrada privada ou de desenvolvimento: {name}")
++        require(PurePosixPath(lowered).suffix not in PRIVATE_SUFFIXES,
++                f"Extensao privada recusada: {name}")
++    require(not name.casefold().endswith(("test.class", "tests.class")),
++            f"Classe de teste recusada: {name}")
++
++
++def archive_files(archive: zipfile.ZipFile) -> dict[str, zipfile.ZipInfo]:
++    """Valida entradas antes de ler conteudo e detecta colisoes de nomes."""
++    require(len(archive.infolist()) <= 50_000, "Numero excessivo de entradas no ZIP.")
++    seen: set[str] = set()
++    files = {}
++    total_size = 0
++    for item in archive.infolist():
++        name = relative_name(item.filename)
++        require(name.casefold() not in seen, "Entradas duplicadas ou ambiguas no ZIP.")
++        seen.add(name.casefold())
++        reject_private_path(name)
++        mode = item.external_attr >> 16
++        require(not stat.S_ISLNK(mode), "Link simbolico recusado no pacote.")
++        require(not item.flag_bits & 1, "Entrada criptografada recusada no pacote.")
++        require(item.file_size <= 512 * 1024 * 1024, "Entrada excede o limite de auditoria.")
++        total_size += item.file_size
++        if not item.is_dir():
++            files[name] = item
++    require(total_size <= 2 * 1024 * 1024 * 1024, "Pacote excede o limite de auditoria.")
++    folded_files = {name.casefold() for name in files}
++    for name in files:
++        require(not any(parent.as_posix().casefold() in folded_files
++                        for parent in PurePosixPath(name).parents
++                        if parent != PurePosixPath(".")),
++                "Arquivo usado tambem como diretorio no pacote.")
++    return files
++
++
++def json_object(data: bytes) -> dict:
++    """Le JSON sem chaves duplicadas que tornariam o inventario ambiguo."""
++    def unique_pairs(pairs):
++        result = {}
++        for key, value in pairs:
++            require(key not in result, "Chave duplicada no manifest.")
++            result[key] = value
++        return result
++
++    result = json.loads(data.decode("utf-8-sig"), object_pairs_hook=unique_pairs)
++    require(isinstance(result, dict), "O manifest deve ser um objeto JSON.")
++    return result
++
++
++def main_manifest(data: bytes) -> dict[str, str]:
++    """Interpreta o cabecalho principal do JAR, incluindo continuacoes."""
++    lines = []
++    for line in data.decode("utf-8").splitlines():
++        if not line:
++            break
++        if line.startswith(" "):
++            require(bool(lines), "Continuacao invalida no manifest do JAR.")
++            lines[-1] += line[1:]
++        else:
++            lines.append(line)
++    result = {}
++    for line in lines:
++        require(": " in line, "Cabecalho invalido no manifest do JAR.")
++        key, value = line.split(": ", 1)
++        require(key.casefold() not in result, "Cabecalho duplicado no manifest do JAR.")
++        result[key.casefold()] = value
++    return result
++
++
++def audit(zip_path: Path, report: dict) -> None:
++    """Executa a auditoria em etapas; falhas preservam os resultados anteriores."""
++    def passed(identifier: str, **details) -> None:
++        report["checks"].append({"id": identifier, "status": "PASS", **details})
++
++    # --- Integridade do ZIP e estrutura segura antes de ler arquivos internos. ---
++    require(zip_path.is_file(), "ZIP de entrada inexistente.")
++    digest = sha256_file(zip_path)
++    report["zipSha256"] = digest
++    sidecar = Path(str(zip_path) + ".sha256")
++    require(sidecar.is_file(), "Sidecar SHA-256 do ZIP ausente.")
++    checksum_line = sidecar.read_text(encoding="utf-8-sig").strip()
++    matched = re.fullmatch(r"([a-fA-F0-9]{64})[ \t]+\*?([^\r\n]+)", checksum_line)
++    require(matched is not None, "Formato invalido no sidecar SHA-256.")
++    require(matched.group(1).lower() == digest, "SHA-256 externo divergente do ZIP.")
++    require(matched.group(2) == zip_path.name, "Sidecar SHA-256 identifica outro ZIP.")
++    passed("zip_sha256_sidecar", sha256=digest, sizeBytes=zip_path.stat().st_size)
++
++    with zipfile.ZipFile(zip_path) as archive:
++        files = archive_files(archive)
++        require(bool(files), "ZIP sem arquivos.")
++        roots = {name.split("/", 1)[0] for name in files}
++        require(roots == {"SpiritGate"}, "Esperada somente a raiz SpiritGate no ZIP.")
++        relative = {name[len("SpiritGate/"):]: item for name, item in files.items()}
++        required = {"manifest.json", "VERSION.txt", "INVENTARIO-SHA256.txt",
++                    "LEIA-ME-TESTER.txt", "SpiritGate.exe", "app/SpiritGate.cfg",
++                    MAIN_JAR, "runtime/release", "runtime/bin/server/jvm.dll"}
++        require(required <= relative.keys(), "Arquivo obrigatorio ausente no pacote.")
++        for name in relative:
++            require(not name.casefold().endswith(".class"),
++                    "Classe solta fora do JAR autorizado no pacote.")
++            if name.casefold().endswith(".jar"):
++                require(name in (MAIN_JAR, "runtime/lib/jrt-fs.jar"),
++                        f"JAR extra nao autorizado no pacote: {name}")
++        passed("estrutura_segura", files=len(files), root="SpiritGate")
++
++        def read(name: str) -> bytes:
++            return archive.read(relative[name])
++
++        # --- Manifest cobre o inventario; o inventario evita a circularidade. ---
++        manifest_bytes = read("manifest.json")
++        side_manifest = Path(str(zip_path) + ".manifest.json")
++        require(side_manifest.is_file(), "Sidecar do manifest ausente.")
++        require(side_manifest.read_bytes() == manifest_bytes,
++                "Sidecar do manifest diverge do arquivo distribuido.")
++        manifest = json_object(manifest_bytes)
++        require(manifest.get("schemaVersion") == 1, "Schema desconhecido no manifest.")
++        require(manifest.get("entrypoint") == ENTRYPOINT, "Entrypoint inesperado no manifest.")
++        require(manifest.get("mainJar") == MAIN_JAR, "JAR principal inesperado no manifest.")
++        require(manifest.get("platform") == "windows-x64", "Plataforma inesperada no manifest.")
++        version = manifest.get("version")
++        require(isinstance(version, str) and bool(version), "Versao invalida no manifest.")
++        require(read("VERSION.txt").decode("utf-8-sig").strip() == version,
++                "VERSION.txt diverge de manifest.version.")
++        report["version"] = version
++        listed = {}
++        entries = manifest.get("files")
++        require(isinstance(entries, list), "Inventario de arquivos ausente no manifest.")
++        for item in entries:
++            require(isinstance(item, dict), "Item invalido no inventario do manifest.")
++            name = relative_name(item.get("path"))
++            require(name not in listed and name != "manifest.json",
++                    "Manifest lista a si mesmo ou contem duplicata.")
++            require(name in relative, f"Manifest referencia arquivo inexistente: {name}")
++            require(type(item.get("sizeBytes")) is int and item["sizeBytes"] >= 0,
++                    f"Tamanho invalido no manifest: {name}")
++            require(isinstance(item.get("sha256"), str) and HEX_SHA256.fullmatch(item["sha256"]),
++                    f"SHA-256 invalido no manifest: {name}")
++            require(relative[name].file_size == item["sizeBytes"],
++                    f"Tamanho divergente do manifest: {name}")
++            with archive.open(relative[name]) as stream:
++                actual_hash = sha256_stream(stream)
++            require(actual_hash == item["sha256"].lower(),
++                    f"SHA-256 divergente do manifest: {name}")
++            listed[name] = actual_hash
++        require(set(listed) == set(relative) - {"manifest.json"},
++                "Manifest nao cobre exatamente todos os arquivos exceto si mesmo.")
++        inventory = {}
++        for line in read("INVENTARIO-SHA256.txt").decode("utf-8-sig").splitlines():
++            matched = re.fullmatch(r"([a-fA-F0-9]{64})  (.+)", line)
++            require(matched is not None, "Linha invalida no inventario SHA-256.")
++            name = relative_name(matched.group(2))
++            require(name not in inventory, "Arquivo duplicado no inventario SHA-256.")
++            inventory[name] = matched.group(1).lower()
++        expected_inventory = {name: value for name, value in listed.items()
++                              if name != "INVENTARIO-SHA256.txt"}
++        require(inventory == expected_inventory,
++                "Inventario SHA-256 divergente ou com circularidade.")
++        passed("manifest_e_inventario", manifestFiles=len(listed),
++               inventoryFiles=len(inventory), version=version,
++               manifestSha256=hashlib.sha256(manifest_bytes).hexdigest())
++
++        # --- JVM integrada, modulos e launcher: somente dados, sem execucao. ---
++        release = dict(re.findall(r'^([A-Z_]+)="([^"\r\n]*)"',
++                                 read("runtime/release").decode("utf-8"), re.MULTILINE))
++        require(re.fullmatch(r"17(?:\.[0-9A-Za-z.+_-]+)?", release.get("JAVA_VERSION", "")),
++                "Runtime integrado nao e Java 17.")
++        require(manifest.get("javaVersion") == release["JAVA_VERSION"],
++                "Versao Java do runtime diverge do manifest.")
++        modules = release.get("MODULES", "").split()
++        declared_modules = manifest.get("javaModules")
++        require(isinstance(declared_modules, list) and
++                all(isinstance(module, str) for module in declared_modules),
++                "Lista de modulos invalida no manifest.")
++        # O manifest registra as raizes passadas ao jlink; runtime/release inclui
++        # tambem dependencias transitivas resolvidas, como java.datatransfer.
++        require(len(set(declared_modules)) == len(declared_modules) and
++                set(declared_modules) <= set(modules),
++                "Modulo declarado no manifest ausente do runtime.")
++        require({"java.base", "java.desktop", "jdk.random"} <= set(declared_modules),
++                "Modulo obrigatorio nao declarado no manifest.")
++        require({"java.base", "java.desktop", "jdk.random"} <= set(modules),
++                "Modulo obrigatorio ausente no runtime integrado.")
++        cfg = read("app/SpiritGate.cfg").decode("utf-8-sig")
++        cfg_values = dict(re.findall(r"^([^=\r\n]+)=([^\r\n]*)", cfg, re.MULTILINE))
++        require(cfg_values.get("app.mainclass") == ENTRYPOINT,
++                "Launcher nao aponta para DebugLauncher.")
++        require(cfg_values.get("app.classpath") in
++                ("$APPDIR\\spirit-gate-arena.jar", "$APPDIR/spirit-gate-arena.jar"),
++                "Classpath inesperado no launcher.")
++        exe = read("SpiritGate.exe")
++        require(len(exe) >= 64 and exe[:2] == b"MZ", "Launcher nao possui cabecalho PE.")
++        pe_offset = struct.unpack_from("<I", exe, 0x3C)[0]
++        require(pe_offset + 6 <= len(exe) and exe[pe_offset:pe_offset + 4] == b"PE\x00\x00" and
++                struct.unpack_from("<H", exe, pe_offset + 4)[0] == 0x8664,
++                "Launcher nao e Windows PE x64.")
++        passed("runtime_e_launcher", javaVersion=release["JAVA_VERSION"],
++               javaModules=sorted(modules), declaredRootModules=sorted(declared_modules),
++               mainClass=ENTRYPOINT,
++               launcherArchitecture="PE x64 (0x8664)")
++
++        # --- Whitelist e igualdade de TODAS as classes com o checkout compilado. ---
++        classes_directory = Path(__file__).resolve().parent.parent / "server" / "target" / "classes"
++        expected_classes = {}
++        for prefix in CLASS_PREFIXES:
++            package = classes_directory.joinpath(*PurePosixPath(prefix).parts)
++            require(package.is_dir(), "Classes locais ausentes; execute mvn clean test antes.")
++            for path in package.rglob("*.class"):
++                require(not path.is_symlink(), "Link simbolico nas classes locais.")
++                expected_classes[path.relative_to(classes_directory).as_posix()] = path
++        require(bool(expected_classes), "Nenhuma classe local encontrada para comparacao.")
++        jar_classes = {}
++        with zipfile.ZipFile(io.BytesIO(read(MAIN_JAR))) as jar:
++            jar_files = archive_files(jar)
++            for item in jar.infolist():
++                name = relative_name(item.filename)
++                require(name == "META-INF" or name.startswith("META-INF/") or
++                        name in ("com/projetok/domain", "com/projetok/prototype") or
++                        name.startswith(CLASS_PREFIXES), f"Entrada fora da whitelist do JAR: {name}")
++            require("META-INF/MANIFEST.MF" in jar_files, "Manifest principal ausente no JAR.")
++            attributes = main_manifest(jar.read("META-INF/MANIFEST.MF"))
++            require(attributes.get("main-class") == ENTRYPOINT, "Main-Class inesperada no JAR.")
++            for name in jar_files:
++                if name.startswith("META-INF/"):
++                    require(not name.casefold().endswith((".class", ".jar")),
++                            "Codigo oculto sob META-INF no JAR.")
++                    continue
++                require(name.endswith(".class"), f"Recurso nao autorizado no JAR: {name}")
++                data = jar.read(name)
++                require(data.startswith(b"\xca\xfe\xba\xbe"), f"Bytecode invalido: {name}")
++                require(len(data) >= 8 and struct.unpack_from(">H", data, 6)[0] <= 61,
++                        f"Classe exige Java posterior ao 17: {name}")
++                forbidden = (b"com/esotericsoftware/kryonet", b"com.esotericsoftware.kryonet",
++                             b"org/postgresql", b"org.postgresql", b"DatabaseManager")
++                require(not any(marker in data for marker in forbidden),
++                        f"Referencia legada de banco ou rede no bytecode: {name}")
++                for label, pattern in SECRET_PATTERNS.items():
++                    require(not pattern.search(data),
++                            f"Padrao concreto de credencial detectado ({label}) em {name}; "
++                            "conteudo omitido.")
++                jar_classes[name] = data
++        require(set(jar_classes) == set(expected_classes),
++                "Inventario de classes do JAR diverge das classes atuais domain/prototype.")
++        for name, path in sorted(expected_classes.items()):
++            require(jar_classes[name] == path.read_bytes(),
++                    f"Bytecode do JAR nao corresponde ao checkout compilado atual: {name}")
++        passed("jar_whitelist_e_bytecode_atual", classesCompared=len(jar_classes),
++               comparison="Byte a byte, todas as classes domain/prototype, sem omissoes.",
++               allowedPrefixes=list(CLASS_PREFIXES), mainClass=ENTRYPOINT)
++        passed("credenciais_padronizadas_no_bytecode_do_jogo", classesScanned=len(jar_classes),
++               patterns=list(SECRET_PATTERNS), findings=0,
++               scope="Somente classes domain/prototype; conteudo encontrado nunca e impresso.")
++
++
++def main() -> int:
++    """Grava evidencia JSON tanto em sucesso quanto em recusa da auditoria."""
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--zip", required=True, type=Path, help="ZIP portatil e seus sidecars.")
++    parser.add_argument("--report", required=True, type=Path, help="Relatorio JSON de saida.")
++    args = parser.parse_args()
++    zip_path = args.zip.resolve()
++    report_path = args.report.resolve()
++    protected = {zip_path, Path(str(zip_path) + ".sha256"), Path(str(zip_path) + ".manifest.json")}
++    if report_path in protected:
++        parser.error("O relatorio nao pode sobrescrever o ZIP nem seus sidecars.")
++    report = {
++        "schemaVersion": 1,
++        "task": "TASK-011",
++        "auditedAtUtc": datetime.now(timezone.utc).isoformat(),
++        "zip": str(zip_path),
++        "status": "FAIL",
++        "checks": [],
++        "limitations": LIMITATIONS,
++        "executedPackagedCode": False,
++    }
++    try:
++        audit(zip_path, report)
++        report["status"] = "PASS"
++    except AuditFailure as failure:
++        report["error"] = str(failure)
++    except (OSError, ValueError, KeyError, TypeError, struct.error,
++            zipfile.BadZipFile, RuntimeError) as failure:
++        # Nao reproduz dados JSON, conteudo binario nem mensagens de bibliotecas
++        # que possam conter trechos de um arquivo privado adulterado.
++        report["error"] = "Falha de leitura ou formato: " + type(failure).__name__
++    report_path.parent.mkdir(parents=True, exist_ok=True)
++    report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
++    print(f"Auditoria {report['status']}: {report_path}")
++    if report["status"] != "PASS":
++        print(report["error"], file=sys.stderr)
++        return 1
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+--- a/tools/build-windows-portable.ps1
++++ b/tools/build-windows-portable.ps1
+@@ -9,12 +9,15 @@
+ .\tools\build-windows-portable.cmd -Version 0.7.0-task007
+ .EXAMPLE
+ .\tools\build-windows-portable.ps1 -Version 0.11.0-rc1 -SkipMaven
++.EXAMPLE
++.\tools\build-windows-portable.cmd -Version 0.11.0-rc1 -TesterKitDirectory .\docs\kit-homologacao
+ #>
+ [CmdletBinding()]
+ param(
+     [ValidatePattern('^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$')]
+     [string] $Version = '0.7.0-task007',
+     [string] $JavaHome = '',
++    [string] $TesterKitDirectory = '',
+     [switch] $SkipMaven
+ )
+ 
+@@ -81,6 +84,23 @@
+     $projectDirectory = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+     $serverDirectory = Join-Path $projectDirectory 'server'
+     $distributionDirectory = Join-Path $projectDirectory 'dist'
++    # O kit e opcional e usa somente estes tres nomes, sem copia recursiva.
++    $testerKitFileNames = @('MODELO-RELATO-BUG.md', 'ROTEIRO-HOMOLOGACAO.md', 'CHANGELOG-RESUMIDO.md')
++    $testerKitSources = @()
++    if ($TesterKitDirectory) {
++        $kitDirectory = Get-Item -LiteralPath $TesterKitDirectory -ErrorAction Stop
++        if (-not $kitDirectory.PSIsContainer) { throw 'TesterKitDirectory deve apontar para uma pasta.' }
++        foreach ($fileName in $testerKitFileNames) {
++            $kitFile = Get-Item -LiteralPath (Join-Path $kitDirectory.FullName $fileName) -ErrorAction Stop
++            if ($kitFile.PSIsContainer -or ($kitFile.Attributes -band [IO.FileAttributes]::ReparsePoint)) {
++                throw "Arquivo de homologacao deve ser um arquivo comum: $fileName"
++            }
++            # Rejeita codificacao invalida sem regravar nem substituir tokens.
++            $strictUtf8 = New-Object Text.UTF8Encoding($false, $true)
++            $null = $strictUtf8.GetString([IO.File]::ReadAllBytes($kitFile.FullName))
++            $testerKitSources += $kitFile
++        }
++    }
+     if (-not $JavaHome) { $JavaHome = $env:JAVA_HOME }
+     if (-not $JavaHome) {
+         $JavaHome = Split-Path -Parent (Split-Path -Parent (Get-Command java.exe -ErrorAction Stop).Source)
+@@ -190,9 +210,13 @@
+ 
+     # --- Kit do tester, inventario verificavel e distribuicao sem sobrescrita. ---
+ 
++    $releaseNotice = if ($Version -match '(?i)(^|[._-])rc\d*($|[._-])') {
++        'CANDIDATO A HOMOLOGACAO; NAO RELEASE PUBLICA'
++    } else { 'PACOTE DE TESTES LOCAIS' }
+     $readme = @"
+ SPIRIT GATE - ARENA LOCAL PORTATIL
+ Versao: $Version | Windows x64
++$releaseNotice
+ 
+ 1. Extraia o ZIP inteiro para uma pasta gravavel.
+ 2. Abra SpiritGate.exe dentro da pasta SpiritGate. Nao mova somente o EXE.
+@@ -213,6 +237,15 @@
+ "@
+     Write-Utf8File (Join-Path $appImage 'LEIA-ME-TESTER.txt') $readme
+     Write-Utf8File (Join-Path $appImage 'VERSION.txt') ($Version + "`r`n")
++    foreach ($kitFile in $testerKitSources) {
++        $kitDestination = Assert-ChildPath (Join-Path $appImage $kitFile.Name) $appImage
++        if (Test-Path -LiteralPath $kitDestination) {
++            throw "Arquivo de homologacao ja existe na imagem: $($kitFile.Name)"
++        }
++        Copy-Item -LiteralPath $kitFile.FullName -Destination $kitDestination -ErrorAction Stop
++        $copiedKitFile = Get-Item -LiteralPath $kitDestination
++        if ($copiedKitFile.IsReadOnly) { $copiedKitFile.IsReadOnly = $false }
++    }
+     $payloadInventory = @(Get-PortableInventory $appImage)
+     $inventoryText = @($payloadInventory | ForEach-Object { $_.sha256 + '  ' + $_.path }) -join "`r`n"
+     Write-Utf8File (Join-Path $appImage 'INVENTARIO-SHA256.txt') ($inventoryText + "`r`n")
+@@ -230,6 +263,7 @@
+         mainJar = 'app/' + $jarName
+         javaModules = @($runtimeModules.Split(','))
+         runtimeLibraries = @()
++        testerKitFiles = @($testerKitSources | ForEach-Object { $_.Name })
+         stagingPolicy = 'Somente com/projetok/domain e com/projetok/prototype; sem classes legadas de banco/rede, testes ou configuracoes privadas.'
+         inventoryPolicy = 'Manifest lista todos os arquivos exceto si mesmo; INVENTARIO-SHA256.txt exclui si mesmo e manifest.json para evitar circularidade.'
+         testsExecutedByBuild = (-not $SkipMaven.IsPresent)
+--- a/tools/test-windows-portable.ps1
++++ b/tools/test-windows-portable.ps1
+@@ -229,6 +229,24 @@
+     $result.ownedProcessIds = @($ownedProcesses.Keys | Sort-Object)
+     # Preserva o handle antes do encerramento para obter ExitCode do filho nativo.
+     [void]$windowProcess.Handle
++    # A DLL carregada comprova o runtime usado, alem do PATH reduzido do teste.
++    $loadedModules = $null
++    try { $loadedModules = @($windowProcess.Modules) }
++    catch {
++        $result.bundledJvmVerified = $false
++        $result.loadedJvmInspection = 'INDISPONIVEL: ' + $_.Exception.Message
++    }
++    if ($null -ne $loadedModules) {
++        $jvmModules = @($loadedModules | Where-Object { $_.ModuleName -ieq 'jvm.dll' })
++        if ($jvmModules.Count -ne 1) { throw 'Esperada exatamente uma jvm.dll no processo da janela.' }
++        $loadedJvm = [IO.Path]::GetFullPath($jvmModules[0].FileName)
++        $bundledRuntime = [IO.Path]::GetFullPath((Join-Path $appDirectory 'runtime')) + [IO.Path]::DirectorySeparatorChar
++        if (-not $loadedJvm.StartsWith($bundledRuntime, [StringComparison]::OrdinalIgnoreCase)) {
++            throw "O processo carregou uma JVM fora do app-image: $loadedJvm"
++        }
++        $result.loadedJvmPath = $loadedJvm
++        $result.bundledJvmVerified = $true
++    }
+     Start-Sleep -Milliseconds 900
+ 
+     # --- Captura da propria janela, sem controlar outras aplicacoes. ---

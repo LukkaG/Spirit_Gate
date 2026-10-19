@@ -1,0 +1,469 @@
+--- /dev/null
++++ b/docs/TASK-015-testes.txt
+@@ -0,0 +1,36 @@
++TASK-015 - mvn clean test - BUILD SUCCESS
++{'tests': 216, 'failures': 0, 'errors': 0, 'skipped': 0}
++Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.
++
++com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.DomainSequenceRegressionTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaSequenceRegressionTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugLauncherEntrypointTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.DirectionalAnimationTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudPrecisionRegressionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudSkillFeedbackTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.prototype.LocalArenaMapTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SoftObstacleDemoTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
+--- /dev/null
++++ b/docs/TASK-015.md
+@@ -0,0 +1,17 @@
++# TASK-015 - Mapa local e colisao separada
++
++Baseline limpo: 210 testes, zero falhas/erros/ignorados. Arquivos previstos: LocalArenaMap, factory opcional DebugWorld, seletor DebugLauncher, DebugPanel e testes. Risco: carga de dados de geometria; variante isolada e comparada com referencia a cada tick.
++
++Formato Properties schemaVersion=1 com limites 960x640, spawn, lista de aparencias (ID, posicao, tamanho, camada e cor sintetica) e descritores fisicos independentes. Categorias SOFT_OBSTACLE e SOLID_OBSTACLE viram retangulos explicitos no dominio; WORLD_BOUNDARY e um unico descritor do limite do Space, sem converter a arena inteira em obstaculo. Rejeita contagens excessivas, numeros nao finitos, schema/chaves desconhecidos, IDs/chaves duplicados, limites invalidos, spawns ocupados/sobrepostos e obstaculos iniciais sobrepostos.
++
++Mapa demonstrativo docs/mapa-demo.properties conserva geometria dos tres solidos e tres leves e spawn historico. Aparencias maiores que corpos mostram a separacao. Renderer com tiles sinteticos de 32x32 em cache, nearest-neighbor e aviso na captura. Nenhum PNG de Karakura ativado, pois TASK-013 teve zero validados. Formato e demonstracao nao equivalem ao cenario artistico final.
++
++DebugWorld.demo() e padrao da janela preservados. Seletor explicito: DebugLauncher --map CAMINHO. No Maven: mvn.cmd -Dmaven.repo.local=.maven-repository -f server/pom.xml exec:java -Dexec.mainClass=com.projetok.prototype.DebugLauncher "-Dexec.args=--map ../docs/mapa-demo.properties" (o caminho depende do diretorio de execucao; prefira absoluto). R recria o mesmo mapa por factory; nada de banco, rede ou editor visual.
++
++Seis testes novos: carga e repeticao, rejeicoes, spawn, dimensao visual independente da colisao, replay da variante vs demo incluindo dash, reinicio deterministico e render sem mutacao. Comparacao de snapshots por tick confirma fisica identica ao demo. Suite completa final: 216 testes, zero falhas/erros/ignorados; replays e baselines historicos preservados. Captura TASK-015-placeholders.png e demonstracao SINTETICA, sem arte final integrada.
++
++Falhas intermediarias preservadas em TASK-015-falha-intermediaria.log: uma fixture usava spawn valido como negativo (corrigida para y=0); o teste de R detectou ausencia da amostra visual do spawn apos reset. Corrigido DebugRuntime para inicializar o sequenciador com o snapshot do novo mundo antes do primeiro tick, sem alterar mecanicas.
++
++Evidencias: TASK-015-inicial.log, TASK-015-final.log, TASK-015-testes.txt, PDF, diff e checkpoint local. Reproducao: mvn.cmd -Dmaven.repo.local=.maven-repository -f server/pom.xml clean test.
++
++O QUE FOI REALMENTE EXECUTADO: carga offline, rejeicoes, snapshots/replays, reinicio e render sintetico. O QUE AINDA EXIGE O USUARIO: homologar nova variante e fornecer/aprovar tiles; o padrao nao foi trocado pela variante.
+--- /dev/null
++++ b/docs/mapa-demo.properties
+@@ -0,0 +1,74 @@
++# DEMONSTRACAO SINTETICA - sem arte Karakura ativada
++schemaVersion=1
++width=960
++height=640
++spawnX=135
++spawnY=340
++visual.count=3
++physical.count=7
++visual.0.id=piso
++visual.0.x=32
++visual.0.y=32
++visual.0.width=256
++visual.0.height=256
++visual.0.layer=0
++visual.0.rgb=245342
++visual.1.id=fachada-placeholder
++visual.1.x=320
++visual.1.y=80
++visual.1.width=160
++visual.1.height=288
++visual.1.layer=1
++visual.1.rgb=444c73
++visual.2.id=arbusto-placeholder
++visual.2.x=48
++visual.2.y=400
++visual.2.width=96
++visual.2.height=96
++visual.2.layer=1
++visual.2.rgb=467642
++physical.0.id=limite
++physical.0.x=0
++physical.0.y=0
++physical.0.width=960
++physical.0.height=640
++physical.0.category=WORLD_BOUNDARY
++physical.1.id=predio-a
++physical.1.x=346
++physical.1.y=112
++physical.1.width=110
++physical.1.height=228
++physical.1.category=SOLID_OBSTACLE
++physical.2.id=predio-b
++physical.2.x=594
++physical.2.y=310
++physical.2.width=112
++physical.2.height=174
++physical.2.category=SOLID_OBSTACLE
++physical.3.id=muro
++physical.3.x=275
++physical.3.y=500
++physical.3.width=145
++physical.3.height=44
++physical.3.category=SOLID_OBSTACLE
++physical.4.id=arbusto-a
++physical.4.x=70
++physical.4.y=420
++physical.4.width=36
++physical.4.height=40
++physical.4.category=SOFT_OBSTACLE
++physical.4.kind=BUSH
++physical.5.id=arbusto-b
++physical.5.x=160
++physical.5.y=420
++physical.5.width=36
++physical.5.height=40
++physical.5.category=SOFT_OBSTACLE
++physical.5.kind=BUSH
++physical.6.id=poste
++physical.6.x=250
++physical.6.y=425
++physical.6.width=14
++physical.6.height=30
++physical.6.category=SOFT_OBSTACLE
++physical.6.kind=POST
+--- a/server/src/main/java/com/projetok/prototype/DebugLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/DebugLauncher.java
+@@ -27,13 +27,26 @@
+     private DebugLauncher() { }
+ 
+     public static void main(String[] args) {
+-        SwingUtilities.invokeLater(DebugLauncher::open);
++        if (args.length == 0) SwingUtilities.invokeLater(DebugLauncher::open);
++        else if (args.length == 2 && "--map".equals(args[0])) {
++            try {
++                LocalArenaMap map = LocalArenaMap.load(java.nio.file.Path.of(args[1]));
++                SwingUtilities.invokeLater(() -> open(map));
++            } catch (java.io.IOException error) { throw new IllegalArgumentException("Nao foi possivel carregar mapa local", error); }
++        } else throw new IllegalArgumentException("Uso: DebugLauncher [--map arquivo.properties]");
+     }
+ 
+     /** Cria a interface no EDT e inicia a simulação em uma thread separada. */
+     private static void open() {
+-        DebugRuntime runtime = new DebugRuntime();
++        open(null);
++    }
++
++    /** Variante explicita de teste: R reutiliza os mesmos dados de mapa validados. */
++    private static void open(LocalArenaMap map) {
++        DebugRuntime runtime = map == null ? new DebugRuntime() : new DebugRuntime(
++                () -> DebugWorld.forMap(map, java.util.random.RandomGenerator.getDefault()));
+         DebugPanel panel = new DebugPanel(runtime::snapshot);
++        panel.setLocalMap(map);
+         panel.setPresentation(runtime::presentation, null);
+         JFrame frame = new JFrame("Spirit Gate | Arena de Debug 2D");
+         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+--- a/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ b/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -27,6 +27,10 @@
+     private boolean showHitboxes;
+     private Supplier<DirectionalAnimation.Presentation> presentationSource;
+     private ValidatedSpriteAtlas spriteAtlas;
++    private LocalArenaMap.Renderer mapRenderer;
++
++    /** Seletor visual opcional de demonstracao, sem modificar o mundo a partir da imagem. */
++    public void setLocalMap(LocalArenaMap map) { mapRenderer = map == null ? null : map.renderer(); }
+ 
+     /** Ativa somente um atlas ja validado; null mantem a geometria original. */
+     public void setPresentation(Supplier<DirectionalAnimation.Presentation> source, ValidatedSpriteAtlas atlas) {
+@@ -76,6 +80,7 @@
+ 
+     private void renderScene(Graphics2D g, DebugSnapshot s, java.util.List<DirectionalAnimation.View> animations) {
+         drawWorld(g);
++        if (mapRenderer != null) mapRenderer.draw(g);
+         drawObstacles(g, s);
+         drawSoftObstacles(g, s);
+         drawIceZones(g, s);
+--- a/server/src/main/java/com/projetok/prototype/DebugRuntime.java
++++ b/server/src/main/java/com/projetok/prototype/DebugRuntime.java
+@@ -60,6 +60,8 @@
+         if (frame.restart()) {
+             animations.reset();
+             world = Objects.requireNonNull(worldFactory.get(), "world");
++            // O primeiro deslocamento apos R deve partir do spawn, como na abertura.
++            animations.advance(world.snapshot(), java.util.List.of(), 0);
+             world.synchronizeEffort(frame.input().effort());
+         }
+         world.tickQueued(frame.input(), 1f / 30f, frame.effortPresses(), frame.casts());
+--- a/server/src/main/java/com/projetok/prototype/DebugWorld.java
++++ b/server/src/main/java/com/projetok/prototype/DebugWorld.java
+@@ -135,8 +135,20 @@
+ 
+     /** Mantém os construtores históricos e compartilha toda a simulação entre os cenários. */
+     private DebugWorld(RandomGenerator random, MovementService.Response response, boolean demo) {
+-        softObstacles = demo ? DEMO_OBSTACLES : List.of();
+-        List<CollisionService.Obstacle> geometry = new ArrayList<>(ORIGINAL_OBSTACLES);
++        this(random, response, demo, null);
++    }
++
++    /** Variante isolada por dados locais; demo() e construtores historicos permanecem iguais. */
++    public static DebugWorld forMap(LocalArenaMap map, RandomGenerator random) {
++        return new DebugWorld(random, MovementService.Response.SOFT_SLIDE, false, java.util.Objects.requireNonNull(map));
++    }
++
++    private DebugWorld(RandomGenerator random, MovementService.Response response, boolean demo, LocalArenaMap map) {
++        softObstacles = map == null ? (demo ? DEMO_OBSTACLES : List.of()) : map.physical().stream()
++                .filter(p -> p.category() == CollisionCategory.SOFT_OBSTACLE)
++                .map(p -> new DemoObstacle(new CollisionService.Obstacle(p.x(),p.y(),p.width(),p.height(),p.category()),p.kind())).toList();
++        List<CollisionService.Obstacle> geometry = new ArrayList<>(map == null ? ORIGINAL_OBSTACLES : map.obstacles().stream()
++                .filter(p -> p.category() == CollisionCategory.SOLID_OBSTACLE).toList());
+         softObstacles.forEach(obstacle -> geometry.add(obstacle.body()));
+         obstacles = List.copyOf(geometry);
+         movement = new MovementService(collisions, response);
+@@ -147,7 +159,7 @@
+         VitalityService vitality = new VitalityService();
+         player = new PlayerFactory(vitality).create(1, "Guardiao", new PlayerArchetype(
+                         races.get("human"), 30, 8, 14, null, null),
+-                new Position(135, 340), new PlayerConnection() {
++                new Position(map == null ? 135 : map.spawnX(), map == null ? 340 : map.spawnY()), new PlayerConnection() {
+                     @Override public void send(Object packet) { /* canal local não envia pacotes */ }
+                     @Override public void disconnect() { /* nenhum socket aberto */ }
+                 });
+@@ -401,7 +413,7 @@
+         for (Mob mob : mobs) actors.add(view(mob, MOB_RADIUS, false));
+         HealthComponent hp = player.require(HealthComponent.class);
+         float vigor = player.require(StaminaComponent.class).current();
+-        return new DebugSnapshot(List.copyOf(actors), ORIGINAL_OBSTACLES.stream().map(o ->
++        return new DebugSnapshot(List.copyOf(actors), obstacles.stream().filter(o -> o.category() == CollisionCategory.SOLID_OBSTACLE).map(o ->
+                         new DebugSnapshot.Obstacle(o.x(), o.y(), o.width(), o.height())).toList(), List.copyOf(effects),
+                 hp.current(), hp.max(), defeated, player.isDead(), ticks,
+                 lastEvent, facingX, facingY, attackCooldown, attack,
+--- /dev/null
++++ b/server/src/main/java/com/projetok/prototype/LocalArenaMap.java
+@@ -0,0 +1,133 @@
++package com.projetok.prototype;
++
++import com.projetok.domain.movement.CollisionCategory;
++import com.projetok.domain.movement.CollisionService;
++import java.awt.Color;
++import java.awt.Graphics2D;
++import java.awt.RenderingHints;
++import java.awt.image.BufferedImage;
++import java.io.IOException;
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.util.ArrayList;
++import java.util.HashSet;
++import java.util.List;
++import java.util.Properties;
++import java.util.Set;
++
++/** Mapa local versionado: aparencia nunca define a geometria autoritativa. */
++public record LocalArenaMap(int width, int height, float spawnX, float spawnY,
++                            List<Visual> visuals, List<Physical> physical) {
++    /** Placeholder sintetico; tamanho e camada nao alteram a hitbox. */
++    public record Visual(String id, int x, int y, int width, int height, int layer, int rgb) { }
++    /** Retangulo fisico explicitamente tipado; WORLD_BOUNDARY e o limite do mundo. */
++    public record Physical(String id, float x, float y, float width, float height,
++                           CollisionCategory category, DebugSnapshot.SoftObstacleKind kind) { }
++
++    public LocalArenaMap {
++        visuals=List.copyOf(visuals);physical=List.copyOf(physical);
++        if(width!=DebugWorld.WIDTH || height!=DebugWorld.HEIGHT) throw new IllegalArgumentException("Limites devem preservar arena 960x640");
++        Set<String> ids=new HashSet<>();
++        for(var v:visuals) {
++            if(v.id()==null || v.id().isBlank() || !ids.add(v.id())) throw new IllegalArgumentException("ID visual duplicado/vazio");
++            bounds(v.x(),v.y(),v.width(),v.height(),width,height);
++            if(v.layer()<0 || v.layer()>10 || v.rgb()<0 || v.rgb()>0xffffff) throw new IllegalArgumentException("Camada/cor invalida");
++        }
++        ids.clear();int boundaries=0;
++        for(var p:physical) {
++            if(p.id()==null || p.id().isBlank() || !ids.add(p.id())) throw new IllegalArgumentException("ID fisico duplicado/vazio");
++            bounds(p.x(),p.y(),p.width(),p.height(),width,height);
++            if(p.category()==CollisionCategory.WORLD_BOUNDARY) {
++                boundaries++;
++                if(p.x()!=0 || p.y()!=0 || p.width()!=width || p.height()!=height) throw new IllegalArgumentException("Borda deve coincidir com mundo");
++            } else if(p.category()!=CollisionCategory.SOFT_OBSTACLE && p.category()!=CollisionCategory.SOLID_OBSTACLE) throw new IllegalArgumentException("Categoria fisica invalida");
++            if(p.category()==CollisionCategory.SOFT_OBSTACLE && p.kind()==null) throw new IllegalArgumentException("Leve exige tipo visual explicito");
++        }
++        if(boundaries!=1) throw new IllegalArgumentException("Exatamente uma borda explicita obrigatoria");
++        List<Physical> bodies=physical.stream().filter(p->p.category()!=CollisionCategory.WORLD_BOUNDARY).toList();
++        for(int i=0;i<bodies.size();i++) for(int j=i+1;j<bodies.size();j++) {
++            var a=bodies.get(i);var b=bodies.get(j);
++            if(a.x()<b.x()+b.width() && a.x()+a.width()>b.x() && a.y()<b.y()+b.height() && a.y()+a.height()>b.y()) throw new IllegalArgumentException("Obstaculos iniciais sobrepostos");
++        }
++        float[][] spawns={{spawnX,spawnY,DebugWorld.PLAYER_RADIUS},{215,148,DebugWorld.MOB_RADIUS},{812,190,DebugWorld.MOB_RADIUS},{782,550,DebugWorld.MOB_RADIUS}};
++        for(var s:spawns) {
++            if(!Float.isFinite(s[0]) || !Float.isFinite(s[1]) || s[0]<s[2] || s[1]<s[2] || s[0]>width-s[2] || s[1]>height-s[2]) throw new IllegalArgumentException("Spawn fora do mapa");
++            for(var b:bodies) {
++                float dx=s[0]-Math.max(b.x(),Math.min(s[0],b.x()+b.width()));
++                float dy=s[1]-Math.max(b.y(),Math.min(s[1],b.y()+b.height()));
++                if(dx*dx+dy*dy<s[2]*s[2]) throw new IllegalArgumentException("Spawn ocupado");
++            }
++        }
++        for(int i=0;i<spawns.length;i++) for(int j=i+1;j<spawns.length;j++) {
++            float dx=spawns[i][0]-spawns[j][0],dy=spawns[i][1]-spawns[j][1],r=spawns[i][2]+spawns[j][2];
++            if(dx*dx+dy*dy<r*r) throw new IllegalArgumentException("Spawns sobrepostos");
++        }
++    }
++    private static void bounds(float x,float y,float w,float h,int width,int height) {
++        if(!Float.isFinite(x+y+w+h) || x<0 || y<0 || w<=0 || h<=0 || x+w>width || y+h>height) throw new IllegalArgumentException("Retangulo fora dos limites");
++    }
++    /** Carrega apenas arquivo local Properties, com contagens limitadas e chaves estritas. */
++    public static LocalArenaMap load(Path path) throws IOException {
++        if(Files.size(path)>1_000_000) throw new IOException("Mapa excessivo");
++        Properties p=new Properties() {
++            @Override public synchronized Object put(Object key,Object value) {
++                if(containsKey(key)) throw new IllegalArgumentException("Chave duplicada no mapa");
++                return super.put(key,value);
++            }
++        };
++        try(var reader=Files.newBufferedReader(path)) {p.load(reader);}
++        try {
++            if(!"1".equals(p.remove("schemaVersion"))) throw new IllegalArgumentException("Schema desconhecido");
++            int w=integer(p,"width"),h=integer(p,"height");
++            float sx=number(p,"spawnX"),sy=number(p,"spawnY");
++            int nv=count(p,"visual.count"),np=count(p,"physical.count");
++            List<Visual> visuals=new ArrayList<>();List<Physical> physical=new ArrayList<>();
++            for(int i=0;i<nv;i++) {
++                String prefix="visual."+i+".";
++                visuals.add(new Visual(take(p,prefix+"id"),integer(p,prefix+"x"),integer(p,prefix+"y"),integer(p,prefix+"width"),integer(p,prefix+"height"),integer(p,prefix+"layer"),Integer.parseInt(take(p,prefix+"rgb"),16)));
++            }
++            for(int i=0;i<np;i++) {
++                String prefix="physical."+i+".";
++                String id=take(p,prefix+"id");float x=number(p,prefix+"x"),y=number(p,prefix+"y"),pw=number(p,prefix+"width"),ph=number(p,prefix+"height");
++                CollisionCategory category=CollisionCategory.valueOf(take(p,prefix+"category"));
++                String kind=(String)p.remove(prefix+"kind");
++                physical.add(new Physical(id,x,y,pw,ph,category,kind==null?null:DebugSnapshot.SoftObstacleKind.valueOf(kind)));
++            }
++            if(!p.isEmpty()) throw new IllegalArgumentException("Chave desconhecida no mapa");
++            return new LocalArenaMap(w,h,sx,sy,visuals,physical);
++        } catch(IllegalArgumentException error) {throw new IOException("Mapa invalido: "+error.getMessage(),error);}
++    }
++    private static String take(Properties p,String key) {
++        String value=(String)p.remove(key);if(value==null) throw new IllegalArgumentException("Chave ausente: "+key);return value;
++    }
++    private static int integer(Properties p,String key) {return Integer.parseInt(take(p,key));}
++    private static float number(Properties p,String key) {return Float.parseFloat(take(p,key));}
++    private static int count(Properties p,String key) {int n=integer(p,key);if(n<0 || n>4096) throw new IllegalArgumentException("Contagem invalida");return n;}
++    /** Converte apenas descritores fisicos em obstaculos; borda pertence ao Space. */
++    public List<CollisionService.Obstacle> obstacles() {
++        return physical.stream().filter(p->p.category()!=CollisionCategory.WORLD_BOUNDARY)
++                .map(p->new CollisionService.Obstacle(p.x(),p.y(),p.width(),p.height(),p.category())).toList();
++    }
++    /** Renderer de demonstracao usa tiles sinteticos em cache, sem ativar PNG candidato. */
++    public Renderer renderer() {return new Renderer(this);}
++    public static final class Renderer {
++        private record Tile(Visual visual,BufferedImage image) { }
++        private final List<Tile> tiles;
++        private Renderer(LocalArenaMap map) {
++            tiles=map.visuals().stream().sorted(java.util.Comparator.comparingInt(Visual::layer)).map(v->{
++                BufferedImage image=new BufferedImage(32,32,BufferedImage.TYPE_INT_RGB);var g=image.createGraphics();
++                g.setColor(new Color(v.rgb()));g.fillRect(0,0,32,32);g.setColor(new Color(v.rgb()).brighter());
++                g.drawRect(0,0,31,31);g.drawLine(0,0,31,31);g.dispose();return new Tile(v,image);
++            }).toList();
++        }
++        /** Renderiza somente dados imutaveis; nenhum efeito no mundo ou na hitbox. */
++        public void draw(Graphics2D original) {
++            Graphics2D g=(Graphics2D)original.create();
++            try {
++                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
++                for(var tile:tiles) {var v=tile.visual();g.drawImage(tile.image(),v.x(),v.y(),v.width(),v.height(),null);}
++                g.setColor(Color.WHITE);g.drawString("MAPA LOCAL DE TESTE - TILES SINTETICOS",24,24);
++            }finally{g.dispose();}
++        }
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/LocalArenaMapTest.java
+@@ -0,0 +1,77 @@
++package com.projetok.prototype;
++
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import java.nio.file.Path;
++import java.nio.file.Files;
++import java.util.List;
++import java.util.Random;
++import java.awt.image.BufferedImage;
++import javax.imageio.ImageIO;
++import com.projetok.domain.skill.SkillCastCommand;
++import com.projetok.domain.skill.LightningStepService;
++import static org.junit.jupiter.api.Assertions.*;
++
++class LocalArenaMapTest {
++    @TempDir Path temp;
++    private Path source=Path.of("../docs/mapa-demo.properties");
++    private LocalArenaMap load() throws Exception {return LocalArenaMap.load(source);}
++    @Test void loadsRepeatablyAndPreservesDefaultDemo() throws Exception {
++        var map=load();assertEquals(map,load());
++        assertThrows(UnsupportedOperationException.class,()->map.visuals().clear());
++        assertEquals(DebugWorld.demo(new Random(3)).snapshot(),DebugWorld.forMap(map,new Random(3)).snapshot());
++        assertEquals(3,DebugWorld.demo().snapshot().softObstacles().size());
++    }
++    @Test void rejectsInvalidBoundsSpawnsCountsSchemaAndObjects() throws Exception {
++        String original=Files.readString(source);
++        String[][] changes={{"width=960","width=NaN"},{"spawnX=135","spawnX=360"},
++                {"spawnY=340","spawnY=0"},{"physical.count=7","physical.count=999999"},
++                {"schemaVersion=1","schemaVersion=2"},{"physical.4.x=70","physical.4.x=-1"},
++                {"physical.4.id=arbusto-a","physical.4.id=predio-a"},
++                {"physical.4.x=70","physical.4.x=160"},{"physical.4.category=SOFT_OBSTACLE","physical.4.category=ACTOR"},
++                {"physical.0.width=960","physical.0.width=900"}};
++        for(var pair:changes) {
++            Path bad=temp.resolve("bad.properties");Files.writeString(bad,original.replace(pair[0],pair[1]));
++            assertThrows(Exception.class,()->LocalArenaMap.load(bad),pair[0]);
++        }
++        Path bad=temp.resolve("extra.properties");Files.writeString(bad,original+"unknown=1\n");
++        assertThrows(Exception.class,()->LocalArenaMap.load(bad));
++        Files.writeString(bad,original+"width=960\n");assertThrows(Exception.class,()->LocalArenaMap.load(bad));
++    }
++    @Test void visualDimensionsNeverChangeCollisionOrReplay() throws Exception {
++        var map=load();var large=List.of(new LocalArenaMap.Visual("gigante",0,0,960,640,0,0x332244));
++        var other=new LocalArenaMap(map.width(),map.height(),map.spawnX(),map.spawnY(),large,map.physical());
++        assertEquals(map.obstacles(),other.obstacles());
++        var a=DebugWorld.forMap(map,new Random(3));var b=DebugWorld.forMap(other,new Random(3));
++        for(int i=0;i<180;i++) {
++            var input=new DebugInput(i%60<30,i%60>=30,false,false,i%3==0);
++            a.tick(input,1f/30f);b.tick(input,1f/30f);assertEquals(a.snapshot(),b.snapshot());
++        }
++    }
++    @Test void mapMovementAndDashMatchReferenceEveryTick() throws Exception {
++        var a=DebugWorld.forMap(load(),new Random(4));var b=DebugWorld.demo(new Random(4));
++        for(int i=0;i<20;i++) {
++            var input=new DebugInput(false,true,true,false,false);
++            a.tick(input,1f/30f);b.tick(input,1f/30f);assertEquals(a.snapshot(),b.snapshot());
++        }
++        var cast=new SkillCastCommand(LightningStepService.ID,80,600);
++        a.tickQueued(DebugInput.NONE,1f/30f,0,List.of(cast));b.tickQueued(DebugInput.NONE,1f/30f,0,List.of(cast));
++        for(int i=0;i<20;i++) {a.tick(DebugInput.NONE,1f/30f);b.tick(DebugInput.NONE,1f/30f);assertEquals(a.snapshot(),b.snapshot());}
++    }
++    @Test void restartUsesSameLocalMap() throws Exception {
++        var map=load();
++        try(var a=new DebugRuntime(()->DebugWorld.forMap(map,new Random(6)));var b=new DebugRuntime(()->DebugWorld.forMap(map,new Random(6)))) {
++            a.setInput(new DebugInput(false,true,false,false,false));for(int i=0;i<20;i++)a.advanceOneTick();
++            a.setInput(DebugInput.NONE);a.restart();a.advanceOneTick();b.advanceOneTick();
++            assertEquals(b.snapshot(),a.snapshot());assertEquals(b.presentation(),a.presentation());
++        }
++    }
++    @Test void syntheticRenderHasFallbackAndDoesNotMutate() throws Exception {
++        var map=load();var world=DebugWorld.forMap(map,new Random(1));var snapshot=world.snapshot();
++        var panel=new DebugPanel(()->snapshot);panel.setLocalMap(map);
++        var image=new BufferedImage(DebugPanel.PANEL_WIDTH,DebugPanel.PANEL_HEIGHT,BufferedImage.TYPE_INT_RGB);
++        var g=image.createGraphics();panel.render(g,snapshot);panel.render(g,snapshot);g.dispose();
++        assertEquals(snapshot,world.snapshot());assertEquals(map,load());
++        ImageIO.write(image,"png",Path.of("../docs/TASK-015-placeholders.png").toFile());
++    }
++}
+--- a/tools/checkpoint_rodada.py
++++ b/tools/checkpoint_rodada.py
+@@ -8,7 +8,7 @@
+ import xml.etree.ElementTree as ET
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+-EXTENSIONS = {".java", ".md", ".txt", ".xml", ".py", ".ps1", ".cmd", ".gitignore"}
++EXTENSIONS = {".java", ".md", ".txt", ".xml", ".py", ".ps1", ".cmd", ".gitignore", ".properties"}
+ EXCLUDED = {"target", "dist", ".git", ".task-checkpoints", "assets", "__pycache__", ".maven-repository"}
+ 
+ 

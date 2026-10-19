@@ -1,0 +1,16 @@
+TASK-004 | 18/10/2026
+Estado inicial: mvn clean test -q; 53 testes aprovados.
+Estado final: mvn clean test; BUILD SUCCESS; compilacao release 17.
+73 testes, 0 falhas, 0 erros, 0 ignorados.
+
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.102 s -- in com.projetok.domain.movement.MovementHardeningTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in com.projetok.domain.movement.MovementServiceTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.083 s -- in com.projetok.domain.movement.SpatialBodyIndexTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in com.projetok.domain.resource.StaminaServiceTest
+Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.027 s -- in com.projetok.domain.skill.CryostasisServiceTest
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.692 s -- in com.projetok.prototype.CryostasisIntegrationTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.013 s -- in com.projetok.prototype.DebugCommandBufferTest
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.122 s -- in com.projetok.prototype.DebugWorldTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.144 s -- in com.projetok.prototype.MovementReplayTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.513 s -- in com.projetok.prototype.StaminaInterfaceTest
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.013 s -- in com.projetok.prototype.StaminaWorldTest

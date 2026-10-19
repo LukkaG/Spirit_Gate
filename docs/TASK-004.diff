@@ -1,0 +1,1017 @@
+--- a/docs/HISTORICO-TECNICO.md
++++ b/docs/HISTORICO-TECNICO.md
+@@ -1,4 +1,14 @@
+ # Histórico técnico
++
++## 18/10/2026 - TASK-004: Criostase
++
++Implementada a primeira habilidade específica: Q captura o alvo do mouse e publica SkillCastCommand imutável na fila. Custo 55 de vigor, cooldown 3 s, clamp de alcance 240, raio 85, duração 2,5 s e cinco pulsos de 7 ICE em 0/0,5/1/1,5/2 s. Sem sexto pulso, congelamento ou lentidão. Paredes não bloqueiam; hitboxes tangentes são incluídas.
++
++CombatService permanece o único caminho de dano e não foi modificado. ICE foi anexado ao final do enum, com afinidade racial padrão 1,0. Zonas persistem no ponto lançado, consultam mobs vivos a cada pulso e são removidas na expiração ou reinício. Snapshot e Java2D publicam/desenham apenas valores; nenhuma nova thread, dependência ou framework genérico foi criado.
++
++Validação inicial: 53 testes. Final: `mvn clean test`, BUILD SUCCESS, **73 testes sem falhas ou erros**. Os três baselines e o código do replay foram preservados. Testes de mouse/Q no EDT e runtime real cobrem toque rápido, repetição, liberação do cooldown e reset. Captura renderizada inspecionada; sessão interativa com JFrame não realizada.
++
++Entrega para revisão técnica: [relatório](TASK-004.md), [PDF](Spirit_Gate_TASK-004.pdf), [testes](TASK-004-testes.txt), [captura](TASK-004-criostase.png) e [diff](TASK-004.diff). A próxima task aguarda revisão.
+ 
+ ## 18/10/2026 - Pendências após TASK-003
+ 
+--- /dev/null
++++ b/docs/TASK-004-testes.txt
+@@ -0,0 +1,16 @@
++TASK-004 | 18/10/2026
++Estado inicial: mvn clean test -q; 53 testes aprovados.
++Estado final: mvn clean test; BUILD SUCCESS; compilacao release 17.
++73 testes, 0 falhas, 0 erros, 0 ignorados.
++
++Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.102 s -- in com.projetok.domain.movement.MovementHardeningTest
++Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in com.projetok.domain.movement.MovementServiceTest
++Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.083 s -- in com.projetok.domain.movement.SpatialBodyIndexTest
++Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in com.projetok.domain.resource.StaminaServiceTest
++Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.027 s -- in com.projetok.domain.skill.CryostasisServiceTest
++Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.692 s -- in com.projetok.prototype.CryostasisIntegrationTest
++Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.013 s -- in com.projetok.prototype.DebugCommandBufferTest
++Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.122 s -- in com.projetok.prototype.DebugWorldTest
++Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.144 s -- in com.projetok.prototype.MovementReplayTest
++Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.513 s -- in com.projetok.prototype.StaminaInterfaceTest
++Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.013 s -- in com.projetok.prototype.StaminaWorldTest
+--- /dev/null
++++ b/docs/TASK-004.md
+@@ -0,0 +1,108 @@
++# TASK-004 - Criostase
++
++Spirit Gate | 18/10/2026 | Java 17 e Maven
++
++## Resultado
++
++Q lança uma zona fixa de gelo na posição capturada do mouse. O comando usa o ID cryostasis, custa 55 de vigor e inicia cooldown de 3 segundos. O centro é limitado a 240 unidades do jogador. A zona tem raio 85 e dura 2,5 segundos. Causa 7 de dano ICE por pulso, em 0, 0,5, 1, 1,5 e 2 segundos. Não existe sexto pulso na expiração.
++
++O dano máximo teórico por alvo é 35 com afinidade neutra e permanência nos cinco instantes de pulso. Mobs continuam se movendo normalmente: congelamento e lentidão não foram implementados. Paredes não bloqueiam a habilidade. O raio pode ultrapassar visualmente a arena, mas o centro solicitado deve estar dentro da área jogável; a renderização é recortada nos limites.
++
++## Preparação e proposta apresentada
++
++Foram inspecionados DebugWorld, DebugInput, DebugRuntime, DebugLauncher, DebugSnapshot, DebugPanel, CombatService, Attacker, DamageType, RaceRegistry, StaminaService e testes existentes. Attacker está em domain/entity/capability; DamageType está em domain/race. O comando inicial mvn clean test -q passou com os 53 testes existentes antes das alterações.
++
++A proposta apresentada separou um contrato imutável de intenção, serviço específico de elegibilidade/cooldown, zona com relógio determinístico e adaptador Attacker. A integração usa a fila FIFO existente; o painel apenas desenha os valores publicados. Nenhuma dependência foi adicionada e nenhum arquivo foi excluído ou renomeado.
++
++## Arquitetura e responsabilidades
++
++SkillCastCommand é o contrato único e imutável: skillId, targetX, targetY. Não executa regras e permite transportar entradas inválidas até a validação autoritativa, sem lançar exceções no EDT.
++
++CryostasisService mantém o estado de um único lançador. Valida ID, coordenadas finitas e mouse dentro de [0, largura) e [0, altura), vida e cooldown. Valida a origem, calcula o centro limitado na direção solicitada e usa StaminaService.tryConsume para consumir somente após a elegibilidade. Recusas retornam um motivo explícito e não criam zona ou cooldown. A verificação de vigor é feita antes de criar qualquer estado; o cálculo puro do clamp pode ocorrer antes dessa consulta.
++
++CryostasisZone guarda centro, tempo decorrido e índice do próximo pulso. advance(0) consome o pulso imediato; cada avanço libera somente os novos pulsos devidos. O contador termina em cinco, independentemente do delta. O relógio usa double acumulando deltas de simulação e tolerância de 0,000001 s para arredondamentos de float nos limites. Não há relógio de parede, sleep, timer Swing ou thread adicional de gameplay.
++
++CryostasisAttacker implementa Attacker com dano base 7 e DamageType.ICE. ICE foi acrescentado após EARTH: os valores e a ordem anteriores do enum foram preservados. RaceRegistry e Race permanecem inalterados: affinityFor usa 1,0 para gelo em todas as raças atuais. WATER não é utilizado.
++
++O único ponto que causa dano na skill é combat.attack(attacker, mob). A implementação não chama receiveDamage ou HealthComponent.applyDamage. CombatService permanece byte a byte igual ao estado inicial. A skill verifica vida antes de cada aplicação, evitando repetição de eventos de morte em pulsos posteriores.
++
++## Pulsos, hitboxes e movimentação
++
++Cada pulso consulta vida e posição atuais dos alvos. A interseção usa distância ao quadrado menor ou igual ao quadrado da soma do raio 85 com a hitbox do mob, incluindo tangência. Uma coleção por identidade impede que um alvo duplicado na lista receba duas aplicações no mesmo pulso; alvos que morrerem são ignorados depois disso.
++
++A zona fica fixa no cenário quando o jogador se move. Alvos podem entrar e sair e só são atingidos se estiverem em interseção no instante de aplicação. Vários pulsos cruzados por um delta são processados uma vez cada. Na arena, as posições são amostradas por ticks de até 0,1 s; não há reconstrução de trajetórias entre pulsos.
++
++Zonas já criadas continuam até expirar mesmo se o lançador morrer. Novos lançamentos permanecem bloqueados. Reiniciar cria um mundo e um serviço novos, eliminando zonas e cooldowns.
++
++## Fila, Q e mouse
++
++DebugLauncher coleta posição do mouse no EDT. Pressionar Q captura essa posição em SkillCastCommand e publica na mesma fila das demais entradas. O conjunto de teclas mantidas permite publicar somente na transição inicial; autorepeat e Q mantido não duplicam lançamentos, inclusive após o cooldown liberar. Soltar Q habilita uma nova tentativa.
++
++Antes do primeiro movimento do mouse ou após sair do painel, o alvo é inválido e a tentativa é recusada sem gasto. Sidebar e rodapé não fazem parte da área jogável e também são recusados. O mouse não precisa ser clicado: Q lança no ponto apontado.
++
++DebugCommandBuffer conserva os comandos mesmo quando Q é pressionado e solto inteiramente entre ticks. Ao drenar, publica uma lista imutável. Um reinício elimina intenções anteriores ao comando de reset; intenções explicitamente posteriores a ele pertencem ao novo mundo. Q ainda mantido no EDT não produz uma nova intenção automaticamente após R.
++
++DebugInput foi inspecionado e não precisou ser modificado: a skill usa um comando separado do estado WASD/E/Espaço. Seus construtores anteriores permanecem compatíveis.
++
++## Ordem da simulação e feedback
++
++No começo do tick, os cooldowns e efeitos anteriores são atualizados. CryostasisService avança as zonas existentes e devolve danos já aplicados pelo CombatService. Depois, se o jogador estiver vivo, ocorrem regeneração, movimento e ataque básico na ordem anterior, seguidos dos comandos de skill, IA dos mobs e esforço E. Assim, Q tem prioridade sobre E no mesmo lote para uso do saldo disponível.
++
++As zonas novas recebem pulso imediato e só envelhecem a partir do próximo tick. A regeneração continua sendo uma por tick, nunca por comando. Os eventos de morte existentes incrementam defeated; os resultados de dano viram os mesmos EffectView usados pelos números flutuantes. O coordenador preserva a mensagem de derrota do mob ao receber um resultado letal.
++
++DebugSnapshot publica cryostasisCooldown e uma lista imutável de IceZoneView com centro, raio, tempo e duração. DebugPanel desenha preenchimento azul-claro, borda com marcas de gelo e pulsação discreta baseada no tempo publicado, sem mutação do mundo. O rodapé foi ampliado em 32 pixels para o atalho Q e o cooldown sem sobrepor as informações antigas. WASD, Espaço, E, H e R foram mantidos.
++
++## Testes executados
++
++Comando final na pasta server: mvn clean test. Resultado real: BUILD SUCCESS, 73 testes, zero falhas, zero erros e zero ignorados; compilação com release 17.
++
++CryostasisServiceTest: 13 testes novos. Verificam lançamento válido, custo 55, dano imediato, vigor insuficiente, cooldown e liberação, clamp exato e diagonal, ID inválido, NaN, infinitos, mouse fora da arena, jogador morto, cinco pulsos sem sexto, delta de 30 Hz, passos grandes, entrada/saída, tangência, deduplicação, cadáveres, evento de morte pelo CombatService, afinidade neutra, ordem do enum e zona fixa após movimento/morte do lançador.
++
++CryostasisIntegrationTest: 7 testes novos. Verificam publicação de zona e dano, vigor e ataque preservados, comandos inválidos/cooldown, paredes, expiração, runtime real e reinício sem estado pendente, fila de skills, mouse e Q no EDT, toque rápido, tecla mantida mesmo após liberar cooldown e captura renderizada sem gameplay no painel.
++
++Os 53 testes anteriores continuam aprovados. MovementReplayTest não foi alterado, seus três baselines não foram recalculados, e a projeção anterior continua verificando 1.800 ticks. Os novos campos do snapshot ficam fora dessa projeção por não pertencerem ao estado legado. Movimento, colisões, corte, dano básico e vigor mantêm suas asserções anteriores.
++
++Os testes usam fixtures que configuram HP para cenários de morte; somente a preparação dos testes modifica esse HP diretamente. A implementação da habilidade usa exclusivamente CombatService para dano.
++
++Resultados por classe: TASK-004-testes.txt. Captura: TASK-004-criostase.png, gerada pelo teste e inspecionada. A imagem mostra zona ativa sobre um mob, número de dano, vigor 45/100 e recarga 3,0 s. Não houve sessão interativa com JFrame; testes do mouse e do teclado usam o EDT com a thread real de simulação.
++
++## Arquivos novos e alterados
++
++Novos, sob server/src/main/java/com/projetok/domain/skill/:
++- SkillCastCommand.java.
++- CryostasisAttacker.java.
++- CryostasisZone.java.
++- CryostasisService.java.
++
++Alterados, sob server/src/main/java/com/projetok/:
++- domain/race/DamageType.java: ICE ao final.
++- prototype/DebugCommandBuffer.java: comandos de skill no lote e limpeza em R.
++- prototype/DebugRuntime.java: transporte de SkillCastCommand.
++- prototype/DebugLauncher.java: Q e captura do mouse.
++- prototype/DebugWorld.java: elegibilidade, avanço e publicação de resultados.
++- prototype/DebugSnapshot.java: cooldown e zonas por valor.
++- prototype/DebugPanel.java: gelo, pulsação e indicador.
++
++Novos testes, sob server/src/test/java/com/projetok/:
++- domain/skill/CryostasisServiceTest.java.
++- prototype/CryostasisIntegrationTest.java.
++
++Documentação e ferramentas:
++- README-PROTOTIPO.md e docs/HISTORICO-TECNICO.md.
++- docs/TASK-004.md, docs/TASK-004-testes.txt, docs/TASK-004.diff.
++- docs/Spirit_Gate_TASK-004.pdf e docs/TASK-004-criostase.png.
++- tools/gerar_pdf_task004.py.
++
++O diff textual é relativo ao estado anterior a esta tarefa, capturado antes de editar. Não inclui server/target, binários, segredos ou a si próprio recursivamente. A captura final e o PDF são entregues separadamente, como artefatos de documentação. Não houve commit ou branch porque a pasta não possui checkout Git acessível.
++
++## Trade-offs e limites
++
++O serviço é específico e mantém estado por lançador; não é um framework de habilidades. O mundo cria sua própria instância. A lista de zonas foi mantida para representação e ciclo de vida claros, embora cooldown de 3 s e duração de 2,5 s impeçam sobreposição de lançamentos normais deste jogador.
++
++Os parâmetros são os solicitados para o protótipo. Não há modificadores de stats no adaptador nem redefinição de afinidades raciais. Não foram adicionados congelamento, lentidão, status genéricos, PvP, multiplayer ou segunda habilidade. Movimento, colisões e sua varredura opcional não foram alterados.
++
++## Reprodução e revisão
++
++Na pasta server: mvn clean test. Na pasta Projeto-K: python -B tools/gerar_pdf_task004.py para regenerar o PDF. Para validar manualmente, execute rodar-prototipo.cmd, aponte dentro da arena e pressione Q. Observe custo e pulsos, mova-se para confirmar centro fixo, aponte longe para ver o clamp, segure Q além de 3 s para confirmar ausência de repetição e use R para limpar o estado.
++
++Entrega concluída para revisão técnica. Nenhuma próxima task foi iniciada.
+--- a/README-PROTOTIPO.md
++++ b/README-PROTOTIPO.md
+@@ -176,3 +176,26 @@
+ - [Resultados dos testes](docs/PENDENCIAS-testes.txt)
+ 
+ Gerar PDF: `python -B tools/gerar_pdf_pendencias.py` na pasta `Projeto-K`.
++
++## TASK-004 - Criostase
++
++Aponte o mouse dentro da arena e pressione **Q**. A zona de gelo custa **55 de
++vigor**, tem cooldown de **3 s**, alcance de centro **240**, raio **85** e duração
++de **2,5 s**. Um alvo mais distante é limitado ao alcance; mouse fora da arena é
++recusado sem gasto. Segurar Q não repete: solte e pressione novamente.
++
++A zona fica fixa e aplica **7 de dano ICE** nos instantes **0, 0,5, 1, 1,5 e 2 s**,
++somente em mobs vivos cujas hitboxes intersectem o círculo, incluindo tangência.
++Não há sexto pulso, congelamento ou lentidão. Paredes não bloqueiam a habilidade.
++O rodapé mostra o cooldown; R limpa zona e recarga. Controles anteriores permanecem.
++
++Validação: `mvn clean test`, **73 testes aprovados**, com os baselines anteriores
++do replay preservados. Domínio sem Swing/rede; dano somente por CombatService.
++
++- [Relatório e arquivos alterados](docs/TASK-004.md)
++- [PDF](docs/Spirit_Gate_TASK-004.pdf)
++- [Testes](docs/TASK-004-testes.txt)
++- [Captura da zona](docs/TASK-004-criostase.png)
++- [Diff](docs/TASK-004.diff)
++
++Gerar PDF: `python -B tools/gerar_pdf_task004.py` na pasta `Projeto-K`.
+--- a/server/src/main/java/com/projetok/domain/race/DamageType.java
++++ b/server/src/main/java/com/projetok/domain/race/DamageType.java
+@@ -6,5 +6,6 @@
+     WATER,
+     HOLY,
+     DARK,
+-    EARTH
++    EARTH,
++    ICE
+ }
+--- /dev/null
++++ b/server/src/main/java/com/projetok/domain/skill/CryostasisAttacker.java
+@@ -0,0 +1,12 @@
++package com.projetok.domain.skill;
++
++import com.projetok.domain.entity.capability.Attacker;
++import com.projetok.domain.race.DamageType;
++
++/** Adaptador específico: dano base sem stats do ataque desarmado. */
++public final class CryostasisAttacker implements Attacker {
++    /** Retorna o dano aprovado por pulso. */
++    @Override public int computeOutgoingDamage() { return 7; }
++    /** Usa gelo, sem reutilizar afinidades de água. */
++    @Override public DamageType outgoingDamageType() { return DamageType.ICE; }
++}
+--- /dev/null
++++ b/server/src/main/java/com/projetok/domain/skill/CryostasisService.java
+@@ -0,0 +1,108 @@
++package com.projetok.domain.skill;
++
++import com.projetok.domain.combat.CombatService;
++import com.projetok.domain.entity.Mob;
++import com.projetok.domain.entity.Player;
++import com.projetok.domain.resource.StaminaService;
++import java.util.ArrayList;
++import java.util.Collections;
++import java.util.IdentityHashMap;
++import java.util.List;
++import java.util.Objects;
++import java.util.Set;
++
++/** Estado da Criostase de um lançador, usado exclusivamente pela thread da simulação. */
++public final class CryostasisService {
++    public static final String ID = "cryostasis";
++    public static final float COST = 55f, COOLDOWN = 3f, RANGE = 240f;
++    private final CombatService combat;
++    private final StaminaService stamina;
++    private final CryostasisAttacker attacker = new CryostasisAttacker();
++    private final List<CryostasisZone> zones = new ArrayList<>();
++    private double cooldown;
++
++    /** Alvo circular da arena; vida e posição são consultadas novamente a cada pulso. */
++    public record Target(Mob mob, float radius) {
++        /** Valida a hitbox antes de entrar na simulação. */
++        public Target {
++            Objects.requireNonNull(mob);
++            if (!Float.isFinite(radius) || radius <= 0) throw new IllegalArgumentException("Raio inválido");
++        }
++    }
++    /** Resultado de dano aplicado somente por CombatService. */
++    public record Hit(Mob mob, int damage) { }
++    /** Motivo explícito da aceitação ou recusa do comando. */
++    public enum Status { CAST, INVALID, DEAD, COOLDOWN, STAMINA }
++    /** Resultado imutável para o coordenador publicar feedback. */
++    public record Result(Status status, List<Hit> hits) {
++        /** Impede alteração da coleção pelo consumidor. */
++        public Result { hits = List.copyOf(hits); }
++    }
++
++    /** Recebe os serviços existentes, sem criar eventos ou caminhos paralelos de dano. */
++    public CryostasisService(CombatService combat, StaminaService stamina) {
++        this.combat = Objects.requireNonNull(combat); this.stamina = Objects.requireNonNull(stamina);
++    }
++    /** Cooldown restante, publicável sem referência mutável. */
++    public float cooldown() { return (float) cooldown; }
++    /** Cópia da composição; o snapshot visual deve extrair os valores das zonas. */
++    public List<CryostasisZone> zones() { return List.copyOf(zones); }
++
++    // --- Elegibilidade e lançamento ---
++
++    /** Valida antes de consumir; ponto válido fora do alcance é limitado na mesma direção. */
++    public Result cast(Player player, SkillCastCommand command, float width, float height, List<Target> targets) {
++        if (command == null || !ID.equals(command.skillId()) || !Float.isFinite(command.targetX())
++                || !Float.isFinite(command.targetY()) || !Float.isFinite(width) || !Float.isFinite(height)
++                || width <= 0 || height <= 0 || command.targetX() < 0 || command.targetY() < 0
++                || command.targetX() >= width || command.targetY() >= height)
++            return new Result(Status.INVALID, List.of());
++        if (player.isDead()) return new Result(Status.DEAD, List.of());
++        if (cooldown > 0) return new Result(Status.COOLDOWN, List.of());
++        var origin = player.getPosition();
++        if (!Float.isFinite(origin.x()) || !Float.isFinite(origin.y())) return new Result(Status.INVALID, List.of());
++        double dx = (double) command.targetX() - origin.x(), dy = (double) command.targetY() - origin.y();
++        double distance = Math.hypot(dx, dy);
++        float x = command.targetX(), y = command.targetY();
++        if (distance > RANGE) {
++            x = (float) (origin.x() + dx / distance * RANGE);
++            y = (float) (origin.y() + dy / distance * RANGE);
++        }
++        if (!stamina.tryConsume(player, COST)) return new Result(Status.STAMINA, List.of());
++        cooldown = COOLDOWN;
++        var zone = new CryostasisZone(x, y);
++        zones.add(zone);
++        return new Result(Status.CAST, pulse(zone, zone.advance(0), targets));
++    }
++
++    // --- Relógio e pulsos ---
++
++    /** Avança zonas mesmo após morte do lançador; novas ações continuam bloqueadas. */
++    public List<Hit> update(float dt, List<Target> targets) {
++        if (!Float.isFinite(dt) || dt < 0) throw new IllegalArgumentException("Delta inválido");
++        cooldown = Math.max(0, cooldown - dt);
++        if (cooldown < 0.000001) cooldown = 0;
++        List<Hit> hits = new ArrayList<>();
++        for (var zone : zones) hits.addAll(pulse(zone, zone.advance(dt), targets));
++        zones.removeIf(CryostasisZone::expired);
++        return List.copyOf(hits);
++    }
++
++    /** Cada alvo vivo recebe no máximo uma aplicação por pulso, inclusive em tangência. */
++    private List<Hit> pulse(CryostasisZone zone, int count, List<Target> targets) {
++        List<Hit> hits = new ArrayList<>();
++        for (int i = 0; i < count; i++) {
++            Set<Mob> visited = Collections.newSetFromMap(new IdentityHashMap<>());
++            for (Target target : targets) {
++                Mob mob = target.mob();
++                if (!visited.add(mob) || mob.isDead()) continue;
++                var p = mob.getPosition();
++                double dx = (double) p.x() - zone.x(), dy = (double) p.y() - zone.y();
++                double radius = CryostasisZone.RADIUS + (double) target.radius();
++                if (dx * dx + dy * dy <= radius * radius)
++                    hits.add(new Hit(mob, combat.attack(attacker, mob)));
++            }
++        }
++        return hits;
++    }
++}
+--- /dev/null
++++ b/server/src/main/java/com/projetok/domain/skill/CryostasisZone.java
+@@ -0,0 +1,37 @@
++package com.projetok.domain.skill;
++
++/** Zona fixa, com relógio determinístico e cinco pulsos consumidos uma única vez. */
++public final class CryostasisZone {
++    private final float x, y;
++    private double elapsed;
++    private int nextPulse;
++    /** Duração da zona, independente do último pulso. */
++    public static final float DURATION = 2.5f;
++    /** Raio da zona em unidades de mundo. */
++    public static final float RADIUS = 85f;
++
++    /** Cria zona com centro finito; o primeiro advance(0) libera o pulso imediato. */
++    public CryostasisZone(float x, float y) {
++        if (!Float.isFinite(x) || !Float.isFinite(y)) throw new IllegalArgumentException("Centro inválido");
++        this.x = x; this.y = y;
++    }
++    /** Centro horizontal fixo. */
++    public float x() { return x; }
++    /** Centro vertical fixo. */
++    public float y() { return y; }
++    /** Tempo publicado para animação e expiração. */
++    public float elapsed() { return (float) elapsed; }
++    /** Indica expiração, com tolerância apenas para arredondamento dos deltas float. */
++    public boolean expired() { return elapsed + 0.000001 >= DURATION; }
++
++    /** Avança o relógio e retorna quantos pulsos novos são devidos; nunca libera um sexto. */
++    public int advance(float dt) {
++        if (!Float.isFinite(dt) || dt < 0) throw new IllegalArgumentException("Delta inválido");
++        elapsed = Math.min(DURATION, elapsed + dt);
++        int count = 0;
++        while (nextPulse < 5 && nextPulse * 0.5 <= elapsed + 0.000001) {
++            nextPulse++; count++;
++        }
++        return count;
++    }
++}
+--- /dev/null
++++ b/server/src/main/java/com/projetok/domain/skill/SkillCastCommand.java
+@@ -0,0 +1,4 @@
++package com.projetok.domain.skill;
++
++/** Intenção imutável; valores recebidos são validados na execução pela simulação. */
++public record SkillCastCommand(String skillId, float targetX, float targetY) { }
+--- a/server/src/main/java/com/projetok/prototype/DebugCommandBuffer.java
++++ b/server/src/main/java/com/projetok/prototype/DebugCommandBuffer.java
+@@ -2,15 +2,19 @@
+ 
+ import com.projetok.domain.command.SimulationCommandQueue;
+ import java.util.Objects;
++import java.util.List;
++import java.util.ArrayList;
++import com.projetok.domain.skill.SkillCastCommand;
+ 
+ /** Adapta transições locais para um lote determinístico consumido em cada tick. */
+ final class DebugCommandBuffer {
+     private interface Command { }
+     private record Input(DebugInput value) implements Command { }
+     private record Restart() implements Command { }
++    private record Cast(SkillCastCommand value) implements Command { }
+ 
+     /** Estado do tick, quantidade de novas pressões de E e marcador de reinício. */
+-    record Frame(DebugInput input, int effortPresses, boolean restart) { }
++    record Frame(DebugInput input, int effortPresses, boolean restart, List<SkillCastCommand> casts) { }
+ 
+     private final SimulationCommandQueue<Command> queue = new SimulationCommandQueue<>();
+     private DebugInput held = DebugInput.NONE;
+@@ -21,6 +25,9 @@
+     /** Ordena reinício junto às entradas, eliminando ações anteriores a ele. */
+     void restart() { queue.submit(new Restart()); }
+ 
++    /** Publica intenção de lançamento no mesmo contrato e fila das demais ações. */
++    void cast(SkillCastCommand command) { queue.submit(new Cast(Objects.requireNonNull(command))); }
++
+     /**
+      * Executado somente pela thread da simulação. Toque de movimento dura um tick;
+      * ataques rápidos respeitam o cooldown e cada pressão de E é contada uma vez.
+@@ -29,12 +36,16 @@
+         boolean up = false, down = false, left = false, right = false;
+         boolean attack = false, restart = false;
+         int effortPresses = 0;
++        List<SkillCastCommand> casts = new ArrayList<>();
+         for (Command command : queue.drain()) {
+             if (command instanceof Restart) {
+                 restart = true;
+                 effortPresses = 0;
++                casts.clear();
+                 up = false; down = false; left = false; right = false;
+                 attack = false;
++            } else if (command instanceof Cast cast) {
++                casts.add(cast.value());
+             } else if (command instanceof Input input) {
+                 DebugInput next = input.value();
+                 if (next.effort() && !held.effort()) effortPresses++;
+@@ -46,6 +57,6 @@
+         }
+         return new Frame(new DebugInput(up || held.up(), down || held.down(),
+                 left || held.left(), right || held.right(), attack || held.attack(), held.effort()),
+-                effortPresses, restart);
++                effortPresses, restart, List.copyOf(casts));
+     }
+ }
+--- a/server/src/main/java/com/projetok/prototype/DebugLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/DebugLauncher.java
+@@ -13,6 +13,10 @@
+ import java.awt.event.WindowEvent;
+ import java.util.HashSet;
+ import java.util.Set;
++import java.awt.event.MouseAdapter;
++import java.awt.event.MouseEvent;
++import com.projetok.domain.skill.SkillCastCommand;
++import com.projetok.domain.skill.CryostasisService;
+ 
+ /**
+  * Executável do protótipo visual. Não substitui KServer.main nem o login real.
+@@ -61,6 +65,24 @@
+     static void configureKeys(DebugPanel panel, DebugRuntime runtime, Set<String> held) {
+         InputMap inputs = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+         ActionMap actions = panel.getActionMap();
++        float[] aim = {Float.NaN, Float.NaN};
++        panel.addMouseMotionListener(new MouseAdapter() {
++            @Override public void mouseMoved(MouseEvent event) { aim[0] = event.getX(); aim[1] = event.getY(); }
++            @Override public void mouseDragged(MouseEvent event) { mouseMoved(event); }
++        });
++        panel.addMouseListener(new MouseAdapter() {
++            @Override public void mouseExited(MouseEvent event) { aim[0] = Float.NaN; aim[1] = Float.NaN; }
++        });
++        inputs.put(KeyStroke.getKeyStroke("pressed Q"), "press_Q");
++        inputs.put(KeyStroke.getKeyStroke("released Q"), "release_Q");
++        actions.put("press_Q", new AbstractAction() {
++            @Override public void actionPerformed(ActionEvent event) {
++                if (held.add("Q")) runtime.cast(new SkillCastCommand(CryostasisService.ID, aim[0], aim[1]));
++            }
++        });
++        actions.put("release_Q", new AbstractAction() {
++            @Override public void actionPerformed(ActionEvent event) { held.remove("Q"); }
++        });
+         for (String key : new String[] {"W", "A", "S", "D", "SPACE", "E"}) {
+             inputs.put(KeyStroke.getKeyStroke("pressed " + key), "press_" + key);
+             inputs.put(KeyStroke.getKeyStroke("released " + key), "release_" + key);
+--- a/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ b/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -18,7 +18,7 @@
+ /** Desenha uma visão descartável do mundo usando apenas Java2D (sem sprites externos). */
+ public final class DebugPanel extends JPanel {
+     public static final int PANEL_WIDTH = DebugWorld.WIDTH + 300;
+-    public static final int PANEL_HEIGHT = DebugWorld.HEIGHT + 78;
++    public static final int PANEL_HEIGHT = DebugWorld.HEIGHT + 110;
+     private static final Color BG = new Color(14, 22, 39);
+     private static final Color TEXT = new Color(229, 239, 248);
+     private static final Color ACCENT = new Color(70, 219, 235);
+@@ -59,6 +59,7 @@
+     public void render(Graphics2D g, DebugSnapshot s) {
+         drawWorld(g);
+         drawObstacles(g, s);
++        drawIceZones(g, s);
+         for (DebugSnapshot.ActorView actor : s.actors()) drawActor(g, actor, s);
+         drawAttack(g, s.attack());
+         drawEffects(g, s);
+@@ -67,6 +68,34 @@
+     }
+ 
+     // --- Cenário ---
++
++    /** Desenha gelo e pulsação apenas a partir do relógio publicado pela simulação. */
++    private void drawIceZones(Graphics2D original, DebugSnapshot snapshot) {
++        Graphics2D g = (Graphics2D) original.create();
++        try {
++            g.clipRect(0, 0, DebugWorld.WIDTH, DebugWorld.HEIGHT);
++            for (var zone : snapshot.iceZones()) {
++                float r = zone.radius(), x = zone.x(), y = zone.y();
++                float pulse = (float) (0.5 + 0.5 * Math.cos(zone.elapsed() * Math.PI * 4));
++                g.setColor(new Color(125, 220, 255, 45 + Math.round(pulse * 20)));
++                g.fill(new Ellipse2D.Float(x - r, y - r, r * 2, r * 2));
++                g.setColor(new Color(190, 245, 255, 210));
++                g.setStroke(new BasicStroke(3f));
++                g.draw(new Ellipse2D.Float(x - r, y - r, r * 2, r * 2));
++                g.setStroke(new BasicStroke(1.5f));
++                g.setColor(new Color(165, 235, 255, 90));
++                float ring = r * (0.65f + pulse * 0.15f);
++                g.draw(new Ellipse2D.Float(x - ring, y - ring, ring * 2, ring * 2));
++                for (int i = 0; i < 12; i++) {
++                    double angle = i * Math.PI / 6;
++                    float cx = x + (float) Math.cos(angle) * r * 0.92f;
++                    float cy = y + (float) Math.sin(angle) * r * 0.92f;
++                    g.drawLine(Math.round(cx - 4), Math.round(cy), Math.round(cx + 4), Math.round(cy));
++                    g.drawLine(Math.round(cx), Math.round(cy - 4), Math.round(cx), Math.round(cy + 4));
++                }
++            }
++        } finally { g.dispose(); }
++    }
+ 
+     /** Pinta solo, grade de referência e bordas da arena. */
+     private void drawWorld(Graphics2D g) {
+@@ -274,7 +303,7 @@
+     /** Mostra o ataque disponível e o estado atual do cooldown. */
+     private void drawBottom(Graphics2D g, DebugSnapshot s) {
+         g.setColor(new Color(10, 21, 35));
+-        g.fillRect(0, DebugWorld.HEIGHT, DebugWorld.WIDTH, 78);
++        g.fillRect(0, DebugWorld.HEIGHT, DebugWorld.WIDTH, 110);
+         g.setColor(new Color(66, 105, 118));
+         g.drawLine(0, DebugWorld.HEIGHT, DebugWorld.WIDTH, DebugWorld.HEIGHT);
+         g.setColor(ACCENT);
+@@ -287,6 +316,12 @@
+         g.setColor(s.cooldown() > 0 ? new Color(245, 171, 108) : new Color(80, 219, 168));
+         g.setFont(new Font("SansSerif", Font.BOLD, 13));
+         g.drawString(s.cooldown() > 0 ? "RECARGA" : "PRONTO", 770, DebugWorld.HEIGHT + 39);
++        g.setColor(new Color(175, 235, 255));
++        g.setFont(new Font("SansSerif", Font.BOLD, 12));
++        g.drawString("Q  CRIOSTASE | Mouse | Alcance 240 | Raio 85 | 55 vigor", 25, DebugWorld.HEIGHT + 83);
++        g.drawString(s.cryostasisCooldown() > 0
++                ? String.format(java.util.Locale.ROOT, "RECARGA %.1f s", s.cryostasisCooldown()) : "CRIOSTASE PRONTA",
++                650, DebugWorld.HEIGHT + 83);
+     }
+ 
+     /** Pinta uma barra proporcional, limitando visualmente os valores entre 0 e 1. */
+--- a/server/src/main/java/com/projetok/prototype/DebugRuntime.java
++++ b/server/src/main/java/com/projetok/prototype/DebugRuntime.java
+@@ -1,4 +1,6 @@
+ package com.projetok.prototype;
++
++import com.projetok.domain.skill.SkillCastCommand;
+ 
+ import java.util.concurrent.Executors;
+ import java.util.concurrent.ScheduledExecutorService;
+@@ -27,7 +29,7 @@
+                     world = new DebugWorld();
+                     world.synchronizeEffort(frame.input().effort());
+                 }
+-                world.tickQueued(frame.input(), 1f / 30f, frame.effortPresses());
++                world.tickQueued(frame.input(), 1f / 30f, frame.effortPresses(), frame.casts());
+                 lastSnapshot = world.snapshot();
+             } catch (RuntimeException exception) {
+                 System.err.println("[Spirit Gate] Falha no tick de debug:");
+@@ -47,6 +49,9 @@
+         commands.restart();
+     }
+ 
++    /** Transporta intenção imutável; entidades são alteradas somente no próximo tick. */
++    public void cast(SkillCastCommand command) { commands.cast(command); }
++
+     /** Último estado imutável publicado pelo loop, próprio para leitura no EDT. */
+     public DebugSnapshot snapshot() {
+         return lastSnapshot;
+--- a/server/src/main/java/com/projetok/prototype/DebugSnapshot.java
++++ b/server/src/main/java/com/projetok/prototype/DebugSnapshot.java
+@@ -7,7 +7,10 @@
+         List<ActorView> actors, List<Obstacle> obstacles, List<EffectView> effects,
+         int playerHp, int playerMaxHp, int defeated, boolean gameOver, long ticks,
+         String lastEvent, float facingX, float facingY, float cooldown, AttackView attack,
+-        float stamina, float maxStamina) {
++        float stamina, float maxStamina, float cryostasisCooldown, List<IceZoneView> iceZones) {
++
++    /** Círculo visual fixo; somente valores, sem regras ou entidades. */
++    public record IceZoneView(float x, float y, float radius, float elapsed, float duration) { }
+ 
+     /** Informações suficientes para desenhar um personagem sem expor componentes mutáveis. */
+     public record ActorView(int id, String name, float x, float y, float radius,
+--- a/server/src/main/java/com/projetok/prototype/DebugWorld.java
++++ b/server/src/main/java/com/projetok/prototype/DebugWorld.java
+@@ -12,6 +12,9 @@
+ import com.projetok.domain.entity.component.HealthComponent;
+ import com.projetok.domain.entity.component.StaminaComponent;
+ import com.projetok.domain.resource.StaminaService;
++import com.projetok.domain.skill.SkillCastCommand;
++import com.projetok.domain.skill.CryostasisService;
++import com.projetok.domain.skill.CryostasisZone;
+ import com.projetok.domain.event.GameEventBus;
+ import com.projetok.domain.event.events.EntityDeathEvent;
+ import com.projetok.domain.factory.MobArchetype;
+@@ -53,6 +56,7 @@
+     private final CombatService combat = new CombatService(events);
+     private final MovementService movement = new MovementService(new CollisionService());
+     private final StaminaService staminaService = new StaminaService();
++    private final CryostasisService cryostasis = new CryostasisService(combat, staminaService);
+     private boolean effortHeld;
+     private final Player player;
+     private final List<Mob> mobs = new ArrayList<>();
+@@ -114,6 +118,11 @@
+ 
+     /** Processa pressões conservadas pela fila; -1 mantém detecção por estado para chamadas antigas. */
+     void tickQueued(DebugInput input, float dt, int effortPresses) {
++        tickQueued(input, dt, effortPresses, List.of());
++    }
++
++    /** Coordena comandos de skill sem alterar a API anterior de entrada. */
++    void tickQueued(DebugInput input, float dt, int effortPresses, List<SkillCastCommand> casts) {
+         if (!Float.isFinite(dt) || dt <= 0f || dt > 0.1f) throw new IllegalArgumentException("dt fora do intervalo (0, 0.1]");
+         ticks++;
+         if (attack != null) {
+@@ -132,14 +141,39 @@
+             else effects.set(i, new DebugSnapshot.EffectView(effect.x(), effect.y(),
+                     effect.damage(), remaining, effect.received()));
+         }
++        publishHits(cryostasis.update(dt, cryostasisTargets()));
+         if (player.isDead()) return;
+         staminaService.regenerate(player, dt);
+         int activations = effortPresses >= 0 ? effortPresses : (input.effort() && !effortHeld ? 1 : 0);
+         effortHeld = input.effort();
+         movePlayer(input, dt);
+         if (input.attack()) attackNearest();
++        for (SkillCastCommand command : casts) {
++            var result = cryostasis.cast(player, command, WIDTH, HEIGHT, cryostasisTargets());
++            lastEvent = switch (result.status()) {
++                case CAST -> "Criostase lancada: zona de gelo ativa.";
++                case INVALID -> "Criostase: alvo ou habilidade invalida.";
++                case DEAD -> "Criostase: jogador derrotado.";
++                case COOLDOWN -> "Criostase em recarga.";
++                case STAMINA -> "Vigor insuficiente para Criostase (55).";
++            };
++            publishHits(result.hits());
++        }
+         updateEnemies(dt);
+         if (!player.isDead()) for (int i = 0; i < activations; i++) performEffort();
++    }
++
++    /** Fornece hitboxes dos mobs; a skill consulta vida e posição em cada pulso. */
++    private List<CryostasisService.Target> cryostasisTargets() {
++        return mobs.stream().map(mob -> new CryostasisService.Target(mob, MOB_RADIUS)).toList();
++    }
++
++    /** Publica os danos já aplicados por CombatService e preserva feedback de morte. */
++    private void publishHits(List<CryostasisService.Hit> hits) {
++        for (var hit : hits) {
++            addEffect(hit.mob(), hit.damage(), false);
++            if (hit.mob().isDead()) lastEvent = hit.mob().getName() + " derrotado!";
++        }
+     }
+ 
+     // --- Vigor físico: ação temporária, sem dano ---
+@@ -257,7 +291,9 @@
+                 hp.current(), hp.max(), defeated, player.isDead(), ticks,
+                 lastEvent, facingX, facingY, attackCooldown, attack,
+                 player.require(StaminaComponent.class).current(),
+-                player.require(StaminaComponent.class).max());
++                player.require(StaminaComponent.class).max(), cryostasis.cooldown(),
++                cryostasis.zones().stream().map(zone -> new DebugSnapshot.IceZoneView(
++                        zone.x(), zone.y(), CryostasisZone.RADIUS, zone.elapsed(), CryostasisZone.DURATION)).toList());
+     }
+ 
+     /** Extrai apenas os campos visuais de uma entidade do domínio. */
+--- /dev/null
++++ b/server/src/test/java/com/projetok/domain/skill/CryostasisServiceTest.java
+@@ -0,0 +1,196 @@
++package com.projetok.domain.skill;
++
++import com.projetok.domain.combat.CombatService;
++import com.projetok.domain.entity.Mob;
++import com.projetok.domain.entity.Player;
++import com.projetok.domain.entity.Position;
++import com.projetok.domain.entity.component.HealthComponent;
++import com.projetok.domain.entity.component.StaminaComponent;
++import com.projetok.domain.entity.component.RaceComponent;
++import com.projetok.domain.event.GameEventBus;
++import com.projetok.domain.event.events.EntityDeathEvent;
++import com.projetok.domain.item.LootTable;
++import com.projetok.domain.network.PlayerConnection;
++import com.projetok.domain.race.DamageType;
++import com.projetok.domain.race.RaceRegistry;
++import com.projetok.domain.resource.StaminaService;
++import org.junit.jupiter.api.Test;
++import java.util.List;
++import java.util.concurrent.atomic.AtomicInteger;
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Regras da Criostase sem protótipo, interface ou banco de dados. */
++class CryostasisServiceTest {
++    private final GameEventBus events = new GameEventBus();
++    private final CryostasisService service = new CryostasisService(new CombatService(events), new StaminaService());
++    private final Player player = createPlayer();
++    private final Mob mob = createMob(120, 200, 200);
++    private final List<CryostasisService.Target> targets = List.of(new CryostasisService.Target(mob, 19));
++
++    /** Monta somente os componentes exigidos pela habilidade. */
++    private Player createPlayer() {
++        var p = new Player(1, "Teste", new Position(100, 100), new PlayerConnection() {
++            @Override public void send(Object packet) { }
++            @Override public void disconnect() { }
++        });
++        p.attach(new HealthComponent(100)); p.attach(new StaminaComponent());
++        return p;
++    }
++
++    /** Alvo mínimo: vida e raça, sem adaptadores de teste para receber dano. */
++    private Mob createMob(int hp, float x, float y) {
++        var m = new Mob(100, "Alvo", new Position(x, y), LootTable.of());
++        m.attach(new HealthComponent(hp));
++        m.attach(new RaceComponent(RaceRegistry.withDefaults().get("demon")));
++        return m;
++    }
++
++    /** Executa pelo mesmo contrato de intenção usado pela interface. */
++    private CryostasisService.Result cast(float x, float y) {
++        return service.cast(player, new SkillCastCommand("cryostasis", x, y), 960, 640, targets);
++    }
++
++    /** Lançamento inicia cooldown, consome exatamente 55 e causa dano imediato neutro. */
++    @Test void lancamentoValido() {
++        var result = cast(200, 200);
++        assertEquals(CryostasisService.Status.CAST, result.status());
++        assertEquals(45, player.require(StaminaComponent.class).current());
++        assertEquals(3, service.cooldown());
++        assertEquals(113, mob.require(HealthComponent.class).current());
++        assertEquals(7, result.hits().get(0).damage());
++        assertEquals(1, service.zones().size());
++    }
++
++    /** Recurso insuficiente não cria zona ou cooldown nem altera saldo. */
++    @Test void vigorInsuficiente() {
++        new StaminaService().tryConsume(player, 50);
++        assertEquals(CryostasisService.Status.STAMINA, cast(200, 200).status());
++        assertEquals(50, player.require(StaminaComponent.class).current());
++        assertEquals(0, service.cooldown()); assertTrue(service.zones().isEmpty());
++    }
++
++    /** Após três segundos pode lançar de novo, se houver recurso. */
++    @Test void cooldownBloqueiaELibera() {
++        cast(200, 200);
++        assertEquals(CryostasisService.Status.COOLDOWN, cast(200, 200).status());
++        assertEquals(45, player.require(StaminaComponent.class).current());
++        service.update(2.99f, targets);
++        assertEquals(CryostasisService.Status.COOLDOWN, cast(200, 200).status());
++        service.update(0.01f, targets);
++        player.require(StaminaComponent.class).restore(55);
++        assertEquals(CryostasisService.Status.CAST, cast(200, 200).status());
++    }
++
++    /** Pontos no limite são preservados; pontos além são limitados sem recusa. */
++    @Test void clampEAlcanceExato() {
++        assertEquals(CryostasisService.Status.CAST, cast(340, 100).status());
++        assertEquals(340, service.zones().get(0).x());
++        service.update(3, targets); player.require(StaminaComponent.class).restore(100);
++        assertEquals(CryostasisService.Status.CAST, cast(900, 600).status());
++        var z = service.zones().get(0);
++        assertEquals(240, Math.hypot(z.x() - 100, z.y() - 100), 0.0001);
++        assertEquals(500.0 / 800, (z.y() - 100) / (z.x() - 100), 0.00001);
++    }
++
++    /** Entrada inválida nunca altera saldo, cooldown ou zonas. */
++    @Test void rejeitaComandosInvalidos() {
++        for (var command : List.of(new SkillCastCommand("outra", 200, 200),
++                new SkillCastCommand(null, 200, 200), new SkillCastCommand("cryostasis", Float.NaN, 200),
++                new SkillCastCommand("cryostasis", 200, Float.POSITIVE_INFINITY),
++                new SkillCastCommand("cryostasis", Float.NEGATIVE_INFINITY, 200),
++                new SkillCastCommand("cryostasis", -1, 0), new SkillCastCommand("cryostasis", 0, -1),
++                new SkillCastCommand("cryostasis", 960, 0), new SkillCastCommand("cryostasis", 0, 640))) {
++            assertEquals(CryostasisService.Status.INVALID, service.cast(player, command, 960, 640, targets).status());
++            assertEquals(100, player.require(StaminaComponent.class).current());
++            assertEquals(0, service.cooldown()); assertTrue(service.zones().isEmpty());
++        }
++        assertEquals(CryostasisService.Status.INVALID, service.cast(player, null, 960, 640, targets).status());
++    }
++
++    /** Morte impede criação e gasto, inclusive com comando válido. */
++    @Test void jogadorMortoNaoLanca() {
++        player.require(HealthComponent.class).applyDamage(100);
++        assertEquals(CryostasisService.Status.DEAD, cast(200, 200).status());
++        assertEquals(100, player.require(StaminaComponent.class).current());
++        assertEquals(0, service.cooldown());
++    }
++
++    /** Exatamente cinco pulsos em 0, 0,5, 1, 1,5 e 2; nenhum na expiração. */
++    @Test void cincoPulsosSemSexto() {
++        cast(200, 200);
++        assertEquals(113, mob.require(HealthComponent.class).current());
++        assertTrue(service.update(0.49f, targets).isEmpty());
++        assertEquals(1, service.update(0.01f, targets).size());
++        assertEquals(106, mob.require(HealthComponent.class).current());
++        for (int i = 0; i < 3; i++) assertEquals(1, service.update(0.5f, targets).size());
++        assertEquals(85, mob.require(HealthComponent.class).current());
++        assertEquals(1, service.zones().size());
++        assertTrue(service.update(0.5f, targets).isEmpty());
++        assertTrue(service.zones().isEmpty());
++        assertTrue(service.update(10, targets).isEmpty());
++        assertEquals(85, mob.require(HealthComponent.class).current());
++    }
++
++    /** Deltas de 30 Hz preservam os mesmos cinco pulsos e a expiração. */
++    @Test void pulsosComDeltaDaArena() {
++        int hits = cast(200, 200).hits().size();
++        for (int i = 0; i < 75; i++) hits += service.update(1f / 30f, targets).size();
++        assertEquals(5, hits);
++        assertEquals(85, mob.require(HealthComponent.class).current());
++        assertTrue(service.zones().isEmpty());
++    }
++
++    /** Passo que cruza vários instantes processa cada pulso devido exatamente uma vez. */
++    @Test void passoGrandeEDeltasInvalidos() {
++        cast(200, 200);
++        assertEquals(4, service.update(2.5f, targets).size());
++        assertEquals(85, mob.require(HealthComponent.class).current());
++        for (float dt : new float[] {-1, Float.NaN, Float.POSITIVE_INFINITY})
++            assertThrows(IllegalArgumentException.class, () -> service.update(dt, targets));
++    }
++
++    /** Consulta a posição em cada pulso, inclui tangência e evita duplicatas no mesmo pulso. */
++    @Test void entradaSaidaETangencia() {
++        mob.setPosition(new Position(305, 200));
++        cast(200, 200); assertEquals(120, mob.require(HealthComponent.class).current());
++        mob.setPosition(new Position(304, 200));
++        assertEquals(1, service.update(0.5f, List.of(targets.get(0), targets.get(0))).size());
++        assertEquals(113, mob.require(HealthComponent.class).current());
++        mob.setPosition(new Position(305, 200));
++        assertTrue(service.update(0.5f, targets).isEmpty());
++        mob.setPosition(new Position(200, 200));
++        assertEquals(1, service.update(0.5f, targets).size());
++        assertEquals(106, mob.require(HealthComponent.class).current());
++    }
++
++    /** CombatService publica morte uma vez; pulsos seguintes ignoram o cadáver. */
++    @Test void eventosDeMorteESomenteCombatService() {
++        var dying = createMob(7, 200, 200);
++        var deathCount = new AtomicInteger();
++        events.subscribe(EntityDeathEvent.class, event -> { assertSame(dying, event.entity()); deathCount.incrementAndGet(); });
++        var victims = List.of(new CryostasisService.Target(dying, 19));
++        service.cast(player, new SkillCastCommand("cryostasis", 200, 200), 960, 640, victims);
++        assertEquals(1, deathCount.get()); assertTrue(dying.isDead());
++        assertTrue(service.update(2.5f, victims).isEmpty());
++        assertEquals(1, deathCount.get());
++    }
++
++    /** ICE é anexado ao enum e todas as raças atuais permanecem neutras. */
++    @Test void afinidadeNeutraEEnumPreservado() {
++        assertEquals(6, DamageType.ICE.ordinal());
++        assertEquals(List.of("PHYSICAL", "FIRE", "WATER", "HOLY", "DARK", "EARTH", "ICE"),
++                java.util.Arrays.stream(DamageType.values()).map(Enum::name).toList());
++        for (var race : RaceRegistry.withDefaults().all()) assertEquals(1.0, race.affinityFor(DamageType.ICE));
++    }
++
++    /** A zona não acompanha o lançador e continua ativa se ele morrer. */
++    @Test void zonaFixaAposMoverOuMorrer() {
++        cast(200, 200);
++        player.setPosition(new Position(700, 500));
++        player.require(HealthComponent.class).applyDamage(100);
++        service.update(0.5f, targets);
++        assertEquals(200, service.zones().get(0).x());
++        assertEquals(200, service.zones().get(0).y());
++        assertEquals(106, mob.require(HealthComponent.class).current());
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/CryostasisIntegrationTest.java
+@@ -0,0 +1,147 @@
++package com.projetok.prototype;
++
++import com.projetok.domain.skill.SkillCastCommand;
++import org.junit.jupiter.api.Test;
++import javax.swing.SwingUtilities;
++import java.awt.event.MouseEvent;
++import java.awt.event.ActionEvent;
++import java.awt.image.BufferedImage;
++import java.nio.file.Path;
++import java.nio.file.Files;
++import java.util.List;
++import java.util.HashSet;
++import java.util.function.BooleanSupplier;
++import javax.imageio.ImageIO;
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Integração da intenção, simulação, renderização e limpeza da Criostase. */
++class CryostasisIntegrationTest {
++    private static final float DT = 1f / 30f;
++
++    /** Publica um lançamento dentro do tick, com a posição capturada no comando. */
++    private void cast(DebugWorld world, float x, float y) {
++        world.tickQueued(DebugInput.NONE, DT, 0, List.of(new SkillCastCommand("cryostasis", x, y)));
++    }
++
++    /** Integra vigor, pulso imediato e dano flutuante, sem danificar alvos distantes. */
++    @Test void lancamentoPublicaZonaEDano() {
++        var world = new DebugWorld();
++        cast(world, 215, 148);
++        var s = world.snapshot();
++        assertEquals(45, s.stamina()); assertEquals(3, s.cryostasisCooldown());
++        assertEquals(1, s.iceZones().size());
++        assertEquals(113, s.actors().get(1).hp()); assertEquals(120, s.actors().get(2).hp());
++        assertEquals(7, s.effects().get(0).damage());
++        world.tick(new DebugInput(false, false, false, true, true), DT);
++        assertTrue(world.snapshot().actors().get(0).x() > s.actors().get(0).x());
++        assertNotNull(world.snapshot().attack());
++        assertEquals(45.5f, world.snapshot().stamina());
++    }
++
++    /** Rejeição de skill não muda vigor ou cooldown e mantém o mundo executando. */
++    @Test void entradaInvalidaECooldown() {
++        var world = new DebugWorld();
++        cast(world, Float.NaN, 0);
++        assertEquals(100, world.snapshot().stamina());
++        assertEquals(0, world.snapshot().cryostasisCooldown());
++        cast(world, 215, 148);
++        cast(world, 300, 300);
++        assertEquals(45.5f, world.snapshot().stamina());
++        assertEquals(1, world.snapshot().iceZones().size());
++        assertTrue(world.snapshot().lastEvent().contains("recarga"));
++    }
++
++    /** Parede não bloqueia lançamento; a zona visual é removida após 2,5 s. */
++    @Test void paredesNaoBloqueiamEZonaExpira() {
++        var world = new DebugWorld();
++        cast(world, 350, 250); // interior do primeiro obstáculo, dentro de 240 do jogador.
++        assertEquals(350, world.snapshot().iceZones().get(0).x());
++        assertEquals(250, world.snapshot().iceZones().get(0).y());
++        for (int i = 0; i < 75; i++) world.tick(DebugInput.NONE, DT);
++        assertTrue(world.snapshot().iceZones().isEmpty());
++        assertTrue(world.snapshot().cryostasisCooldown() > 0);
++    }
++
++    /** Reinício elimina zonas e cooldown, e descarta comandos anteriores ao reset. */
++    @Test void reinicioSemEstadoOuComandosPendentes() throws Exception {
++        try (var runtime = new DebugRuntime()) {
++            runtime.cast(new SkillCastCommand("cryostasis", 215, 148));
++            runtime.restart();
++            runtime.start();
++            await(() -> runtime.snapshot().ticks() >= 2);
++            assertEquals(100, runtime.snapshot().stamina());
++            assertTrue(runtime.snapshot().iceZones().isEmpty());
++            assertEquals(0, runtime.snapshot().cryostasisCooldown());
++            runtime.cast(new SkillCastCommand("cryostasis", 215, 148));
++            await(() -> !runtime.snapshot().iceZones().isEmpty());
++            runtime.restart();
++            await(() -> runtime.snapshot().iceZones().isEmpty());
++            assertEquals(100, runtime.snapshot().stamina());
++            assertEquals(0, runtime.snapshot().cryostasisCooldown());
++        }
++    }
++
++    /** A fila preserva comandos rápidos e a ordem em torno de um reinício. */
++    @Test void filaPreservaContratoELimpaNoReinicio() {
++        var buffer = new DebugCommandBuffer();
++        var command = new SkillCastCommand("cryostasis", 10, 20);
++        buffer.cast(command);
++        assertEquals(List.of(command), buffer.drain().casts());
++        assertTrue(buffer.drain().casts().isEmpty());
++        buffer.cast(command); buffer.restart();
++        assertTrue(buffer.drain().casts().isEmpty());
++        buffer.restart(); buffer.cast(command);
++        assertEquals(List.of(command), buffer.drain().casts());
++    }
++
++    /** Q não perde toque rápido e não repete ao manter, mesmo depois do cooldown. */
++    @Test void mouseEQRealSemDuplicacao() throws Exception {
++        try (var runtime = new DebugRuntime()) {
++            var panel = new DebugPanel(runtime::snapshot);
++            SwingUtilities.invokeAndWait(() -> {
++                DebugLauncher.configureKeys(panel, runtime, new HashSet<>());
++                var event = new MouseEvent(panel, MouseEvent.MOUSE_MOVED, 0, 0, 215, 148, 0, false);
++                for (var listener : panel.getMouseMotionListeners()) listener.mouseMoved(event);
++            });
++            action(panel, "press_Q"); action(panel, "release_Q");
++            runtime.start();
++            await(() -> !runtime.snapshot().iceZones().isEmpty());
++            assertEquals(45, runtime.snapshot().stamina(), 1.5);
++            action(panel, "press_Q"); // recusado em cooldown, mas continua mantido.
++            await(() -> runtime.snapshot().cryostasisCooldown() == 0);
++            action(panel, "press_Q"); action(panel, "press_Q");
++            long tick = runtime.snapshot().ticks();
++            await(() -> runtime.snapshot().ticks() >= tick + 2);
++            assertEquals(0, runtime.snapshot().cryostasisCooldown());
++            assertTrue(runtime.snapshot().iceZones().isEmpty());
++            action(panel, "release_Q"); action(panel, "press_Q");
++            await(() -> runtime.snapshot().cryostasisCooldown() > 0);
++        }
++    }
++
++    /** A renderização não executa gameplay e gera captura com a zona em funcionamento. */
++    @Test void capturaDaZonaESnapshotImutavel() throws Exception {
++        var world = new DebugWorld(); cast(world, 215, 148);
++        var before = world.snapshot();
++        assertThrows(UnsupportedOperationException.class, () -> before.iceZones().clear());
++        var image = new BufferedImage(DebugPanel.PANEL_WIDTH, DebugPanel.PANEL_HEIGHT, BufferedImage.TYPE_INT_ARGB);
++        var graphics = image.createGraphics();
++        try { new DebugPanel(world::snapshot).render(graphics, before); }
++        finally { graphics.dispose(); }
++        assertEquals(before, world.snapshot());
++        Files.createDirectories(Path.of("target"));
++        ImageIO.write(image, "png", Path.of("target/task004-criostase.png").toFile());
++    }
++
++    /** Executa atalho no EDT sem abrir janela. */
++    private void action(DebugPanel panel, String name) throws Exception {
++        SwingUtilities.invokeAndWait(() -> panel.getActionMap().get(name)
++                .actionPerformed(new ActionEvent(panel, ActionEvent.ACTION_PERFORMED, name)));
++    }
++    /** Espera somente publicação da thread da simulação, com prazo finito. */
++    private void await(BooleanSupplier condition) throws InterruptedException {
++        long deadline = System.nanoTime() + 4_000_000_000L;
++        while (!condition.getAsBoolean() && System.nanoTime() < deadline) Thread.sleep(5);
++        assertTrue(condition.getAsBoolean(), "Estado deve ser publicado em até 4 s");
++    }
++}
+--- /dev/null
++++ b/tools/gerar_pdf_task004.py
+@@ -0,0 +1,9 @@
++"""Exporta a documentação da Criostase sem dependências externas."""
++
++from pathlib import Path
++from gerar_pdf_task002 import gerar_pdf
++
++
++if __name__ == "__main__":
++    docs = Path(__file__).resolve().parents[1] / "docs"
++    gerar_pdf(docs / "TASK-004.md", docs / "Spirit_Gate_TASK-004.pdf", "TASK-004")

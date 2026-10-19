@@ -1,0 +1,50 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 970 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-049 - Inimigos, spawns e combate basico) Tj T*
+() Tj T*
+(Catalogos enemies/spawns definem HP, ataque, velocidade, percepcao, limite de) Tj T*
+(perseguicao, respawn, regiao e posicao. Populacao maxima 64, quatro spawns iniciais.) Tj T*
+(Validacao recusa locais obstruidos e regioes proibidas. Vila segura, tres inimigos no) Tj T*
+(bosque, chefe sem respawn no santuario.) Tj T*
+() Tj T*
+(Ataque basico autoritativo escolhe alvo proximo com linha livre, recarga de 12 ticks; 82) Tj T*
+(unidades guardian/145 mystic. Derrota integra loot, XP e cinco moedas por ledger de) Tj T*
+(geracao. Estado de HP/posicao/morte/respawn e persistente. Renderizacao de inimigos e) Tj T*
+(controles sera integrada com UI; IA na tarefa seguinte.) Tj T*
+() Tj T*
+(Teste integrado elimina inimigo, verifica recompensa unica, salva/carrega e aguarda) Tj T*
+(respawn sem sleeps. Suite completa.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-049 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1365
+%%EOF

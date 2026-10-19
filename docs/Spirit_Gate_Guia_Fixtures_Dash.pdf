@@ -1,0 +1,397 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R 8 0 R 10 0 R 12 0 R 14 0 R] /Count 5 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 4979 >>
+stream
+0.10 0.20 0.32 rg BT /F2 17 Tf 1 0 0 1 42 795 Tm (Spirit Gate - Guia das fixtures do Passo Relâmpago) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 764 Tm (TASK-006.1. Consulta ao código local em 18/10/2026.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 743 Tm (Este guia reúne as assinaturas reais para criar uma parede sólida, montar o espaço de) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 729 Tm (colisão e executar o dash seletivo até o encerramento. O exemplo usa as fixtures) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 715 Tm (existentes e executa somente o domínio, sem Swing, rede ou banco de dados.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 694 Tm (O teste JUnit devePreservarBloqueioDeParedeNoDashSeletivo continua reservado ao usuário. O) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 680 Tm (exemplo demonstra a montagem e a execução; não inclui @Test, asserções de posição nem o) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 666 Tm (resultado esperado da colisão com a parede. Nenhum arquivo de teste foi alterado nesta) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 652 Tm (documentação.) Tj ET
+0.10 0.20 0.32 rg BT /F2 13 Tf 1 0 0 1 42 631 Tm (1. Localização e acesso às fixtures) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 604 Tm (Arquivo: server/src/test/java/com/projetok/domain/skill/LightningStepTestFixtures.java.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 583 Tm (A classe LightningStepTestFixtures e seus membros são package-private. Seu código precisa) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 569 Tm (estar no pacote com.projetok.domain.skill e ter os arquivos de teste compilados no) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 555 Tm (classpath. As fixtures não fazem parte da API de produção.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 534 Tm (Assinaturas reais:) Tj ET
+q 0.96 g 39 503 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 506 Tm (static final float RADIUS = 18f;) Tj ET
+q 0.96 g 39 492 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 495 Tm (static Player player\(float x, float y\);) Tj ET
+q 0.96 g 39 481 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 484 Tm (static CollisionService.Space emptySpace\(\);) Tj ET
+q 0.96 g 39 470 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 473 Tm (static LightningStepService service\(\);) Tj ET
+q 0.96 g 39 459 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 462 Tm (static LightningStepService selectiveService\(\);) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 437 Tm (player\(x,y\) cria um jogador humano pela PlayerFactory real, com 100 de vida e 100 de) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 423 Tm (vigor. RADIUS é o raio de colisão do jogador, em unidades do mundo. Não é o diâmetro.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 402 Tm (emptySpace\(\) cria uma arena de 960 por 640, sem obstáculos, corpos ou índice espacial.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 388 Tm (Para incluir uma parede, crie outro Space com a lista de obstáculos.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 367 Tm (service\(\) conserva a política SOLID. Para a TASK-006.1, use selectiveService\(\): ela monta) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 353 Tm (MovementService e LightningStepService compartilhando a mesma instância de) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 339 Tm (CollisionService e seleciona PHASE_THROUGH_ACTORS_AND_SOFT.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 318 Tm (Importações para usar as fixtures no mesmo pacote:) Tj ET
+q 0.96 g 39 287 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 290 Tm (package com.projetok.domain.skill;) Tj ET
+q 0.96 g 39 276 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 279 Tm () Tj ET
+q 0.96 g 39 265 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 268 Tm (import static com.projetok.domain.skill.LightningStepTestFixtures.RADIUS;) Tj ET
+q 0.96 g 39 254 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 257 Tm (import static com.projetok.domain.skill.LightningStepTestFixtures.player;) Tj ET
+q 0.96 g 39 243 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 246 Tm (import static com.projetok.domain.skill.LightningStepTestFixtures.selectiveService;) Tj ET
+0.10 0.20 0.32 rg BT /F2 13 Tf 1 0 0 1 42 221 Tm (2. Criar uma parede sólida) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 194 Tm (Arquivo: server/src/main/java/com/projetok/domain/movement/CollisionService.java.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 173 Tm (O construtor de quatro argumentos mantém a categoria sólida por padrão:) Tj ET
+q 0.96 g 39 142 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 145 Tm (public Obstacle\(float x, float y, float width, float height\)) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 120 Tm (O construtor canônico do record permite informar a categoria explicitamente:) Tj ET
+q 0.96 g 39 89 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 92 Tm (public Obstacle\(float x, float y, float width, float height,) Tj ET
+q 0.96 g 39 78 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 81 Tm (                CollisionCategory category\)) Tj ET
+0.75 G 42 44 m 553 44 l S
+0.35 g BT /F1 8 Tf 1 0 0 1 42 29 Tm (Spirit Gate | Guia de fixtures do dash | 1/5) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 5352 >>
+stream
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 795 Tm (x e y indicam o canto superior esquerdo do retângulo; width e height são suas dimensões.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 781 Tm (Coordenadas e extremidades precisam ser finitas; as dimensões devem ser positivas. Para) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 767 Tm (retângulos, são aceitas SOFT_OBSTACLE e SOLID_OBSTACLE.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 746 Tm (As duas formas abaixo criam a mesma parede sólida; escolha uma delas:) Tj ET
+q 0.96 g 39 715 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 718 Tm (var parede = new CollisionService.Obstacle\(200f, 60f, 20f, 160f\);) Tj ET
+q 0.96 g 39 704 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 707 Tm () Tj ET
+q 0.96 g 39 693 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 696 Tm (// Forma alternativa com categoria explícita:) Tj ET
+q 0.96 g 39 682 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 685 Tm (var paredeExplicita = new CollisionService.Obstacle\() Tj ET
+q 0.96 g 39 671 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 674 Tm (        200f, 60f, 20f, 160f, CollisionCategory.SOLID_OBSTACLE\);) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 649 Tm (A política seletiva ignora atores e obstáculos leves. Uma parede SOLID_OBSTACLE continua) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 635 Tm (bloqueante. WORLD_BOUNDARY representa as bordas; elas já são derivadas das dimensões de) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 621 Tm (Space.) Tj ET
+0.10 0.20 0.32 rg BT /F2 13 Tf 1 0 0 1 42 600 Tm (3. Criar o espaço de colisão) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 573 Tm (Construtores reais de Space e Body, ambos records internos de CollisionService:) Tj ET
+q 0.96 g 39 542 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 545 Tm (public Space\(float width, float height,) Tj ET
+q 0.96 g 39 531 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 534 Tm (             List<Obstacle> obstacles, List<Body> bodies\)) Tj ET
+q 0.96 g 39 520 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 523 Tm () Tj ET
+q 0.96 g 39 509 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 512 Tm (public Space\(float width, float height,) Tj ET
+q 0.96 g 39 498 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 501 Tm (             List<Obstacle> obstacles, List<Body> bodies,) Tj ET
+q 0.96 g 39 487 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 490 Tm (             SpatialBodyIndex index\)) Tj ET
+q 0.96 g 39 476 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 479 Tm () Tj ET
+q 0.96 g 39 465 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 468 Tm (public Body\(GameEntity entity, float radius\)) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 443 Tm (O construtor de quatro argumentos não usa índice espacial. Ele é suficiente para um) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 429 Tm (cenário pequeno de teste. Space copia as listas; as posições e a vida dos atores são) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 415 Tm (consultadas ao vivo. O próprio jogador é ignorado nas consultas de colisão contra seu) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 401 Tm (corpo.) Tj ET
+q 0.96 g 39 370 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 373 Tm (var jogador = player\(100f, 100f\);) Tj ET
+q 0.96 g 39 359 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 362 Tm (var parede = new CollisionService.Obstacle\(200f, 60f, 20f, 160f\);) Tj ET
+q 0.96 g 39 348 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 351 Tm (var corpoJogador = new CollisionService.Body\(jogador, RADIUS\);) Tj ET
+q 0.96 g 39 337 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 340 Tm () Tj ET
+q 0.96 g 39 326 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 329 Tm (var espaco = new CollisionService.Space\() Tj ET
+q 0.96 g 39 315 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 318 Tm (        960f, 640f, List.of\(parede\), List.of\(corpoJogador\)\);) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 293 Tm (Neste exemplo, o raio do jogador pertence a Body e também é informado nas chamadas do) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 279 Tm (serviço. A parede é um retângulo: não recebe raio. Não reutilize emptySpace\(\) se a) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 265 Tm (intenção for testar a parede, pois ele não contém esse obstáculo.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 244 Tm (Se optar pelo construtor com SpatialBodyIndex, construa o índice com as mesmas instâncias) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 230 Tm (de Body da lista do Space. Movimentos feitos pela física atualizam o índice; uma alteração) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 216 Tm (direta externa de posição exige index.update\(entity\). O exemplo deste guia usa a versão) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 202 Tm (sem índice para reduzir a montagem.) Tj ET
+0.10 0.20 0.32 rg BT /F2 13 Tf 1 0 0 1 42 181 Tm (4. Contrato real do dash) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 154 Tm (Arquivo do comando: server/src/main/java/com/projetok/domain/skill/SkillCastCommand.java.) Tj ET
+q 0.96 g 39 123 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 126 Tm (public record SkillCastCommand\(String skillId, float targetX, float targetY\)) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 101 Tm (Arquivo do serviço:) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 87 Tm (server/src/main/java/com/projetok/domain/skill/LightningStepService.java.) Tj ET
+0.75 G 42 44 m 553 44 l S
+0.35 g BT /F1 8 Tf 1 0 0 1 42 29 Tm (Spirit Gate | Guia de fixtures do dash | 2/5) Tj ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 11 0 R >>
+endobj
+11 0 obj
+<< /Length 6246 >>
+stream
+q 0.96 g 39 792 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 795 Tm (public LightningStepService\(MovementService movement,) Tj ET
+q 0.96 g 39 781 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 784 Tm (                            StaminaService stamina,) Tj ET
+q 0.96 g 39 770 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 773 Tm (                            CollisionService collisions\)) Tj ET
+q 0.96 g 39 759 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 762 Tm () Tj ET
+q 0.96 g 39 748 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 751 Tm (public LightningStepService\(MovementService movement,) Tj ET
+q 0.96 g 39 737 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 740 Tm (                            StaminaService stamina,) Tj ET
+q 0.96 g 39 726 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 729 Tm (                            CollisionService collisions,) Tj ET
+q 0.96 g 39 715 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 718 Tm (                            CollisionPolicy policy\)) Tj ET
+q 0.96 g 39 704 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 707 Tm () Tj ET
+q 0.96 g 39 693 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 696 Tm (public Status cast\(Player player, SkillCastCommand command,) Tj ET
+q 0.96 g 39 682 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 685 Tm (                   float radius, CollisionService.Space space\)) Tj ET
+q 0.96 g 39 671 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 674 Tm () Tj ET
+q 0.96 g 39 660 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 663 Tm (public Step update\(Player player, float dt, float radius,) Tj ET
+q 0.96 g 39 649 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 652 Tm (                   CollisionService.Space space\)) Tj ET
+q 0.96 g 39 638 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 641 Tm () Tj ET
+q 0.96 g 39 627 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 630 Tm (public boolean active\(\)) Tj ET
+q 0.96 g 39 616 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 619 Tm (public boolean awaitingLanding\(\)) Tj ET
+q 0.96 g 39 605 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 608 Tm (public float remaining\(\)) Tj ET
+q 0.96 g 39 594 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 597 Tm (public float cooldown\(\)) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 572 Tm (O construtor antigo usa SOLID; selectiveService\(\) usa o novo construtor com a política) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 558 Tm (seletiva. Status e Step são tipos internos de LightningStepService. Step contém from\(\),) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 544 Tm (to\(\) e path\(\), além de moved\(\); path\(\) é uma lista imutável dos vértices realmente) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 530 Tm (percorridos.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 509 Tm (cast valida e inicia o estado. O retorno STARTED confirma a aceitação; a chamada ainda não) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 495 Tm (desloca o jogador. O comando usa LightningStepService.ID, cujo valor é "lightning_step". O) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 481 Tm (ponto alvo deve ser finito, dentro da arena e diferente da posição do jogador. Ele fixa a) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 467 Tm (direção, e não um destino obrigatório.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 446 Tm (update avança o tempo e move usando colisão contínua. dt é dado em segundos: deve ser) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 432 Tm (finito e não negativo. A velocidade é 600 px/s; o orçamento direcional é de até 150 px) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 418 Tm (durante 0,25 s. O custo é 35 e o cooldown é 4 s. Não chame cast a cada atualização: a) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 404 Tm (ativação é única, seguida das chamadas de update.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 383 Tm (O último avanço usa somente o tempo restante, mesmo se dt for maior. Uma parede pode) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 369 Tm (bloquear o deslocamento antes do fim, mas o relógio do dash continua até encerrar. O) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 355 Tm (cooldown não precisa chegar a zero para concluir o dash: ele continua após a duração de) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 341 Tm (movimento.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 320 Tm (O cooldown avança pelo dt completo de cada update; somente o deslocamento é limitado ao) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 306 Tm (tempo restante. O exemplo mantém o passo fixo de 1/30 s, como a arena. Para controlar) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 292 Tm (exatamente o tempo de uma atualização final isolada, pode-se limitar seu delta a) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 278 Tm (Math.min\(dt, service.remaining\(\)\) enquanto active\(\) for verdadeiro.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 257 Tm (active\(\) indica tempo de dash restante. awaitingLanding\(\) indica espera por uma saída) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 243 Tm (normalmente livre quando atores móveis ocupam toda a trajetória. Nessa situação, active\(\)) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 229 Tm (pode ser falso e a saída ainda estar pendente. O loop de exemplo é limitado e considera) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 215 Tm (ambos os estados, evitando uma espera infinita. Um cenário estático com apenas uma parede) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 201 Tm (sólida não depende de liberação de atores.) Tj ET
+0.10 0.20 0.32 rg BT /F2 13 Tf 1 0 0 1 42 180 Tm (5. Exemplo completo de montagem e execução) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 153 Tm (Este exemplo é uma classe executável de demonstração, não um teste JUnit. O pacote é) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 139 Tm (necessário para acessar as fixtures. Não o coloque em src/main/java: ele depende de) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 125 Tm (classes de src/test/java. Para aproveitar no seu teste, use apenas a montagem e as) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 111 Tm (chamadas que precisar; as asserções continuam a seu cargo.) Tj ET
+q 0.96 g 39 80 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 83 Tm (package com.projetok.domain.skill;) Tj ET
+q 0.96 g 39 69 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 72 Tm () Tj ET
+0.75 G 42 44 m 553 44 l S
+0.35 g BT /F1 8 Tf 1 0 0 1 42 29 Tm (Spirit Gate | Guia de fixtures do dash | 3/5) Tj ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 13 0 R >>
+endobj
+13 0 obj
+<< /Length 7149 >>
+stream
+q 0.96 g 39 792 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 795 Tm (import com.projetok.domain.movement.CollisionService;) Tj ET
+q 0.96 g 39 781 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 784 Tm (import java.util.List;) Tj ET
+q 0.96 g 39 770 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 773 Tm () Tj ET
+q 0.96 g 39 759 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 762 Tm (import static com.projetok.domain.skill.LightningStepTestFixtures.RADIUS;) Tj ET
+q 0.96 g 39 748 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 751 Tm (import static com.projetok.domain.skill.LightningStepTestFixtures.player;) Tj ET
+q 0.96 g 39 737 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 740 Tm (import static com.projetok.domain.skill.LightningStepTestFixtures.selectiveService;) Tj ET
+q 0.96 g 39 726 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 729 Tm () Tj ET
+q 0.96 g 39 715 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 718 Tm (/** Demonstra as fixtures sem implementar o teste reservado. */) Tj ET
+q 0.96 g 39 704 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 707 Tm (public final class ExemploFixturesDash {) Tj ET
+q 0.96 g 39 693 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 696 Tm (    /** Executa a montagem e os passos em uma única thread. */) Tj ET
+q 0.96 g 39 682 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 685 Tm (    public static void main\(String[] args\) {) Tj ET
+q 0.96 g 39 671 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 674 Tm (        var jogador = player\(100f, 100f\);) Tj ET
+q 0.96 g 39 660 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 663 Tm (        var parede = new CollisionService.Obstacle\() Tj ET
+q 0.96 g 39 649 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 652 Tm (                200f, 60f, 20f, 160f\);) Tj ET
+q 0.96 g 39 638 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 641 Tm (        var corpo = new CollisionService.Body\(jogador, RADIUS\);) Tj ET
+q 0.96 g 39 627 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 630 Tm (        var espaco = new CollisionService.Space\() Tj ET
+q 0.96 g 39 616 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 619 Tm (                960f, 640f, List.of\(parede\), List.of\(corpo\)\);) Tj ET
+q 0.96 g 39 605 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 608 Tm (        var service = selectiveService\(\);) Tj ET
+q 0.96 g 39 594 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 597 Tm (        var comando = new SkillCastCommand\() Tj ET
+q 0.96 g 39 583 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 586 Tm (                LightningStepService.ID, 800f, 100f\);) Tj ET
+q 0.96 g 39 572 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 575 Tm () Tj ET
+q 0.96 g 39 561 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 564 Tm (        var resultado = service.cast\(jogador, comando, RADIUS, espaco\);) Tj ET
+q 0.96 g 39 550 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 553 Tm (        if \(resultado != LightningStepService.Status.STARTED\) {) Tj ET
+q 0.96 g 39 539 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 542 Tm (            throw new IllegalStateException\("Dash recusado: " + resultado\);) Tj ET
+q 0.96 g 39 528 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 531 Tm (        }) Tj ET
+q 0.96 g 39 517 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 520 Tm () Tj ET
+q 0.96 g 39 506 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 509 Tm (        float dt = 1f / 30f;) Tj ET
+q 0.96 g 39 495 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 498 Tm (        int ticks = 0;) Tj ET
+q 0.96 g 39 484 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 487 Tm (        int limite = 30;) Tj ET
+q 0.96 g 39 473 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 476 Tm (        while \(\(service.active\(\) || service.awaitingLanding\(\)\) && ticks < limite\) {) Tj ET
+q 0.96 g 39 462 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 465 Tm (            service.update\(jogador, dt, RADIUS, espaco\);) Tj ET
+q 0.96 g 39 451 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 454 Tm (            ticks++;) Tj ET
+q 0.96 g 39 440 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 443 Tm (        }) Tj ET
+q 0.96 g 39 429 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 432 Tm () Tj ET
+q 0.96 g 39 418 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 421 Tm (        if \(service.active\(\) || service.awaitingLanding\(\)\) {) Tj ET
+q 0.96 g 39 407 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 410 Tm (            throw new IllegalStateException\("Simulacao terminou com dash pendente"\);) Tj ET
+q 0.96 g 39 396 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 399 Tm (        }) Tj ET
+q 0.96 g 39 385 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 388 Tm (        System.out.println\("Dash concluido em " + ticks + " atualizacoes."\);) Tj ET
+q 0.96 g 39 374 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 377 Tm (    }) Tj ET
+q 0.96 g 39 363 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 366 Tm (}) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 341 Tm (O guard de 30 atualizações é uma proteção da demonstração; não é a duração da habilidade.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 327 Tm (A duração vem do serviço. Não há Thread.sleep: cada update representa um passo da) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 313 Tm (simulação. O exemplo não aciona regeneração de vigor, IA ou outros serviços de DebugWorld.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 292 Tm (Para inspecionar o estado depois das chamadas, existem jogador.getPosition\(\).x\(\)/y\(\),) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 278 Tm (service.remaining\(\), service.cooldown\(\), service.active\(\) e service.awaitingLanding\(\). As) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 264 Tm (asserções sobre parede e raio devem ser escritas por você no arquivo) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 250 Tm (server/src/test/java/com/projetok/domain/skill/LightningStepSelectiveCollisionTest.java.) Tj ET
+0.10 0.20 0.32 rg BT /F2 13 Tf 1 0 0 1 42 229 Tm (6. Verificação e reprodução) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 202 Tm (O exemplo do bloco anterior foi extraído deste documento, compilado com javac --release 17) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 188 Tm (usando target/classes e target/test-classes e executado. Ambos os comandos terminaram com) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 174 Tm (código de saída 0. Saída real: "Dash concluido em 8 atualizacoes.") Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 153 Tm (A compilação e a execução são independentes da janela. Arquivos temporários de) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 139 Tm (demonstração ficam em server/target, fora dos fontes e dos testes do projeto. Não foi) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 125 Tm (criado um teste JUnit para o cenário reservado nem executada novamente a suíte Maven nesta) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 111 Tm (alteração documental.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 90 Tm (Para reproduzir, salve a classe do exemplo em target/guia-fixtures-) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 76 Tm (src/com/projetok/domain/skill/ExemploFixturesDash.java. Com as classes do projeto e das) Tj ET
+0.75 G 42 44 m 553 44 l S
+0.35 g BT /F1 8 Tf 1 0 0 1 42 29 Tm (Spirit Gate | Guia de fixtures do dash | 4/5) Tj ET
+endstream
+endobj
+14 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 15 0 R >>
+endobj
+15 0 obj
+<< /Length 1861 >>
+stream
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 795 Tm (fixtures já compiladas, estes foram os comandos executados em PowerShell, na pasta server:) Tj ET
+q 0.96 g 39 764 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 767 Tm (javac --release 17 -encoding UTF-8 `) Tj ET
+q 0.96 g 39 753 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 756 Tm (  -cp 'target/classes;target/test-classes' `) Tj ET
+q 0.96 g 39 742 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 745 Tm (  -d target/guia-fixtures `) Tj ET
+q 0.96 g 39 731 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 734 Tm (  target/guia-fixtures-src/com/projetok/domain/skill/ExemploFixturesDash.java) Tj ET
+q 0.96 g 39 720 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 723 Tm () Tj ET
+q 0.96 g 39 709 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 712 Tm (java -cp 'target/classes;target/test-classes;target/guia-fixtures' `) Tj ET
+q 0.96 g 39 698 517 11 re f Q
+0 0 0 rg BT /F3 8.5 Tf 1 0 0 1 42 701 Tm (  com.projetok.domain.skill.ExemploFixturesDash) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 676 Tm (Para compilar as fixtures quando target não estiver disponível, execute mvn test-compile) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 662 Tm (na pasta server. Isso prepara as classes de produção e teste. Para validar sua) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 648 Tm (contribuição JUnit posteriormente, execute mvn clean test na mesma pasta.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 627 Tm (O PDF é regenerado na pasta Projeto-K com python -B tools/gerar_pdf_guia_fixtures_dash.py.) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 613 Tm (Este Markdown é a fonte editável do documento. A documentação não modifica a implementação) Tj ET
+0 0 0 rg BT /F1 10 Tf 1 0 0 1 42 599 Tm (de colisão, do dash ou das fixtures.) Tj ET
+0.75 G 42 44 m 553 44 l S
+0.35 g BT /F1 8 Tf 1 0 0 1 42 29 Tm (Spirit Gate | Guia de fixtures do dash | 5/5) Tj ET
+endstream
+endobj
+xref
+0 16
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000148 00000 n 
+0000000245 00000 n 
+0000000347 00000 n 
+0000000442 00000 n 
+0000000588 00000 n 
+0000005619 00000 n 
+0000005765 00000 n 
+0000011169 00000 n 
+0000011317 00000 n 
+0000017616 00000 n 
+0000017764 00000 n 
+0000024966 00000 n 
+0000025114 00000 n 
+trailer
+<< /Size 16 /Root 1 0 R >>
+startxref
+27028
+%%EOF

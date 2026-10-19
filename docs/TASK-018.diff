@@ -1,0 +1,231 @@
+--- /dev/null
++++ b/docs/TASK-018-testes.txt
+@@ -0,0 +1,36 @@
++TASK-018 - mvn clean test - BUILD SUCCESS
++{'tests': 216, 'failures': 0, 'errors': 0, 'skipped': 0}
++Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.
++
++com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.DomainSequenceRegressionTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaSequenceRegressionTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugLauncherEntrypointTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.DirectionalAnimationTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudPrecisionRegressionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudSkillFeedbackTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.prototype.LocalArenaMapTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SoftObstacleDemoTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
+--- /dev/null
++++ b/docs/TASK-018.md
+@@ -0,0 +1,13 @@
++# TASK-018 - Autoria e revis?o de sprites
++
++18/10/2026. Ferramentas automatizadas aprovadas; arte humana pendente.
++
++Criada tools/revisar_sprites.py, extens?o do inspetor e contrato TASK-013, sem segundo validador de aprova??o. CLI template gera PNG transparente 512x512 com 59 posi??es 64x64 (cinco c?lulas excedentes n?o usadas), ?ndice JSON com dura??o 100ms e pivot 32,48. Resultado reproduz?vel em docs/autoria-018. Template vazio ? intencionalmente reprovado como personagem: nunca ? arte de produ??o.
++
++CLI review gera HTML com grade, fundo quadriculado, ?ndices, pivots, SHA e relat?rio por arquivo. Reutiliza checagens de bordas/alfa/dimens?es/recortes do inspetor original; acrescenta ordem/dire??o e consist?ncia de pivot/dura??o. Sa?das fora de assets; originais n?o s?o alterados. Os 228 PNGs existentes permanecem reprovados: docs/revisao-fontes-018/relatorio.json e preview.html. Nenhum atlas de produ??o criado.
++
++Fluxo: editar c?pia do template no Aseprite; nomear frames ACTION.DIRECTION.INDEX, com FRONT/BACK/LEFT/RIGHT expl?citos; exportar PNG e JSON array, sem trim/rotate/pack; dura??o 100ms, sourceSize e spriteSourceSize 64x64. CLI aseprite PNG JSON MANIFEST aceita somente esse contrato estrito e rejeita incompatibilidade, sem autocorre??o. Revisar dire??o visual humana: metadados n?o provam orienta??o do desenho.
++
++Comandos: python tools/revisar_sprites.py template NOVA_PASTA; python tools/revisar_sprites.py review RAIZ MANIFEST NOVA_PASTA; python tools/revisar_sprites.py aseprite PNG JSON NOVO_MANIFEST. Revis?o humana deve registrar o SHA exato em review.approvedSha256 no manifest da TASK-013, somente ap?s aprova??o expl?cita. Depois executar o pipeline validar_assets.py. Qualquer edi??o muda o SHA e invalida a revis?o anterior.
++
++Valida??o: 216 JUnit e 16 Python, zero falhas. Novos testes: template vazio/59/reprodu??o, dire??o invertida, ordem, frame ausente, pivot, sobreposi??o, alfa parcial, hash modificado, importa??o Aseprite v?lida e recusa de trim/ordem. Fixtures sint?ticas tempor?rias, sem aprova??o dos originais. Logs TASK-018-java.log e TASK-018-python.log.
+--- /dev/null
++++ b/tools/revisar_sprites.py
+@@ -0,0 +1,103 @@
++"""Autoria/revisao apenas; reutiliza o contrato e inspetor TASK-013. Nunca aprova arte."""
++import argparse
++import copy
++import hashlib
++import html
++import json
++from pathlib import Path
++from separar_sprites import write_png
++from validar_assets import CONTRACT, DIRECTIONS, inspect, read_png
++
++
++def frames():
++    result = []
++    for action, count in list(CONTRACT.items()) + [('KO', 3)]:
++        for direction in (('FRONT',) if action == 'KO' else DIRECTIONS):
++            for index in range(count):
++                slot = len(result)
++                result.append(dict(state=action, direction=direction, index=index,
++                                   x=(slot % 8)*64, y=(slot // 8)*64, width=64, height=64,
++                                   durationMs=100, pivot=[32, 48]))
++    return result
++
++
++def template(output):
++    output.mkdir(parents=True, exist_ok=False)
++    write_png(output/'template-vazio.png', 512, 512, bytearray(512*512*4))
++    entry = dict(path='template-vazio.png', kind='character', grid=64, frames=frames(),
++                 pivot=[32, 48], offset=[0, 0], layer='actors',
++                 origin='TEMPLATE VAZIO - NAO E ARTE APROVADA', review={})
++    (output/'manifest.json').write_text(json.dumps({'schemaVersion': 1, 'assets': [entry]}, indent=2), encoding='utf-8')
++    review(output, output/'manifest.json', output/'revisao')
++
++
++def aseprite(png, metadata, output):
++    """Importa --format json-array, sem trim/rotate/pack, nomes ACTION.DIRECTION.INDEX."""
++    data = json.loads(metadata.read_text(encoding='utf-8'))
++    exported = data.get('frames')
++    expected = frames()
++    if not isinstance(exported, list) or len(exported) != 59:
++        raise ValueError('Aseprite exige json-array com exatamente 59 frames')
++    w, h, _ = read_png(png)
++    if data.get('meta', {}).get('size') != {'w': w, 'h': h}:
++        raise ValueError('dimensoes Aseprite divergentes')
++    for source, target in zip(exported, expected):
++        name = f"{target['state']}.{target['direction']}.{target['index']}"
++        if source.get('filename') != name or source.get('rotated') is not False or source.get('trimmed') is not False:
++            raise ValueError('ordem/direcao, rotacao ou trim incompativel: ' + name)
++        if source.get('duration') != 100 or source.get('sourceSize') != {'w':64, 'h':64} or source.get('spriteSourceSize') != {'x':0,'y':0,'w':64,'h':64}:
++            raise ValueError('duracao/origem/tamanho incompativel')
++        rect = source['frame']
++        target.update(x=rect['x'], y=rect['y'], width=rect['w'], height=rect['h'])
++    entry = dict(path=png.name, kind='character', grid=64, frames=expected, pivot=[32,48],
++                 offset=[0,0], layer='actors', origin='Aseprite: ' + metadata.name, review={})
++    result, _ = inspect(png.parent, entry)
++    if result['errors']:
++        raise ValueError('; '.join(result['errors']))
++    if output.exists():
++        raise FileExistsError(output)
++    output.write_text(json.dumps({'schemaVersion':1, 'assets':[entry]}, indent=2), encoding='utf-8')
++
++
++def review(root, manifest, output):
++    """Le fontes sem modifica-las; relatorio/preview fora dos assets de producao."""
++    output = output.resolve()
++    production = Path(__file__).resolve().parents[1]/'assets'
++    if output.is_relative_to(production):
++        raise ValueError('saida de revisao deve ficar fora de assets')
++    output.mkdir(parents=True, exist_ok=False)
++    entries = json.loads(manifest.read_text(encoding='utf-8-sig'))['assets']
++    results, sections = [], []
++    for entry in entries:
++        result, _ = inspect(root, copy.deepcopy(entry))
++        # A ferramenta nao promove nem exporta atlas, mesmo se um SHA constar no manifest.
++        result['reviewToolApprovesArt'] = False
++        expected = frames()
++        actual = entry.get('frames', [])
++        if entry['kind'] == 'character':
++            if [(f['state'],f['direction'],f['index']) for f in actual] != [(f['state'],f['direction'],f['index']) for f in expected]:
++                result['errors'].append('ordem ou direcao incoerente')
++            if any(f.get('pivot',entry.get('pivot')) != entry.get('pivot') or f.get('durationMs',100) != 100 for f in actual):
++                result['errors'].append('pivot/duracao por frame inconsistente')
++        result['status'] = 'REPROVADO' if result['errors'] else 'PENDENTE_REVISAO_HUMANA'
++        results.append(result)
++        src = html.escape((root/entry['path']).resolve().as_uri(), quote=True)
++        labels = ' | '.join(html.escape(f"{i}: {f['state']}.{f['direction']}.{f['index']} pivot={f.get('pivot',entry.get('pivot'))}") for i,f in enumerate(actual))
++        sections.append(f"<section><h2>{html.escape(entry['path'])}</h2><p>{result['sha256']} — {result['status']}</p><div class='sheet'><img src='{src}'></div><p>{labels}</p><pre>{html.escape(json.dumps(result,ensure_ascii=False,indent=2))}</pre></section>")
++    (output/'relatorio.json').write_text(json.dumps({'schemaVersion':1,'artApproved':False,'assets':results},ensure_ascii=False,indent=2),encoding='utf-8')
++    (output/'preview.html').write_text("<!doctype html><meta charset='utf-8'><title>Revisao humana - sem aprovacao automatica</title><style>body{font:14px sans-serif;background:#ddd}section{border:1px solid #444;padding:12px}.sheet{width:max-content;background:repeating-conic-gradient(#aaa 0% 25%,#eee 0% 50%) 0/16px 16px;position:relative}.sheet:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#f008 1px,transparent 1px),linear-gradient(#f008 1px,transparent 1px);background-size:64px 64px;pointer-events:none}img{display:block;image-rendering:pixelated;max-width:none}pre{white-space:pre-wrap}</style><h1>REVISAO: nenhuma arte aprovada</h1><p>Grade 64px. Indices em ordem abaixo de cada imagem; pivot e alfa no relatorio. Originais preservados.</p>" + ''.join(sections),encoding='utf-8')
++    return results
++
++
++if __name__ == '__main__':
++    parser = argparse.ArgumentParser(description=__doc__)
++    sub = parser.add_subparsers(dest='command', required=True)
++    t = sub.add_parser('template'); t.add_argument('output', type=Path)
++    r = sub.add_parser('review')
++    for name in ('root','manifest','output'): r.add_argument(name,type=Path)
++    a = sub.add_parser('aseprite')
++    for name in ('png','metadata','output'): a.add_argument(name,type=Path)
++    args = parser.parse_args()
++    if args.command == 'template': template(args.output)
++    elif args.command == 'review': review(args.root,args.manifest,args.output)
++    else: aseprite(args.png,args.metadata,args.output)
+--- /dev/null
++++ b/tools/test_sprite_review.py
+@@ -0,0 +1,67 @@
++"""Revisao usa apenas fixtures sinteticas temporarias."""
++import copy
++import hashlib
++import json
++from pathlib import Path
++import tempfile
++import unittest
++from revisar_sprites import frames, template, review, aseprite
++from separar_sprites import write_png
++from validar_assets import read_png
++
++
++class SpriteReviewTest(unittest.TestCase):
++    def setUp(self):
++        self.temp = tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
++        self.root = Path(self.temp.name)
++        self.pixels = bytearray(512*512*4)
++        for f in frames():
++            i = ((f['y']+32)*512+f['x']+32)*4
++            self.pixels[i:i+4] = bytes([255,0,0,255])
++        write_png(self.root/'hero.png',512,512,self.pixels)
++        self.entry = dict(path='hero.png',kind='character',grid=64,frames=frames(),pivot=[32,48],offset=[0,0],layer='actors',origin='FIXTURE SINTETICA',review={})
++        self.count = 0
++
++    def check(self, entry=None):
++        self.count += 1
++        m = self.root/'manifest.json'; m.write_text(json.dumps({'assets':[entry or self.entry]}))
++        return review(self.root,m,self.root/f'out{self.count}')[0]
++
++    def test_template_59_empty_reproducible(self):
++        template(self.root/'a'); template(self.root/'b')
++        self.assertEqual((self.root/'a/template-vazio.png').read_bytes(),(self.root/'b/template-vazio.png').read_bytes())
++        w,h,p = read_png(self.root/'a/template-vazio.png')
++        self.assertEqual((w,h),(512,512)); self.assertFalse(any(p))
++        self.assertEqual(len(frames()),59)
++        self.assertEqual(len({(f['state'],f['direction'],f['index']) for f in frames()}),59)
++
++    def test_direction_order_missing_pivot_overlap(self):
++        for mutation in ('direction','order','missing','pivot','overlap'):
++            e = copy.deepcopy(self.entry)
++            if mutation == 'direction': e['frames'][0]['direction']='RIGHT'
++            if mutation == 'order': e['frames'][0],e['frames'][1]=e['frames'][1],e['frames'][0]
++            if mutation == 'missing': e['frames'].pop()
++            if mutation == 'pivot': e['frames'][0]['pivot']=[0,0]
++            if mutation == 'overlap': e['frames'][1]['x']=0
++            with self.subTest(mutation=mutation): self.assertEqual(self.check(e)['status'],'REPROVADO')
++
++    def test_alpha_border_and_hash_after_review(self):
++        self.entry['review']['approvedSha256']=hashlib.sha256((self.root/'hero.png').read_bytes()).hexdigest()
++        self.assertEqual(self.check()['status'],'PENDENTE_REVISAO_HUMANA')
++        self.pixels[3]=128
++        write_png(self.root/'hero.png',512,512,self.pixels)
++        result=self.check()
++        self.assertIn('alfa parcial: revisar antialiasing/fundo irregular',result['errors'])
++        self.assertNotEqual(result['sha256'],self.entry['review']['approvedSha256'])
++        self.assertFalse(result['reviewToolApprovesArt'])
++
++    def test_aseprite_exact_export_and_reject_trim_order(self):
++        exported=[]
++        for f in frames():
++            exported.append(dict(filename=f"{f['state']}.{f['direction']}.{f['index']}",rotated=False,trimmed=False,duration=100,sourceSize={'w':64,'h':64},spriteSourceSize={'x':0,'y':0,'w':64,'h':64},frame={'x':f['x'],'y':f['y'],'w':64,'h':64}))
++        data={'frames':exported,'meta':{'size':{'w':512,'h':512}}}
++        p=self.root/'ase.json'; p.write_text(json.dumps(data))
++        aseprite(self.root/'hero.png',p,self.root/'import.json')
++        for field,value in [('trimmed',True),('filename','IDLE.RIGHT.0')]:
++            bad=copy.deepcopy(data); bad['frames'][0][field]=value; p.write_text(json.dumps(bad))
++            with self.assertRaises(ValueError): aseprite(self.root/'hero.png',p,self.root/'bad.json')

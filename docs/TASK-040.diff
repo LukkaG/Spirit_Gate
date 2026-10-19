@@ -1,0 +1,141 @@
+--- /dev/null
++++ b/docs/TASK-040-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 246,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-040.md
+@@ -0,0 +1,5 @@
++# TASK-040 - Registro de conteudo
++
++Catalogo Properties UTF-8 schema=1, embutido no classpath. Categorias item, enemy, region, npc, quest com IDs estaveis, nome, referencia regional e valor limitado. Mundo carrega e valida catalogo antes de iniciar. Limites: 64 KiB, 512 definicoes, IDs 40 caracteres, nomes 80, valores inteiros 0-100000. Duplicatas, referencias ausentes, schema desconhecido, valores nao finitos e categorias desconhecidas recusados.
++
++Conteudo inicial: tres regioes, cinco itens, tres inimigos, dois NPCs e duas missoes. Contratos especificos serao estendidos e validados nas tarefas de cada sistema. Nenhum conteudo e executavel. Testes negativos e suite integral.
+--- /dev/null
++++ b/server/src/main/java/com/projetok/rpg/RpgContent.java
+@@ -0,0 +1,56 @@
++package com.projetok.rpg;
++
++import java.io.*;
++import java.nio.charset.StandardCharsets;
++import java.util.*;
++
++/** Catalogo local versionado. Nenhum script ou classe arbitraria e executado. */
++public final class RpgContent {
++    public record Definition(String id, String name, String region, int value) { }
++    private final Map<String, Map<String, Definition>> entries;
++    private RpgContent(Map<String, Map<String, Definition>> entries) { this.entries = Map.copyOf(entries); }
++    public Definition get(String kind, String id) {
++        Definition definition = entries.getOrDefault(kind, Map.of()).get(id);
++        if (definition == null) throw new IllegalArgumentException("Referencia ausente: " + kind + "." + id);
++        return definition;
++    }
++    public Collection<Definition> all(String kind) { return entries.getOrDefault(kind, Map.of()).values(); }
++    public static RpgContent builtin() {
++        try (InputStream in = RpgContent.class.getResourceAsStream("/rpg/content.properties")) {
++            if (in == null) throw new IOException("Catalogo RPG ausente");
++            return load(in);
++        } catch (IOException error) { throw new IllegalStateException("Conteudo RPG invalido", error); }
++    }
++    public static RpgContent load(InputStream in) throws IOException {
++        byte[] bytes = in.readNBytes(65_537);
++        if (bytes.length > 65_536) throw new IllegalArgumentException("Catalogo excessivo");
++        Properties properties = new Properties() {
++            @Override public synchronized Object put(Object key, Object value) {
++                if (containsKey(key)) throw new IllegalArgumentException("ID duplicado: " + key);
++                return super.put(key,value);
++            }
++        };
++        properties.load(new StringReader(new String(bytes, StandardCharsets.UTF_8)));
++        if (!"1".equals(properties.remove("schema")) || properties.size()>512) throw new IllegalArgumentException("Schema/limites invalidos");
++        Map<String, Map<String, Definition>> entries = new TreeMap<>();
++        for (String key : properties.stringPropertyNames()) {
++            String[] parts = key.split("\\.", -1), values = properties.getProperty(key).split("\\|", -1);
++            if (parts.length!=2 || !Set.of("item","enemy","region","npc","quest").contains(parts[0])
++                    || !parts[1].matches("[a-z][a-z0-9_-]{0,39}") || values.length!=3
++                    || values[0].isBlank() || values[0].length()>80 || !values[1].matches("[a-z][a-z0-9_-]{0,39}"))
++                throw new IllegalArgumentException("Definicao invalida: " + key);
++            int value;
++            try { value = Integer.parseInt(values[2]); } catch (NumberFormatException e) { throw new IllegalArgumentException("Numero invalido: " + key,e); }
++            if (value<0 || value>100_000) throw new IllegalArgumentException("Valor fora do limite");
++            entries.computeIfAbsent(parts[0], k->new TreeMap<>()).put(parts[1], new Definition(parts[1],values[0],values[1],value));
++        }
++        Map<String,Map<String,Definition>> immutable = new TreeMap<>();
++        entries.forEach((k,v)->immutable.put(k,Map.copyOf(v)));
++        RpgContent result = new RpgContent(immutable);
++        for (String kind : Set.of("item","enemy","region","npc","quest")) {
++            if (result.all(kind).isEmpty()) throw new IllegalArgumentException("Categoria ausente: " + kind);
++            for (Definition definition : result.all(kind)) result.get("region",definition.region());
++        }
++        return result;
++    }
++}
+--- a/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -9,10 +9,12 @@
+ /** Mundo offline: uma thread proprietaria, geometria compartilhada com a arena. */
+ public final class RpgWorld {
+     private final CharacterIdentity identity;
++    private final RpgContent content = RpgContent.builtin();
+     private final GameEntity body;
+     public RpgWorld() { this(CharacterIdentity.create("Viajante", "guardian", "azure")); }
+     public RpgWorld(CharacterIdentity identity) {
+         this.identity = java.util.Objects.requireNonNull(identity);
++        content.get("region", identity.initialRegion());
+         body = new GameEntity(1, identity.name(), new Position(140, 320)) { };
+     }
+     private final MovementService movement = new MovementService(new CollisionService());
+--- /dev/null
++++ b/server/src/main/resources/rpg/content.properties
+@@ -0,0 +1,16 @@
++schema=1
++region.village=Vila da Aurora|village|0
++region.forest=Bosque dos Ecos|forest|0
++region.ruins=Santuario Partido|ruins|0
++item.potion=Pocao de vida|village|12
++item.sword=Espada de aprendiz|village|35
++item.robe=Manto do viajante|village|25
++item.crystal=Cristal do eco|forest|3
++item.relic=Reliquia do Guardiao|ruins|0
++enemy.slime=Eco errante|forest|20
++enemy.wolf=Lobo do bosque|forest|35
++enemy.warden=Guardiao do Santuario|ruins|180
++npc.elder=Ancia da Aurora|village|0
++npc.trader=Comerciante Nilo|village|0
++quest.first_steps=Ecos no bosque|forest|80
++quest.sanctuary=O Santuario Partido|ruins|180
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/RpgContentTest.java
+@@ -0,0 +1,14 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import java.io.*;
++import java.nio.charset.StandardCharsets;
++import static org.junit.jupiter.api.Assertions.*;
++class RpgContentTest {
++    private RpgContent load(String text) throws IOException { return RpgContent.load(new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8))); }
++    @Test void loadsTypedReferences() { assertEquals("Bosque dos Ecos",RpgContent.builtin().get("region","forest").name()); }
++    @Test void rejectsMalformedDuplicatesNonFiniteAndExcess() {
++        for (String text : new String[]{"schema=2", "schema=1\nregion.a=A|a|NaN", "schema=1\nregion.a=A|a|1\nregion.a=A|a|2", "schema=1\nregion.a=A|missing|0", "x".repeat(65537)})
++            assertThrows(IllegalArgumentException.class,()->load(text));
++        assertThrows(IllegalArgumentException.class,()->RpgContent.builtin().get("item","missing"));
++    }
++}

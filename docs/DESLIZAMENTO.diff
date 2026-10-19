@@ -1,0 +1,696 @@
+--- /dev/null
++++ b/docs/DESLIZAMENTO-COLISOES.md
+@@ -0,0 +1,97 @@
++# Colisões com deslizamento lento
++
++18/10/2026 - Melhoria de sensação de movimento solicitada após TASK-005.
++
++## Comportamento
++
++O jogador e os mobs agora tentam escorregar lentamente pelo contorno de outro
++corpo circular ou por uma quina externa quando o passo inteiro fica bloqueado.
++A intenção é projetada na tangente do contato, com fator de atrito de 0,45.
++O auxílio nunca supera 45% da distância da caminhada solicitada e fica mais
++lento quando a direção aponta quase de frente para o bloqueador. É mais lento
++que manter uma diagonal livre. O limite adicional por passo é um quarto do raio.
++
++Movimento livre e deslizamento normal X/Y pelas paredes conservam a velocidade
++anterior. O auxílio só entra se os dois eixos não produzirem deslocamento.
++Raios, alcance e hitboxes de ataque não foram reduzidos. Outros atores não são
++empurrados, incluindo mobs congelados.
++
++Um contato frontal perfeitamente simétrico não escolhe sozinho um lado.
++Paredes retas e cantos internos sem saída continuam bloqueando. Não há expulsão
++automática de uma origem já sobreposta. Isso evita desvio arbitrário ao segurar
++uma tecla diretamente contra uma parede ou um ator alinhado.
++
++## Resolução e segurança geométrica
++
++CollisionService.resolveSliding mantém a prioridade X antes de Y. Cada trecho
++normal é verificado por inteiro para não atravessar a pequena borda curva de
++um círculo, mesmo quando as duas extremidades estejam livres. Se o passo ficar
++totalmente bloqueado, o serviço identifica corpos/quinas no percurso, projeta
++a intenção na tangente e tenta um deslocamento reduzido.
++
++A projeção precisa avançar na direção solicitada; não pode recuar apenas para
++produzir algum movimento. O percurso tangencial inteiro também é validado
++contra todos os bloqueadores e limites. Há até quatro tentativas de redução
++do passo. Entre alternativas válidas, prevalece o maior progresso na intenção,
++com desempate geométrico estável. O índice espacial atualiza apenas o ator movido.
++
++Não há sorteio, nova thread ou dependência gráfica nesse cálculo. Freeze continua
++sendo verificado em MovementService antes de qualquer resposta à colisão.
++Ataques, vigor, Criostase e probabilidades não foram alterados.
++
++## Políticas e regressão histórica
++
++MovementService.Response permite selecionar STRICT ou SOFT_SLIDE. O construtor
++antigo do serviço mantém STRICT por compatibilidade de API. DebugWorld usa
++SOFT_SLIDE por padrão, para jogador e mobs, inclusive ao reiniciar a arena.
++O construtor de DebugWorld com resposta explícita permite comparar os dois modos.
++
++CollisionService.resolve conserva o comportamento discreto anterior.
++resolveContinuous continua sendo a operação específica de varredura por eixo,
++sem assistência tangencial. Para a caminhada da arena, o caminho usado é
++resolveSliding. Deslocamentos grandes de dash devem continuar usando a API
++contínua apropriada; esta tarefa não implementa dash ou busca de caminho.
++
++Esta mudança altera intencionalmente trajetórias antes bloqueadas. Portanto,
++MovementReplayTest agora instancia explicitamente o modo STRICT para conservar
++a referência histórica. Seus três hashes não foram recalculados. Os novos testes
++verificam o comportamento SOFT_SLIDE diretamente, evitando usar o replay antigo
++para exigir que a melhoria reproduza o travamento anterior.
++
++## Validação
++
++Estado inicial: mvn clean test -q, 105 testes aprovados.
++Estado final: mvn clean test -q, 118 testes aprovados, sem falhas, erros ou ignorados.
++
++SoftSlideCollisionTest acrescenta 13 testes: círculo, quatro espelhamentos,
++quinas externas, limite de velocidade, 24 passos de escape com amostragem do
++percurso, contato frontal, paredes/limites/cantos internos, passagem fechada,
++origem sobreposta, atualização do índice sem empurrar, entradas numéricas
++inválidas, Freeze e preservação de movimento livre e da prioridade X/Y.
++
++Um desses testes identificou o caso de pontas livres com travessia do contorno
++curvo; a validação por segmento no novo modo corrige esse problema. A versão
++final passa no teste, sem relaxar sua separação entre corpos.
++
++A execução incremental intermediária encontrou artefatos internos de classe
++incompletos no target. A compilação limpa foi executada para a validação final.
++Não houve sessão interativa da janela nesta etapa; o fator inicial de 45% deve
++ser avaliado pela sensação de jogo. Não se alterou o balanceamento de combate.
++
++## Arquivos
++
++- server/src/main/java/com/projetok/domain/movement/CollisionService.java.
++- server/src/main/java/com/projetok/domain/movement/MovementService.java.
++- server/src/main/java/com/projetok/prototype/DebugWorld.java.
++- server/src/test/java/com/projetok/domain/movement/SoftSlideCollisionTest.java (novo).
++- server/src/test/java/com/projetok/prototype/MovementReplayTest.java (seleção explícita de STRICT).
++- README-PROTOTIPO.md e docs/HISTORICO-TECNICO.md.
++- Este relatório, DESLIZAMENTO-testes.txt e DESLIZAMENTO.diff.
++
++O ajuste de intensidade fica em CollisionService.SOFT_SLIDE_FACTOR. Valores
++maiores tornam o contorno mais rápido; 0,45 é o valor inicial desta entrega.
++
++Para testar manualmente: executar rodar-prototipo.cmd, aproximar-se ligeiramente
++desalinhado de um mob ou de uma quina externa e manter a direção contra o contato.
++O personagem deve contornar lentamente e retomar a velocidade normal ao liberar
++o caminho. Conferir também diagonal livre, parede reta e mob congelado.
+--- /dev/null
++++ b/docs/DESLIZAMENTO-testes.txt
+@@ -0,0 +1,22 @@
++Deslizamento lento | 18/10/2026
++Estado inicial: mvn clean test -q; 105 testes aprovados.
++Estado final: mvn clean test -q; BUILD SUCCESS; compilacao release 17.
++118 testes; 0 falhas; 0 erros; 0 ignorados.
++
++Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.056 s -- in com.projetok.domain.effect.StatusEffectServiceTest
++Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.034 s -- in com.projetok.domain.movement.FreezeMovementTest
++Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.023 s -- in com.projetok.domain.movement.MovementHardeningTest
++Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.005 s -- in com.projetok.domain.movement.MovementServiceTest
++Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.018 s -- in com.projetok.domain.movement.SoftSlideCollisionTest
++Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.047 s -- in com.projetok.domain.movement.SpatialBodyIndexTest
++Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 s -- in com.projetok.domain.probability.ProbabilityServiceTest
++Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.005 s -- in com.projetok.domain.resource.StaminaServiceTest
++Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.011 s -- in com.projetok.domain.skill.CryostasisFreezeTest
++Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.015 s -- in com.projetok.domain.skill.CryostasisServiceTest
++Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.672 s -- in com.projetok.prototype.CryostasisIntegrationTest
++Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.010 s -- in com.projetok.prototype.DebugCommandBufferTest
++Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.097 s -- in com.projetok.prototype.DebugWorldTest
++Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.077 s -- in com.projetok.prototype.FreezeWorldTest
++Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.144 s -- in com.projetok.prototype.MovementReplayTest
++Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.481 s -- in com.projetok.prototype.StaminaInterfaceTest
++Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.012 s -- in com.projetok.prototype.StaminaWorldTest
+--- a/docs/HISTORICO-TECNICO.md
++++ b/docs/HISTORICO-TECNICO.md
+@@ -1,4 +1,21 @@
+ # Histórico técnico
++
++## 18/10/2026 - Colisões com deslizamento lento
++
++Adicionada assistência tangencial em bloqueio total por corpos e quinas externas.
++SOFT_SLIDE passa a ser a resposta padrão do DebugWorld para jogador e mobs.
++Movimento livre e deslizamento X/Y normais mantêm a velocidade; o auxílio usa
++fator 0,45 e valida o percurso inteiro, sem reduzir raios ou empurrar atores.
++Freeze continua impedindo movimento; combate e recursos não foram alterados.
++
++O modo STRICT preserva o comportamento anterior. MovementReplayTest passou a
++selecioná-lo explicitamente, mantendo os três baselines, já que a trajetória nova
++é uma mudança intencional. Treze testes novos cobrem o modo SOFT_SLIDE.
++Validação final: `mvn clean test -q`, **118 testes aprovados**, sem falhas ou erros.
++Sem sessão interativa da janela nesta etapa.
++
++Entrega: [decisões e arquivos](DESLIZAMENTO-COLISOES.md),
++[testes](DESLIZAMENTO-testes.txt) e [diff](DESLIZAMENTO.diff).
+ 
+ ## 18/10/2026 - TASK-005: Efeitos temporários e Freeze
+ 
+--- a/README-PROTOTIPO.md
++++ b/README-PROTOTIPO.md
+@@ -222,3 +222,21 @@
+ - [Diff](docs/TASK-005.diff)
+ 
+ Gerar PDF: `python -B tools/gerar_pdf_task005.py` na pasta `Projeto-K`.
++
++## Colisão mais maleável: deslizamento lento
++
++Ao ficar completamente bloqueado por uma quina externa ou pelo contorno de um
++mob, o personagem tenta escorregar pela tangente a até **45% da velocidade**.
++O auxílio também vale para mobs. Não reduz hitboxes, não empurra outros atores
++e verifica o percurso para impedir travessias. Movimento livre e deslizamento
++normal nas paredes mantêm sua velocidade. Freeze continua bloqueando movimento.
++
++Paredes retas, contato frontal perfeitamente alinhado e cantos sem saída
++continuam bloqueando quando não há direção tangencial válida.
++
++Validação: `mvn clean test -q`, **118 testes aprovados**. O replay histórico usa
++explicitamente o modo STRICT com os hashes antigos; os testes novos cobrem o
++modo SOFT_SLIDE, ativo por padrão na arena.
++
++[Detalhes e arquivos](docs/DESLIZAMENTO-COLISOES.md),
++[testes](docs/DESLIZAMENTO-testes.txt) e [diff](docs/DESLIZAMENTO.diff).
+--- a/server/src/main/java/com/projetok/domain/movement/CollisionService.java
++++ b/server/src/main/java/com/projetok/domain/movement/CollisionService.java
+@@ -7,6 +7,8 @@
+ 
+ /** Detecta e resolve colisões sem interface. Coordenadas e raios usam a mesma unidade. */
+ public final class CollisionService {
++    /** Atrito do auxílio de contorno; movimento livre e deslizamento por eixo não mudam. */
++    public static final float SOFT_SLIDE_FACTOR = 0.45f;
+     // --- Dados do cenário ---
+ 
+     /** Obstáculo retangular sólido em coordenadas de mundo. */
+@@ -82,6 +84,155 @@
+         if (dy != 0 && isFree(entity, p.x(), p.y() + dy, radius, space))
+             entity.setPosition(new Position(p.x(), p.y() + dy));
+         if (space.index() != null) space.index().update(entity);
++    }
++
++    // --- Auxílio de contorno com atrito ---
++
++    /**
++     * Preserva X/Y e, somente em bloqueio total, tenta contornar círculos ou quinas
++     * externas em velocidade reduzida. Não encolhe hitboxes nem empurra outro ator.
++     */
++    public void resolveSliding(GameEntity entity, float dx, float dy, float radius, Space space) {
++        validateMove(entity, dx, dy, radius);
++        Position origin = entity.getPosition();
++        if ((dx == 0 && dy == 0) || !isFree(entity, origin.x(), origin.y(), radius, space)) return;
++        Position axisX = new Position(origin.x() + dx, origin.y());
++        if (dx != 0 && pathIsFree(entity, origin, axisX, radius, space)) entity.setPosition(axisX);
++        Position afterX = entity.getPosition();
++        Position axisY = new Position(afterX.x(), afterX.y() + dy);
++        if (dy != 0 && pathIsFree(entity, afterX, axisY, radius, space)) entity.setPosition(axisY);
++        if (!origin.equals(entity.getPosition())) {
++            if (space.index() != null) space.index().update(entity);
++            return;
++        }
++        Position best = null;
++        for (Obstacle obstacle : space.obstacles()) {
++            // Faces planas não escolhem um desvio lateral arbitrário.
++            boolean outsideX = origin.x() < obstacle.x() || origin.x() > obstacle.x() + obstacle.width();
++            boolean outsideY = origin.y() < obstacle.y() || origin.y() > obstacle.y() + obstacle.height();
++            if (!outsideX || !outsideY || !blocksStep(origin, dx, dy, radius, obstacle)) continue;
++            double nx = origin.x() - (double) clamp(origin.x(), obstacle.x(), obstacle.x() + obstacle.width());
++            double ny = origin.y() - (double) clamp(origin.y(), obstacle.y(), obstacle.y() + obstacle.height());
++            best = betterSlide(origin, dx, dy, best,
++                    slideCandidate(entity, origin, dx, dy, radius, space, nx, ny));
++        }
++        for (Body body : candidates(space, origin.x(), origin.y(), origin.x() + dx, origin.y() + dy, radius)) {
++            if (body.entity() == entity || body.entity().require(HealthComponent.class).isDead()) continue;
++            Position other = body.entity().getPosition();
++            double sum = radius + (double) body.radius();
++            double squared = sum * sum;
++            if (pointSegmentSquared(other.x(), other.y(), origin, axisX) >= squared
++                    && pointSegmentSquared(other.x(), other.y(), origin, new Position(origin.x(), origin.y() + dy)) >= squared
++                    && pointSegmentSquared(other.x(), other.y(), origin, new Position(origin.x() + dx, origin.y() + dy)) >= squared) continue;
++            best = betterSlide(origin, dx, dy, best,
++                    slideCandidate(entity, origin, dx, dy, radius, space,
++                            origin.x() - (double) other.x(), origin.y() - (double) other.y()));
++        }
++        if (best != null) {
++            entity.setPosition(best);
++            if (space.index() != null) space.index().update(entity);
++        }
++    }
++
++    /** Identifica a quina que rejeitou pelo menos uma das tentativas do passo original. */
++    private boolean blocksStep(Position p, float dx, float dy, float radius, Obstacle o) {
++        return obstacleBlocksSegment(p, new Position(p.x() + dx, p.y()), radius, o)
++                || obstacleBlocksSegment(p, new Position(p.x(), p.y() + dy), radius, o)
++                || obstacleBlocksSegment(p, new Position(p.x() + dx, p.y() + dy), radius, o);
++    }
++
++    /** Consulta de um círculo contra um único retângulo, com a mesma regra de tangência. */
++    private boolean overlapsRectangle(float x, float y, float radius, Obstacle o) {
++        return overlaps(x, y, clamp(x, o.x(), o.x() + o.width()),
++                clamp(y, o.y(), o.y() + o.height()), radius);
++    }
++
++    /** Projeta na tangente e aplica atrito, recuando o passo quando houver outro bloqueio. */
++    private Position slideCandidate(GameEntity entity, Position origin, float dx, float dy,
++                                    float radius, Space space, double nx, double ny) {
++        double normalLength = Math.hypot(nx, ny);
++        if (normalLength == 0) return null;
++        nx /= normalLength; ny /= normalLength;
++        double inward = dx * nx + dy * ny;
++        if (inward >= 0) return null;
++        double sx = dx - inward * nx, sy = dy - inward * ny;
++        double length = Math.hypot(sx, sy);
++        if (length < 0.000001) return null; // contato frontal simétrico não escolhe um lado.
++        double scale = Math.min(SOFT_SLIDE_FACTOR, radius * 0.25 / length);
++        for (int i = 0; i < 4; i++, scale *= 0.5) {
++            Position end = new Position((float) (origin.x() + sx * scale), (float) (origin.y() + sy * scale));
++            if (!Float.isFinite(end.x()) || !Float.isFinite(end.y())) continue;
++            if (end.equals(origin)) continue;
++            if (pathIsFree(entity, origin, end, radius, space)) return end;
++        }
++        return null;
++    }
++
++    /** Seleciona maior progresso na intenção; desempate geométrico evita oscilação pela ordem do índice. */
++    private Position betterSlide(Position origin, float dx, float dy, Position best, Position candidate) {
++        if (candidate == null) return best;
++        double score = (candidate.x() - (double) origin.x()) * dx + (candidate.y() - (double) origin.y()) * dy;
++        if (score <= 0) return best;
++        if (best == null) return candidate;
++        double previous = (best.x() - (double) origin.x()) * dx + (best.y() - (double) origin.y()) * dy;
++        if (score > previous + 0.000000001 || (Math.abs(score - previous) <= 0.000000001
++                && (candidate.x() < best.x() || (candidate.x() == best.x() && candidate.y() < best.y())))) return candidate;
++        return best;
++    }
++
++    /** Valida o segmento inteiro da assistência, incluindo terceiros corpos e cantos arredondados. */
++    private boolean pathIsFree(GameEntity entity, Position start, Position end, float radius, Space space) {
++        if (!isFree(entity, end.x(), end.y(), radius, space)) return false;
++        for (Obstacle o : space.obstacles()) {
++            if (obstacleBlocksSegment(start, end, radius, o)) return false;
++        }
++        for (Body body : candidates(space, start.x(), start.y(), end.x(), end.y(), radius)) {
++            if (body.entity() == entity || body.entity().require(HealthComponent.class).isDead()) continue;
++            var p = body.entity().getPosition();
++            double sum = radius + (double) body.radius();
++            if (pointSegmentSquared(p.x(), p.y(), start, end) < sum * sum) return false;
++        }
++        return true;
++    }
++
++    /** Distância mínima do segmento ao retângulo, incluindo faces e quinas. */
++    private boolean obstacleBlocksSegment(Position start, Position end, float radius, Obstacle o) {
++        double squared = (double) radius * radius;
++        return overlapsRectangle(start.x(), start.y(), radius, o)
++                || overlapsRectangle(end.x(), end.y(), radius, o)
++                || segmentIntersectsRectangle(start, end, o)
++                || pointSegmentSquared(o.x(), o.y(), start, end) < squared
++                || pointSegmentSquared(o.x() + o.width(), o.y(), start, end) < squared
++                || pointSegmentSquared(o.x(), o.y() + o.height(), start, end) < squared
++                || pointSegmentSquared(o.x() + o.width(), o.y() + o.height(), start, end) < squared;
++    }
++
++    /** Teste de segmento contra o interior retangular pela interseção dos intervalos X/Y. */
++    private boolean segmentIntersectsRectangle(Position start, Position end, Obstacle o) {
++        double near = 0, far = 1;
++        double[] origins = {start.x(), start.y()}, deltas = {(double) end.x() - start.x(), (double) end.y() - start.y()};
++        double[] low = {o.x(), o.y()}, high = {o.x() + o.width(), o.y() + o.height()};
++        for (int axis = 0; axis < 2; axis++) {
++            if (deltas[axis] == 0) {
++                if (origins[axis] < low[axis] || origins[axis] > high[axis]) return false;
++            } else {
++                double a = (low[axis] - origins[axis]) / deltas[axis];
++                double b = (high[axis] - origins[axis]) / deltas[axis];
++                near = Math.max(near, Math.min(a, b)); far = Math.min(far, Math.max(a, b));
++                if (near > far) return false;
++            }
++        }
++        return true;
++    }
++
++    /** Distância de ponto ao segmento, incluindo as duas extremidades. */
++    private double pointSegmentSquared(double x, double y, Position start, Position end) {
++        double dx = (double) end.x() - start.x(), dy = (double) end.y() - start.y();
++        double lengthSquared = dx * dx + dy * dy;
++        double t = lengthSquared == 0 ? 0 : Math.max(0, Math.min(1,
++                ((x - start.x()) * dx + (y - start.y()) * dy) / lengthSquared));
++        double rx = x - (start.x() + t * dx), ry = y - (start.y() + t * dy);
++        return rx * rx + ry * ry;
+     }
+ 
+     /** Valida ambos os eixos e seus resultados antes de aplicar o primeiro. */
+--- a/server/src/main/java/com/projetok/domain/movement/MovementService.java
++++ b/server/src/main/java/com/projetok/domain/movement/MovementService.java
+@@ -8,11 +8,20 @@
+ 
+ /** Movimento autoritativo sem interface; chamado na thread proprietária das entidades. */
+ public final class MovementService {
++    /** Política explícita: referência por eixos ou assistência lenta no contorno. */
++    public enum Response { STRICT, SOFT_SLIDE }
+     private final CollisionService collisions;
++    private final Response response;
+ 
+     /** Recebe o serviço responsável pela detecção e resolução de colisões. */
+     public MovementService(CollisionService collisions) {
+-        this.collisions = collisions;
++        this(collisions, Response.STRICT);
++    }
++
++    /** Seleciona a resposta à colisão sem modificar velocidade, raios ou combate. */
++    public MovementService(CollisionService collisions, Response response) {
++        this.collisions = java.util.Objects.requireNonNull(collisions);
++        this.response = java.util.Objects.requireNonNull(response);
+     }
+ 
+     /** Retorna direção unitária, ou zero quando não há intenção de movimento. */
+@@ -39,7 +48,8 @@
+     /** Encaminha um deslocamento à resolução de colisões, sem criar threads. */
+     public void move(GameEntity entity, float dx, float dy, float radius, CollisionService.Space space) {
+         if (blockedByFreeze(entity, dx, dy, radius)) return;
+-        collisions.resolve(entity, dx, dy, radius, space);
++        if (response == Response.SOFT_SLIDE) collisions.resolveSliding(entity, dx, dy, radius, space);
++        else collisions.resolve(entity, dx, dy, radius, space);
+     }
+ 
+     /** Deslocamento contínuo opcional para dash e velocidades altas, sem tunelamento. */
+--- a/server/src/main/java/com/projetok/prototype/DebugWorld.java
++++ b/server/src/main/java/com/projetok/prototype/DebugWorld.java
+@@ -59,7 +59,7 @@
+ 
+     private final GameEventBus events = new GameEventBus();
+     private final CombatService combat = new CombatService(events);
+-    private final MovementService movement = new MovementService(new CollisionService());
++    private final MovementService movement;
+     private final StaminaService staminaService = new StaminaService();
+     private final StatusEffectService statusEffects = new StatusEffectService();
+     private final CryostasisService cryostasis;
+@@ -87,6 +87,12 @@
+ 
+     /** Permite reproduzir os sorteios de gameplay sem acoplar testes à interface. */
+     public DebugWorld(RandomGenerator random) {
++        this(random, MovementService.Response.SOFT_SLIDE);
++    }
++
++    /** Permite comparar a resposta nova com a referência histórica sem alterar os baselines. */
++    public DebugWorld(RandomGenerator random, MovementService.Response response) {
++        movement = new MovementService(new CollisionService(), response);
+         cryostasis = new CryostasisService(combat, staminaService, statusEffects, new ProbabilityService(random));
+         RaceRegistry races = RaceRegistry.withDefaults();
+         VitalityService vitality = new VitalityService();
+--- /dev/null
++++ b/server/src/test/java/com/projetok/domain/movement/SoftSlideCollisionTest.java
+@@ -0,0 +1,282 @@
++package com.projetok.domain.movement;
++
++import com.projetok.domain.effect.StatusEffectType;
++import com.projetok.domain.entity.GameEntity;
++import com.projetok.domain.entity.Mob;
++import com.projetok.domain.entity.Position;
++import com.projetok.domain.entity.component.HealthComponent;
++import com.projetok.domain.entity.component.StatusEffectsComponent;
++import com.projetok.domain.item.LootTable;
++import java.util.List;
++import org.junit.jupiter.api.Test;
++
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Verifica o escape tangencial lento sem reduzir hitboxes ou empurrar outros atores. */
++class SoftSlideCollisionTest {
++    private final CollisionService collisions = new CollisionService();
++
++    // --- Escape por corpos circulares e quinas externas ---
++
++    /** Um contato lateral converte o bloqueio em avanço tangencial com velocidade reduzida. */
++    @Test void contornaCorpoSemEmpurrarEMaisDevagarQueMovimentoLivre() {
++        GameEntity actor = ator(1, 20, 20);
++        GameEntity blocker = ator(2, 30, 25);
++        var space = espacoCorpos(actor, blocker, 5);
++        Position blockerOrigin = blocker.getPosition();
++
++        collisions.resolveSliding(actor, 4, 0, 5, space);
++
++        Position p = actor.getPosition();
++        assertTrue(p.x() > 20, "O escape precisa permitir avanço na direção pedida");
++        assertTrue(p.y() < 20, "A tangente deve afastar o ator do lado do bloqueador");
++        assertTrue(distancia(new Position(20, 20), p) <= 4 * 0.45 + 0.0001);
++        assertTrue(collisions.isFree(actor, p.x(), p.y(), 5, space));
++        assertEquals(blockerOrigin, blocker.getPosition(), "O bloqueador não pode ser empurrado");
++    }
++
++    /** Os quatro espelhamentos evitam uma preferência artificial por baixo ou pela direita. */
++    @Test void escapeCircularRespeitaEspelhamentosDosContatos() {
++        for (int sx : new int[] {-1, 1}) for (int sy : new int[] {-1, 1}) {
++            float x = espelhar(20, sx), y = espelhar(20, sy);
++            GameEntity actor = ator(1, x, y);
++            GameEntity blocker = ator(2, espelhar(30, sx), espelhar(25, sy));
++            var space = espacoCorpos(actor, blocker, 5);
++
++            collisions.resolveSliding(actor, 4 * sx, 0, 5, space);
++
++            Position p = actor.getPosition();
++            assertTrue((p.x() - x) * sx > 0);
++            assertTrue((p.y() - y) * sy < 0);
++            assertTrue(distancia(new Position(x, y), p) <= 4 * 0.45 + 0.0001);
++            assertTrue(collisions.isFree(actor, p.x(), p.y(), 5, space));
++        }
++    }
++
++    /** Uma quina externa admite escape lento nos quatro lados sem encolher o raio. */
++    @Test void contornaQuinaExternaNosQuatroEspelhamentos() {
++        for (int sx : new int[] {-1, 1}) for (int sy : new int[] {-1, 1}) {
++            float x = espelhar(33, sx), y = espelhar(32, sy);
++            GameEntity actor = ator(1, x, y);
++            var space = new CollisionService.Space(100, 100,
++                    List.of(new CollisionService.Obstacle(40, 40, 20, 20)), List.of());
++
++            collisions.resolveSliding(actor, 5 * sx, 0, 10, space);
++
++            Position p = actor.getPosition();
++            assertTrue((p.x() - x) * sx > 0);
++            assertTrue((p.y() - y) * sy < 0);
++            assertTrue(distancia(new Position(x, y), p) <= 5 * 0.45 + 0.0001);
++            assertTrue(collisions.isFree(actor, p.x(), p.y(), 10, space));
++        }
++    }
++
++    /** Pressões repetidas permitem sair do contato sem cruzar o corpo intermediário. */
++    @Test void variosTicksPermitemEscaparSemAtravessarOutroCorpo() {
++        GameEntity actor = ator(1, 20, 20);
++        GameEntity blocker = ator(2, 30, 25);
++        var space = espacoCorpos(actor, blocker, 5);
++        for (int tick = 0; tick < 24; tick++) {
++            Position before = actor.getPosition();
++            collisions.resolveSliding(actor, 4, 0, 5, space);
++            Position after = actor.getPosition();
++            for (int sample = 0; sample <= 40; sample++) {
++                float ratio = sample / 40f;
++                float x = before.x() + (after.x() - before.x()) * ratio;
++                float y = before.y() + (after.y() - before.y()) * ratio;
++                assertTrue(collisions.isFree(actor, x, y, 5, space),
++                        "O caminho entre ticks deve preservar a separação dos corpos");
++            }
++        }
++        assertTrue(actor.getPosition().x() > 40, "O ator deve conseguir contornar o bloqueador");
++        assertEquals(new Position(30, 25), blocker.getPosition());
++    }
++
++    // --- Barreiras que não admitem um desvio tangencial válido ---
++
++    /** Um contato frontal simétrico não escolhe arbitrariamente um lado de escape. */
++    @Test void contatoFrontalExatoContinuaBloqueado() {
++        GameEntity actor = ator(1, 20, 20);
++        GameEntity blocker = ator(2, 30, 20);
++
++        collisions.resolveSliding(actor, 4, 0, 5, espacoCorpos(actor, blocker, 5));
++
++        assertEquals(new Position(20, 20), actor.getPosition());
++    }
++
++    /** Paredes planas, limites e quinas internas continuam impedindo penetração. */
++    @Test void paredesLimitesECantosInternosContinuamSolidos() {
++        GameEntity actor = ator(1, 35, 35);
++        var wall = new CollisionService.Obstacle(40, 10, 10, 70);
++        var wallSpace = new CollisionService.Space(100, 100, List.of(wall), List.of());
++        collisions.resolveSliding(actor, 4, 0, 5, wallSpace);
++        assertEquals(new Position(35, 35), actor.getPosition());
++
++        var cornerSpace = new CollisionService.Space(100, 100,
++                List.of(wall, new CollisionService.Obstacle(10, 40, 70, 10)), List.of());
++        collisions.resolveSliding(actor, 4, 4, 5, cornerSpace);
++        assertEquals(new Position(35, 35), actor.getPosition());
++
++        actor.setPosition(new Position(5, 35));
++        collisions.resolveSliding(actor, -4, 0, 5,
++                new CollisionService.Space(100, 100, List.of(), List.of()));
++        assertEquals(new Position(5, 35), actor.getPosition());
++    }
++
++    /** A tangente de um corpo não pode ignorar outro corpo fechando a passagem. */
++    @Test void doisCorposNaoPermitemForcarUmaPassagemEstreita() {
++        GameEntity actor = ator(1, 22, 20);
++        GameEntity upper = ator(2, 30, 14);
++        GameEntity lower = ator(3, 30, 26);
++        var space = new CollisionService.Space(100, 100, List.of(), List.of(
++                new CollisionService.Body(actor, 5), new CollisionService.Body(upper, 5),
++                new CollisionService.Body(lower, 5)));
++        assertTrue(collisions.isFree(actor, 22, 20, 5, space));
++
++        for (int tick = 0; tick < 20; tick++) collisions.resolveSliding(actor, 4, 0, 5, space);
++
++        assertEquals(new Position(22, 20), actor.getPosition());
++        assertEquals(new Position(30, 14), upper.getPosition());
++        assertEquals(new Position(30, 26), lower.getPosition());
++    }
++
++    /** Uma origem já sobreposta não dispara expulsão automática nem move o outro ator. */
++    @Test void origemSobrepostaNaoProvocaExpulsaoAutomatica() {
++        GameEntity actor = ator(1, 20, 20);
++        GameEntity blocker = ator(2, 25, 20);
++        var space = espacoCorpos(actor, blocker, 5);
++
++        collisions.resolveSliding(actor, 4, 0, 5, space);
++
++        assertEquals(new Position(20, 20), actor.getPosition());
++        assertEquals(new Position(25, 20), blocker.getPosition());
++    }
++
++    // --- Contratos compartilhados: índice, validação e imobilização ---
++
++    /** A grade recebe a nova posição do ator sem alterar o corpo usado no contato. */
++    @Test void atualizaIndiceAposEscapeMantendoOutroAtorFixo() {
++        GameEntity actor = ator(1, 20, 20);
++        GameEntity blocker = ator(2, 30, 25);
++        var bodies = List.of(new CollisionService.Body(actor, 5), new CollisionService.Body(blocker, 5));
++        var index = new SpatialBodyIndex(bodies, 1);
++        var space = new CollisionService.Space(100, 100, List.of(), bodies, index);
++        assertTrue(index.query(20, 25.1, 20, 25.1).stream().anyMatch(body -> body.entity() == actor));
++
++        collisions.resolveSliding(actor, 4, 0, 5, space);
++
++        assertTrue(actor.getPosition().y() < 20);
++        assertFalse(index.query(20, 25.1, 20, 25.1).stream().anyMatch(body -> body.entity() == actor),
++                "A célula antiga deve deixar de conter o ator movido");
++        var p = actor.getPosition();
++        assertTrue(index.query(p.x(), p.y(), p.x(), p.y()).stream().anyMatch(body -> body.entity() == actor));
++        assertEquals(new Position(30, 25), blocker.getPosition());
++    }
++
++    /** A nova política mantém a rejeição de números inválidos antes de qualquer mutação. */
++    @Test void rejeitaEntradasInvalidasSemAlterarPosicao() {
++        GameEntity actor = ator(1, 20, 20);
++        GameEntity blocker = ator(2, 30, 25);
++        var space = espacoCorpos(actor, blocker, 5);
++        for (float invalid : new float[] {Float.NaN, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY}) {
++            assertThrows(IllegalArgumentException.class,
++                    () -> collisions.resolveSliding(actor, invalid, 0, 5, space));
++            assertThrows(IllegalArgumentException.class,
++                    () -> collisions.resolveSliding(actor, 0, invalid, 5, space));
++            assertThrows(IllegalArgumentException.class,
++                    () -> collisions.resolveSliding(actor, 4, 0, invalid, space));
++            assertEquals(new Position(20, 20), actor.getPosition());
++        }
++        for (float radius : new float[] {0, -1}) {
++            assertThrows(IllegalArgumentException.class,
++                    () -> collisions.resolveSliding(actor, 4, 0, radius, space));
++            assertEquals(new Position(20, 20), actor.getPosition());
++        }
++    }
++
++    /** Freeze intercepta todos os caminhos do serviço antes do escape tangencial. */
++    @Test void freezeBloqueiaMovimentoMesmoComPoliticaDeDeslizamento() {
++        Mob mob = new Mob(1, "Mob", new Position(20, 20), LootTable.of());
++        mob.attach(new HealthComponent(10));
++        var effects = new StatusEffectsComponent();
++        effects.refresh(StatusEffectType.FREEZE, 1);
++        mob.attach(effects);
++        GameEntity blocker = ator(2, 30, 25);
++        var space = espacoCorpos(mob, blocker, 5);
++        var movement = new MovementService(collisions, MovementService.Response.SOFT_SLIDE);
++
++        movement.move(mob, 4, 0, 5, space);
++        movement.moveDirected(mob, new Position(1, 0), 40, 0.1f, 5, space);
++        movement.moveContinuous(mob, 4, 0, 5, space);
++
++        assertEquals(new Position(20, 20), mob.getPosition());
++        assertEquals(1f, effects.remaining(StatusEffectType.FREEZE));
++        assertThrows(IllegalArgumentException.class,
++                () -> movement.move(mob, Float.NaN, 0, 5, space));
++
++        effects.advance(1);
++        movement.move(mob, 4, 0, 5, space);
++        assertTrue(mob.getPosition().x() > 20);
++        assertTrue(mob.getPosition().y() < 20);
++    }
++
++    /** A política opcional preserva posições e velocidade do movimento livre em todas as direções. */
++    @Test void movimentoLivreEVelocidadeDiagonalPermanecemIguais() {
++        var strict = new MovementService(collisions);
++        var sliding = new MovementService(collisions, MovementService.Response.SOFT_SLIDE);
++        var space = new CollisionService.Space(1000, 1000, List.of(), List.of());
++        for (int x = -1; x <= 1; x++) for (int y = -1; y <= 1; y++) {
++            GameEntity original = ator(1, 500, 500);
++            GameEntity actor = ator(2, 500, 500);
++            Position direction = strict.direction(x, y);
++
++            strict.moveDirected(original, direction, 215, 1f / 30f, 18, space);
++            sliding.moveDirected(actor, direction, 215, 1f / 30f, 18, space);
++
++            assertEquals(original.getPosition(), actor.getPosition());
++            assertEquals(x == 0 && y == 0 ? 0 : 215f / 30f,
++                    distancia(new Position(500, 500), actor.getPosition()), 0.0001);
++        }
++    }
++
++    /** A resolução por eixos permanece intacta quando ao menos um eixo pode avançar. */
++    @Test void preservaDeslizamentoAnteriorQuandoUmEixoEstaLivre() {
++        var strict = new MovementService(collisions);
++        var sliding = new MovementService(collisions, MovementService.Response.SOFT_SLIDE);
++        var space = new CollisionService.Space(100, 100,
++                List.of(new CollisionService.Obstacle(40, 20, 20, 40)), List.of());
++        GameEntity original = ator(1, 25, 40);
++        GameEntity actor = ator(2, 25, 40);
++
++        strict.move(original, 11, 8, 5, space);
++        sliding.move(actor, 11, 8, 5, space);
++
++        assertEquals(new Position(25, 48), actor.getPosition());
++        assertEquals(original.getPosition(), actor.getPosition());
++    }
++
++    // --- Cenários mínimos sem Swing ou dependências externas ---
++
++    /** Cria um ator com o componente de vida exigido pelas consultas de colisão. */
++    private static GameEntity ator(int id, float x, float y) {
++        GameEntity entity = new GameEntity(id, "Ator", new Position(x, y)) { };
++        entity.attach(new HealthComponent(10));
++        return entity;
++    }
++
++    /** Monta um cenário com o ator móvel e um bloqueador de mesmo raio. */
++    private static CollisionService.Space espacoCorpos(GameEntity actor, GameEntity blocker, float radius) {
++        return new CollisionService.Space(100, 100, List.of(), List.of(
++                new CollisionService.Body(actor, radius), new CollisionService.Body(blocker, radius)));
++    }
++
++    /** Espelha uma coordenada em torno do centro do cenário de cem unidades. */
++    private static float espelhar(float coordinate, int sign) {
++        return sign > 0 ? coordinate : 100 - coordinate;
++    }
++
++    /** Mede deslocamento efetivo sem pressupor arredondamentos da projeção tangencial. */
++    private static double distancia(Position a, Position b) {
++        return Math.hypot(a.x() - b.x(), a.y() - b.y());
++    }
++}
+--- a/server/src/test/java/com/projetok/prototype/MovementReplayTest.java
++++ b/server/src/test/java/com/projetok/prototype/MovementReplayTest.java
+@@ -9,7 +9,9 @@
+         // Captured before extraction; compares every tick of the complete visual state.
+         long[] expected = {-5020331805826811769L, 720261320915429601L, -6194199811086341680L};
+         for (int scenario = 0; scenario < 3; scenario++) {
+-            DebugWorld world = new DebugWorld();
++            // Esta referência conserva a resposta antiga; a nova mecânica tem regressões próprias.
++            DebugWorld world = new DebugWorld(java.util.random.RandomGenerator.getDefault(),
++                    com.projetok.domain.movement.MovementService.Response.STRICT);
+             long fingerprint = 0;
+             for (int i = 0; i < 600; i++) {
+                 DebugInput input;

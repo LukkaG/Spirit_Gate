@@ -1,0 +1,62 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1729 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-037 - Auditoria da base real) Tj T*
+() Tj T*
+(Base encontrada: 0.36.0-rc1, TASK-036 concluida. Nao existe repositorio Git neste) Tj T*
+(checkout. Fontes e documentos recuperaveis no checkpoint TASK-037-before.json;) Tj T*
+(distribuicoes e assets anteriores preservados.) Tj T*
+() Tj T*
+(Baseline reproduzido: 241 testes Java e 25 Python, zero falhas. Logs completos) Tj T*
+(TASK-037-java.log e TASK-037-python.log. Nenhuma regra ou baseline historico alterado.) Tj T*
+() Tj T*
+(Arquitetura: dominio RPG em com.projetok.rpg, sem Swing; apresentacao em) Tj T*
+(com.projetok.prototype.rpg; persistencia local versionada separada da simulacao.) Tj T*
+(Reutilizar MovementService, CollisionService, ArenaViewport e renderizacao Java2D.) Tj T*
+(DebugWorld permanece exclusivo da arena historica. Nao reutilizar seus spawns e) Tj T*
+(recompensas demonstrativos para progresso persistente.) Tj T*
+() Tj T*
+(Dependencias: modo -> identidade -> conteudo -> save -> inventario/equipamento ->) Tj T*
+(PvE/progressao -> NPC/missoes/comercio -> regioes/masmorra -> interface/configuracoes.) Tj T*
+(Rede somente depois do marco offline e em pacote separado.) Tj T*
+() Tj T*
+(Os servicos de combate da arena tem formulas historicas e dependem de componentes) Tj T*
+(criados para demonstracao. Regras RPG deverao ser explicitas e isoladas; geometria e) Tj T*
+(resolucao de movimento permanecem compartilhadas. Snapshots imutaveis atravessam a) Tj T*
+(fronteira da UI; IO em executor separado.) Tj T*
+() Tj T*
+(Limitacoes: teste automatizado nao constitui homologacao humana. Nenhum acesso a) Tj T*
+(PostgreSQL, rede publica ou sprites reprovados.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-037 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2125
+%%EOF

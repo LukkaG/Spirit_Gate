@@ -1,0 +1,1464 @@
+--- a/docs/HISTORICO-TECNICO.md
++++ b/docs/HISTORICO-TECNICO.md
+@@ -1,4 +1,32 @@
+ # Histórico técnico
++
++## 18/10/2026 - TASK-006.1: colisão seletiva preparada para revisão
++
++Adicionadas CollisionCategory e CollisionPolicy. A mesma geometria de CollisionService
++filtra atores e obstáculos leves na varredura seletiva, conservando paredes e limites.
++Construtores e overloads antigos continuam SOLID; DebugWorld seleciona explicitamente
++PHASE_THROUGH_ACTORS_AND_SOFT para o Passo Relâmpago. WASD e obstáculos antigos mantidos.
++NPCs sem HealthComponent também podem ter corpo sólido, sem exigir regras de combate.
++
++Ao terminar, o dash procura a saída normalmente livre mais próxima do destino pela
++trajetória real X/Y, incluindo deslizamentos; a correção atualiza o índice espacial.
++Paredes impedem o retorno. Se corpos móveis cobrirem toda a rota, o relógio termina,
++WASD aguarda uma mudança do espaço e a busca é repetida sem novo consumo/cooldown.
++Essa espera pode persistir se os bloqueadores não se moverem; não há empurrão ou i-frames.
++Snapshot publica a espera e rastros seguem todos os segmentos, inclusive o recuo.
++
++Estado inicial: **147 testes aprovados**. Final: `mvn clean test`, BUILD SUCCESS,
++**169 testes, zero falhas/erros/ignorados**, incluindo 22 novos. Testes anteriores,
++MovementReplayTest e seus baselines preservados; teste de direção zero do usuário intacto.
++Captura de dois quadros renderizados inspecionada, sem sessão interativa humana da janela.
++
++O teste `devePreservarBloqueioDeParedeNoDashSeletivo` foi reservado ao usuário e
++não foi implementado. Fixtures e API real estão no relatório. Aguardar essa
++contribuição, conferência jogando e revisão técnica; TASK-007 não iniciada.
++
++Entrega: [relatório e API](TASK-006-1.md), [PDF](Spirit_Gate_TASK-006-1.pdf),
++[testes](TASK-006-1-testes.txt), [captura](TASK-006-1-colisao-seletiva.png)
++e [diff](TASK-006-1.diff).
+ 
+ ## 18/10/2026 - TASK-006: Passo Relâmpago e participação validados
+ 
+--- /dev/null
++++ b/docs/TASK-006-1-testes.txt
+@@ -0,0 +1,40 @@
++TASK-006.1 - Resultado real dos testes - 18/10/2026
++
++Estado inicial: mvn clean test -q, executado antes das alteracoes.
++147 testes; 0 falhas, 0 erros e 0 ignorados. Exit code 0.
++
++Validacao final: mvn clean test, pasta Projeto-K/server.
++BUILD SUCCESS - compilacao Java release 17 - tempo Maven 11.917 s.
++Tests run: 169, Failures: 0, Errors: 0, Skipped: 0
++
++Resultados por classe (Surefire XML desta execucao):
++com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
++
++Todos os testes anteriores e seus baselines foram preservados.
++A unica alteracao em arquivo de teste anterior foi adicionar selectiveService() a fixture.
++MovementReplayTest e LightningStepZeroDirectionTest identicos ao estado inicial.
++22 testes novos; teste reservado do usuario NAO implementado.
++Captura renderizada inspecionada; confer?ncia humana interativa pendente.
+--- /dev/null
++++ b/docs/TASK-006-1.md
+@@ -0,0 +1,118 @@
++# TASK-006.1 - Colisão seletiva do Passo Relâmpago
++
++Data: 18/10/2026. Implementação e testes automatizados preparados para revisão.
++Pendências de aceite: teste reservado ao usuário, conferência jogando na janela e revisão técnica. TASK-007 não iniciada.
++
++## Proposta e decisões
++
++Inspecionados LightningStepService, MovementService, CollisionService/Space, SpatialBodyIndex, DebugWorld, DebugSnapshot, DebugPanel e testes relacionados antes das alterações. Estado inicial: mvn clean test -q, código de saída 0, 147 testes, zero falhas/erros/ignorados nos relatórios Surefire.
++
++A proposta apresentada foi acrescentar categorias e políticas à física existente, registrar os vértices X/Y efetivamente percorridos e corrigir a saída pela mesma geometria. Sem dependências, exclusões ou renomeações. O serviço de habilidade continua responsável pelo relógio e pelo consumo; CollisionService continua responsável por toda a geometria. A simulação mantém uma única thread proprietária.
++
++CollisionCategory explicita ACTOR, SOFT_OBSTACLE, SOLID_OBSTACLE e WORLD_BOUNDARY. CollisionPolicy disponibiliza SOLID e PHASE_THROUGH_ACTORS_AND_SOFT. Ambas bloqueiam sólidos e limites. Obstáculos retangulares aceitam apenas categorias de obstáculo; corpos de entidades são ACTOR. As bordas continuam implícitas nas dimensões de Space, sem construir quatro paredes artificiais.
++
++O construtor antigo Obstacle(x,y,width,height) continua sólido. A política é aplicada na consulta e varredura, não na montagem do índice espacial. Space e SpatialBodyIndex preservam seus contratos e composição; não foi necessário modificar o índice.
++
++## Geometria e saída segura
++
++isFree e resolveContinuous possuem overloads com CollisionPolicy. Os overloads antigos usam SOLID. MovementService.moveContinuous também recebe política opcional; os caminhos do WASD não mudaram. NPCs sem componente de vida bloqueiam normalmente; corpos com vida morta continuam sendo ignorados. Isso permite usar o Npc de diálogo real sem torná-lo combatente.
++
++axisIntervals é a fonte comum dos intervalos analíticos de contato com retângulos arredondados e círculos para varredura e recuperação. Não foi criado outro algoritmo de colisão para o dash. Tangências continuam permitidas; contatos são validados na geometria existente e arredondamentos internos recuam até oito ULPs, como na varredura anterior.
++
++O dash guarda origem, fim do eixo X e fim do eixo Y a cada avanço. Ao terminar, recoverAlongPath consulta as posições atuais de todos os corpos pela política SOLID. Se o destino estiver ocupado, busca o primeiro ponto livre em ordem reversa dessa polilinha. A distância usada para escolher a saída é a distância ao longo da rota, não uma aproximação por corda diagonal. Fronteiras analíticas permitem encontrar até uma tangência compartilhada entre dois intervalos; não há amostragem por pixel.
++
++Cada trecho reverso é limitado pela mesma varredura seletiva contra sólidos e bordas. Uma parede que passe a bloquear o retorno impede examinar pontos além dela. A posição só é alterada após encontrar uma saída válida, e o índice é atualizado imediatamente após a correção. Não há empurrão, dano ou teleporte direto para a origem através de paredes.
++
++Corpos móveis podem ocupar toda a trajetória, tornando impossível encontrar uma saída que satisfaça as regras. Nesse caso o dash termina em 0,25 s, mantém a posição segura perante paredes/bordas e publica awaitingLanding. WASD e uma nova ativação de dash aguardam; cooldown segue diminuindo e não há novo consumo. A busca é repetida a cada atualização com a geometria atual. A sobreposição com ator ou obstáculo leve permanece transitoriamente até haver saída. O jogador continua vulnerável e pode usar os sistemas de combate existentes.
++
++Essa espera não garante que a IA resolverá o bloqueio: um mob com origem sobreposta também pode ficar impedido de mover. Morte, remoção ou movimentação de um bloqueador, ou reinício da arena, podem liberar o estado. Não foram adicionados reserva da origem, empurrão, invulnerabilidade ou uma nova regra de movimentação para contornar essa impossibilidade.
++
++## Habilidade e interface
++
++O construtor anterior de LightningStepService continua SOLID para compatibilidade e regressão. Um novo construtor recebe CollisionPolicy. DebugWorld escolhe explicitamente PHASE_THROUGH_ACTORS_AND_SOFT. O Passo Relâmpago atravessa jogadores, mobs, NPCs sólidos e obstáculos leves durante o deslocamento.
++
++Preservados: 150 px de orçamento direcional, normalização diagonal, velocidade 600 px/s, duração 0,25 s, custo único 35 e cooldown 4 s. O último tick continua fracionário. Colisão sólida reduz a distância sem compensação posterior. A correção pode recuar o destino ao fim; esse recuo é uma resolução de sobreposição, não uma extensão do tempo ou alcance da habilidade. Morte interrompe o avanço e limpa uma espera de saída.
++
++Step.path publica uma cópia imutável dos trechos avançados e eventualmente recuados no tick. O rastro segue esses trechos, sem desenhar cordas que cortem paredes. DebugSnapshot acrescenta somente lightningStepAwaitingLanding; ActorView e Obstacle visuais mantêm o formato usado pelo replay histórico. O painel lê valores e desenha, sem consultar componentes ou atualizar regras.
++
++O HUD informa a travessia seletiva, as paredes/bordas bloqueantes, custo, cooldown e eventual espera. R cria outro mundo e elimina habilidade, caminho e rastros. A fila de comandos e os bindings de Shift não foram alterados. Q e Shift continuam competindo pelo vigor em ordem FIFO.
++
++Os três obstáculos da arena continuam sólidos e nas posições anteriores. Nenhum arbusto foi acrescentado ao cenário de regressão. Obstáculos leves são exercitados nos testes do domínio; a captura demonstra a passagem por um ator real da arena. A grama da interface continua apenas decorativa.
++
++CombatService, Criostase, efeitos de Freeze, cálculo de dano, alcance/cone/cooldown e animação do ataque básico não foram modificados. Sem novas habilidades, dependências, banco, login ou rede.
++
++## Testes e evidências reais
++
++Comando final na pasta Projeto-K/server: mvn clean test. Resultado: BUILD SUCCESS, compilação release 17, 169 testes, zero falhas, zero erros e zero ignorados; tempo Maven 11,917 s. Resumo por classe em TASK-006-1-testes.txt.
++
++São 147 testes anteriores e 22 novos. Os testes antigos permanecem, incluindo o teste de direção zero escrito pelo usuário. MovementReplayTest e seus três baselines não foram modificados. Combate, Criostase, Freeze, consumo, fila, Shift mantido/toques rápidos e reinício passaram na suíte completa.
++
++CollisionPolicyTest: 6 casos para classificação sólida por padrão, consulta seletiva, paredes finas/espessas, deslizamento por eixo, quatro bordas e movimento normal bloqueado por leves. As verificações de parede novas operam diretamente na física; o teste de parede do serviço dash foi reservado ao usuário.
++
++LightningStepSelectiveCollisionTest: 11 casos para atores das três classes, arbustos, construtor sólido anterior, alcance diagonal/bordas, destinos ocupados, união de bloqueadores, recuo pela curva real X/Y, corpos móveis/índice atualizado, ausência de saída com liberação posterior e corpo morto. Preservados dano/efeitos/vigor dos atravessados e parâmetros do dash.
++
++CollisionRecoveryTest: 4 casos para caminho real em volta de construção sólida, parede surgida no retorno, tangência compartilhada e rejeição de rota inválida sem mutação. SelectiveDashIntegrationTest acrescenta 1 caso usando a arena real: comprova hitboxes sobrepostas durante o dash, término livre, distância de 150 px, mobs sem dano e jogador ainda vulnerável.
++
++TASK-006-1-colisao-seletiva.png foi gerada pelo teste e inspecionada visualmente. Mostra dois quadros da renderização real: passagem por um mob e término livre, com hitboxes, rastro, HP, vigor e recarga. A renderização não altera o snapshot. Não houve sessão humana interativa com JFrame; a captura não substitui essa conferência.
++
++## Sua participação reservada
++
++Não foi escrito o teste devePreservarBloqueioDeParedeNoDashSeletivo, nem criado um método vazio. O arquivo recomendado é server/src/test/java/com/projetok/domain/skill/LightningStepSelectiveCollisionTest.java, no pacote com.projetok.domain.skill. Acrescente seu método nessa classe já existente.
++
++Fixtures reais disponíveis por import estático de LightningStepTestFixtures, no mesmo pacote:
++
++- static Player player(float x, float y): fábrica real, HP 100 e vigor 100.
++- static final float RADIUS = 18f.
++- static LightningStepService selectiveService(): política PHASE_THROUGH_ACTORS_AND_SOFT.
++- static LightningStepService service(): política SOLID, compatibilidade anterior.
++- static CollisionService.Space emptySpace(): arena 960 por 640, sem obstáculos.
++
++Construtores e métodos reais para montar o seu cenário:
++
++- new CollisionService.Obstacle(float x, float y, float width, float height): parede sólida por padrão.
++- new CollisionService.Space(float width, float height, List<Obstacle> obstacles, List<Body> bodies).
++- new CollisionService.Body(GameEntity entity, float radius), caso queira incluir o jogador no espaço.
++- new SkillCastCommand(String skillId, float targetX, float targetY), com LightningStepService.ID.
++- Status cast(Player player, SkillCastCommand command, float radius, CollisionService.Space space).
++- Step update(Player player, float dt, float radius, CollisionService.Space space).
++- player.getPosition().x()/y(); service.active(), remaining(), cooldown(), awaitingLanding().
++- boolean CollisionService.isFree(GameEntity entity, float x, float y, float radius, Space space): validação normal.
++
++O construtor explícito é LightningStepService(MovementService movement, StaminaService stamina, CollisionService collisions, CollisionPolicy policy). Os três serviços devem compartilhar a mesma instância CollisionService. A fixture selectiveService() já faz essa montagem. update aceita delta zero ou positivo finito e limita o tempo de avanço ao restante; a ativação não altera a posição imediatamente.
++
++Sua implementação deve conferir a parede considerando o raio do jogador. A solução JUnit não foi fornecida. Após sua contribuição, executar mvn clean test novamente e atualizar os resultados antes de encerrar o aceite.
++
++## Arquivos alterados e novos
++
++Modificados:
++
++- server/src/main/java/com/projetok/domain/movement/CollisionService.java.
++- server/src/main/java/com/projetok/domain/movement/MovementService.java.
++- server/src/main/java/com/projetok/domain/skill/LightningStepService.java.
++- server/src/main/java/com/projetok/prototype/DebugWorld.java.
++- server/src/main/java/com/projetok/prototype/DebugSnapshot.java.
++- server/src/main/java/com/projetok/prototype/DebugPanel.java.
++- server/src/test/java/com/projetok/domain/skill/LightningStepTestFixtures.java.
++- README-PROTOTIPO.md e docs/HISTORICO-TECNICO.md.
++
++Novos:
++
++- server/src/main/java/com/projetok/domain/movement/CollisionCategory.java.
++- server/src/main/java/com/projetok/domain/movement/CollisionPolicy.java.
++- server/src/test/java/com/projetok/domain/movement/CollisionPolicyTest.java.
++- server/src/test/java/com/projetok/domain/movement/CollisionRecoveryTest.java.
++- server/src/test/java/com/projetok/domain/skill/LightningStepSelectiveCollisionTest.java.
++- server/src/test/java/com/projetok/prototype/SelectiveDashIntegrationTest.java.
++- tools/gerar_pdf_task006_1.py.
++- docs/TASK-006-1.md, TASK-006-1-testes.txt e TASK-006-1.diff.
++- docs/Spirit_Gate_TASK-006-1.pdf e TASK-006-1-colisao-seletiva.png.
++
++## Reprodução e limitações
++
++Na pasta server, executar mvn clean test. Na pasta Projeto-K, python -B tools/gerar_pdf_task006_1.py regenera o PDF com a biblioteca padrão do Python. A captura é produzida em server/target pelo teste e copiada para docs na entrega.
++
++Conferência jogando: abrir rodar-prototipo.cmd, usar H para hitboxes, atravessar um mob com Shift, mirar contra as paredes existentes, testar diagonais e bordas, observar término livre e volta do WASD; conferir ataque básico, Q/Freeze e R com Shift mantido. O cenário padrão não contém arbustos físicos.
++
++O retorno é uma correção de posição no encerramento e pode produzir um recuo visível se o destino estiver ocupado. A rota cresce com os ticks de uma ativação; a arena usa 30 Hz. A busca de saída consulta os obstáculos e candidatos da rota; não foi introduzido cache de trajetórias ou otimização para milhares de atores. Em magnitudes extremas de float, o ajuste conservador de oito ULPs pode recusar uma solução matemática; validação final impede aceitar penetração.
++
++O diff compara os fontes/documentos com o estado inspecionado no início desta tarefa. Artefatos PDF/PNG são entregues separadamente; server/target e dados locais não integram o diff. Não houve merge ou publicação. Aguardar sua implementação, conferência interativa e revisão técnica antes da TASK-007.
+--- a/README-PROTOTIPO.md
++++ b/README-PROTOTIPO.md
+@@ -101,7 +101,7 @@
+   circulo contra circulo. Tangencia e permitida; o proprio ator e mortos nao bloqueiam.
+ - `CollisionService.Space` recebe dimensoes, obstaculos do dominio e corpos com
+   entidade e raio. As listas sao copiadas; posicoes e HP sao consultados ao vivo.
+-  Entidades dos corpos devem possuir `HealthComponent`.
++  Corpos mortos são ignorados; NPCs sem `HealthComponent` continuam sólidos.
+ 
+ O chamador fornece direção normalizada, velocidade e delta de tempo, mantém a direção
+ de olhar e executa os servicos na thread proprietaria das entidades. `DebugWorld`
+@@ -265,3 +265,28 @@
+ - [Diff](docs/TASK-006.diff)
+ 
+ Gerar PDF: `python -B tools/gerar_pdf_task006.py` na pasta `Projeto-K`.
++
++## TASK-006.1 - Colisão seletiva do dash
++
++Na arena, o Passo Relâmpago atravessa atores e obstáculos classificados como leves.
++Paredes, construções sólidas e bordas continuam bloqueando a varredura, considerando
++o raio do personagem. WASD mantém todas as colisões normais. Os três obstáculos
++anteriores continuam sólidos; a grama decorativa não ganhou colisão.
++
++Se terminar dentro de um corpo ou obstáculo leve, o jogador recua pela trajetória
++real até a saída livre mais próxima do destino. Se corpos móveis ocuparem toda
++a rota, o HUD indica espera por saída livre e WASD aguarda uma mudança do espaço,
++sem prolongar o dash ou renovar custo/cooldown. Dano recebido continua permitido.
++
++O construtor anterior de `LightningStepService` mantém `CollisionPolicy.SOLID`;
++a arena seleciona explicitamente `PHASE_THROUGH_ACTORS_AND_SOFT` no novo construtor.
++
++Validação: `mvn clean test`, **169 testes aprovados**, com os testes e baselines
++anteriores preservados. O teste de parede reservado ao usuário e a conferência
++interativa ainda estão pendentes. Nenhuma TASK-007 foi iniciada.
++
++[Relatório e API para sua participação](docs/TASK-006-1.md),
++[PDF](docs/Spirit_Gate_TASK-006-1.pdf), [resultados](docs/TASK-006-1-testes.txt),
++[captura](docs/TASK-006-1-colisao-seletiva.png) e [diff](docs/TASK-006-1.diff).
++
++Gerar PDF: `python -B tools/gerar_pdf_task006_1.py` na pasta `Projeto-K`.
+--- /dev/null
++++ b/server/src/main/java/com/projetok/domain/movement/CollisionCategory.java
+@@ -0,0 +1,13 @@
++package com.projetok.domain.movement;
++
++/** Classifica a participação de cada corpo nas políticas de colisão. */
++public enum CollisionCategory {
++    /** Jogadores, mobs e NPCs com corpo sólido. */
++    ACTOR,
++    /** Obstáculos atravessáveis apenas pelas habilidades que permitem essa passagem. */
++    SOFT_OBSTACLE,
++    /** Paredes, construções e obstáculos sólidos tradicionais. */
++    SOLID_OBSTACLE,
++    /** Bordas do cenário, sempre respeitadas pelas políticas disponíveis. */
++    WORLD_BOUNDARY
++}
+--- /dev/null
++++ b/server/src/main/java/com/projetok/domain/movement/CollisionPolicy.java
+@@ -0,0 +1,18 @@
++package com.projetok.domain.movement;
++
++import java.util.Objects;
++
++/** Seleciona categorias bloqueantes sem modificar a geometria da física. */
++public enum CollisionPolicy {
++    /** Movimento tradicional, bloqueado por todas as categorias. */
++    SOLID,
++    /** Atravessa atores e obstáculos leves; conserva paredes e limites do mundo. */
++    PHASE_THROUGH_ACTORS_AND_SOFT;
++
++    /** Informa se a categoria participa da detecção e da resolução deste movimento. */
++    public boolean blocks(CollisionCategory category) {
++        Objects.requireNonNull(category, "category");
++        return this == SOLID || category == CollisionCategory.SOLID_OBSTACLE
++                || category == CollisionCategory.WORLD_BOUNDARY;
++    }
++}
+--- a/server/src/main/java/com/projetok/domain/movement/CollisionService.java
++++ b/server/src/main/java/com/projetok/domain/movement/CollisionService.java
+@@ -3,7 +3,10 @@
+ import com.projetok.domain.entity.GameEntity;
+ import com.projetok.domain.entity.Position;
+ import com.projetok.domain.entity.component.HealthComponent;
++import java.util.ArrayList;
++import java.util.Comparator;
+ import java.util.List;
++import java.util.Objects;
+ 
+ /** Detecta e resolve colisões sem interface. Coordenadas e raios usam a mesma unidade. */
+ public final class CollisionService {
+@@ -11,22 +14,33 @@
+     public static final float SOFT_SLIDE_FACTOR = 0.45f;
+     // --- Dados do cenário ---
+ 
+-    /** Obstáculo retangular sólido em coordenadas de mundo. */
+-    public record Obstacle(float x, float y, float width, float height) {
++    /** Obstáculo retangular cuja categoria é compartilhada por todas as políticas. */
++    public record Obstacle(float x, float y, float width, float height, CollisionCategory category) {
++        /** Conserva a classificação sólida dos cenários e construtores anteriores. */
++        public Obstacle(float x, float y, float width, float height) {
++            this(x, y, width, height, CollisionCategory.SOLID_OBSTACLE);
++        }
++
+         /** Valida o retângulo inclusive quanto a overflow nas extremidades. */
+         public Obstacle {
+             MovementValidation.finite(x, y, x + width, y + height);
+             MovementValidation.positive(width, height);
+-        }
+-    }
+-    /** Corpo circular; sua entidade deve possuir HealthComponent. */
++            Objects.requireNonNull(category, "category");
++            if (category != CollisionCategory.SOFT_OBSTACLE && category != CollisionCategory.SOLID_OBSTACLE)
++                throw new IllegalArgumentException("Retângulos devem ser obstáculos leves ou sólidos");
++        }
++    }
++    /** Corpo circular; atores sem vida, como NPCs de diálogo, também podem ser sólidos. */
+     public record Body(GameEntity entity, float radius) {
+-        /** Valida geometria; o componente de vida é exigido nas consultas. */
++        /** Valida a geometria sem exigir componentes específicos de combate. */
+         public Body {
+             java.util.Objects.requireNonNull(entity);
+             MovementValidation.positive(radius);
+             MovementValidation.finite(entity.getPosition().x(), entity.getPosition().y());
+         }
++
++        /** Corpos circulares de entidades pertencem à categoria de atores. */
++        public CollisionCategory category() { return CollisionCategory.ACTOR; }
+     }
+     /** Listas copiadas, com posições e vida das entidades consultadas ao vivo. */
+     public record Space(float width, float height, List<Obstacle> obstacles, List<Body> bodies,
+@@ -49,18 +63,27 @@
+ 
+     /** Tangência é permitida; corpos mortos e o próprio ator não bloqueiam. */
+     public boolean isFree(GameEntity entity, float x, float y, float radius, Space space) {
++        return isFree(entity, x, y, radius, space, CollisionPolicy.SOLID);
++    }
++
++    /** Consulta as categorias bloqueantes da política, preservando tangência e limites. */
++    public boolean isFree(GameEntity entity, float x, float y, float radius, Space space,
++                          CollisionPolicy policy) {
+         MovementValidation.finite(x, y);
+         MovementValidation.positive(radius);
++        Objects.requireNonNull(policy, "policy");
+         if (x < radius || y < radius || x > space.width() - radius
+                 || y > space.height() - radius) return false;
+         for (Obstacle obstacle : space.obstacles()) {
++            if (!policy.blocks(obstacle.category())) continue;
+             float closestX = clamp(x, obstacle.x(), obstacle.x() + obstacle.width());
+             float closestY = clamp(y, obstacle.y(), obstacle.y() + obstacle.height());
+             if (overlaps(x, y, closestX, closestY, radius)) return false;
+         }
+         for (Body body : candidates(space, x, y, x, y, radius)) {
++            if (!policy.blocks(body.category())) continue;
+             GameEntity other = body.entity();
+-            if (other == entity || other.require(HealthComponent.class).isDead()) continue;
++            if (!bodyBlocks(entity, body)) continue;
+             MovementValidation.finite(other.getPosition().x(), other.getPosition().y());
+             if (overlaps(x, y, other.getPosition().x(), other.getPosition().y(),
+                     (double) radius + body.radius())) return false;
+@@ -117,7 +140,7 @@
+                     slideCandidate(entity, origin, dx, dy, radius, space, nx, ny));
+         }
+         for (Body body : candidates(space, origin.x(), origin.y(), origin.x() + dx, origin.y() + dy, radius)) {
+-            if (body.entity() == entity || body.entity().require(HealthComponent.class).isDead()) continue;
++            if (!bodyBlocks(entity, body)) continue;
+             Position other = body.entity().getPosition();
+             double sum = radius + (double) body.radius();
+             double squared = sum * sum;
+@@ -187,7 +210,7 @@
+             if (obstacleBlocksSegment(start, end, radius, o)) return false;
+         }
+         for (Body body : candidates(space, start.x(), start.y(), end.x(), end.y(), radius)) {
+-            if (body.entity() == entity || body.entity().require(HealthComponent.class).isDead()) continue;
++            if (!bodyBlocks(entity, body)) continue;
+             var p = body.entity().getPosition();
+             double sum = radius + (double) body.radius();
+             if (pointSegmentSquared(p.x(), p.y(), start, end) < sum * sum) return false;
+@@ -251,6 +274,12 @@
+                         Math.max(y0, y1) + (double) radius);
+     }
+ 
++    /** Ignora o próprio ator e mortos; NPCs sem componente de vida continuam bloqueantes. */
++    private boolean bodyBlocks(GameEntity entity, Body body) {
++        return body.entity() != entity && !body.entity().get(HealthComponent.class)
++                .map(HealthComponent::isDead).orElse(false);
++    }
++
+     // --- Varredura contínua opcional ---
+ 
+     /**
+@@ -258,24 +287,53 @@
+      * Não substitui a resolução discreta da arena nem altera sua mecânica atual.
+      */
+     public void resolveContinuous(GameEntity entity, float dx, float dy, float radius, Space space) {
++        resolveContinuous(entity, dx, dy, radius, space, CollisionPolicy.SOLID);
++    }
++
++    /** Varre X/Y com categorias seletivas; a política nunca autoriza atravessar limites. */
++    public void resolveContinuous(GameEntity entity, float dx, float dy, float radius, Space space,
++                                  CollisionPolicy policy) {
+         validateMove(entity, dx, dy, radius);
++        Objects.requireNonNull(policy, "policy");
+         Position p = entity.getPosition();
+-        if (!isFree(entity, p.x(), p.y(), radius, space))
++        if (!isFree(entity, p.x(), p.y(), radius, space, policy))
+             throw new IllegalStateException("Varredura exige posição inicial livre");
+-        float x = sweepAxis(entity, p.x(), p.y(), dx, radius, space, true);
++        float x = sweepAxis(entity, p.x(), p.y(), dx, radius, space, true, policy);
+         entity.setPosition(new Position(x, p.y()));
+-        float y = sweepAxis(entity, p.y(), x, dy, radius, space, false);
++        float y = sweepAxis(entity, p.y(), x, dy, radius, space, false, policy);
+         entity.setPosition(new Position(x, y));
+         if (space.index() != null) space.index().update(entity);
+     }
+ 
+-    /** Calcula interseções analíticas do círculo com retângulos e outros círculos. */
++    /** Usa os intervalos geométricos comuns à varredura e à recuperação da trajetória. */
+     private float sweepAxis(GameEntity entity, float origin, float fixed, float delta,
+-                            float radius, Space space, boolean horizontal) {
++                            float radius, Space space, boolean horizontal, CollisionPolicy policy) {
+         if (delta == 0) return origin;
+         double target = Math.max(radius, Math.min((double) origin + delta,
+                 (horizontal ? space.width() : space.height()) - (double) radius));
++        for (Interval interval : axisIntervals(entity, origin, (float) target, fixed, radius,
++                space, horizontal, policy))
++            target = stopAtInterval(origin, target, interval.low(), interval.high());
++        float result = (float) target;
++        // Contato arredondado para dentro é recuado alguns ULPs, sem tolerância de penetração.
++        for (int i = 0; i < 8; i++) {
++            if (isFree(entity, horizontal ? result : fixed, horizontal ? fixed : result,
++                    radius, space, policy)) return result;
++            result = Math.nextAfter(result, origin);
++        }
++        return origin;
++    }
++
++    /** Intervalo aberto ocupado pelo centro do círculo; suas extremidades permitem tangência. */
++    private record Interval(double low, double high) { }
++
++    /** Calcula uma única vez a geometria analítica de retângulos arredondados e círculos. */
++    private List<Interval> axisIntervals(GameEntity entity, float origin, float target, float fixed,
++                                         float radius, Space space, boolean horizontal,
++                                         CollisionPolicy policy) {
++        List<Interval> intervals = new ArrayList<>();
+         for (Obstacle o : space.obstacles()) {
++            if (!policy.blocks(o.category())) continue;
+             double low = horizontal ? o.x() : o.y();
+             double high = low + (horizontal ? o.width() : o.height());
+             double crossLow = horizontal ? o.y() : o.x();
+@@ -283,28 +341,23 @@
+             double distance = Math.max(0, Math.max(crossLow - fixed, fixed - crossHigh));
+             if (distance >= radius) continue;
+             double extension = Math.sqrt((double) radius * radius - distance * distance);
+-            target = stopAtInterval(origin, target, low - extension, high + extension);
++            intervals.add(new Interval(low - extension, high + extension));
+         }
+         float x0 = horizontal ? origin : fixed, y0 = horizontal ? fixed : origin;
+-        float x1 = horizontal ? (float) target : fixed, y1 = horizontal ? fixed : (float) target;
++        float x1 = horizontal ? target : fixed, y1 = horizontal ? fixed : target;
+         for (Body body : candidates(space, x0, y0, x1, y1, radius)) {
+-            if (body.entity() == entity || body.entity().require(HealthComponent.class).isDead()) continue;
++            if (!policy.blocks(body.category())) continue;
++            if (!bodyBlocks(entity, body)) continue;
+             Position p = body.entity().getPosition();
++            MovementValidation.finite(p.x(), p.y());
+             double center = horizontal ? p.x() : p.y();
+             double distance = Math.abs((horizontal ? p.y() : p.x()) - (double) fixed);
+             double sum = (double) radius + body.radius();
+             if (distance >= sum) continue;
+             double extension = Math.sqrt(sum * sum - distance * distance);
+-            target = stopAtInterval(origin, target, center - extension, center + extension);
+-        }
+-        float result = (float) target;
+-        // Contato arredondado para dentro é recuado alguns ULPs, sem tolerância de penetração.
+-        for (int i = 0; i < 8; i++) {
+-            if (isFree(entity, horizontal ? result : fixed, horizontal ? fixed : result, radius, space))
+-                return result;
+-            result = Math.nextAfter(result, origin);
+-        }
+-        return origin;
++            intervals.add(new Interval(center - extension, center + extension));
++        }
++        return intervals;
+     }
+ 
+     /** Interrompe na entrada do intervalo aberto, permitindo tangência. */
+@@ -313,6 +366,110 @@
+         if (target > origin && origin <= low && target > low) return low;
+         if (target < origin && origin >= high && target < high) return high;
+         return target;
++    }
++
++    // --- Recuperação após travessia seletiva ---
++
++    /** Resultado imutável, com o caminho reverso efetivamente usado pela correção. */
++    public record Recovery(boolean recovered, Position position, List<Position> path) {
++        /** Copia os vértices para impedir alterações pelos consumidores. */
++        public Recovery {
++            Objects.requireNonNull(position, "position");
++            path = List.copyOf(path);
++        }
++    }
++
++    /**
++     * Procura a posição normalmente livre mais próxima do destino na rota real, em ordem reversa.
++     * Cada trecho deve ser alinhado a um eixo, incluindo os vértices produzidos pelo deslizamento.
++     * A geometria atual é consultada: atores podem ter mudado de posição desde o início do dash.
++     * Paredes interrompem o recuo. Sem solução, preserva a posição e permite nova tentativa posterior.
++     * Toda a rota é validada antes de qualquer mutação; a correção atualiza o índice espacial.
++     */
++    public Recovery recoverAlongPath(GameEntity entity, List<Position> travelled,
++                                     float radius, Space space) {
++        Objects.requireNonNull(entity, "entity");
++        Objects.requireNonNull(space, "space");
++        MovementValidation.positive(radius);
++        List<Position> route = List.copyOf(travelled);
++        if (route.isEmpty()) throw new IllegalArgumentException("Trajetória não pode ser vazia");
++        Position current = entity.getPosition();
++        MovementValidation.finite(current.x(), current.y());
++        for (int i = 0; i < route.size(); i++) {
++            Position point = route.get(i);
++            MovementValidation.finite(point.x(), point.y());
++            if (i > 0) {
++                Position previous = route.get(i - 1);
++                MovementValidation.finite(point.x() - previous.x(), point.y() - previous.y());
++                if (point.x() != previous.x() && point.y() != previous.y())
++                    throw new IllegalArgumentException("Trajetória deve conter os trechos reais por eixo");
++            }
++        }
++        if (!current.equals(route.get(route.size() - 1)))
++            throw new IllegalArgumentException("Trajetória deve terminar na posição atual");
++        List<Position> untouched = List.of(current);
++        if (isFree(entity, current.x(), current.y(), radius, space))
++            return new Recovery(true, current, untouched);
++        CollisionPolicy selective = CollisionPolicy.PHASE_THROUGH_ACTORS_AND_SOFT;
++        if (!isFree(entity, current.x(), current.y(), radius, space, selective))
++            return new Recovery(false, current, untouched);
++
++        List<Position> reversePath = new ArrayList<>();
++        reversePath.add(current);
++        Position from = current;
++        for (int i = route.size() - 2; i >= 0; i--) {
++            Position desired = route.get(i);
++            if (desired.equals(from)) continue;
++            boolean horizontal = from.y() == desired.y();
++            float origin = horizontal ? from.x() : from.y();
++            float target = horizontal ? desired.x() : desired.y();
++            float fixed = horizontal ? from.y() : from.x();
++            float reachable = sweepAxis(entity, origin, fixed, target - origin,
++                    radius, space, horizontal, selective);
++            Position free = firstFreeOnAxis(entity, origin, reachable, fixed, radius, space, horizontal);
++            if (free != null) {
++                if (!free.equals(reversePath.get(reversePath.size() - 1))) reversePath.add(free);
++                entity.setPosition(free);
++                if (space.index() != null) space.index().update(entity);
++                return new Recovery(true, free, reversePath);
++            }
++            // Uma parede surgida no caminho impede usar vértices além dela.
++            if (reachable != target) break;
++            from = desired;
++            reversePath.add(from);
++        }
++        return new Recovery(false, current, untouched);
++    }
++
++    /**
++     * Examina os limites analíticos dos intervalos ocupados, sem amostragem de distância.
++     * A ordem preserva o primeiro ponto livre, inclusive tangências entre intervalos encostados.
++     */
++    private Position firstFreeOnAxis(GameEntity entity, float origin, float target, float fixed,
++                                      float radius, Space space, boolean horizontal) {
++        if (origin == target) return null;
++        List<Double> boundaries = new ArrayList<>();
++        double low = Math.min(origin, target), high = Math.max(origin, target);
++        for (Interval interval : axisIntervals(entity, origin, target, fixed, radius,
++                space, horizontal, CollisionPolicy.SOLID)) {
++            if (interval.low() >= low && interval.low() <= high) boundaries.add(interval.low());
++            if (interval.high() >= low && interval.high() <= high) boundaries.add(interval.high());
++        }
++        boundaries.add((double) target);
++        boundaries.sort(target > origin ? Comparator.naturalOrder() : Comparator.reverseOrder());
++        for (double boundary : boundaries) {
++            float coordinate = (float) boundary;
++            // Ajusta apenas arredondamento de contato, na direção do espaço procurado.
++            for (int i = 0; i < 8; i++) {
++                if (coordinate < low || coordinate > high) break;
++                float x = horizontal ? coordinate : fixed, y = horizontal ? fixed : coordinate;
++                if (isFree(entity, x, y, radius, space)) return new Position(x, y);
++                float next = Math.nextAfter(coordinate, target);
++                if (next == coordinate) break;
++                coordinate = next;
++            }
++        }
++        return null;
+     }
+ 
+     // --- Geometria ---
+--- a/server/src/main/java/com/projetok/domain/movement/MovementService.java
++++ b/server/src/main/java/com/projetok/domain/movement/MovementService.java
+@@ -55,8 +55,15 @@
+     /** Deslocamento contínuo opcional para dash e velocidades altas, sem tunelamento. */
+     public void moveContinuous(GameEntity entity, float dx, float dy, float radius,
+                                CollisionService.Space space) {
++        moveContinuous(entity, dx, dy, radius, space, CollisionPolicy.SOLID);
++    }
++
++    /** Aplica uma política de contato à mesma varredura contínua, sem alterar o WASD. */
++    public void moveContinuous(GameEntity entity, float dx, float dy, float radius,
++                               CollisionService.Space space, CollisionPolicy policy) {
++        java.util.Objects.requireNonNull(policy, "policy");
+         if (blockedByFreeze(entity, dx, dy, radius)) return;
+-        collisions.resolveContinuous(entity, dx, dy, radius, space);
++        collisions.resolveContinuous(entity, dx, dy, radius, space, policy);
+     }
+ 
+     /** Freeze bloqueia só mobs e preserva rejeição de entradas inválidas, mesmo imobilizados. */
+--- a/server/src/main/java/com/projetok/domain/skill/LightningStepService.java
++++ b/server/src/main/java/com/projetok/domain/skill/LightningStepService.java
+@@ -3,9 +3,12 @@
+ import com.projetok.domain.entity.Player;
+ import com.projetok.domain.entity.Position;
+ import com.projetok.domain.movement.CollisionService;
++import com.projetok.domain.movement.CollisionPolicy;
+ import com.projetok.domain.movement.MovementService;
+ import com.projetok.domain.resource.StaminaService;
+ import java.util.Objects;
++import java.util.ArrayList;
++import java.util.List;
+ 
+ /**
+  * Controla o Passo Relâmpago de um jogador na thread proprietária da simulação.
+@@ -28,35 +31,54 @@
+     private final MovementService movement;
+     private final StaminaService stamina;
+     private final CollisionService collisions;
++    private final CollisionPolicy policy;
++    private final List<Position> travelled = new ArrayList<>();
++    private boolean awaitingLanding;
+     private Position direction = new Position(0f, 0f);
+     private double remaining;
+     private double cooldown;
+ 
+     /** Motivo da aceitação ou recusa, sem efeitos colaterais nas recusas. */
+-    public enum Status { STARTED, INVALID, DEAD, ZERO_DIRECTION, COOLDOWN, STAMINA }
++    public enum Status { STARTED, INVALID, DEAD, ZERO_DIRECTION, COOLDOWN, STAMINA, LANDING_PENDING }
+ 
+-    /** Segmento imutável percorrido no tick, próprio para formar um rastro visual. */
+-    public record Step(Position from, Position to) {
++    /** Trajeto imutável do tick, incluindo curvas por eixo e eventual recuo de saída. */
++    public record Step(Position from, Position to, List<Position> path) {
+         /** Garante que as duas extremidades estejam disponíveis ao consumidor. */
+         public Step {
+             Objects.requireNonNull(from, "from");
+             Objects.requireNonNull(to, "to");
++            path = List.copyOf(path);
++        }
++
++        /** Preserva o construtor anterior, explicitando o vértice intermediário X/Y. */
++        public Step(Position from, Position to) {
++            this(from, to, List.of(from, new Position(to.x(), from.y()), to));
+         }
+ 
+         /** Informa se houve deslocamento efetivo após a resolução das colisões. */
+-        public boolean moved() { return !from.equals(to); }
++        public boolean moved() { return path.stream().anyMatch(point -> !point.equals(from)); }
+     }
+ 
+     /** Injeta os serviços existentes, mantendo um único caminho para mover e consumir. */
+     public LightningStepService(MovementService movement, StaminaService stamina,
+                                 CollisionService collisions) {
++        this(movement, stamina, collisions, CollisionPolicy.SOLID);
++    }
++
++    /** Seleciona os contatos da habilidade; o construtor antigo preserva a colisão sólida. */
++    public LightningStepService(MovementService movement, StaminaService stamina,
++                                CollisionService collisions, CollisionPolicy policy) {
+         this.movement = Objects.requireNonNull(movement, "movement");
+         this.stamina = Objects.requireNonNull(stamina, "stamina");
+         this.collisions = Objects.requireNonNull(collisions, "collisions");
++        this.policy = Objects.requireNonNull(policy, "policy");
+     }
+ 
+     /** Informa se ainda resta tempo de deslocamento desta ativação. */
+     public boolean active() { return remaining > 0; }
++
++    /** Aguarda saída livre quando corpos móveis ocuparam toda a trajetória do dash. */
++    public boolean awaitingLanding() { return awaitingLanding; }
+ 
+     /** Retorna os segundos restantes de deslocamento. */
+     public float remaining() { return (float) remaining; }
+@@ -83,6 +105,7 @@
+                 || command.targetX() >= space.width() || command.targetY() >= space.height())
+             return Status.INVALID;
+         if (player.isDead()) return Status.DEAD;
++        if (awaitingLanding) return Status.LANDING_PENDING;
+         Position origin = player.getPosition();
+         if (!Float.isFinite(origin.x()) || !Float.isFinite(origin.y())
+                 || !collisions.isFree(player, origin.x(), origin.y(), radius, space))
+@@ -96,6 +119,8 @@
+         direction = new Position((float) (dx / length), (float) (dy / length));
+         remaining = DURATION;
+         cooldown = COOLDOWN;
++        travelled.clear();
++        travelled.add(origin);
+         return Status.STARTED;
+     }
+ 
+@@ -106,6 +131,9 @@
+      * Colisões usam a varredura X/Y existente; um passo bloqueado consome seu tempo
+      * sem compensar a distância depois. A morte interrompe somente o deslocamento.
+      * Delta inválido é rejeitado antes de qualquer mutação; zero é permitido.
++     * Ao terminar, recupera uma saída normalmente livre pela trajetória percorrida.
++     * Se todos os pontos estiverem ocupados, aguarda e tenta novamente sem renovar
++     * duração, consumo ou cooldown. O chamador deve suspender WASD enquanto aguarda.
+      */
+     public Step update(Player player, float dt, float radius, CollisionService.Space space) {
+         if (!Float.isFinite(dt) || dt < 0f)
+@@ -115,17 +143,45 @@
+         if (!Float.isFinite(radius) || radius <= 0f)
+             throw new IllegalArgumentException("Raio deve ser finito e positivo");
+         Position from = player.getPosition();
++        List<Position> tickPath = new ArrayList<>();
++        tickPath.add(from);
+         cooldown = Math.max(0, cooldown - dt);
+         if (cooldown < CLOCK_TOLERANCE) cooldown = 0;
+         if (player.isDead()) {
+             remaining = 0;
++            awaitingLanding = false;
++            travelled.clear();
+         } else if (active() && dt > 0f) {
+             double stepTime = Math.min((double) dt, remaining);
+             float distance = (float) (SPEED * stepTime);
+             movement.moveContinuous(player, direction.x() * distance, direction.y() * distance,
+-                    radius, space);
++                    radius, space, policy);
++            Position to = player.getPosition();
++            appendAxisPath(tickPath, from, to);
++            appendAxisPath(travelled, from, to);
+             remaining = Math.max(0, remaining - stepTime);
++            if (!active()) awaitingLanding = true;
+         }
+-        return new Step(from, player.getPosition());
++        // A saída considera as posições atuais dos corpos, sem prolongar o relógio do dash.
++        if (awaitingLanding) {
++            var recovery = collisions.recoverAlongPath(player, travelled, radius, space);
++            if (recovery.recovered()) {
++                for (Position point : recovery.path()) appendDistinct(tickPath, point);
++                awaitingLanding = false;
++                travelled.clear();
++            }
++        }
++        return new Step(from, player.getPosition(), tickPath);
++    }
++
++    /** Conserva a curva efetiva da varredura X/Y, sem substituir por uma corda diagonal. */
++    private static void appendAxisPath(List<Position> path, Position from, Position to) {
++        appendDistinct(path, new Position(to.x(), from.y()));
++        appendDistinct(path, to);
++    }
++
++    /** Descarta vértices repetidos sem arredondar as posições autoritativas. */
++    private static void appendDistinct(List<Position> path, Position point) {
++        if (path.isEmpty() || !path.get(path.size() - 1).equals(point)) path.add(point);
+     }
+ }
+--- a/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ b/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -362,6 +362,10 @@
+         g.setFont(new Font("SansSerif", Font.PLAIN, 13));
+         g.drawString("Alcance 74 px  |  Cone 90 graus  |  Dano: dominio CombatService", 25,
+                 DebugWorld.HEIGHT + 52);
++        g.setFont(new Font("SansSerif", Font.PLAIN, 11));
++        g.setColor(new Color(205, 211, 171));
++        g.drawString("Passo: atravessa atores e obstaculos leves; paredes e bordas bloqueiam.",
++                25, DebugWorld.HEIGHT + 67);
+         g.setColor(s.cooldown() > 0 ? new Color(245, 171, 108) : new Color(80, 219, 168));
+         g.setFont(new Font("SansSerif", Font.BOLD, 13));
+         g.drawString(s.cooldown() > 0 ? "RECARGA" : "PRONTO", 770, DebugWorld.HEIGHT + 39);
+@@ -372,8 +376,8 @@
+                 ? String.format(java.util.Locale.ROOT, "RECARGA %.1f s", s.cryostasisCooldown()) : "CRIOSTASE PRONTA",
+                 650, DebugWorld.HEIGHT + 83);
+         g.setColor(new Color(255, 235, 110));
+-        g.drawString("SHIFT  PASSO RELAMPAGO | Mouse | 150 px | 35 vigor", 25, DebugWorld.HEIGHT + 102);
+-        g.drawString(s.lightningStepActive()
++        g.drawString("SHIFT  PASSO RELAMPAGO | Mouse | 150 px | 35 vigor | 4 s", 25, DebugWorld.HEIGHT + 102);
++        g.drawString(s.lightningStepAwaitingLanding() ? "AGUARDANDO SAIDA LIVRE" : s.lightningStepActive()
+                 ? String.format(java.util.Locale.ROOT, "ATIVO | RECARGA %.1f s", s.lightningStepCooldown()) : s.lightningStepCooldown() > 0
+                 ? String.format(java.util.Locale.ROOT, "RECARGA %.1f s", s.lightningStepCooldown()) : "PASSO PRONTO",
+                 650, DebugWorld.HEIGHT + 102);
+--- a/server/src/main/java/com/projetok/prototype/DebugSnapshot.java
++++ b/server/src/main/java/com/projetok/prototype/DebugSnapshot.java
+@@ -9,7 +9,8 @@
+         String lastEvent, float facingX, float facingY, float cooldown, AttackView attack,
+         float stamina, float maxStamina, float cryostasisCooldown, List<IceZoneView> iceZones,
+         List<StatusView> statuses, boolean lightningStepActive, float lightningStepRemaining,
+-        float lightningStepCooldown, List<LightningTrailView> lightningTrails) {
++        float lightningStepCooldown, List<LightningTrailView> lightningTrails,
++        boolean lightningStepAwaitingLanding) {
+ 
+     /** Segmento visual elétrico com tempo de vida; sem estado mutável da habilidade. */
+     public record LightningTrailView(float x0, float y0, float x1, float y1,
+--- a/server/src/main/java/com/projetok/prototype/DebugWorld.java
++++ b/server/src/main/java/com/projetok/prototype/DebugWorld.java
+@@ -2,6 +2,7 @@
+ 
+ import com.projetok.domain.ai.PassiveBehavior;
+ import com.projetok.domain.movement.CollisionService;
++import com.projetok.domain.movement.CollisionPolicy;
+ import com.projetok.domain.movement.MovementService;
+ import com.projetok.domain.movement.SpatialBodyIndex;
+ import com.projetok.domain.combat.CombatService;
+@@ -98,7 +99,8 @@
+     /** Permite comparar a resposta nova com a referência histórica sem alterar os baselines. */
+     public DebugWorld(RandomGenerator random, MovementService.Response response) {
+         movement = new MovementService(collisions, response);
+-        lightningStep = new LightningStepService(movement, staminaService, collisions);
++        lightningStep = new LightningStepService(movement, staminaService, collisions,
++                CollisionPolicy.PHASE_THROUGH_ACTORS_AND_SOFT);
+         cryostasis = new CryostasisService(combat, staminaService, statusEffects, new ProbabilityService(random));
+         RaceRegistry races = RaceRegistry.withDefaults();
+         VitalityService vitality = new VitalityService();
+@@ -175,7 +177,7 @@
+                     trail.x0(), trail.y0(), trail.x1(), trail.y1(), remaining, trail.duration()));
+         }
+         publishHits(cryostasis.update(dt, cryostasisTargets()));
+-        boolean dashingAtStart = lightningStep.active();
++        boolean dashingAtStart = lightningStep.active() || lightningStep.awaitingLanding();
+         var dashStep = lightningStep.update(player, dt, PLAYER_RADIUS, collisionSpace);
+         if (dashStep.moved()) addLightningTrail(dashStep);
+         if (player.isDead()) return;
+@@ -196,6 +198,7 @@
+                     case ZERO_DIRECTION -> "Passo Relampago: escolha uma direcao.";
+                     case COOLDOWN -> "Passo Relampago em recarga.";
+                     case STAMINA -> "Vigor insuficiente para Passo Relampago (35).";
++                    case LANDING_PENDING -> "Passo Relampago: aguardando uma saida livre.";
+                 };
+                 continue;
+             }
+@@ -215,11 +218,11 @@
+ 
+     /** Registra só trechos realmente percorridos, incluindo a curva X/Y da física. */
+     private void addLightningTrail(LightningStepService.Step step) {
+-        var from = step.from(); var to = step.to();
+-        if (from.x() != to.x()) lightningTrails.add(new DebugSnapshot.LightningTrailView(
+-                from.x(), from.y(), to.x(), from.y(), TRAIL_DURATION, TRAIL_DURATION));
+-        if (from.y() != to.y()) lightningTrails.add(new DebugSnapshot.LightningTrailView(
+-                to.x(), from.y(), to.x(), to.y(), TRAIL_DURATION, TRAIL_DURATION));
++        for (int i = 1; i < step.path().size(); i++) {
++            var from = step.path().get(i - 1); var to = step.path().get(i);
++            if (!from.equals(to)) lightningTrails.add(new DebugSnapshot.LightningTrailView(
++                    from.x(), from.y(), to.x(), to.y(), TRAIL_DURATION, TRAIL_DURATION));
++        }
+     }
+ 
+     /** Fornece hitboxes dos mobs; a skill consulta vida e posição em cada pulso. */
+@@ -356,7 +359,8 @@
+                 mobs.stream().filter(mob -> !mob.isDead()).filter(mob -> mob.require(StatusEffectsComponent.class)
+                         .has(StatusEffectType.FREEZE)).map(mob -> new DebugSnapshot.StatusView(mob.getId(),
+                         mob.require(StatusEffectsComponent.class).remaining(StatusEffectType.FREEZE))).toList(),
+-                lightningStep.active(), lightningStep.remaining(), lightningStep.cooldown(), List.copyOf(lightningTrails));
++                lightningStep.active(), lightningStep.remaining(), lightningStep.cooldown(), List.copyOf(lightningTrails),
++                lightningStep.awaitingLanding());
+     }
+ 
+     /** Extrai apenas os campos visuais de uma entidade do domínio. */
+--- /dev/null
++++ b/server/src/test/java/com/projetok/domain/movement/CollisionPolicyTest.java
+@@ -0,0 +1,94 @@
++package com.projetok.domain.movement;
++
++import com.projetok.domain.entity.DialogueScript;
++import com.projetok.domain.entity.Npc;
++import com.projetok.domain.entity.Position;
++import com.projetok.domain.entity.component.HealthComponent;
++import java.util.List;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Políticas filtram categorias sem duplicar a geometria normal ou a varredura contínua. */
++class CollisionPolicyTest {
++    private static final float RADIUS = 18f;
++    private static final CollisionPolicy PHASE = CollisionPolicy.PHASE_THROUGH_ACTORS_AND_SOFT;
++
++    /** Cria um corpo com vida sem depender de fábricas de habilidades. */
++    private static Npc actor(int id, float x, float y) {
++        var actor = new Npc(id, "Corpo de teste", new Position(x, y), DialogueScript.of("Corpo de teste"));
++        actor.attach(new HealthComponent(100));
++        return actor;
++    }
++
++    /** Obstáculos antigos conservam a classificação sólida do cenário original. */
++    @Test void obstaculoSemCategoriaContinuaSolido() {
++        var obstacle = new CollisionService.Obstacle(180f, 60f, 30f, 80f);
++        assertEquals(CollisionCategory.SOLID_OBSTACLE, obstacle.category());
++        var player = actor(1, 100f, 100f);
++        var space = new CollisionService.Space(960f, 640f, List.of(obstacle), List.of());
++        assertFalse(new CollisionService().isFree(player, 190f, 100f, RADIUS, space, PHASE));
++    }
++
++    /** A mesma posição é livre para passagem seletiva e ocupada para a física normal. */
++    @Test void consultaSeletivaIgnoraAtoresEArbustosMasPreservaLimites() {
++        var player = actor(1, 100f, 100f);
++        var blocker = actor(2, 200f, 100f);
++        var space = new CollisionService.Space(960f, 640f,
++                List.of(new CollisionService.Obstacle(180f, 80f, 40f, 40f, CollisionCategory.SOFT_OBSTACLE)),
++                List.of(new CollisionService.Body(blocker, 19f)));
++        var collisions = new CollisionService();
++        assertFalse(collisions.isFree(player, 200f, 100f, RADIUS, space));
++        assertFalse(collisions.isFree(player, 200f, 100f, RADIUS, space, CollisionPolicy.SOLID));
++        assertTrue(collisions.isFree(player, 200f, 100f, RADIUS, space, PHASE));
++        for (Position outside : List.of(new Position(17f, 100f), new Position(943f, 100f),
++                new Position(100f, 17f), new Position(100f, 623f))) {
++            assertFalse(collisions.isFree(player, outside.x(), outside.y(), RADIUS, space, PHASE));
++        }
++    }
++
++    /** Paredes finas ou espessas detêm até deslocamentos que atravessariam toda a forma. */
++    @Test void varreduraSeletivaMantemParedesFinasEEspessas() {
++        var collisions = new CollisionService();
++        for (float thickness : new float[] {1f, 80f}) {
++            var player = actor(1, 100f, 100f);
++            var space = new CollisionService.Space(960f, 640f,
++                    List.of(new CollisionService.Obstacle(200f, 50f, thickness, 100f)), List.of());
++            collisions.resolveContinuous(player, 700f, 0f, RADIUS, space, PHASE);
++            assertEquals(new Position(182f, 100f), player.getPosition());
++            assertTrue(collisions.isFree(player, 182f, 100f, RADIUS, space));
++        }
++    }
++
++    /** A política seletiva preserva o deslizamento por eixo ao atingir um sólido. */
++    @Test void varreduraSeletivaDeslizaNoEixoLivre() {
++        var player = actor(1, 100f, 100f);
++        var space = new CollisionService.Space(960f, 640f,
++                List.of(new CollisionService.Obstacle(160f, 0f, 2f, 640f)), List.of());
++        new MovementService(new CollisionService()).moveContinuous(player, 100f, 100f, RADIUS, space, PHASE);
++        assertEquals(new Position(142f, 200f), player.getPosition());
++    }
++
++    /** As quatro bordas continuam sólidas, inclusive em deslocamento diagonal contínuo. */
++    @Test void varreduraSeletivaMantemLimitesNosDoisSentidos() {
++        var player = actor(1, 900f, 580f);
++        var space = new CollisionService.Space(960f, 640f, List.of(), List.of());
++        var movement = new MovementService(new CollisionService());
++        movement.moveContinuous(player, 300f, 300f, RADIUS, space, PHASE);
++        assertEquals(new Position(942f, 622f), player.getPosition());
++        movement.moveContinuous(player, -2000f, -2000f, RADIUS, space, PHASE);
++        assertEquals(new Position(18f, 18f), player.getPosition());
++    }
++
++    /** O caminho normal utilizado pelo WASD continua tratando arbustos como bloqueadores. */
++    @Test void movimentoNormalContinuaBloqueadoPorObstaculosLeves() {
++        var player = actor(1, 100f, 100f);
++        var space = new CollisionService.Space(960f, 640f,
++                List.of(new CollisionService.Obstacle(140f, 80f, 30f, 40f, CollisionCategory.SOFT_OBSTACLE)),
++                List.of());
++        var movement = new MovementService(new CollisionService());
++        movement.move(player, 50f, 0f, RADIUS, space);
++        assertEquals(new Position(100f, 100f), player.getPosition());
++        movement.moveContinuous(player, 150f, 0f, RADIUS, space);
++        assertEquals(new Position(122f, 100f), player.getPosition());
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/domain/movement/CollisionRecoveryTest.java
+@@ -0,0 +1,82 @@
++package com.projetok.domain.movement;
++
++import com.projetok.domain.entity.DialogueScript;
++import com.projetok.domain.entity.Npc;
++import com.projetok.domain.entity.Position;
++import java.util.List;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Casos geométricos da saída seletiva, separados da habilidade e do teste reservado. */
++class CollisionRecoveryTest {
++    private static final float RADIUS = 18f;
++
++    /** Monta um ator sólido sem exigir componentes de combate para um NPC. */
++    private Npc actor(float x, float y) {
++        return new Npc(1, "Trajetória", new Position(x, y), DialogueScript.of("Teste"));
++    }
++
++    /** Uma curva segura é refeita por eixos; sua corda atravessaria a construção. */
++    @Test void recuperaPelaCurvaRealAoRedorDaConstrucao() {
++        var actor = actor(200f, 200f);
++        var space = new CollisionService.Space(960f, 640f, List.of(
++                new CollisionService.Obstacle(130f, 130f, 40f, 40f),
++                new CollisionService.Obstacle(190f, 80f, 40f, 140f, CollisionCategory.SOFT_OBSTACLE)),
++                List.of());
++        var recovery = new CollisionService().recoverAlongPath(actor, List.of(
++                new Position(100f, 100f), new Position(200f, 100f), new Position(200f, 200f)),
++                RADIUS, space);
++        assertTrue(recovery.recovered());
++        assertEquals(new Position(172f, 100f), actor.getPosition());
++        assertEquals(List.of(new Position(200f, 200f), new Position(200f, 100f),
++                new Position(172f, 100f)), recovery.path());
++        assertThrows(UnsupportedOperationException.class, () -> recovery.path().clear());
++    }
++
++    /** Uma parede no caminho de retorno impede aproveitar uma saída livre do outro lado. */
++    @Test void recuoNaoUsaSaidaAlemDeParedeQueSurgiuNoPercurso() {
++        var actor = actor(250f, 100f);
++        var body = new CollisionService.Body(actor, RADIUS);
++        var bodies = List.of(body);
++        var index = new SpatialBodyIndex(bodies, 16f);
++        var space = new CollisionService.Space(960f, 640f, List.of(
++                new CollisionService.Obstacle(210f, 0f, 2f, 200f),
++                new CollisionService.Obstacle(240f, 80f, 30f, 40f, CollisionCategory.SOFT_OBSTACLE)),
++                bodies, index);
++        var recovery = new CollisionService().recoverAlongPath(actor,
++                List.of(new Position(100f, 100f), actor.getPosition()), RADIUS, space);
++        assertFalse(recovery.recovered());
++        assertEquals(new Position(250f, 100f), actor.getPosition());
++        assertEquals(List.of(actor.getPosition()), recovery.path());
++        assertTrue(index.query(250, 100, 250, 100).contains(body));
++    }
++
++    /** A tangência compartilhada continua sendo uma saída válida, mesmo sem vão de um pixel. */
++    @Test void encontraTangenciaEntreDoisIntervalosEncostados() {
++        var actor = actor(250f, 100f);
++        var space = new CollisionService.Space(960f, 640f, List.of(
++                new CollisionService.Obstacle(80f, 80f, 82f, 40f, CollisionCategory.SOFT_OBSTACLE),
++                new CollisionService.Obstacle(198f, 80f, 100f, 40f, CollisionCategory.SOFT_OBSTACLE)),
++                List.of());
++        var recovery = new CollisionService().recoverAlongPath(actor,
++                List.of(new Position(50f, 100f), actor.getPosition()), RADIUS, space);
++        assertTrue(recovery.recovered());
++        assertEquals(new Position(180f, 100f), actor.getPosition());
++        assertTrue(new CollisionService().isFree(actor, 180f, 100f, RADIUS, space));
++    }
++
++    /** Rotas incompletas, diagonais ou não finitas são rejeitadas antes de corrigir posição. */
++    @Test void rejeitaRotasInvalidasSemMutacao() {
++        var actor = actor(250f, 100f);
++        var origin = actor.getPosition();
++        var space = new CollisionService.Space(960f, 640f, List.of(), List.of());
++        var collisions = new CollisionService();
++        for (var path : List.of(List.<Position>of(), List.of(new Position(100f, 100f)),
++                List.of(new Position(100f, 200f), origin),
++                List.of(new Position(Float.NaN, 100f), origin))) {
++            assertThrows(IllegalArgumentException.class,
++                    () -> collisions.recoverAlongPath(actor, path, RADIUS, space));
++            assertEquals(origin, actor.getPosition());
++        }
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/domain/skill/LightningStepSelectiveCollisionTest.java
+@@ -0,0 +1,263 @@
++package com.projetok.domain.skill;
++
++import com.projetok.domain.entity.DialogueScript;
++import com.projetok.domain.entity.GameEntity;
++import com.projetok.domain.entity.Mob;
++import com.projetok.domain.entity.Npc;
++import com.projetok.domain.entity.Position;
++import com.projetok.domain.entity.component.HealthComponent;
++import com.projetok.domain.entity.component.StaminaComponent;
++import com.projetok.domain.entity.component.StatusEffectsComponent;
++import com.projetok.domain.item.LootTable;
++import com.projetok.domain.movement.CollisionCategory;
++import com.projetok.domain.movement.CollisionService;
++import com.projetok.domain.movement.SpatialBodyIndex;
++import java.util.List;
++import org.junit.jupiter.api.Test;
++import static com.projetok.domain.skill.LightningStepTestFixtures.*;
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Passagem seletiva e recuperação autoritativa sem alterar os testes sólidos anteriores. */
++class LightningStepSelectiveCollisionTest {
++    // --- Montagem de comandos e corpos ---
++
++    /** Aponta à direita sem limitar o orçamento de 150 unidades ao cursor. */
++    private static SkillCastCommand right() {
++        return new SkillCastCommand(LightningStepService.ID, 800f, 100f);
++    }
++
++    /** Cria um mob vivo que permite verificar dano e efeitos colaterais. */
++    private static Mob mob(float x, float y) {
++        var mob = new Mob(200, "Alvo de passagem", new Position(x, y), LootTable.of());
++        mob.attach(new HealthComponent(120));
++        mob.attach(new StatusEffectsComponent());
++        return mob;
++    }
++
++    /** Cria um arbusto retangular para a mesma geometria usada pelos sólidos. */
++    private static CollisionService.Obstacle brush(float x, float y, float width, float height) {
++        return new CollisionService.Obstacle(x, y, width, height, CollisionCategory.SOFT_OBSTACLE);
++    }
++
++    /** Confirma a validade normal, inclusive após uma correção de pouso. */
++    private static void assertNormalPosition(GameEntity entity, CollisionService.Space space) {
++        var p = entity.getPosition();
++        assertTrue(new CollisionService().isFree(entity, p.x(), p.y(), RADIUS, space),
++                () -> "Posição final precisa estar livre na política normal: " + p);
++    }
++
++    // --- Passagem e regras preservadas ---
++
++    /** Atores de classes distintas são atravessados sem deslocamento ou dano. */
++    @Test void atravessaMobJogadorENpcSemAlterarOsAtores() {
++        var mob = mob(175f, 100f);
++        var otherPlayer = player(175f, 100f);
++        var npc = new Npc(300, "Vendedor", new Position(175f, 100f), DialogueScript.of("Vendedor"));
++        // O NPC de diálogo não precisa ganhar componentes de combate para ser atravessado.
++        for (GameEntity actor : List.of(mob, otherPlayer, npc)) {
++            var player = player(100f, 100f);
++            var service = selectiveService();
++            var space = new CollisionService.Space(960f, 640f, List.of(), List.of(
++                    new CollisionService.Body(player, RADIUS), new CollisionService.Body(actor, 19f)));
++            assertEquals(LightningStepService.Status.STARTED, service.cast(player, right(), RADIUS, space));
++            service.update(player, 0.125f, RADIUS, space);
++            assertEquals(new Position(175f, 100f), player.getPosition());
++            assertTrue(service.active());
++            service.update(player, 0.125f, RADIUS, space);
++            assertEquals(new Position(250f, 100f), player.getPosition());
++            assertEquals(new Position(175f, 100f), actor.getPosition());
++            assertEquals(100, player.require(HealthComponent.class).current());
++            assertEquals(65f, player.require(StaminaComponent.class).current());
++            assertEquals(3.75f, service.cooldown());
++            assertFalse(service.active());
++            assertFalse(service.awaitingLanding());
++            assertNormalPosition(player, space);
++        }
++        assertEquals(120, mob.require(HealthComponent.class).current());
++        assertTrue(mob.require(StatusEffectsComponent.class).snapshot().isEmpty());
++        assertEquals(100, otherPlayer.require(HealthComponent.class).current());
++    }
++
++    /** Arbustos usam a mesma forma retangular, mas não bloqueiam o avanço seletivo. */
++    @Test void atravessaArbustoSemMudarDistanciaDuracaoOuCusto() {
++        var player = player(100f, 100f);
++        var service = selectiveService();
++        var space = new CollisionService.Space(960f, 640f,
++                List.of(brush(150f, 80f, 30f, 40f)), List.of());
++        assertEquals(LightningStepService.Status.STARTED, service.cast(player, right(), RADIUS, space));
++        service.update(player, 0.1f, RADIUS, space);
++        assertEquals(160f, player.getPosition().x(), 0.0001f);
++        service.update(player, 0.1f, RADIUS, space);
++        assertEquals(220f, player.getPosition().x(), 0.0001f);
++        service.update(player, 0.2f, RADIUS, space);
++        assertEquals(new Position(250f, 100f), player.getPosition());
++        assertFalse(service.active());
++        assertEquals(0f, service.remaining());
++        assertEquals(65f, player.require(StaminaComponent.class).current());
++        assertEquals(3.6f, service.cooldown(), 0.00001f);
++        assertNormalPosition(player, space);
++    }
++
++    /** O construtor antigo continua usando colisão sólida mesmo em obstáculos leves. */
++    @Test void construtorAnteriorMantemDashSolidoContraArbustos() {
++        var player = player(100f, 100f);
++        var service = service();
++        var space = new CollisionService.Space(960f, 640f,
++                List.of(brush(150f, 80f, 30f, 40f)), List.of());
++        service.cast(player, right(), RADIUS, space);
++        service.update(player, 0.25f, RADIUS, space);
++        assertEquals(new Position(132f, 100f), player.getPosition());
++        assertFalse(service.active());
++        assertNormalPosition(player, space);
++    }
++
++    /** O alcance diagonal continua normalizado e os limites consideram todo o raio. */
++    @Test void diagonalSeletivaRespeitaAlcanceELimites() {
++        var player = player(100f, 100f);
++        var service = selectiveService();
++        service.cast(player, new SkillCastCommand(LightningStepService.ID, 700f, 500f),
++                RADIUS, emptySpace());
++        service.update(player, 0.25f, RADIUS, emptySpace());
++        assertEquals(150d, Math.hypot(player.getPosition().x() - 100f,
++                player.getPosition().y() - 100f), 0.0002d);
++
++        var borderPlayer = player(920f, 600f);
++        var borderService = selectiveService();
++        borderService.cast(borderPlayer, new SkillCastCommand(LightningStepService.ID, 959f, 639f),
++                RADIUS, emptySpace());
++        borderService.update(borderPlayer, 0.25f, RADIUS, emptySpace());
++        assertEquals(new Position(942f, 622f), borderPlayer.getPosition());
++        assertNormalPosition(borderPlayer, emptySpace());
++    }
++
++    // --- Recuperação no percurso efetivamente realizado ---
++
++    /** Um destino dentro de arbusto recua até a tangência mais próxima no percurso. */
++    @Test void destinoDentroDeArbustoRecuaAteUltimaPosicaoLivre() {
++        var player = player(100f, 100f);
++        var service = selectiveService();
++        var space = new CollisionService.Space(960f, 640f,
++                List.of(brush(240f, 80f, 30f, 40f)), List.of());
++        service.cast(player, right(), RADIUS, space);
++        service.update(player, 0.25f, RADIUS, space);
++        assertEquals(222f, player.getPosition().x(), 0.0001f);
++        assertEquals(100f, player.getPosition().y());
++        assertFalse(service.active());
++        assertFalse(service.awaitingLanding());
++        assertNormalPosition(player, space);
++    }
++
++    /** A recuperação considera a soma dos raios e não empurra o inimigo. */
++    @Test void destinoDentroDeMobRecuaConsiderandoAmbosOsRaios() {
++        var player = player(100f, 100f);
++        var mob = mob(250f, 100f);
++        var space = new CollisionService.Space(960f, 640f, List.of(),
++                List.of(new CollisionService.Body(mob, 19f)));
++        var service = selectiveService();
++        service.cast(player, right(), RADIUS, space);
++        service.update(player, 0.25f, RADIUS, space);
++        assertEquals(213f, player.getPosition().x(), 0.0001f);
++        assertEquals(new Position(250f, 100f), mob.getPosition());
++        assertEquals(120, mob.require(HealthComponent.class).current());
++        assertNormalPosition(player, space);
++    }
++
++    /** Bloqueadores sobrepostos formam uma faixa única sem aceitar um falso espaço livre. */
++    @Test void recuoConsideraUniaoDeArbustoEAtor() {
++        var player = player(100f, 100f);
++        var mob = mob(220f, 100f);
++        var space = new CollisionService.Space(960f, 640f,
++                List.of(brush(230f, 80f, 40f, 40f)),
++                List.of(new CollisionService.Body(mob, 19f)));
++        var service = selectiveService();
++        service.cast(player, right(), RADIUS, space);
++        service.update(player, 0.25f, RADIUS, space);
++        assertEquals(183f, player.getPosition().x(), 0.0001f);
++        assertNormalPosition(player, space);
++    }
++
++    /** A perna Y ocupada é desfeita antes de procurar uma saída na perna X real. */
++    @Test void recuoSegueQuinaDoPercursoEmVezDaCordaDiagonal() {
++        var player = player(100f, 100f);
++        var service = selectiveService();
++        var space = new CollisionService.Space(960f, 640f,
++                List.of(brush(185f, 90f, 45f, 140f)), List.of());
++        service.cast(player, new SkillCastCommand(LightningStepService.ID, 400f, 400f), RADIUS, space);
++        service.update(player, 0.25f, RADIUS, space);
++        // A corda origem/destino retornaria uma posição diagonal que não foi percorrida.
++        assertEquals(167f, player.getPosition().x(), 0.0001f);
++        assertEquals(100f, player.getPosition().y());
++        assertFalse(service.awaitingLanding());
++        assertNormalPosition(player, space);
++    }
++
++    /** A posição atual do mob, e não a posição de lançamento, decide o pouso e a grade. */
++    @Test void corpoMovelEIndiceEspacialSaoAtualizadosAposRecuo() {
++        var player = player(100f, 100f);
++        var mob = mob(400f, 100f);
++        var playerBody = new CollisionService.Body(player, RADIUS);
++        var bodies = List.of(playerBody, new CollisionService.Body(mob, 19f));
++        var index = new SpatialBodyIndex(bodies, 16f);
++        var space = new CollisionService.Space(960f, 640f, List.of(), bodies, index);
++        var service = selectiveService();
++        service.cast(player, right(), RADIUS, space);
++        service.update(player, 0.1f, RADIUS, space);
++        mob.setPosition(new Position(250f, 100f));
++        index.update(mob);
++        service.update(player, 0.15f, RADIUS, space);
++        assertEquals(213f, player.getPosition().x(), 0.0001f);
++        assertTrue(index.query(213d, 100d, 213d, 100d).stream().anyMatch(body -> body == playerBody));
++        assertFalse(index.query(250d, 100d, 250d, 100d).stream().anyMatch(body -> body == playerBody));
++        assertNormalPosition(player, space);
++    }
++
++    /** Sem saída possível, o relógio termina e a recuperação aguarda sem outro gasto. */
++    @Test void todaRotaOcupadaAguardaLiberacaoSemEstenderDash() {
++        var player = player(100f, 100f);
++        var mob = mob(400f, 100f);
++        var bodies = List.of(new CollisionService.Body(player, RADIUS),
++                new CollisionService.Body(mob, 100f));
++        var index = new SpatialBodyIndex(bodies, 16f);
++        var space = new CollisionService.Space(960f, 640f, List.of(), bodies, index);
++        var service = selectiveService();
++        service.cast(player, right(), RADIUS, space);
++        service.update(player, 0.1f, RADIUS, space);
++        mob.setPosition(new Position(175f, 100f));
++        index.update(mob);
++        service.update(player, 0.15f, RADIUS, space);
++        assertEquals(new Position(250f, 100f), player.getPosition());
++        assertFalse(service.active());
++        assertEquals(0f, service.remaining());
++        assertTrue(service.awaitingLanding());
++        service.update(player, 0.25f, RADIUS, space);
++        assertEquals(new Position(250f, 100f), player.getPosition());
++        assertEquals(3.5f, service.cooldown(), 0.00001f);
++        assertEquals(65f, player.require(StaminaComponent.class).current());
++        assertNotEquals(LightningStepService.Status.STARTED, service.cast(player, right(), RADIUS, space));
++
++        mob.setPosition(new Position(400f, 100f));
++        index.update(mob);
++        service.update(player, 0.01f, RADIUS, space);
++        assertFalse(service.awaitingLanding());
++        assertFalse(service.active());
++        assertEquals(new Position(250f, 100f), player.getPosition());
++        assertEquals(65f, player.require(StaminaComponent.class).current());
++        assertNormalPosition(player, space);
++    }
++
++    /** Um alvo morto na posição final não exige recuo nem recebe novos efeitos. */
++    @Test void corpoMortoNaoBloqueiaPouso() {
++        var player = player(100f, 100f);
++        var mob = mob(250f, 100f);
++        mob.require(HealthComponent.class).applyDamage(120);
++        var space = new CollisionService.Space(960f, 640f, List.of(),
++                List.of(new CollisionService.Body(mob, 19f)));
++        var service = selectiveService();
++        service.cast(player, right(), RADIUS, space);
++        service.update(player, 0.25f, RADIUS, space);
++        assertEquals(new Position(250f, 100f), player.getPosition());
++        assertTrue(mob.require(StatusEffectsComponent.class).snapshot().isEmpty());
++        assertFalse(service.awaitingLanding());
++        assertNormalPosition(player, space);
++    }
++}
+--- a/server/src/test/java/com/projetok/domain/skill/LightningStepTestFixtures.java
++++ b/server/src/test/java/com/projetok/domain/skill/LightningStepTestFixtures.java
+@@ -5,6 +5,7 @@
+ import com.projetok.domain.factory.PlayerArchetype;
+ import com.projetok.domain.factory.PlayerFactory;
+ import com.projetok.domain.movement.CollisionService;
++import com.projetok.domain.movement.CollisionPolicy;
+ import com.projetok.domain.movement.MovementService;
+ import com.projetok.domain.network.PlayerConnection;
+ import com.projetok.domain.progression.VitalityService;
+@@ -41,4 +42,11 @@
+         var collisions = new CollisionService();
+         return new LightningStepService(new MovementService(collisions), new StaminaService(), collisions);
+     }
++
++    /** Monta a política seletiva sem mudar os cenários sólidos anteriores. */
++    static LightningStepService selectiveService() {
++        var collisions = new CollisionService();
++        return new LightningStepService(new MovementService(collisions), new StaminaService(),
++                collisions, CollisionPolicy.PHASE_THROUGH_ACTORS_AND_SOFT);
++    }
+ }
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/SelectiveDashIntegrationTest.java
+@@ -0,0 +1,115 @@
++package com.projetok.prototype;
++
++import com.projetok.domain.skill.LightningStepService;
++import com.projetok.domain.skill.SkillCastCommand;
++import org.junit.jupiter.api.Test;
++
++import javax.imageio.ImageIO;
++import java.awt.Color;
++import java.awt.Font;
++import java.awt.Graphics2D;
++import java.awt.image.BufferedImage;
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.util.List;
++import java.util.Random;
++
++import static org.junit.jupiter.api.Assertions.assertEquals;
++import static org.junit.jupiter.api.Assertions.assertFalse;
++import static org.junit.jupiter.api.Assertions.assertNotNull;
++import static org.junit.jupiter.api.Assertions.assertTrue;
++
++/** Exercita a arena real e registra o cruzamento de um ator sem aplicar dano de dash. */
++class SelectiveDashIntegrationTest {
++    private static final float DT = 1f / 30f;
++
++    /** Comprova a passagem, o pouso livre e o dano recebido sem modificar a simulação ao desenhar. */
++    @Test
++    void atravessaMobNaArenaSemCausarDanoEPublicaCaptura() throws Exception {
++        var world = new DebugWorld(new Random(61));
++        for (int i = 0; i < 40; i++) world.tick(DebugInput.NONE, DT);
++        var before = world.snapshot();
++        var origin = before.actors().get(0);
++        var mob = before.actors().get(1);
++        int playerHp = before.playerHp();
++
++        // O alvo é o centro atual do mob; a distância total do dash permanece 150 px.
++        world.tickQueued(DebugInput.NONE, DT, 0,
++                List.of(new SkillCastCommand(LightningStepService.ID, mob.x(), mob.y())));
++        assertTrue(world.snapshot().lightningStepActive());
++        assertEquals(65, world.snapshot().stamina());
++        DebugSnapshot crossing = null;
++        for (int i = 0; i < 8; i++) {
++            world.tick(DebugInput.NONE, DT);
++            var current = world.snapshot();
++            if (distance(current.actors().get(0), current.actors().get(1))
++                    < DebugWorld.PLAYER_RADIUS + DebugWorld.MOB_RADIUS) {
++                assertTrue(current.lightningStepActive(), "Sobreposição é permitida durante a travessia");
++                crossing = current;
++            }
++            for (int actor = 1; actor < current.actors().size(); actor++) {
++                assertEquals(before.actors().get(actor).hp(), current.actors().get(actor).hp(),
++                        "A passagem não aplica dano aos mobs");
++            }
++        }
++
++        var landed = world.snapshot();
++        assertNotNull(crossing, "A captura deve demonstrar interseção real das hitboxes");
++        assertFalse(landed.lightningStepActive());
++        assertFalse(landed.lightningStepAwaitingLanding());
++        assertEquals(150, distance(origin, landed.actors().get(0)), 0.001);
++        for (int actor = 1; actor < landed.actors().size(); actor++) {
++            assertTrue(distance(landed.actors().get(0), landed.actors().get(actor))
++                    >= DebugWorld.PLAYER_RADIUS + DebugWorld.MOB_RADIUS,
++                    "O dash termina fora dos corpos atuais");
++        }
++        assertTrue(landed.playerHp() < playerHp, "A travessia não concede invulnerabilidade");
++        assertFalse(crossing.lightningTrails().isEmpty());
++        assertFalse(landed.lightningTrails().isEmpty());
++        capture(world, crossing, landed);
++        assertEquals(landed, world.snapshot(), "Renderizar não altera o mundo autoritativo");
++    }
++
++    /** Mede as posições publicadas sem consultar entidades mutáveis do domínio. */
++    private static double distance(DebugSnapshot.ActorView first, DebugSnapshot.ActorView second) {
++        return Math.hypot(first.x() - second.x(), first.y() - second.y());
++    }
++
++    /** Produz dois quadros da renderização real com legendas e hitboxes visíveis. */
++    private static void capture(DebugWorld world, DebugSnapshot crossing, DebugSnapshot landed) throws Exception {
++        int header = 38;
++        var image = new BufferedImage(DebugPanel.PANEL_WIDTH * 2,
++                DebugPanel.PANEL_HEIGHT + header, BufferedImage.TYPE_INT_ARGB);
++        Graphics2D graphics = image.createGraphics();
++        try {
++            graphics.setColor(new Color(10, 21, 35));
++            graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
++            graphics.setFont(new Font("SansSerif", Font.BOLD, 16));
++            graphics.setColor(new Color(255, 235, 110));
++            graphics.drawString("DURANTE: atravessa o mob; hitboxes sobrepostas", 18, 25);
++            graphics.drawString("DEPOIS: termina livre; mob sem dano; jogador pode receber dano",
++                    DebugPanel.PANEL_WIDTH + 18, 25);
++            var panel = new DebugPanel(world::snapshot);
++            panel.setShowHitboxes(true);
++            paintFrame(panel, graphics, crossing, 0, header);
++            paintFrame(panel, graphics, landed, DebugPanel.PANEL_WIDTH, header);
++        } finally {
++            graphics.dispose();
++        }
++        Path output = Path.of("target/task006-1-colisao-seletiva.png");
++        Files.createDirectories(output.getParent());
++        assertTrue(ImageIO.write(image, "png", output.toFile()));
++    }
++
++    /** Isola a transformação de cada quadro para preservar o desenho original do painel. */
++    private static void paintFrame(DebugPanel panel, Graphics2D original, DebugSnapshot snapshot, int x, int y) {
++        Graphics2D graphics = (Graphics2D) original.create();
++        try {
++            graphics.translate(x, y);
++            graphics.clipRect(0, 0, DebugPanel.PANEL_WIDTH, DebugPanel.PANEL_HEIGHT);
++            panel.render(graphics, snapshot);
++        } finally {
++            graphics.dispose();
++        }
++    }
++}
+--- /dev/null
++++ b/tools/gerar_pdf_task006_1.py
+@@ -0,0 +1,9 @@
++"""Gera o relatório da colisão seletiva usando apenas a biblioteca padrão."""
++
++from pathlib import Path
++from gerar_pdf_task002 import gerar_pdf
++
++
++if __name__ == "__main__":
++    docs = Path(__file__).resolve().parents[1] / "docs"
++    gerar_pdf(docs / "TASK-006-1.md", docs / "Spirit_Gate_TASK-006-1.pdf", "TASK-006.1")

@@ -1,0 +1,192 @@
+--- /dev/null
++++ b/docs/TASK-049-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 257,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-049.md
+@@ -0,0 +1,7 @@
++# TASK-049 - Inimigos, spawns e combate basico
++
++Catalogos enemies/spawns definem HP, ataque, velocidade, percepcao, limite de perseguicao, respawn, regiao e posicao. Populacao maxima 64, quatro spawns iniciais. Validacao recusa locais obstruidos e regioes proibidas. Vila segura, tres inimigos no bosque, chefe sem respawn no santuario.
++
++Ataque basico autoritativo escolhe alvo proximo com linha livre, recarga de 12 ticks; 82 unidades guardian/145 mystic. Derrota integra loot, XP e cinco moedas por ledger de geracao. Estado de HP/posicao/morte/respawn e persistente. Renderizacao de inimigos e controles sera integrada com UI; IA na tarefa seguinte.
++
++Teste integrado elimina inimigo, verifica recompensa unica, salva/carrega e aguarda respawn sem sleeps. Suite completa.
+--- /dev/null
++++ b/server/src/main/java/com/projetok/rpg/EnemyService.java
+@@ -0,0 +1,64 @@
++package com.projetok.rpg;
++import com.projetok.domain.entity.*;
++import com.projetok.domain.movement.*;
++import java.util.*;
++import java.io.*;
++
++/** Populacao finita definida em conteudo; estado persistente de cada spawn. */
++public final class EnemyService {
++    public record Definition(String id,int hp,int attack,int speed,int aggro,int leash,int respawn) { }
++    public static final class Enemy extends GameEntity {
++        final String spawn,region; final Definition definition; final Position home;
++        int hp; long generation=1,readyTick,attackTick; String behavior="PATROL";
++        Enemy(int id,String spawn,String region,Definition definition,Position home,String name) {
++            super(id,name,home);this.spawn=spawn;this.region=region;this.definition=definition;this.home=home;hp=definition.hp();
++        }
++    }
++    public record View(int id,String spawn,String name,float x,float y,int hp,int maxHp,String state,boolean boss) { }
++    private final List<Enemy> enemies=new ArrayList<>();
++    public EnemyService(RpgContent content,CollisionService.Space space) {
++        Properties definitions=read("enemies"),spawns=read("spawns"); Map<String,Definition> types=new TreeMap<>();
++        for(String id:definitions.stringPropertyNames()) {
++            String[] v=definitions.getProperty(id).split("\\|");if(v.length!=6)throw new IllegalArgumentException("Inimigo invalido");
++            content.get("enemy",id); int[] n=Arrays.stream(v).mapToInt(Integer::parseInt).toArray();
++            if(n[0]<1||n[0]>10000||n[1]<1||n[1]>100||n[2]<1||n[2]>200||n[3]<40||n[3]>800||n[4]<n[3]||n[4]>900||n[5]<0||n[5]>9000)throw new IllegalArgumentException("Parametros PvE invalidos");
++            types.put(id,new Definition(id,n[0],n[1],n[2],n[3],n[4],n[5]));
++        }
++        if(spawns.size()>64)throw new IllegalArgumentException("Populacao excessiva"); int entityId=100;
++        for(String spawn:new TreeSet<>(spawns.stringPropertyNames())) {
++            if(!spawn.matches("[a-z][a-z0-9_]{0,30}"))throw new IllegalArgumentException("Spawn invalido");
++            String[] v=spawns.getProperty(spawn).split("\\|");if(v.length!=4)throw new IllegalArgumentException("Spawn malformado");
++            var base=content.get("enemy",v[0]);content.get("region",v[1]);Definition definition=types.get(v[0]);
++            if(definition==null||!base.region().equals(v[1]))throw new IllegalArgumentException("Spawn em regiao proibida");
++            var enemy=new Enemy(entityId++,spawn,v[1],definition,new Position(Float.parseFloat(v[2]),Float.parseFloat(v[3])),base.name());
++            if(!new CollisionService().isFree(enemy,enemy.home.x(),enemy.home.y(),19,space))throw new IllegalArgumentException("Spawn obstruido");
++            enemies.add(enemy);
++        }
++    }
++    private static Properties read(String name) {
++        try(InputStream in=EnemyService.class.getResourceAsStream("/rpg/"+name+".properties")) {
++            if(in==null)throw new IOException("Conteudo ausente");Properties p=new Properties();p.load(in);return p;
++        }catch(IOException e){throw new IllegalStateException(e);}
++    }
++    List<Enemy> current(String region) { return enemies.stream().filter(e->e.region.equals(region)).toList(); }
++    public List<View> views(String region) { return current(region).stream().map(e->new View(e.getId(),e.spawn,e.getName(),e.getPosition().x(),e.getPosition().y(),e.hp,e.definition.hp(),e.hp==0?"DEAD":e.behavior,e.definition.id().equals("warden"))).toList(); }
++    void respawn(long tick,String region) {
++        for(Enemy e:current(region))if(e.hp==0&&e.definition.respawn()>0&&tick>=e.readyTick){e.hp=e.definition.hp();e.generation++;e.setPosition(e.home);e.behavior="PATROL";}
++    }
++    Set<String> saveFlags() {
++        Set<String> result=new TreeSet<>();
++        for(Enemy e:enemies)result.add("mob:"+e.spawn+":"+e.hp+":"+e.getPosition().x()+":"+e.getPosition().y()+":"+e.generation+":"+e.readyTick);
++        return result;
++    }
++    void restore(Set<String> flags,CollisionService.Space space) {
++        Set<String> seen=new HashSet<>();
++        for(String f:flags)if(f.startsWith("mob:")) {
++            String[] v=f.split(":");if(v.length!=7||!seen.add(v[1]))throw new IllegalArgumentException("Estado de mob invalido");
++            Enemy e=enemies.stream().filter(m->m.spawn.equals(v[1])).findFirst().orElseThrow(()->new IllegalArgumentException("Spawn ausente"));
++            e.hp=Integer.parseInt(v[2]);e.generation=Long.parseLong(v[5]);e.readyTick=Long.parseLong(v[6]);
++            float x=Float.parseFloat(v[3]),y=Float.parseFloat(v[4]);
++            if(e.hp<0||e.hp>e.definition.hp()||e.generation<1||e.readyTick<0||!new CollisionService().isFree(e,x,y,19,space))throw new IllegalArgumentException("Estado de inimigo invalido");
++            e.setPosition(new Position(x,y));
++        }
++    }
++}
+--- a/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -75,9 +75,37 @@
+     private final MovementService movement = new MovementService(new CollisionService());
+     private final CollisionService.Space space = new CollisionService.Space(960, 640,
+             List.of(new CollisionService.Obstacle(380, 180, 120, 120)), List.of());
++    private final EnemyService enemies=new EnemyService(content,space);
++    private final LootService loot=new LootService(content,items);
++    private java.util.random.RandomGenerator random=new java.util.Random(741);
++    private long attackReadyTick;
++    public RpgWorld(CharacterIdentity identity,java.util.random.RandomGenerator random) { this(identity);this.random=java.util.Objects.requireNonNull(random); }
++    public boolean attack() {
++        if(hp==0||transitioning||ticks<attackReadyTick)return false;
++        EnemyService.Enemy target=enemies.current(region).stream().filter(e->e.hp>0&&distance(body.getPosition(),e.getPosition())<= (identity.archetype().equals("mystic")?145:82))
++            .min(java.util.Comparator.comparingDouble(e->distance(body.getPosition(),e.getPosition()))).orElse(null);
++        if(target==null||!lineClear(body.getPosition(),target.getPosition()))return false;
++        attackReadyTick=ticks+12;target.hp=Math.max(0,target.hp-attackPower());
++        message="Golpe em "+target.getName()+": "+attackPower();
++        if(target.hp==0) {
++            target.readyTick=ticks+target.definition.respawn();
++            if(loot.award(target.spawn,target.generation,target.definition.id(),inventory,flags,random)) {
++                awardExperience(content.get("enemy",target.definition.id()).value());coins=Math.min(1_000_000,coins+5);
++                message="Derrotado: +XP, loot e moedas";
++            }
++        }
++        return true;
++    }
++    private static double distance(Position a,Position b) { return Math.hypot(a.x()-b.x(),a.y()-b.y()); }
++    private boolean lineClear(Position a,Position b) {
++        int samples=Math.max(1,(int)(distance(a,b)/6));
++        for(int i=1;i<samples;i++)if(!new CollisionService().isFree(body,a.x()+(b.x()-a.x())*i/samples,a.y()+(b.y()-a.y())*i/samples,1,space))return false;
++        return true;
++    }
++    public void collectLoot() { loot.collect(inventory,flags);message="Recompensas pendentes recolhidas quando houver espaco"; }
+     private long ticks;
+     public RpgSave save() {
+-        var persistent=new java.util.TreeSet<>(flags);persistent.removeIf(f->f.startsWith("stamina:"));persistent.add("stamina:"+stamina);
++        var persistent=new java.util.TreeSet<>(flags);persistent.removeIf(f->f.startsWith("stamina:")||f.startsWith("mob:"));persistent.add("stamina:"+stamina);persistent.addAll(enemies.saveFlags());
+         return new RpgSave(identity,region,body.getPosition().x(),body.getPosition().y(),hp,xp,coins,inventory.snapshot(),equipment,quests,persistent,ticks);
+     }
+     public static RpgWorld restore(RpgSave state) {
+@@ -94,9 +122,10 @@
+             if(flag.startsWith("stamina:"))world.stamina=Integer.parseInt(flag.substring(8));
+         }
+         if(world.stamina<0||world.stamina>1000)throw new IllegalArgumentException("Vigor invalido");
++        world.enemies.restore(state.flags(),world.space);
+         if(world.hp>world.maxHp()) throw new IllegalArgumentException("HP acima do maximo"); return world;
+     }
+-    public record View(float x, float y, long ticks, CharacterIdentity identity, RpgSave state, int attack, int defense, String message, int maxHp, int level) { }
++    public record View(float x, float y, long ticks, CharacterIdentity identity, RpgSave state, int attack, int defense, String message, int maxHp, int level,List<EnemyService.View> enemies) { public View { enemies=List.copyOf(enemies); } }
+     public void tick(float x, float y) {
+         Position direction=movement.direction(x,y);
+         if(hp>0) {
+@@ -105,6 +134,7 @@
+             stamina=Math.min(1000,stamina+5);
+         }
+         ticks++;
++        enemies.respawn(ticks,region);
+     }
+-    public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message,maxHp(),level()); }
++    public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message,maxHp(),level(),enemies.views(region)); }
+ }
+--- /dev/null
++++ b/server/src/main/resources/rpg/enemies.properties
+@@ -0,0 +1,3 @@
++slime=40|6|65|230|360|240
++wolf=65|9|90|260|400|330
++warden=320|14|60|420|600|0
+--- /dev/null
++++ b/server/src/main/resources/rpg/spawns.properties
+@@ -0,0 +1,4 @@
++forest_a=slime|forest|280|360
++forest_b=slime|forest|620|440
++forest_c=wolf|forest|710|240
++sanctuary=warden|ruins|720|320
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/EnemyRpgTest.java
+@@ -0,0 +1,14 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class EnemyRpgTest {
++    static RpgWorld forest() { var s=new RpgWorld().save();return RpgWorld.restore(new RpgSave(s.identity(),"forest",240,360,s.hp(),s.xp(),s.coins(),s.inventory(),s.equipment(),s.quests(),s.flags(),s.ticks())); }
++    @Test void regionSpawnDeathRewardsAndRespawn() {
++        assertTrue(new RpgWorld().snapshot().enemies().isEmpty());var w=forest();assertEquals(3,w.snapshot().enemies().size());
++        for(int i=0;i<3;i++){assertTrue(w.attack());for(int t=0;t<12;t++)w.tick(0,0);}
++        assertEquals(20,w.save().xp());assertEquals(5,w.save().coins());assertEquals(0,w.snapshot().enemies().get(0).hp());
++        assertFalse(w.attack());assertEquals(20,w.save().xp());
++        var restored=RpgWorld.restore(w.save());assertEquals(w.save(),restored.save());
++        for(int t=0;t<250;t++)restored.tick(0,0);assertEquals(40,restored.snapshot().enemies().get(0).hp());
++    }
++}

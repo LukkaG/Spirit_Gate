@@ -1,0 +1,65 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 2100 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-019 - Integração controlada de pacote visual) Tj T*
+() Tj T*
+(18/10/2026. 219 JUnit e 18 Python verdes. Logs TASK-019-java.log e TASK-019-python.log.) Tj T*
+() Tj T*
+(ValidatedSpriteAtlas estendido sem duplicar loader. Legado mantém fallback por frame;) Tj T*
+(pacote v1 exige 59 frames, ID estável, tileSize 32, frameSize 64, origem da revisão, SHA) Tj T*
+(aprovado igual ao arquivo, pivots e offsets válidos. Caminhos externos e links diretos) Tj T*
+(recusados. Metadados malformados viram IOException controlada. loadOptional retorna) Tj T*
+(fallback para ausência/corrupção. Imagem e recortes carregados uma vez, render sem IO.) Tj T*
+() Tj T*
+(Launcher procura visual/character.properties junto ao EXE por jpackage.app-path; em) Tj T*
+(desenvolvimento, relativo ao diretório corrente. Pacote ausente mantém geometria.) Tj T*
+() Tj T*
+(tools/pacote_visual.py reutiliza inspect TASK-013. JSON de entrada: packageVersion=1,) Tj T*
+(assetId estável e um único assets[] de kind character, com review.origin e) Tj T*
+(approvedSha256. Saída: character.png, character.properties e review.json. Build admite) Tj T*
+(VisualManifest e VisualRoot explícitos. Auditor revalida pacote e igualdade da) Tj T*
+(exportação. Sem esses argumentos, release usa fallback e não inclui arte.) Tj T*
+() Tj T*
+(Procedimento futuro: autoria e revisão TASK-018; aprovação humana expressa do SHA;) Tj T*
+(registrar review.origin e approvedSha256; executar pacote_visual.py RAIZ MANIFEST) Tj T*
+(NOVA_PASTA; build com -VisualManifest MANIFEST -VisualRoot RAIZ. Edição exige nova) Tj T*
+(aprovação. Fixtures não são arte de produção.) Tj T*
+() Tj T*
+(Testes Java: pacote completo, carga única após remover fonte, fallback de) Tj T*
+(hash/revisão/frame/dimensão/arquivo/pivot/versão/origem inválidos e caminho do launcher.) Tj T*
+(Python: staging com whitelist, ZIP sintético, exclusão de PNG pendente e recusa de) Tj T*
+(pacotes inválidos. Fixtures exclusivamente temporárias. Gameplay e fontes artísticas) Tj T*
+(preservados.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-019 - página 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2496
+%%EOF

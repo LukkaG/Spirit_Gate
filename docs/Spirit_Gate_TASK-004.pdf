@@ -1,0 +1,293 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R 10 0 R 12 0 R] /Count 5 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3120 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-004 - Criostase) Tj T*
+() Tj T*
+(Spirit Gate | 18/10/2026 | Java 17 e Maven) Tj T*
+() Tj T*
+(## Resultado) Tj T*
+() Tj T*
+(Q lança uma zona fixa de gelo na posição capturada do mouse. O comando usa o ID) Tj T*
+(cryostasis, custa 55 de vigor e inicia cooldown de 3 segundos. O centro é limitado a 240) Tj T*
+(unidades do jogador. A zona tem raio 85 e dura 2,5 segundos. Causa 7 de dano ICE por) Tj T*
+(pulso, em 0, 0,5, 1, 1,5 e 2 segundos. Não existe sexto pulso na expiração.) Tj T*
+() Tj T*
+(O dano máximo teórico por alvo é 35 com afinidade neutra e permanência nos cinco) Tj T*
+(instantes de pulso. Mobs continuam se movendo normalmente: congelamento e lentidão não) Tj T*
+(foram implementados. Paredes não bloqueiam a habilidade. O raio pode ultrapassar) Tj T*
+(visualmente a arena, mas o centro solicitado deve estar dentro da área jogável; a) Tj T*
+(renderização é recortada nos limites.) Tj T*
+() Tj T*
+(## Preparação e proposta apresentada) Tj T*
+() Tj T*
+(Foram inspecionados DebugWorld, DebugInput, DebugRuntime, DebugLauncher, DebugSnapshot,) Tj T*
+(DebugPanel, CombatService, Attacker, DamageType, RaceRegistry, StaminaService e testes) Tj T*
+(existentes. Attacker está em domain/entity/capability; DamageType está em domain/race. O) Tj T*
+(comando inicial mvn clean test -q passou com os 53 testes existentes antes das) Tj T*
+(alterações.) Tj T*
+() Tj T*
+(A proposta apresentada separou um contrato imutável de intenção, serviço específico de) Tj T*
+(elegibilidade/cooldown, zona com relógio determinístico e adaptador Attacker. A) Tj T*
+(integração usa a fila FIFO existente; o painel apenas desenha os valores publicados.) Tj T*
+(Nenhuma dependência foi adicionada e nenhum arquivo foi excluído ou renomeado.) Tj T*
+() Tj T*
+(## Arquitetura e responsabilidades) Tj T*
+() Tj T*
+(SkillCastCommand é o contrato único e imutável: skillId, targetX, targetY. Não executa) Tj T*
+(regras e permite transportar entradas inválidas até a validação autoritativa, sem lançar) Tj T*
+(exceções no EDT.) Tj T*
+() Tj T*
+(CryostasisService mantém o estado de um único lançador. Valida ID, coordenadas finitas e) Tj T*
+(mouse dentro de [0, largura\) e [0, altura\), vida e cooldown. Valida a origem, calcula o) Tj T*
+(centro limitado na direção solicitada e usa StaminaService.tryConsume para consumir) Tj T*
+(somente após a elegibilidade. Recusas retornam um motivo explícito e não criam zona ou) Tj T*
+(cooldown. A verificação de vigor é feita antes de criar qualquer estado; o cálculo puro) Tj T*
+(do clamp pode ocorrer antes dessa consulta.) Tj T*
+() Tj T*
+(CryostasisZone guarda centro, tempo decorrido e índice do próximo pulso. advance\(0\)) Tj T*
+(consome o pulso imediato; cada avanço libera somente os novos pulsos devidos. O contador) Tj T*
+(termina em cinco, independentemente do delta. O relógio usa double acumulando deltas de) Tj T*
+(simulação e tolerância de 0,000001 s para arredondamentos de float nos limites. Não há) Tj T*
+(relógio de parede, sleep, timer Swing ou thread adicional de gameplay.) Tj T*
+() Tj T*
+() Tj T*
+(Spirit Gate - TASK-004 - página 1/5) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 3127 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(CryostasisAttacker implementa Attacker com dano base 7 e DamageType.ICE. ICE foi) Tj T*
+(acrescentado após EARTH: os valores e a ordem anteriores do enum foram preservados.) Tj T*
+(RaceRegistry e Race permanecem inalterados: affinityFor usa 1,0 para gelo em todas as) Tj T*
+(raças atuais. WATER não é utilizado.) Tj T*
+() Tj T*
+(O único ponto que causa dano na skill é combat.attack\(attacker, mob\). A implementação) Tj T*
+(não chama receiveDamage ou HealthComponent.applyDamage. CombatService permanece byte a) Tj T*
+(byte igual ao estado inicial. A skill verifica vida antes de cada aplicação, evitando) Tj T*
+(repetição de eventos de morte em pulsos posteriores.) Tj T*
+() Tj T*
+(## Pulsos, hitboxes e movimentação) Tj T*
+() Tj T*
+(Cada pulso consulta vida e posição atuais dos alvos. A interseção usa distância ao) Tj T*
+(quadrado menor ou igual ao quadrado da soma do raio 85 com a hitbox do mob, incluindo) Tj T*
+(tangência. Uma coleção por identidade impede que um alvo duplicado na lista receba duas) Tj T*
+(aplicações no mesmo pulso; alvos que morrerem são ignorados depois disso.) Tj T*
+() Tj T*
+(A zona fica fixa no cenário quando o jogador se move. Alvos podem entrar e sair e só são) Tj T*
+(atingidos se estiverem em interseção no instante de aplicação. Vários pulsos cruzados) Tj T*
+(por um delta são processados uma vez cada. Na arena, as posições são amostradas por) Tj T*
+(ticks de até 0,1 s; não há reconstrução de trajetórias entre pulsos.) Tj T*
+() Tj T*
+(Zonas já criadas continuam até expirar mesmo se o lançador morrer. Novos lançamentos) Tj T*
+(permanecem bloqueados. Reiniciar cria um mundo e um serviço novos, eliminando zonas e) Tj T*
+(cooldowns.) Tj T*
+() Tj T*
+(## Fila, Q e mouse) Tj T*
+() Tj T*
+(DebugLauncher coleta posição do mouse no EDT. Pressionar Q captura essa posição em) Tj T*
+(SkillCastCommand e publica na mesma fila das demais entradas. O conjunto de teclas) Tj T*
+(mantidas permite publicar somente na transição inicial; autorepeat e Q mantido não) Tj T*
+(duplicam lançamentos, inclusive após o cooldown liberar. Soltar Q habilita uma nova) Tj T*
+(tentativa.) Tj T*
+() Tj T*
+(Antes do primeiro movimento do mouse ou após sair do painel, o alvo é inválido e a) Tj T*
+(tentativa é recusada sem gasto. Sidebar e rodapé não fazem parte da área jogável e) Tj T*
+(também são recusados. O mouse não precisa ser clicado: Q lança no ponto apontado.) Tj T*
+() Tj T*
+(DebugCommandBuffer conserva os comandos mesmo quando Q é pressionado e solto) Tj T*
+(inteiramente entre ticks. Ao drenar, publica uma lista imutável. Um reinício elimina) Tj T*
+(intenções anteriores ao comando de reset; intenções explicitamente posteriores a ele) Tj T*
+(pertencem ao novo mundo. Q ainda mantido no EDT não produz uma nova intenção) Tj T*
+(automaticamente após R.) Tj T*
+() Tj T*
+(DebugInput foi inspecionado e não precisou ser modificado: a skill usa um comando) Tj T*
+(separado do estado WASD/E/Espaço. Seus construtores anteriores permanecem compatíveis.) Tj T*
+() Tj T*
+(## Ordem da simulação e feedback) Tj T*
+() Tj T*
+() Tj T*
+(Spirit Gate - TASK-004 - página 2/5) Tj T*
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 3466 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(No começo do tick, os cooldowns e efeitos anteriores são atualizados. CryostasisService) Tj T*
+(avança as zonas existentes e devolve danos já aplicados pelo CombatService. Depois, se o) Tj T*
+(jogador estiver vivo, ocorrem regeneração, movimento e ataque básico na ordem anterior,) Tj T*
+(seguidos dos comandos de skill, IA dos mobs e esforço E. Assim, Q tem prioridade sobre E) Tj T*
+(no mesmo lote para uso do saldo disponível.) Tj T*
+() Tj T*
+(As zonas novas recebem pulso imediato e só envelhecem a partir do próximo tick. A) Tj T*
+(regeneração continua sendo uma por tick, nunca por comando. Os eventos de morte) Tj T*
+(existentes incrementam defeated; os resultados de dano viram os mesmos EffectView usados) Tj T*
+(pelos números flutuantes. O coordenador preserva a mensagem de derrota do mob ao receber) Tj T*
+(um resultado letal.) Tj T*
+() Tj T*
+(DebugSnapshot publica cryostasisCooldown e uma lista imutável de IceZoneView com centro,) Tj T*
+(raio, tempo e duração. DebugPanel desenha preenchimento azul-claro, borda com marcas de) Tj T*
+(gelo e pulsação discreta baseada no tempo publicado, sem mutação do mundo. O rodapé foi) Tj T*
+(ampliado em 32 pixels para o atalho Q e o cooldown sem sobrepor as informações antigas.) Tj T*
+(WASD, Espaço, E, H e R foram mantidos.) Tj T*
+() Tj T*
+(## Testes executados) Tj T*
+() Tj T*
+(Comando final na pasta server: mvn clean test. Resultado real: BUILD SUCCESS, 73 testes,) Tj T*
+(zero falhas, zero erros e zero ignorados; compilação com release 17.) Tj T*
+() Tj T*
+(CryostasisServiceTest: 13 testes novos. Verificam lançamento válido, custo 55, dano) Tj T*
+(imediato, vigor insuficiente, cooldown e liberação, clamp exato e diagonal, ID inválido,) Tj T*
+(NaN, infinitos, mouse fora da arena, jogador morto, cinco pulsos sem sexto, delta de 30) Tj T*
+(Hz, passos grandes, entrada/saída, tangência, deduplicação, cadáveres, evento de morte) Tj T*
+(pelo CombatService, afinidade neutra, ordem do enum e zona fixa após movimento/morte do) Tj T*
+(lançador.) Tj T*
+() Tj T*
+(CryostasisIntegrationTest: 7 testes novos. Verificam publicação de zona e dano, vigor e) Tj T*
+(ataque preservados, comandos inválidos/cooldown, paredes, expiração, runtime real e) Tj T*
+(reinício sem estado pendente, fila de skills, mouse e Q no EDT, toque rápido, tecla) Tj T*
+(mantida mesmo após liberar cooldown e captura renderizada sem gameplay no painel.) Tj T*
+() Tj T*
+(Os 53 testes anteriores continuam aprovados. MovementReplayTest não foi alterado, seus) Tj T*
+(três baselines não foram recalculados, e a projeção anterior continua verificando 1.800) Tj T*
+(ticks. Os novos campos do snapshot ficam fora dessa projeção por não pertencerem ao) Tj T*
+(estado legado. Movimento, colisões, corte, dano básico e vigor mantêm suas asserções) Tj T*
+(anteriores.) Tj T*
+() Tj T*
+(Os testes usam fixtures que configuram HP para cenários de morte; somente a preparação) Tj T*
+(dos testes modifica esse HP diretamente. A implementação da habilidade usa) Tj T*
+(exclusivamente CombatService para dano.) Tj T*
+() Tj T*
+(Resultados por classe: TASK-004-testes.txt. Captura: TASK-004-criostase.png, gerada pelo) Tj T*
+(teste e inspecionada. A imagem mostra zona ativa sobre um mob, número de dano, vigor) Tj T*
+(45/100 e recarga 3,0 s. Não houve sessão interativa com JFrame; testes do mouse e do) Tj T*
+(teclado usam o EDT com a thread real de simulação.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-004 - página 3/5) Tj T*
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 11 0 R >>
+endobj
+11 0 obj
+<< /Length 2665 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+() Tj T*
+(## Arquivos novos e alterados) Tj T*
+() Tj T*
+(Novos, sob server/src/main/java/com/projetok/domain/skill/:) Tj T*
+(- SkillCastCommand.java.) Tj T*
+(- CryostasisAttacker.java.) Tj T*
+(- CryostasisZone.java.) Tj T*
+(- CryostasisService.java.) Tj T*
+() Tj T*
+(Alterados, sob server/src/main/java/com/projetok/:) Tj T*
+(- domain/race/DamageType.java: ICE ao final.) Tj T*
+(- prototype/DebugCommandBuffer.java: comandos de skill no lote e limpeza em R.) Tj T*
+(- prototype/DebugRuntime.java: transporte de SkillCastCommand.) Tj T*
+(- prototype/DebugLauncher.java: Q e captura do mouse.) Tj T*
+(- prototype/DebugWorld.java: elegibilidade, avanço e publicação de resultados.) Tj T*
+(- prototype/DebugSnapshot.java: cooldown e zonas por valor.) Tj T*
+(- prototype/DebugPanel.java: gelo, pulsação e indicador.) Tj T*
+() Tj T*
+(Novos testes, sob server/src/test/java/com/projetok/:) Tj T*
+(- domain/skill/CryostasisServiceTest.java.) Tj T*
+(- prototype/CryostasisIntegrationTest.java.) Tj T*
+() Tj T*
+(Documentação e ferramentas:) Tj T*
+(- README-PROTOTIPO.md e docs/HISTORICO-TECNICO.md.) Tj T*
+(- docs/TASK-004.md, docs/TASK-004-testes.txt, docs/TASK-004.diff.) Tj T*
+(- docs/Spirit_Gate_TASK-004.pdf e docs/TASK-004-criostase.png.) Tj T*
+(- tools/gerar_pdf_task004.py.) Tj T*
+() Tj T*
+(O diff textual é relativo ao estado anterior a esta tarefa, capturado antes de editar.) Tj T*
+(Não inclui server/target, binários, segredos ou a si próprio recursivamente. A captura) Tj T*
+(final e o PDF são entregues separadamente, como artefatos de documentação. Não houve) Tj T*
+(commit ou branch porque a pasta não possui checkout Git acessível.) Tj T*
+() Tj T*
+(## Trade-offs e limites) Tj T*
+() Tj T*
+(O serviço é específico e mantém estado por lançador; não é um framework de habilidades.) Tj T*
+(O mundo cria sua própria instância. A lista de zonas foi mantida para representação e) Tj T*
+(ciclo de vida claros, embora cooldown de 3 s e duração de 2,5 s impeçam sobreposição de) Tj T*
+(lançamentos normais deste jogador.) Tj T*
+() Tj T*
+(Os parâmetros são os solicitados para o protótipo. Não há modificadores de stats no) Tj T*
+(adaptador nem redefinição de afinidades raciais. Não foram adicionados congelamento,) Tj T*
+(lentidão, status genéricos, PvP, multiplayer ou segunda habilidade. Movimento, colisões) Tj T*
+(e sua varredura opcional não foram alterados.) Tj T*
+() Tj T*
+(## Reprodução e revisão) Tj T*
+() Tj T*
+(Na pasta server: mvn clean test. Na pasta Projeto-K: python -B) Tj T*
+(tools/gerar_pdf_task004.py para regenerar o PDF. Para validar manualmente, execute) Tj T*
+() Tj T*
+(Spirit Gate - TASK-004 - página 4/5) Tj T*
+ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 13 0 R >>
+endobj
+13 0 obj
+<< /Length 439 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(rodar-prototipo.cmd, aponte dentro da arena e pressione Q. Observe custo e pulsos, mova-) Tj T*
+(se para confirmar centro fixo, aponte longe para ver o clamp, segure Q além de 3 s para) Tj T*
+(confirmar ausência de repetição e use R para limpar o estado.) Tj T*
+() Tj T*
+(Entrega concluída para revisão técnica. Nenhuma próxima task foi iniciada.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-004 - página 5/5) Tj T*
+ET
+endstream
+endobj
+xref
+0 14
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000147 00000 n 
+0000000244 00000 n 
+0000000370 00000 n 
+0000003542 00000 n 
+0000003668 00000 n 
+0000006847 00000 n 
+0000006973 00000 n 
+0000010491 00000 n 
+0000010619 00000 n 
+0000013337 00000 n 
+0000013465 00000 n 
+trailer
+<< /Size 14 /Root 1 0 R >>
+startxref
+13956
+%%EOF

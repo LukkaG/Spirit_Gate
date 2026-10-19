@@ -1,0 +1,168 @@
+--- /dev/null
++++ b/docs/TASK-043-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 251,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-043.md
+@@ -0,0 +1,5 @@
++# TASK-043 - Inventario transacional
++
++20 slots por personagem; capacidade configuravel no servico ate 100. Pilhas maximas por catalogo, aquisicao/remocao, transferencia e separacao por quantidade. Adicao prepara copia antes de commit; remocao valida saldo total antes de alterar. Erros nao perdem nem duplicam itens. Snapshots imutaveis preservam indices dos slots no save, inclusive pilhas separadas.
++
++Personagem inicia com tres pocoes. Save/restauracao agora integram inventario real e preservam os demais campos. Testes de cheio, rollback, quantidade zero, item inexistente, pilha, transferencia e round-trip do mundo; suite inteira executada.
+--- /dev/null
++++ b/server/src/main/java/com/projetok/rpg/InventoryService.java
+@@ -0,0 +1,61 @@
++package com.projetok.rpg;
++import java.util.*;
++
++/** Transacoes sobre copias: falha nunca altera o inventario publicado. */
++public final class InventoryService {
++    public record Stack(String id,int quantity) { }
++    private final ItemCatalog catalog;
++    private final Stack[] slots;
++    public InventoryService(ItemCatalog catalog,int capacity) {
++        if(capacity<1||capacity>100) throw new IllegalArgumentException("Capacidade invalida");
++        this.catalog=catalog; slots=new Stack[capacity];
++    }
++    public int capacity() { return slots.length; }
++    public List<Stack> slots() { return Collections.unmodifiableList(Arrays.asList(slots.clone())); }
++    public int count(String id) { catalog.get(id); return Arrays.stream(slots).filter(Objects::nonNull).filter(s->s.id().equals(id)).mapToInt(Stack::quantity).sum(); }
++    public boolean add(String id,int amount) {
++        validate(id,amount); Stack[] copy=slots.clone(); int remaining=amount,max=catalog.get(id).maxStack();
++        for(int i=0;i<copy.length && remaining>0;i++) if(copy[i]!=null && copy[i].id().equals(id)) {
++            int n=Math.min(remaining,max-copy[i].quantity()); copy[i]=new Stack(id,copy[i].quantity()+n); remaining-=n;
++        }
++        for(int i=0;i<copy.length && remaining>0;i++) if(copy[i]==null) {
++            int n=Math.min(remaining,max); copy[i]=new Stack(id,n); remaining-=n;
++        }
++        if(remaining>0) return false; System.arraycopy(copy,0,slots,0,slots.length); return true;
++    }
++    public boolean remove(String id,int amount) {
++        validate(id,amount); if(count(id)<amount) return false; int remaining=amount;
++        for(int i=0;i<slots.length && remaining>0;i++) if(slots[i]!=null && slots[i].id().equals(id)) {
++            int n=Math.min(remaining,slots[i].quantity()),left=slots[i].quantity()-n;
++            slots[i]=left==0?null:new Stack(id,left); remaining-=n;
++        }
++        return true;
++    }
++    public boolean move(int from,int to,int amount) {
++        index(from);index(to); if(amount<1||from==to||slots[from]==null||slots[from].quantity()<amount) return false;
++        Stack a=slots[from],b=slots[to];
++        if(b!=null && (!b.id().equals(a.id()) || b.quantity()+amount>catalog.get(a.id()).maxStack())) return false;
++        slots[to]=new Stack(a.id(),amount+(b==null?0:b.quantity()));
++        slots[from]=a.quantity()==amount?null:new Stack(a.id(),a.quantity()-amount); return true;
++    }
++    private void index(int i) { if(i<0||i>=slots.length) throw new IllegalArgumentException("Slot inexistente"); }
++    private void validate(String id,int n) { catalog.get(id); if(n<1||n>9999) throw new IllegalArgumentException("Quantidade invalida"); }
++    public Map<String,Integer> snapshot() {
++        Map<String,Integer> result=new TreeMap<>(); for(int i=0;i<slots.length;i++) if(slots[i]!=null) result.put(i+":"+slots[i].id(),slots[i].quantity()); return Map.copyOf(result);
++    }
++    public InventoryService copy() { return restore(catalog,slots.length,snapshot()); }
++    public void replace(InventoryService other) {
++        if(other.capacity()!=capacity()) throw new IllegalArgumentException("Capacidades diferentes");
++        System.arraycopy(other.slots,0,slots,0,slots.length);
++    }
++    public static InventoryService restore(ItemCatalog catalog,int capacity,Map<String,Integer> data) {
++        InventoryService result=new InventoryService(catalog,capacity);
++        for(var entry:data.entrySet()) {
++            String[] key=entry.getKey().split(":",-1); if(key.length!=2) throw new IllegalArgumentException("Slot persistente invalido");
++            int slot=Integer.parseInt(key[0]); result.index(slot); int n=entry.getValue();
++            if(result.slots[slot]!=null||n<1||n>catalog.get(key[1]).maxStack()) throw new IllegalArgumentException("Pilha persistente invalida");
++            result.slots[slot]=new Stack(key[1],n);
++        }
++        return result;
++    }
++}
+--- a/server/src/main/java/com/projetok/rpg/RpgSave.java
++++ b/server/src/main/java/com/projetok/rpg/RpgSave.java
+@@ -14,7 +14,7 @@
+                 || xp<0 || xp>1_000_000 || coins<0 || coins>1_000_000 || ticks<0 || ticks>1_000_000_000L
+                 || inventory.size()>100 || equipment.size()>8 || quests.size()>64 || flags.size()>2048)
+             throw new IllegalArgumentException("Save fora dos limites");
+-        inventory.forEach((id,q)->{ content.get("item",id); if(q<1||q>9999) throw new IllegalArgumentException("Quantidade invalida"); });
++        InventoryService.restore(new ItemCatalog(content),20,inventory);
+         equipment.forEach((slot,id)->{ if(!Set.of("weapon","torso","legs","accessory").contains(slot)) throw new IllegalArgumentException("Slot invalido"); content.get("item",id); });
+         quests.forEach((id,q)->{ content.get("quest",id); if(q<0||q>10000) throw new IllegalArgumentException("Quest invalida"); });
+         for(String flag:flags) if(!flag.matches("[a-zA-Z0-9_:.-]{1,100}")) throw new IllegalArgumentException("Flag invalida");
+--- a/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -10,22 +10,35 @@
+ public final class RpgWorld {
+     private final CharacterIdentity identity;
+     private final RpgContent content = RpgContent.builtin();
++    private final ItemCatalog items = new ItemCatalog(content);
++    private final InventoryService inventory = new InventoryService(items,20);
++    private int hp,coins;
++    private long xp;
++    private String region="village";
++    private final java.util.Map<String,String> equipment=new java.util.TreeMap<>();
++    private final java.util.Map<String,Integer> quests=new java.util.TreeMap<>();
++    private final java.util.Set<String> flags=new java.util.TreeSet<>();
++    public InventoryService inventory() { return inventory; }
+     private final GameEntity body;
+     public RpgWorld() { this(CharacterIdentity.create("Viajante", "guardian", "azure")); }
+     public RpgWorld(CharacterIdentity identity) {
+         this.identity = java.util.Objects.requireNonNull(identity);
+         content.get("region", identity.initialRegion());
+         body = new GameEntity(1, identity.name(), new Position(140, 320)) { };
++        hp=identity.baseHp(); inventory.add("potion",3);
+     }
+     private final MovementService movement = new MovementService(new CollisionService());
+     private final CollisionService.Space space = new CollisionService.Space(960, 640,
+             List.of(new CollisionService.Obstacle(380, 180, 120, 120)), List.of());
+     private long ticks;
+-    public RpgSave save() { return new RpgSave(identity, "village",body.getPosition().x(),body.getPosition().y(),identity.baseHp(),0,0,java.util.Map.of(),java.util.Map.of(),java.util.Map.of(),java.util.Set.of(),ticks); }
++    public RpgSave save() { return new RpgSave(identity,region,body.getPosition().x(),body.getPosition().y(),hp,xp,coins,inventory.snapshot(),equipment,quests,flags,ticks); }
+     public static RpgWorld restore(RpgSave state) {
+         RpgWorld world=new RpgWorld(state.identity());
+         if(!new CollisionService().isFree(world.body,state.x(),state.y(),18,world.space)) throw new IllegalArgumentException("Posicao de save obstruida");
+-        world.body.setPosition(new Position(state.x(),state.y())); world.ticks=state.ticks(); return world;
++        world.body.setPosition(new Position(state.x(),state.y())); world.ticks=state.ticks();
++        world.inventory.replace(InventoryService.restore(world.items,20,state.inventory()));
++        world.hp=state.hp(); world.xp=state.xp(); world.coins=state.coins(); world.region=state.region();
++        world.equipment.putAll(state.equipment()); world.quests.putAll(state.quests()); world.flags.addAll(state.flags()); return world;
+     }
+     public record View(float x, float y, long ticks, CharacterIdentity identity) { }
+     public void tick(float x, float y) {
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/InventoryServiceTest.java
+@@ -0,0 +1,19 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class InventoryServiceTest {
++    @Test void stacksSplitTransferAndRollbackWithoutLoss() {
++        var catalog=new ItemCatalog(RpgContent.builtin()); var inv=new InventoryService(catalog,2);
++        assertTrue(inv.add("potion",11)); assertEquals(11,inv.count("potion"));
++        var before=inv.snapshot(); assertFalse(inv.add("sword",1)); assertEquals(before,inv.snapshot());
++        assertFalse(inv.remove("potion",12)); assertEquals(before,inv.snapshot());
++        assertTrue(inv.move(0,1,4)); assertEquals(11,inv.count("potion"));
++        assertEquals(inv.snapshot(),InventoryService.restore(catalog,2,inv.snapshot()).snapshot());
++        assertThrows(IllegalArgumentException.class,()->inv.add("potion",0));
++        assertThrows(IllegalArgumentException.class,()->inv.add("absent",1));
++    }
++    @Test void worldInventorySurvivesSave() throws Exception {
++        RpgWorld world=new RpgWorld(); world.inventory().add("sword",1); world.inventory().move(0,4,1);
++        assertEquals(world.save(),RpgWorld.restore(LocalSaveStore.decode(LocalSaveStore.encode(world.save()))).save());
++    }
++}

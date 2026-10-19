@@ -1,0 +1,47 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 797 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-055 - Objetivos e recompensas) Tj T*
+() Tj T*
+(quests.properties define objetivos kill/collect/talk/visit e recompensas) Tj T*
+(XP/moedas/itens. Eventos de derrota possuem origem e geracao, ledger rejeita repeticao.) Tj T*
+(Coleta consulta posse real; itens exigidos sao consumidos na entrega. Visita e conversa) Tj T*
+(registradas pela simulacao.) Tj T*
+() Tj T*
+(Entrega valida copia do inventario antes de conceder itens/moedas/XP e marcar conclusao.) Tj T*
+(Cheio recusa sem recompensa parcial. Primeira quest: dois ecos, 80 XP, 45 moedas e duas) Tj T*
+(pocoes. Santuario: chefe, reliquia, visita e conversa. Testes de evento duplicado,) Tj T*
+(recompensa unica e persistencia; suite completa.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-055 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1192
+%%EOF

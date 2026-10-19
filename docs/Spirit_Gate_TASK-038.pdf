@@ -1,0 +1,50 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 972 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-038 - Entrada offline independente) Tj T*
+() Tj T*
+(RpgLauncher inicia o modo RPG; DebugLauncher continua iniciando a arena historica.) Tj T*
+(Runtime proprio com ciclo explicito, thread unica, snapshots imutaveis e encerramento) Tj T*
+(idempotente. Movimento/colisao reutilizam MovementService/CollisionService. A) Tj T*
+(apresentacao reutiliza integralmente DebugPanel e sua camera, sem um segundo renderer.) Tj T*
+() Tj T*
+(Entrada: java -cp server/target/classes com.projetok.prototype.rpg.RpgLauncher. Neste) Tj T*
+(primeiro incremento o mundo contem apenas um personagem provisÛrio e obstaculo de teste;) Tj T*
+(identidade e conteudo seguem nas proximas tarefas. Nenhuma alegacao de ciclo RPG) Tj T*
+(completo nesta etapa.) Tj T*
+() Tj T*
+(Testes: limites do mundo, entrada nao finita e suite completa Java/Python. UI real sera) Tj T*
+(verificada no marco integrado.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-038 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1367
+%%EOF

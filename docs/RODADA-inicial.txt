@@ -1,0 +1,4 @@
+Base TASK-006.1 confirmada: mvn clean test, BUILD SUCCESS, 170 tests, 0 failures/errors/skipped.
+Windows 10 amd64; Temurin 17.0.20.1+1; Maven 3.10.0; jpackage 17.0.20.1.
+Teste devePreservarBloqueioDeParedeNoDashSeletivo presente e aprovado.
+Sem repositorio Git: checkpoints locais e diffs por etapa.

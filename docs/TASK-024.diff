@@ -1,0 +1,275 @@
+--- /dev/null
++++ b/docs/TASK-024-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 226,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 22
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-024.md
+@@ -0,0 +1,32 @@
++# TASK-024 - Mapas V2 ampliados
++
++Objetivo: aceitar mapas maiores preservando V1, colisões e reinício.
++Base aprovada: TASK-023, 223 JUnit e 22 Python. Situação: ver evidências finais
++TASK-024-qualidade.json e TASK-024-testes.txt, que são a autoridade de aprovação.
++
++Diagnóstico: LocalArenaMap limitava dimensões ao demo; mundo, Criostase e painel
++usavam constantes. ArenaViewport já calculava câmera para mundo maior.
++Decisão: constantes históricas continuam definindo o canvas e o mapa padrão;
++dimensões do mapa governam Space, alvo da Criostase, câmera e desenho do mundo.
++DebugRuntime já usa fábrica no reinício e não precisou ser substituído.
++
++Implementação: schema 1 permanece estritamente 960x640; schema 2 reservado a mapas
++ampliados, mínimo 960x640 e máximo 8192x8192. Isso impede que apenas trocar a
++versão de um mapa histórico valide silenciosamente outro contrato. Máximo 4096
++visuais e 4096 físicos, também no construtor. Spawn, borda, finitude, IDs,
++categorias e sobreposições continuam validados. Memória visual depende de tiles
++32x32 por objeto, não de uma imagem com toda a área do mundo.
++
++Arquivos: LocalArenaMap.java, DebugWorld.java, DebugPanel.java e LargeMapTest.java.
++Testes novos: V2 1920x1280, V1 ampliado inválido, limite excessivo, NaN, contagem,
++dash versus sólido em posição além da arena histórica, câmera e R determinístico.
++Suíte completa: 226 JUnit e 22 Python aprovados na primeira execução; a repetição
++após corrigir também o clipping do ataque está registrada nos mesmos logs finais.
++Nenhuma fórmula de combate, custo, duração, FIFO ou expectativa histórica alterada.
++
++Reprodução: python tools/qualidade.py --offline --task 024
++Checkpoint inicial .task-checkpoints/TASK-024-before.json; diff e checkpoint final
++gerados somente depois da validação. Retomada: TASK-025.
++Limites: mobs mantêm seus três spawns históricos; não foi introduzida autoria
++de entidades. Sem arte final ou homologação humana. O render ainda percorre todos
++os objetos; otimização de culling pertence à próxima tarefa.
+--- a/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ b/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -29,6 +29,7 @@
+     private ValidatedSpriteAtlas spriteAtlas;
+     private LocalArenaMap.Renderer mapRenderer;
+     private int cameraZoom=1;
++    private int worldWidth=DebugWorld.WIDTH, worldHeight=DebugWorld.HEIGHT;
+ 
+     /** Zoom inteiro opcional; padrao preserva coordenadas historicas. */
+     public void setCameraZoom(int zoom) {
+@@ -39,7 +40,7 @@
+         var player=snapshot.actors().stream().filter(DebugSnapshot.ActorView::player).findFirst();
+         double x=player.map(a->(double)a.x()).orElse(480d),y=player.map(a->(double)a.y()).orElse(320d);
+         return ArenaViewport.fit(getWidth()>0?getWidth():PANEL_WIDTH,getHeight()>0?getHeight():PANEL_HEIGHT,
+-                DebugWorld.WIDTH,DebugWorld.HEIGHT,x,y,cameraZoom);
++                worldWidth,worldHeight,x,y,cameraZoom);
+     }
+     /** Conversao no instante do comando evita mira obsoleta se a camera se moveu. */
+     java.awt.geom.Point2D.Double aimAt(float x,float y) {
+@@ -48,7 +49,11 @@
+     }
+ 
+     /** Seletor visual opcional de demonstracao, sem modificar o mundo a partir da imagem. */
+-    public void setLocalMap(LocalArenaMap map) { mapRenderer = map == null ? null : map.renderer(); }
++    public void setLocalMap(LocalArenaMap map) {
++        mapRenderer = map == null ? null : map.renderer();
++        worldWidth = map == null ? DebugWorld.WIDTH : map.width();
++        worldHeight = map == null ? DebugWorld.HEIGHT : map.height();
++    }
+ 
+     /** Ativa somente um atlas ja validado; null mantem a geometria original. */
+     public void setPresentation(Supplier<DirectionalAnimation.Presentation> source, ValidatedSpriteAtlas atlas) {
+@@ -137,7 +142,7 @@
+     private void drawLightningTrails(Graphics2D original, DebugSnapshot snapshot) {
+         Graphics2D g = (Graphics2D) original.create();
+         try {
+-            g.clipRect(0, 0, DebugWorld.WIDTH, DebugWorld.HEIGHT);
++            g.clipRect(0, 0, worldWidth, worldHeight);
+             for (var trail : snapshot.lightningTrails()) {
+                 float alpha = Math.max(0, Math.min(1, trail.remaining() / trail.duration()));
+                 double dx = trail.x1() - trail.x0(), dy = trail.y1() - trail.y0();
+@@ -165,7 +170,7 @@
+     private void drawIceZones(Graphics2D original, DebugSnapshot snapshot) {
+         Graphics2D g = (Graphics2D) original.create();
+         try {
+-            g.clipRect(0, 0, DebugWorld.WIDTH, DebugWorld.HEIGHT);
++            g.clipRect(0, 0, worldWidth, worldHeight);
+             for (var zone : snapshot.iceZones()) {
+                 float r = zone.radius(), x = zone.x(), y = zone.y();
+                 float pulse = (float) (0.5 + 0.5 * Math.cos(zone.elapsed() * Math.PI * 4));
+@@ -192,23 +197,23 @@
+     /** Pinta solo, grade de referência e bordas da arena. */
+     private void drawWorld(Graphics2D g) {
+         g.setPaint(new GradientPaint(0, 0, new Color(27, 54, 63),
+-                DebugWorld.WIDTH, DebugWorld.HEIGHT, new Color(12, 39, 52)));
+-        g.fillRect(0, 0, DebugWorld.WIDTH, DebugWorld.HEIGHT);
++                worldWidth, worldHeight, new Color(12, 39, 52)));
++        g.fillRect(0, 0, worldWidth, worldHeight);
+         g.setColor(new Color(255, 255, 255, 12));
+-        for (int x = 0; x <= DebugWorld.WIDTH; x += 40) g.drawLine(x, 0, x, DebugWorld.HEIGHT);
+-        for (int y = 0; y <= DebugWorld.HEIGHT; y += 40) g.drawLine(0, y, DebugWorld.WIDTH, y);
++        for (int x = 0; x <= worldWidth; x += 40) g.drawLine(x, 0, x, worldHeight);
++        for (int y = 0; y <= worldHeight; y += 40) g.drawLine(0, y, worldWidth, y);
+         // Lâminas de grama decorativas, sem colisão: os obstáculos sólidos ficam explícitos.
+         g.setStroke(new BasicStroke(2f));
+         g.setColor(new Color(61, 126, 118, 90));
+-        for (int x = 28; x < DebugWorld.WIDTH; x += 77) {
+-            for (int y = 32; y < DebugWorld.HEIGHT; y += 89) {
++        for (int x = 28; x < worldWidth; x += 77) {
++            for (int y = 32; y < worldHeight; y += 89) {
+                 g.drawLine(x, y, x - 4, y - 7);
+                 g.drawLine(x, y, x + 4, y - 6);
+             }
+         }
+         g.setColor(new Color(98, 183, 176));
+         g.setStroke(new BasicStroke(4f));
+-        g.drawRect(1, 1, DebugWorld.WIDTH - 2, DebugWorld.HEIGHT - 2);
++        g.drawRect(1, 1, worldWidth - 2, worldHeight - 2);
+     }
+ 
+     /** Desenha pedras/paredes e destaca suas bordas sólidas no modo de inspeção. */
+@@ -358,7 +363,7 @@
+         if (attack == null) return;
+         Graphics2D g = (Graphics2D) original.create();
+         try {
+-            g.clipRect(0, 0, DebugWorld.WIDTH, DebugWorld.HEIGHT);
++            g.clipRect(0, 0, worldWidth, worldHeight);
+             g.translate(attack.x(), attack.y());
+             g.rotate(Math.atan2(attack.facingY(), attack.facingX()));
+             float progress = 1f - attack.remaining() / DebugWorld.ATTACK_DURATION;
+--- a/server/src/main/java/com/projetok/prototype/DebugWorld.java
++++ b/server/src/main/java/com/projetok/prototype/DebugWorld.java
+@@ -47,6 +47,11 @@
+ 
+     public static final int WIDTH = 960;
+     public static final int HEIGHT = 640;
++    private final int worldWidth, worldHeight;
++
++    /** Dimensões físicas do mapa atual; as constantes conservam o cenário histórico. */
++    public int worldWidth() { return worldWidth; }
++    public int worldHeight() { return worldHeight; }
+     public static final float PLAYER_RADIUS = 18f;
+     public static final float MOB_RADIUS = 19f;
+     public static final float WALK_SPEED = 215f;
+@@ -144,6 +149,8 @@
+     }
+ 
+     private DebugWorld(RandomGenerator random, MovementService.Response response, boolean demo, LocalArenaMap map) {
++        worldWidth = map == null ? WIDTH : map.width();
++        worldHeight = map == null ? HEIGHT : map.height();
+         softObstacles = map == null ? (demo ? DEMO_OBSTACLES : List.of()) : map.physical().stream()
+                 .filter(p -> p.category() == CollisionCategory.SOFT_OBSTACLE)
+                 .map(p -> new DemoObstacle(new CollisionService.Obstacle(p.x(),p.y(),p.width(),p.height(),p.category()),p.kind())).toList();
+@@ -175,7 +182,7 @@
+         List<CollisionService.Body> bodies = new ArrayList<>();
+         bodies.add(new CollisionService.Body(player, PLAYER_RADIUS));
+         for (Mob mob : mobs) bodies.add(new CollisionService.Body(mob, MOB_RADIUS));
+-        collisionSpace = new CollisionService.Space(WIDTH, HEIGHT, obstacles, bodies,
++        collisionSpace = new CollisionService.Space(worldWidth, worldHeight, obstacles, bodies,
+                 new SpatialBodyIndex(bodies, 96f));
+         events.subscribe(EntityDeathEvent.class, event -> {
+             if (event.entity() == player) {
+@@ -262,7 +269,7 @@
+                 };
+                 continue;
+             }
+-            var result = cryostasis.cast(player, command, WIDTH, HEIGHT, cryostasisTargets());
++            var result = cryostasis.cast(player, command, worldWidth, worldHeight, cryostasisTargets());
+             cryostasisFeedback = SkillHudMapper.feedback(result.status(), SKILL_FEEDBACK_DURATION);
+             lastEvent = switch (result.status()) {
+                 case CAST -> "Criostase lancada: zona de gelo ativa.";
+--- a/server/src/main/java/com/projetok/prototype/LocalArenaMap.java
++++ b/server/src/main/java/com/projetok/prototype/LocalArenaMap.java
+@@ -26,7 +26,9 @@
+ 
+     public LocalArenaMap {
+         visuals=List.copyOf(visuals);physical=List.copyOf(physical);
+-        if(width!=DebugWorld.WIDTH || height!=DebugWorld.HEIGHT) throw new IllegalArgumentException("Limites devem preservar arena 960x640");
++        if(width<DebugWorld.WIDTH || height<DebugWorld.HEIGHT || width>8192 || height>8192)
++            throw new IllegalArgumentException("Limites do mundo: 960x640 ate 8192x8192");
++        if(visuals.size()>4096 || physical.size()>4096) throw new IllegalArgumentException("Contagem excessiva");
+         Set<String> ids=new HashSet<>();
+         for(var v:visuals) {
+             if(v.id()==null || v.id().isBlank() || !ids.add(v.id())) throw new IllegalArgumentException("ID visual duplicado/vazio");
+@@ -77,8 +79,11 @@
+         };
+         try(var reader=Files.newBufferedReader(path)) {p.load(reader);}
+         try {
+-            if(!"1".equals(p.remove("schemaVersion"))) throw new IllegalArgumentException("Schema desconhecido");
++            String version=(String)p.remove("schemaVersion");
++            if(!"1".equals(version) && !"2".equals(version)) throw new IllegalArgumentException("Schema desconhecido");
+             int w=integer(p,"width"),h=integer(p,"height");
++            if("1".equals(version) && (w!=960 || h!=640)) throw new IllegalArgumentException("V1 exige 960x640");
++            if("2".equals(version) && w==960 && h==640) throw new IllegalArgumentException("V2 reservado a mapas ampliados; use V1 para 960x640");
+             float sx=number(p,"spawnX"),sy=number(p,"spawnY");
+             int nv=count(p,"visual.count"),np=count(p,"physical.count");
+             List<Visual> visuals=new ArrayList<>();List<Physical> physical=new ArrayList<>();
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/LargeMapTest.java
+@@ -0,0 +1,57 @@
++package com.projetok.prototype;
++
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.util.List;
++import java.util.Random;
++import com.projetok.domain.skill.SkillCastCommand;
++import com.projetok.domain.skill.LightningStepService;
++import com.projetok.domain.movement.CollisionCategory;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import static org.junit.jupiter.api.Assertions.*;
++
++class LargeMapTest {
++    @TempDir Path temp;
++    static LocalArenaMap large() {
++        return new LocalArenaMap(1920,1280,1500,1000,List.of(),List.of(
++                new LocalArenaMap.Physical("boundary",0,0,1920,1280,CollisionCategory.WORLD_BOUNDARY,null),
++                new LocalArenaMap.Physical("solid",1650,900,32,200,CollisionCategory.SOLID_OBSTACLE,null),
++                new LocalArenaMap.Physical("soft",1450,900,32,32,CollisionCategory.SOFT_OBSTACLE,DebugSnapshot.SoftObstacleKind.BUSH)));
++    }
++    @Test void v2LoadsAndV1RemainsStrict() throws Exception {
++        String original=Files.readString(Path.of("../docs/mapa-demo.properties"));
++        String v2=original.replace("schemaVersion=1","schemaVersion=2").replace("width=960","width=1920").replace("height=640","height=1280");
++        Path path=temp.resolve("large.properties");Files.writeString(path,v2);
++        assertEquals(1920,LocalArenaMap.load(path).width());
++        Files.writeString(path,v2.replace("schemaVersion=2","schemaVersion=1"));
++        assertThrows(java.io.IOException.class,()->LocalArenaMap.load(path));
++        Files.writeString(path,v2.replace("width=1920","width=999999"));
++        assertThrows(java.io.IOException.class,()->LocalArenaMap.load(path));
++    }
++    @Test void movementDashCollisionCameraAndRestartUseExpandedWorld() {
++        var map=large();var world=DebugWorld.forMap(map,new Random(2));
++        assertEquals(1920,world.worldWidth());assertEquals(1280,world.worldHeight());
++        world.tickQueued(DebugInput.NONE,1f/30f,0,List.of(new SkillCastCommand(LightningStepService.ID,1800,1000)));
++        for(int i=0;i<20;i++)world.tick(DebugInput.NONE,1f/30f);
++        var player=world.snapshot().actors().get(0);
++        assertTrue(player.x()>1500 && player.x()<=1650-player.radius());
++        var panel=new DebugPanel(world::snapshot);panel.setLocalMap(map);
++        var view=panel.viewport(world.snapshot());assertTrue(view.originX()>0);assertTrue(view.originY()>0);
++        var screen=view.worldToScreen(player.x(),player.y());
++        assertEquals(player.x(),view.screenToWorld(screen.x,screen.y).x,1e-6);
++        try(var a=new DebugRuntime(()->DebugWorld.forMap(map,new Random(2)));var b=new DebugRuntime(()->DebugWorld.forMap(map,new Random(2)))) {
++            a.setInput(new DebugInput(false,true,false,false,false));
++            for(int i=0;i<60;i++)a.advanceOneTick();
++            a.setInput(DebugInput.NONE);a.restart();a.advanceOneTick();b.advanceOneTick();
++            assertEquals(b.presentation(),a.presentation());
++        }
++    }
++    @Test void rejectsNonFiniteSpawnsAndExcessiveObjects() {
++        var map=large();
++        assertThrows(IllegalArgumentException.class,()->new LocalArenaMap(1920,1280,Float.NaN,1000,List.of(),map.physical()));
++        assertThrows(IllegalArgumentException.class,()->new LocalArenaMap(1920,1280,1500,1000,
++                java.util.Collections.nCopies(4097,new LocalArenaMap.Visual("v",0,0,32,32,0,0)),map.physical()));
++        assertThrows(IllegalArgumentException.class,()->new LocalArenaMap(8193,1280,1500,1000,List.of(),map.physical()));
++    }
++}

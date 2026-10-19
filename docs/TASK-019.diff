@@ -1,0 +1,340 @@
+--- /dev/null
++++ b/docs/TASK-019-testes.txt
+@@ -0,0 +1,37 @@
++TASK-019 - mvn clean test - BUILD SUCCESS
++{'tests': 219, 'failures': 0, 'errors': 0, 'skipped': 0}
++Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.
++
++com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.DomainSequenceRegressionTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaSequenceRegressionTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugLauncherEntrypointTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.DirectionalAnimationTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudPrecisionRegressionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudSkillFeedbackTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.prototype.LocalArenaMapTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SoftObstacleDemoTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.VisualPackageTest: tests=3, failures=0, errors=0, skipped=0
+--- /dev/null
++++ b/docs/TASK-019.md
+@@ -0,0 +1,13 @@
++# TASK-019 - Integra??o controlada de pacote visual
++
++18/10/2026. 219 JUnit e 18 Python verdes. Logs TASK-019-java.log e TASK-019-python.log. Nenhuma arte real aprovada.
++
++Loader ValidatedSpriteAtlas preservado e estendido: contrato legado mant?m fallback por frame; pacote versionado v1 exige 59 frames, ID est?vel, tileSize 32, frameSize 64, origem de revis?o, SHA aprovado igual ao arquivo, pivots/offsets v?lidos. Caminho externo e link direto recusados. Metadados ausentes/malformados s?o IOException controlada. loadOptional retorna fallback para aus?ncia/corrup??o. Imagem e recortes carregados somente na inicializa??o; render permanece sem IO.
++
++Launcher procura visual/character.properties ao lado do EXE via jpackage.app-path; em desenvolvimento, relativo ao diret?rio corrente. Manifest ausente mant?m geometria. Pacote opcional ? carregado uma vez ao abrir a janela.
++
++Ferramenta tools/pacote_visual.py reutiliza inspect TASK-013 para staging. Entrada: JSON com packageVersion=1, assetId est?vel e um ?nico assets[] de kind character, incluindo review.origin e approvedSha256. Sa?da estrita: character.png, character.properties e review.json, sem fontes pendentes. Build admite VisualManifest e VisualRoot expl?citos, sem copiar assets indiscriminadamente. Auditor oficial revalida pacote e igualdade da exporta??o, al?m do invent?rio global. Release sem esses argumentos cont?m zero imagens aprovadas e mant?m fallback.
++
++Procedimento futuro: autoria/revis?o TASK-018; aprova??o humana expressa do SHA exato; registrar review.origin e approvedSha256; executar pacote_visual.py RAIZ MANIFEST NOVA_PASTA e revisar resultado; build com -VisualManifest MANIFEST -VisualRoot RAIZ. Altera??o de qualquer pixel exige nova revis?o. N?o usar fixtures como arte de produ??o.
++
++Testes Java: pacote sint?tico completo, carga ?nica ap?s remover fonte, fallback de hash/revis?o/frame/dimens?o/arquivo/pivot/vers?o/origem inv?lidos e caminho do launcher. Testes Python: staging sint?tico com whitelist e ZIP de teste, exclus?o de PNG pendente e recusa de pacotes n?o aprovados. Fixtures ficam exclusivamente nos testes tempor?rios. Fontes art?sticas e gameplay preservados.
+--- a/server/src/main/java/com/projetok/prototype/DebugLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/DebugLauncher.java
+@@ -47,7 +47,7 @@
+                 () -> DebugWorld.forMap(map, java.util.random.RandomGenerator.getDefault()));
+         DebugPanel panel = new DebugPanel(runtime::snapshot);
+         panel.setLocalMap(map);
+-        panel.setPresentation(runtime::presentation, null);
++        panel.setPresentation(runtime::presentation, ValidatedSpriteAtlas.loadOptional(defaultVisualManifest()));
+         JFrame frame = new JFrame("Spirit Gate | Arena de Debug 2D");
+         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+         frame.setContentPane(panel);
+@@ -75,6 +75,14 @@
+     }
+ 
+     // --- Atalhos: Key Bindings funcionam melhor que KeyListener ao trocar foco ---
++
++    /** Pacote portatil resolve a arte junto ao EXE, independente do diretorio corrente. */
++    static java.nio.file.Path defaultVisualManifest() {
++        String launcher = System.getProperty("jpackage.app-path");
++        java.nio.file.Path base = launcher == null ? java.nio.file.Path.of("") :
++                java.nio.file.Path.of(launcher).toAbsolutePath().getParent();
++        return base.resolve("visual/character.properties");
++    }
+ 
+     /** Liga teclas ao estado de entrada; acessível aos testes sem criar JFrame. */
+     static void configureKeys(DebugPanel panel, DebugRuntime runtime, Set<String> held) {
+--- a/server/src/main/java/com/projetok/prototype/ValidatedSpriteAtlas.java
++++ b/server/src/main/java/com/projetok/prototype/ValidatedSpriteAtlas.java
+@@ -27,10 +27,32 @@
+     }
+     /** Recusa status, hash, tamanho ou coordenadas inconsistentes antes de ativar o recurso. */
+     public static ValidatedSpriteAtlas load(Path manifest) throws IOException {
++        try { return loadChecked(manifest); }
++        catch (IllegalArgumentException | NullPointerException error) { throw new IOException("Manifest visual invalido", error); }
++    }
++    /** Ausencia ou corrupcao opcional conserva o fallback, sem IO durante render. */
++    public static ValidatedSpriteAtlas loadOptional(Path manifest) {
++        if (!Files.exists(manifest)) return null;
++        try { return load(manifest); }
++        catch (IOException error) {
++            System.err.println("[Spirit Gate] Pacote visual recusado; usando fallback: " + error.getMessage());
++            return null;
++        }
++    }
++    private static ValidatedSpriteAtlas loadChecked(Path manifest) throws IOException {
+         Properties p=new Properties();
+         try (var reader=Files.newBufferedReader(manifest)) { p.load(reader); }
+         if (!"VALIDADO".equals(p.getProperty("status"))) throw new IOException("Asset sem validacao");
++        boolean versioned=p.getProperty("packageVersion")!=null;
++        if(versioned && (!"1".equals(p.getProperty("packageVersion")) ||
++                !p.getProperty("assetId", "").matches("[a-z][a-z0-9._-]{0,63}") ||
++                !"64".equals(p.getProperty("frameSize")) || !"32".equals(p.getProperty("tileSize")) ||
++                p.getProperty("reviewOrigin", "").isBlank() ||
++                !p.getProperty("sha256", "").equals(p.getProperty("approvedSha256"))))
++            throw new IOException("Contrato versionado ou revisao invalida");
+         Path png=manifest.toAbsolutePath().getParent().resolve(p.getProperty("image")).normalize();
++        if(versioned && (!png.startsWith(manifest.toAbsolutePath().getParent()) || Files.isSymbolicLink(png)))
++            throw new IOException("Caminho visual inseguro");
+         byte[] data=Files.readAllBytes(png);
+         try {
+             String sha=HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(data));
+@@ -43,7 +65,10 @@
+             if (state==DirectionalAnimation.State.FAINT && direction!=DirectionalAnimation.Direction.FRONT) continue;
+             for (int i=0;i<DirectionalAnimation.count(state);i++) {
+                 String key=key(state,direction,i), value=p.getProperty(key);
+-                if (value==null) continue; // frame ausente usa geometria de depuracao.
++                if (value==null) {
++                    if(versioned) throw new IOException("Pacote versionado incompleto");
++                    continue; // contrato legado admite fallback por frame.
++                }
+                 String[] parts=value.split(",");
+                 if(parts.length!=4) throw new IOException("Recorte invalido");
+                 int[] r=new int[4];
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/VisualPackageTest.java
+@@ -0,0 +1,57 @@
++package com.projetok.prototype;
++
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import java.nio.file.*;
++import java.util.*;
++import java.security.MessageDigest;
++import java.awt.image.BufferedImage;
++import javax.imageio.ImageIO;
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Somente dados sinteticos: nenhuma aprovacao de arte real. */
++class VisualPackageTest {
++    @TempDir Path temp;
++    private Path fixture() throws Exception {
++        var image=new BufferedImage(512,512,BufferedImage.TYPE_INT_ARGB);
++        Path png=temp.resolve("synthetic.png");ImageIO.write(image,"png",png.toFile());
++        String sha=HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(png)));
++        var p=new Properties();
++        for(String[] pair:new String[][]{{"status","VALIDADO"},{"packageVersion","1"},{"assetId","synthetic.hero"},
++                {"frameSize","64"},{"tileSize","32"},{"reviewOrigin","FIXTURE SINTETICA"},{"image","synthetic.png"},
++                {"sha256",sha},{"approvedSha256",sha},{"pivotX","32"},{"pivotY","48"},{"offsetX","0"},{"offsetY","0"}})
++            p.setProperty(pair[0],pair[1]);
++        int slot=0;
++        for(var state:DirectionalAnimation.State.values()) for(var d:DirectionalAnimation.Direction.values()) {
++            if(state==DirectionalAnimation.State.FAINT && d!=DirectionalAnimation.Direction.FRONT) continue;
++            String action=switch(state){case ATTACK->"PUNCH";case FAINT->"KO";default->state.name();};
++            for(int i=0;i<DirectionalAnimation.count(state);i++,slot++) p.setProperty(action+"."+d+"."+i,(slot%8)*64+","+(slot/8)*64+",64,64");
++        }
++        Path path=temp.resolve("character.properties");try(var out=Files.newBufferedWriter(path)){p.store(out,"SINTETICO");}return path;
++    }
++    private void alter(Path path,String key,String value) throws Exception {
++        var p=new Properties();try(var r=Files.newBufferedReader(path)){p.load(r);}
++        if(value==null)p.remove(key);else p.setProperty(key,value);
++        try(var out=Files.newBufferedWriter(path)){p.store(out,"SINTETICO");}
++    }
++    @Test void validLoadsOnceAndSurvivesSourceRemoval() throws Exception {
++        Path p=fixture();var atlas=ValidatedSpriteAtlas.load(p);Files.delete(temp.resolve("synthetic.png"));
++        var s=DebugWorld.demo(new Random(1)).snapshot();var image=new BufferedImage(960,640,2);var g=image.createGraphics();
++        assertTrue(atlas.draw(g,s.actors().get(0),new DirectionalAnimation.View(1,DirectionalAnimation.State.IDLE,DirectionalAnimation.Direction.FRONT,0)));g.dispose();
++    }
++    @Test void invalidPackagesAlwaysFallback() throws Exception {
++        for(String[] change:new String[][]{{"sha256","0"},{"approvedSha256","0"},{"IDLE.FRONT.0",null},
++                {"IDLE.FRONT.0","0,0,32,64"},{"image","missing.png"},{"image","../outside.png"},
++                {"pivotX","bad"},{"packageVersion","2"},{"reviewOrigin",""}}) {
++            Path p=fixture();alter(p,change[0],change[1]);assertNull(ValidatedSpriteAtlas.loadOptional(p),Arrays.toString(change));
++        }
++        Path p=fixture();Files.write(temp.resolve("synthetic.png"),new byte[]{1,2,3});assertNull(ValidatedSpriteAtlas.loadOptional(p));
++        assertNull(ValidatedSpriteAtlas.loadOptional(temp.resolve("absent.properties")));
++    }
++    @Test void portablePathIndependentOfWorkingDirectory() {
++        String old=System.getProperty("jpackage.app-path");
++        try {System.setProperty("jpackage.app-path",temp.resolve("SpiritGate.exe").toString());
++            assertEquals(temp.resolve("visual/character.properties"),DebugLauncher.defaultVisualManifest());
++        } finally {if(old==null)System.clearProperty("jpackage.app-path");else System.setProperty("jpackage.app-path",old);}
++    }
++}
+--- a/tools/auditar_rc.py
++++ b/tools/auditar_rc.py
+@@ -17,6 +17,7 @@
+ import stat
+ import struct
+ import sys
++import tempfile
+ import zipfile
+ 
+ 
+@@ -212,6 +213,24 @@
+ 
+         def read(name: str) -> bytes:
+             return archive.read(relative[name])
++
++        visual_names = {name for name in relative if name.startswith('visual/')}
++        if visual_names:
++            require(visual_names == {'visual/character.png', 'visual/character.properties', 'visual/review.json'},
++                    'Whitelist do pacote visual divergente.')
++            from pacote_visual import stage
++            with tempfile.TemporaryDirectory(prefix='spirit-visual-audit-') as directory:
++                base = Path(directory)
++                for name in ('character.png', 'character.properties', 'review.json'):
++                    (base/name).write_bytes(read('visual/'+name))
++                config = json_object((base/'review.json').read_bytes())
++                require(len(config.get('assets', [])) == 1 and config['assets'][0].get('path') == 'character.png',
++                        'Manifest visual deve usar imagem local fixa.')
++                stage(base, base/'review.json', base/'checked')
++                for name in ('character.png', 'character.properties', 'review.json'):
++                    require((base/name).read_bytes() == (base/'checked'/name).read_bytes(),
++                            'Pacote visual diverge da revisao por SHA.')
++            passed('pacote_visual_aprovado_sha', files=3)
+ 
+         # --- Manifest cobre o inventario; o inventario evita a circularidade. ---
+         manifest_bytes = read("manifest.json")
+--- a/tools/build-windows-portable.ps1
++++ b/tools/build-windows-portable.ps1
+@@ -19,6 +19,8 @@
+     [string] $JavaHome = '',
+     [string] $TesterKitDirectory = '',
+     [string] $MavenRepository = '',
++    [string] $VisualManifest = '',
++    [string] $VisualRoot = '',
+     [switch] $SkipMaven
+ )
+ 
+@@ -217,6 +219,14 @@
+ 
+     # --- Kit do tester, inventario verificavel e distribuicao sem sobrescrita. ---
+ 
++    if ($VisualManifest) {
++        if (-not $VisualRoot) { throw 'VisualRoot obrigatorio com VisualManifest.' }
++        Invoke-CheckedTool (Get-Command python -ErrorAction Stop).Source @(
++            (Join-Path $projectDirectory 'tools\pacote_visual.py'),
++            ([IO.Path]::GetFullPath($VisualRoot)), ([IO.Path]::GetFullPath($VisualManifest)),
++            (Join-Path $appImage 'visual'))
++    }
++
+     $releaseNotice = if ($Version -match '(?i)(^|[._-])rc\d*($|[._-])') {
+         'CANDIDATO A HOMOLOGACAO; NAO RELEASE PUBLICA'
+     } else { 'PACOTE DE TESTES LOCAIS' }
+--- /dev/null
++++ b/tools/pacote_visual.py
+@@ -0,0 +1,44 @@
++"""Staging explicito de um personagem aprovado por SHA; sem alteracao da fonte."""
++import argparse
++import json
++from pathlib import Path
++import shutil
++from validar_assets import inspect
++
++
++def stage(root, manifest, output):
++    config=json.loads(manifest.read_text(encoding='utf-8-sig'))
++    if config.get('packageVersion') != 1 or len(config.get('assets',[])) != 1:
++        raise ValueError('pacote visual v1 exige exatamente um personagem')
++    asset_id=config.get('assetId','')
++    import re
++    if not re.fullmatch('[a-z][a-z0-9._-]{0,63}',asset_id):
++        raise ValueError('assetId estavel invalido')
++    entry=config['assets'][0]
++    if entry.get('kind') != 'character' or not entry.get('review',{}).get('origin','').strip():
++        raise ValueError('personagem e origem da revisao obrigatorios')
++    result,_=inspect(root,entry)
++    if result['status'] != 'VALIDADO':
++        raise ValueError('arte nao aprovada ou invalida: '+ '; '.join(result['errors']+result['warnings']))
++    # Pacote duravel usa nomes fixos, sem caminhos externos e sem fontes pendentes.
++    output.mkdir(parents=True,exist_ok=False)
++    shutil.copyfile(root/entry['path'],output/'character.png')
++    entry=dict(entry,path='character.png')
++    config=dict(config,assets=[entry])
++    (output/'review.json').write_text(json.dumps(config,ensure_ascii=False,indent=2),encoding='utf-8')
++    values=dict(status='VALIDADO',packageVersion=1,assetId=asset_id,image='character.png',
++                sha256=result['sha256'],approvedSha256=result['sha256'],
++                reviewOrigin=entry['review']['origin'],frameSize=64,tileSize=32,
++                pivotX=entry['pivot'][0],pivotY=entry['pivot'][1],offsetX=entry['offset'][0],offsetY=entry['offset'][1])
++    for frame in entry['frames']:
++        values[f"{frame['state']}.{frame['direction']}.{frame['index']}"]=','.join(str(frame[k]) for k in ('x','y','width','height'))
++    # Properties: escapar controles, separadores e unicode evita reinterpretacao.
++    def escape(value):
++        return str(value).replace('\\','\\\\').replace('\n','\\n').replace('\r','\\r').replace('=','\\=').replace(':','\\:')
++    (output/'character.properties').write_text('\n'.join(f'{k}={escape(v)}' for k,v in sorted(values.items()))+'\n',encoding='utf-8')
++
++
++if __name__ == '__main__':
++    p=argparse.ArgumentParser(description=__doc__)
++    for name in ('root','manifest','output'): p.add_argument(name,type=Path)
++    a=p.parse_args(); stage(a.root,a.manifest,a.output)
+--- /dev/null
++++ b/tools/test_visual_package.py
+@@ -0,0 +1,40 @@
++"""Distribuicao visual exercitada apenas em diretorios temporarios sinteticos."""
++import hashlib
++import json
++import unittest
++import zipfile
++import test_sprite_review
++from pacote_visual import stage
++
++
++class VisualPackageTest(unittest.TestCase):
++    def setUp(self):
++        test_sprite_review.SpriteReviewTest.setUp(self)
++
++    def config(self):
++        self.entry['review']={'origin':'FIXTURE SINTETICA - teste, nao aprovacao humana',
++            'approvedSha256':hashlib.sha256((self.root/'hero.png').read_bytes()).hexdigest()}
++        return dict(packageVersion=1,assetId='synthetic.hero',assets=[self.entry])
++
++    def test_stage_approved_fixture_exact_whitelist(self):
++        p=self.root/'package.json'; p.write_text(json.dumps(self.config()))
++        (self.root/'pending.png').write_bytes(b'NAO INCLUIR')
++        stage(self.root,p,self.root/'visual')
++        self.assertEqual({p.name for p in (self.root/'visual').iterdir()}, {'review.json','character.properties','character.png'})
++        self.assertEqual((self.root/'hero.png').read_bytes(),(self.root/'visual/character.png').read_bytes())
++        self.assertIn('packageVersion=1',(self.root/'visual/character.properties').read_text())
++        with zipfile.ZipFile(self.root/'synthetic-distribution.zip','w') as z:
++            for p in (self.root/'visual').iterdir(): z.write(p,'SpiritGate/visual/'+p.name)
++        with zipfile.ZipFile(self.root/'synthetic-distribution.zip') as z:
++            self.assertEqual(set(z.namelist()),{'SpiritGate/visual/'+n for n in ('review.json','character.properties','character.png')})
++
++    def test_reject_pending_missing_corrupt_hash_no_output(self):
++        for case in ('pending','missing','hash','corrupt'):
++            config=self.config()
++            if case=='pending': self.entry['review']={}
++            if case=='missing': self.entry['frames'].pop()
++            if case=='hash': self.entry['review']['approvedSha256']='0'*64
++            if case=='corrupt': (self.root/'hero.png').write_bytes(b'corrupt')
++            p=self.root/'package.json'; p.write_text(json.dumps(config))
++            with self.subTest(case=case),self.assertRaises(ValueError): stage(self.root,p,self.root/case)
++            self.assertFalse((self.root/case).exists())

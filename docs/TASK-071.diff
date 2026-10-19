@@ -1,0 +1,127 @@
+--- /dev/null
++++ b/docs/TASK-071-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 289,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-071.md
+@@ -0,0 +1,5 @@
++# TASK-071 - LAN configuravel, validacao local parcial
++
++Servidor permite endereco privado somente com --bind IP-PRIVADO --allow-lan. Sem isso, loopback. Endereco publico, wildcard e multicast recusados. Cliente tem checkbox LAN explicito ou argumento --lan. Nenhum port forwarding, firewall, servico ou bind LAN foi executado nesta rodada.
++
++Teste TwoProcessTest abre dois PROCESSOS Java de cliente e um servidor local real, confirma identidades distintas, movimento e snapshots. Evidencia TWO_PROCESS_LOCAL no log Java. Isso valida dois processos locais; nao equivale a teste entre computadores. Status de homologacao LAN entre duas maquinas: PARCIAL/NAO REALIZADA por ausencia de segunda maquina configurada. Funcionalidade LAN privada disponivel para teste manual posterior.
+--- a/server/src/main/java/com/projetok/multiplayer/LocalClient.java
++++ b/server/src/main/java/com/projetok/multiplayer/LocalClient.java
+@@ -10,7 +10,11 @@
+     private final ArrayBlockingQueue<Protocol.Intent> outgoing=new ArrayBlockingQueue<>(32);private final Object changed=new Object();
+     private final Thread reader,writer;private long sequence;private volatile Protocol.State state;private volatile String problem="";
+     public LocalClient(InetAddress address,int port,String name)throws IOException{
+-        if(!address.isLoopbackAddress())throw new IllegalArgumentException("Cliente local exige loopback");new Protocol.Hello(1,name);
++        this(address,port,name,false);
++    }
++    public static LocalClient lan(InetAddress address,int port,String name)throws IOException{return new LocalClient(address,port,name,true);}
++    private LocalClient(InetAddress address,int port,String name,boolean lan)throws IOException{
++        if(!address.isLoopbackAddress()&&(!lan||!address.isSiteLocalAddress()||address.isAnyLocalAddress()||address.isMulticastAddress()))throw new IllegalArgumentException("Endereco privado LAN exige opcao explicita");new Protocol.Hello(1,name);
+         socket=new Socket();try{
+             socket.connect(new InetSocketAddress(address,port),2000);socket.setSoTimeout(3000);socket.setTcpNoDelay(true);Protocol.write(socket.getOutputStream(),new Protocol.Hello(1,name));
+             var reply=Protocol.read(socket.getInputStream());if(!(reply instanceof Protocol.Welcome welcome))throw new IOException("Conexao recusada: "+reply);id=welcome.id();
+--- a/server/src/main/java/com/projetok/multiplayer/LocalSimulationServer.java
++++ b/server/src/main/java/com/projetok/multiplayer/LocalSimulationServer.java
+@@ -12,7 +12,9 @@
+     private final ArrayBlockingQueue<Runnable> commands=new ArrayBlockingQueue<>(64);private final CoopWorld world=new CoopWorld();
+     private final ScheduledExecutorService owner=Executors.newSingleThreadScheduledExecutor(r->{Thread t=new Thread(r,"coop-world");t.setDaemon(true);return t;});
+     private volatile Protocol.State state=world.snapshot();private volatile Throwable failure;
+-    public LocalSimulationServer(InetAddress bind,int port){if(!bind.isLoopbackAddress()||port<0||port>65535)throw new IllegalArgumentException("Somente loopback neste servidor local");this.bind=bind;requestedPort=port;}
++    public LocalSimulationServer(InetAddress bind,int port){this(bind,port,false);}
++    private LocalSimulationServer(InetAddress bind,int port,boolean lan){if((!bind.isLoopbackAddress()&&(!lan||!bind.isSiteLocalAddress()||bind.isAnyLocalAddress()||bind.isMulticastAddress()))||port<0||port>65535)throw new IllegalArgumentException("Use loopback ou endereco LAN privado explicitamente autorizado");this.bind=bind;requestedPort=port;}
++    public static LocalSimulationServer lan(InetAddress address,int port){return new LocalSimulationServer(address,port,true);}
+     public synchronized void start()throws IOException{
+         if(!running.compareAndSet(false,true))throw new IllegalStateException("Servidor ja iniciado");
+         try{listener=new ServerSocket();listener.bind(new InetSocketAddress(bind,requestedPort));}catch(IOException error){running.set(false);throw error;}
+@@ -48,7 +50,8 @@
+     }
+     public synchronized void close(){if(!running.getAndSet(false))return;try{listener.close();}catch(IOException ignored){}for(Peer peer:peers.values())peer.closePeer();owner.shutdownNow();if(acceptThread!=null)acceptThread.interrupt();}
+     public static void main(String[] args)throws Exception{
+-        int port=args.length==2&&args[0].equals("--port")?Integer.parseInt(args[1]):54557;if(args.length!=0&&args.length!=2)throw new IllegalArgumentException("Uso: --port numero");
+-        var server=new LocalSimulationServer(InetAddress.getLoopbackAddress(),port);server.start();Runtime.getRuntime().addShutdownHook(new Thread(server::close));System.out.println("Spirit Gate experimental em localhost:"+server.port()+"; sem autenticacao de contas");new CountDownLatch(1).await();
++        int port=54557;InetAddress address=InetAddress.getLoopbackAddress();boolean lan=false;
++        for(int i=0;i<args.length;i++)switch(args[i]){case "--port"->{if(++i>=args.length)throw new IllegalArgumentException("Porta ausente");port=Integer.parseInt(args[i]);}case "--bind"->{if(++i>=args.length)throw new IllegalArgumentException("Endereco ausente");address=InetAddress.getByName(args[i]);}case "--allow-lan"->lan=true;default->throw new IllegalArgumentException("Uso: [--port N] [--bind IP-PRIVADO --allow-lan]");}
++        var server=lan?LocalSimulationServer.lan(address,port):new LocalSimulationServer(address,port);server.start();Runtime.getRuntime().addShutdownHook(new Thread(server::close));System.out.println("Spirit Gate experimental em "+address.getHostAddress()+":"+server.port()+"; sem autenticacao de contas");new CountDownLatch(1).await();
+     }
+ }
+--- a/server/src/main/java/com/projetok/multiplayer/NetworkClientLauncher.java
++++ b/server/src/main/java/com/projetok/multiplayer/NetworkClientLauncher.java
+@@ -10,12 +10,12 @@
+ public final class NetworkClientLauncher {
+     private NetworkClientLauncher(){}
+     public static void main(String[] args){SwingUtilities.invokeLater(()->{
+-        String host="127.0.0.1",name="Viajante";int port=54557;
++        String host="127.0.0.1",name="Viajante";int port=54557;boolean allowLan=args.length==4&&args[3].equals("--lan");
+         if(args.length==3||args.length==4){host=args[0];port=Integer.parseInt(args[1]);name=args[2];}
+-        else if(args.length==0){JTextField h=new JTextField(host),p=new JTextField("54557"),n=new JTextField(name);JPanel form=new JPanel(new GridLayout(0,2));form.add(new JLabel("Servidor local"));form.add(h);form.add(new JLabel("Porta"));form.add(p);form.add(new JLabel("Nome transitorio"));form.add(n);if(JOptionPane.showConfirmDialog(null,form,"Coop experimental - sem contas",JOptionPane.OK_CANCEL_OPTION)!=JOptionPane.OK_OPTION)return;host=h.getText();name=n.getText();try{port=Integer.parseInt(p.getText());}catch(NumberFormatException error){JOptionPane.showMessageDialog(null,"Porta invalida");return;}}
++        else if(args.length==0){JTextField h=new JTextField(host),p=new JTextField("54557"),n=new JTextField(name);JCheckBox lan=new JCheckBox("Habilitar conexao LAN privada");JPanel form=new JPanel(new GridLayout(0,2));form.add(new JLabel("Servidor local"));form.add(h);form.add(new JLabel("Porta"));form.add(p);form.add(new JLabel("Nome transitorio"));form.add(n);form.add(lan);if(JOptionPane.showConfirmDialog(null,form,"Coop experimental - sem contas",JOptionPane.OK_CANCEL_OPTION)!=JOptionPane.OK_OPTION)return;host=h.getText();name=n.getText();allowLan=lan.isSelected();try{port=Integer.parseInt(p.getText());}catch(NumberFormatException error){JOptionPane.showMessageDialog(null,"Porta invalida");return;}}
+         else throw new IllegalArgumentException("Uso: [host porta nome [captura-componentes.png]]");
+-        String address=host,playerName=name;int chosenPort=port;
+-        new SwingWorker<LocalClient,Void>(){protected LocalClient doInBackground()throws Exception{return new LocalClient(InetAddress.getByName(address),chosenPort,playerName);}protected void done(){try{open(get(),address+":"+chosenPort,args.length==4?args[3]:null);}catch(Exception error){JOptionPane.showMessageDialog(null,"Falha ao conectar: "+error.getMessage());}}}.execute();
++        String address=host,playerName=name;int chosenPort=port;boolean lanEnabled=allowLan;
++        new SwingWorker<LocalClient,Void>(){protected LocalClient doInBackground()throws Exception{return lanEnabled?LocalClient.lan(InetAddress.getByName(address),chosenPort,playerName):new LocalClient(InetAddress.getByName(address),chosenPort,playerName);}protected void done(){try{open(get(),address+":"+chosenPort,args.length==4&&!lanEnabled?args[3]:null);}catch(Exception error){JOptionPane.showMessageDialog(null,"Falha ao conectar: "+error.getMessage());}}}.execute();
+     });}
+     private static void open(LocalClient client,String endpoint,String capture){
+         var template=DebugWorld.demo().snapshot();Protocol.State[] display={new Protocol.State(0,java.util.List.of())};
+--- /dev/null
++++ b/server/src/test/java/com/projetok/multiplayer/TwoProcessProbe.java
+@@ -0,0 +1,13 @@
++package com.projetok.multiplayer;
++import java.net.InetAddress;
++import java.time.Duration;
++/** Executado como processo-filho nos testes; nao entra em distribuicoes. */
++public final class TwoProcessProbe {
++    public static void main(String[] args)throws Exception{
++        try(var client=new LocalClient(InetAddress.getLoopbackAddress(),Integer.parseInt(args[0]),args[1])){
++            var first=client.await(s->s.actors().stream().filter(a->!a.boss()).count()==2,Duration.ofSeconds(5));client.send(Protocol.Action.MOVE,1,0);
++            var moved=client.await(s->s.tick()>=first.tick()+20,Duration.ofSeconds(5));boolean moving=moved.actors().stream().anyMatch(a->a.id()==client.id()&&a.x()>140);if(!moving)throw new IllegalStateException("Nao moveu");
++            System.out.println("{\"session\":"+client.id()+",\"players\":2,\"moved\":true,\"tick\":"+moved.tick()+"}");
++        }
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/multiplayer/TwoProcessTest.java
+@@ -0,0 +1,19 @@
++package com.projetok.multiplayer;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import java.net.*;
++import java.nio.file.*;
++import java.util.concurrent.TimeUnit;
++import static org.junit.jupiter.api.Assertions.*;
++class TwoProcessTest {
++    @TempDir Path folder;
++    @Test void twoSeparateClientProcessesShareOneLocalServer()throws Exception{
++        try(var server=new LocalSimulationServer(InetAddress.getLoopbackAddress(),0)){server.start();
++            String java=Path.of(System.getProperty("java.home"),"bin",System.getProperty("os.name").startsWith("Windows")?"java.exe":"java").toString();String cp=Path.of(CoopWorld.class.getProtectionDomain().getCodeSource().getLocation().toURI())+System.getProperty("path.separator")+Path.of(TwoProcessProbe.class.getProtectionDomain().getCodeSource().getLocation().toURI());
++            Process a=new ProcessBuilder(java,"-cp",cp,TwoProcessProbe.class.getName(),""+server.port(),"Processo Um").redirectErrorStream(true).redirectOutput(folder.resolve("one.log").toFile()).start();Process b=new ProcessBuilder(java,"-cp",cp,TwoProcessProbe.class.getName(),""+server.port(),"Processo Dois").redirectErrorStream(true).redirectOutput(folder.resolve("two.log").toFile()).start();
++            try{assertTrue(a.waitFor(10,TimeUnit.SECONDS));assertTrue(b.waitFor(10,TimeUnit.SECONDS));String one=Files.readString(folder.resolve("one.log")),two=Files.readString(folder.resolve("two.log"));assertEquals(0,a.exitValue(),one);assertEquals(0,b.exitValue(),two);assertTrue(one.contains("\"players\":2"));assertTrue(two.contains("\"moved\":true"));System.out.println("TWO_PROCESS_LOCAL "+one.strip()+" "+two.strip());}finally{if(a.isAlive())a.destroyForcibly();if(b.isAlive())b.destroyForcibly();}
++            assertNull(server.failure());
++        }
++    }
++    @Test void lanNeverAllowsWildcardOrPublicAddresses()throws Exception{assertThrows(IllegalArgumentException.class,()->LocalSimulationServer.lan(InetAddress.getByName("0.0.0.0"),0));assertThrows(IllegalArgumentException.class,()->LocalSimulationServer.lan(InetAddress.getByName("8.8.8.8"),0));}
++}

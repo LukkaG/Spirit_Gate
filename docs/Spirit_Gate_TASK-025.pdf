@@ -1,0 +1,64 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 2019 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-025 - Culling conservador) Tj T*
+() Tj T*
+(Objetivo: evitar desenho fora da viewport sem interferir no mundo.) Tj T*
+(Base: TASK-024 aprovada, 226 JUnit e 22 Python.) Tj T*
+(Implementação: ArenaViewport.visibleWorld publica o retângulo visível. Java2D) Tj T*
+(hitClip reaproveita o clipping transformado para tiles, sólidos, leves e atores) Tj T*
+(do fallback. Margens incluem sombras, strokes, nome, HP, Freeze e alcance H.) Tj T*
+(Atlas com offsets arbitrários mantém desenho conservador, sem descarte de ator.) Tj T*
+(Efeitos permanecem desenhados e recortados pelo Java2D, preservando cruzamentos) Tj T*
+(de borda. Nenhum índice espacial ou alteração da física foi introduzido.) Tj T*
+() Tj T*
+(Diagnóstico: o pipeline já recortava pixels, mas ainda submetia todos os objetos.) Tj T*
+(Foi acrescentada uma chave de referência para comparar culling de entidades) Tj T*
+(ligado/desligado. Tiles usam hitClip sempre. Ordem e dados continuam iguais.) Tj T*
+(Arquivos: ArenaViewport.java, LocalArenaMap.java, DebugPanel.java, CullingTest.java.) Tj T*
+(Testes: comparação de pixels em mapa 1920x1280, zoom 1 a 4, três tamanhos, hitboxes;) Tj T*
+(interseções parciais diagonais e retângulo visível. Ver totais reais e resultado em) Tj T*
+(TASK-025-qualidade.json e TASK-025-testes.txt, logs completos Java/Python.) Tj T*
+(Comando: python tools/qualidade.py --offline --task 025) Tj T*
+() Tj T*
+(Limites: fundo e efeitos ainda percorrem seus elementos; otimização é conservadora,) Tj T*
+(sem alegar eliminação de todo trabalho fora da câmera. Sem benchmark temporal) Tj T*
+(rígido ou arte aprovada. Homologação visual humana permanece pendente.) Tj T*
+(Checkpoint recuperável antes/depois e diff em caminhos padronizados. Próximo:) Tj T*
+(TASK-026, camadas explícitas. Não há mudanças de regras de gameplay.) Tj T*
+() Tj T*
+(## Resultado final observado) Tj T*
+(Validação local aprovada: 228 JUnit e 22 Python; zero falhas.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-025 - página 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2415
+%%EOF

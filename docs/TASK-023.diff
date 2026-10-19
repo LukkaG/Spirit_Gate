@@ -1,0 +1,174 @@
+--- /dev/null
++++ b/docs/TASK-023-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 223,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 22
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-023.md
+@@ -0,0 +1,25 @@
++# TASK-023 - Orquestrador de qualidade
++
++Objetivo: um comando reprodutível para validação local completa.
++Situação: APROVADA. Base: 223 JUnit e 18 Python.
++
++Diagnóstico: os scripts anteriores empacotavam e auditavam, mas a execução conjunta
++de Java e Python dependia de comandos manuais. Implementado tools/qualidade.py;
++reutiliza Maven/Surefire e unittest, sem duplicar testes ou instalar dependências.
++Verifica Java 17, Maven e Python; cache Maven do projeto e opção --offline.
++Logs individuais completos, resumo TXT e relatório estruturado JSON por execução.
++Códigos: 0 aprovado, 2 ambiente, 3 testes, 4 build. Não muda o Windows global.
++Adicionado tools/test_qualidade.py: classificação, totais XML, ambiente ausente e
++rejeição de identificador com escape de diretório. Testes negativos usam mocks
++somente no teste unitário, sem substituir a execução real do orquestrador.
++
++Execução real: python tools/qualidade.py --offline --task 023
++Resultado: 223 JUnit, zero falhas/erros/ignorados; 22 Python aprovados.
++Evidências: TASK-023-qualidade.json, TASK-023-testes.txt e logs TASK-023-*.log.
++Arquivos alterados/adicionados constam no diff; checkpoints before/after em
++.task-checkpoints. Retomada: TASK-024 após esta aprovação.
++
++Limitações: logs técnicos locais podem conter caminhos do ambiente de build;
++não são o pacote de diagnóstico sanitizado da TASK-034. Não realiza homologação
++humana nem certifica arte final. Falhas Maven não classificadas como teste são
++tratadas como build. O modo online não foi necessário nesta validação.
+--- /dev/null
++++ b/tools/qualidade.py
+@@ -0,0 +1,83 @@
++"""Validação local completa: python tools/qualidade.py --offline --task 023."""
++import argparse
++import json
++import os
++from pathlib import Path
++import re
++import shutil
++import subprocess
++import sys
++import xml.etree.ElementTree as ET
++
++ROOT = Path(__file__).resolve().parents[1]
++
++def classify(code, output):
++    """Códigos: 0 sucesso, 2 ambiente, 3 teste, 4 build."""
++    if code == 0:
++        return 0
++    if 'COMPILATION ERROR' in output or 'Could not resolve' in output:
++        return 4
++    if 'There are test failures' in output or re.search(r'FAILED \(', output):
++        return 3
++    return 4
++
++def junit_totals(folder):
++    reports = [ET.parse(p).getroot() for p in folder.glob('TEST-*.xml')]
++    if not reports:
++        raise ValueError('Relatórios JUnit ausentes')
++    return {k: sum(int(r.get(k, '0')) for r in reports)
++            for k in ('tests', 'failures', 'errors', 'skipped')}
++
++def run(command, log, cwd=ROOT):
++    result = subprocess.run(command, cwd=cwd, stdout=subprocess.PIPE,
++                            stderr=subprocess.STDOUT, text=True, errors='replace')
++    log.write_text(result.stdout, encoding='utf-8')
++    return result.returncode, result.stdout
++
++def main(argv=None):
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('--offline', action='store_true')
++    parser.add_argument('--task', default='local', type=str)
++    args = parser.parse_args(argv)
++    if not re.fullmatch(r'[A-Za-z0-9_-]{1,40}', args.task):
++        parser.error('Identificador inválido')
++    prefix = ROOT / f'docs/TASK-{args.task}'
++    report = {'schemaVersion': 1, 'exitCode': 2, 'tools': {}, 'checks': {}}
++    try:
++        for name, command in [('java', ['java', '-version']), ('maven', ['mvn', '-v']),
++                              ('python', [sys.executable, '--version'])]:
++            executable = shutil.which(command[0])
++            if not executable:
++                raise RuntimeError(f'Ferramenta ausente: {name}')
++            command[0] = executable
++            code, output = run(command, Path(str(prefix) + f'-{name}-version.log'))
++            report['tools'][name] = output.strip()
++            if code or (name == 'java' and not re.search(r'version "17[.]', output)):
++                raise RuntimeError(f'Versão/ferramenta inválida: {name}')
++        command = [shutil.which('mvn'), f'-Dmaven.repo.local={ROOT / ".maven-repository"}',
++                   '-f', 'server/pom.xml']
++        if args.offline:
++            command.append('-o')
++        code, output = run(command + ['clean', 'test'], Path(str(prefix) + '-java.log'))
++        report['checks']['java'] = {'exitCode': code, 'category': classify(code, output)}
++        if code == 0:
++            report['checks']['java']['totals'] = junit_totals(ROOT / 'server/target/surefire-reports')
++        code, output = run([sys.executable, '-m', 'unittest', 'discover', '-s', 'tools',
++                            '-p', 'test_*.py', '-v'], Path(str(prefix) + '-python.log'))
++        match = re.search(r'Ran (\d+) tests?', output)
++        report['checks']['python'] = {'exitCode': code, 'category': 0 if code == 0 else 3,
++                                     'tests': int(match[1]) if match else None}
++        report['exitCode'] = max(c['category'] for c in report['checks'].values())
++    except (OSError, RuntimeError, ValueError, ET.ParseError) as error:
++        report['error'] = str(error)
++        report['exitCode'] = 2
++    Path(str(prefix) + '-qualidade.json').write_text(
++        json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
++    summary = json.dumps({'exitCode': report['exitCode'], 'checks': report['checks']},
++                         ensure_ascii=False, indent=2)
++    Path(str(prefix) + '-testes.txt').write_text(summary + '\n', encoding='utf-8')
++    print(summary)
++    return report['exitCode']
++
++if __name__ == '__main__':
++    raise SystemExit(main())
+--- /dev/null
++++ b/tools/test_qualidade.py
+@@ -0,0 +1,34 @@
++"""Regressões de classificação e leitura de resultados do orquestrador."""
++import tempfile
++from pathlib import Path
++import unittest
++from unittest.mock import patch
++import qualidade
++
++class QualityTest(unittest.TestCase):
++    def test_exit_categories(self):
++        self.assertEqual(0, qualidade.classify(0, 'BUILD SUCCESS'))
++        self.assertEqual(3, qualidade.classify(1, 'There are test failures'))
++        self.assertEqual(3, qualidade.classify(1, 'FAILED (failures=1)'))
++        self.assertEqual(4, qualidade.classify(1, 'COMPILATION ERROR'))
++        self.assertEqual(4, qualidade.classify(1, 'Could not resolve dependencies'))
++
++    def test_real_totals_and_missing_report(self):
++        with tempfile.TemporaryDirectory() as directory:
++            folder = Path(directory)
++            with self.assertRaises(ValueError):
++                qualidade.junit_totals(folder)
++            (folder / 'TEST-a.xml').write_text('<testsuite tests="3" failures="1" errors="0" skipped="1"/>')
++            self.assertEqual({'tests': 3, 'failures': 1, 'errors': 0, 'skipped': 1},
++                             qualidade.junit_totals(folder))
++
++    def test_missing_environment_writes_failure(self):
++        with tempfile.TemporaryDirectory() as directory, patch.object(qualidade, 'ROOT', Path(directory)):
++            (Path(directory) / 'docs').mkdir()
++            with patch.object(qualidade.shutil, 'which', return_value=None):
++                self.assertEqual(2, qualidade.main(['--task', 'negative']))
++            self.assertIn('Ferramenta ausente', (Path(directory) / 'docs/TASK-negative-qualidade.json').read_text(encoding='utf-8'))
++
++    def test_identifier_cannot_escape(self):
++        with self.assertRaises(SystemExit):
++            qualidade.main(['--task', '../../escape'])

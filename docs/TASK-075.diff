@@ -1,0 +1,106 @@
+--- /dev/null
++++ b/docs/TASK-075-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 297,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-075.md
+@@ -0,0 +1,7 @@
++# TASK-075 - Integracao geral
++
++Suite completa preserva 241 testes historicos e todos os incrementos. Campanha offline ponta a ponta para ambos arquetipos, inventario/equipamento, quests, transicoes, masmorra/chefe, corrupcao e restauracao de save. Stress offline 20000 ticks; rede com falhas deterministicas 2500 ticks, dois processos de clientes e combate por TCP real ate recompensa compartilhada.
++
++Regressao reproduzida ANTES da correcao em TASK-075-regressao-backup-antes.log: arquivo atual com formato Properties valido mas flag semanticamente corrompida podia substituir backup bom. load/backup agora validam restauracao completa antes de qualquer copia; falha preserva backup e exige recuperacao. Teste CorruptBackupProtectionTest protege esse caso. Novo candidato offline sera reconstruido com essa correcao; 0.66.0-rc2 permanece preservado.
++
++Corrigido ainda lifecycle do servidor fechado antes de start e cleanup de bind malsucedido. Nenhuma conexao externa, alteracao de credenciais ou migracao de banco. Homologacao em outra maquina/LAN e transicoes online continuam pendentes explicitamente.
+--- a/server/src/main/java/com/projetok/multiplayer/LocalSimulationServer.java
++++ b/server/src/main/java/com/projetok/multiplayer/LocalSimulationServer.java
+@@ -18,7 +18,7 @@
+     public static LocalSimulationServer lan(InetAddress address,int port){return new LocalSimulationServer(address,port,true);}
+     public synchronized void start()throws IOException{
+         if(started||!running.compareAndSet(false,true))throw new IllegalStateException("Servidor ja iniciado/encerrado");started=true;
+-        try{listener=new ServerSocket();listener.bind(new InetSocketAddress(bind,requestedPort));}catch(IOException error){running.set(false);throw error;}
++        try{listener=new ServerSocket();listener.bind(new InetSocketAddress(bind,requestedPort));}catch(IOException error){running.set(false);if(listener!=null)try{listener.close();}catch(IOException ignored){}owner.shutdownNow();throw error;}
+         owner.scheduleAtFixedRate(()->{try{
+             for(int id:departures)if(departures.remove(id))world.leave(id);
+             for(int i=0;i<64;i++){var command=commands.poll();if(command==null)break;command.run();}
+@@ -50,7 +50,7 @@
+         }catch(IOException|InterruptedException|ExecutionException|TimeoutException ignored){}finally{closePeer();}}
+         void closePeer(){if(!closed.compareAndSet(false,true))return;peers.remove(id,this);connections.remove(id,this);departures.add(id);try{socket.close();}catch(IOException ignored){}if(writer!=null)writer.interrupt();if(reader!=null&&reader!=Thread.currentThread())reader.interrupt();capacity.release();}
+     }
+-    public synchronized void close(){if(!running.getAndSet(false)){owner.shutdownNow();return;}try{listener.close();}catch(IOException ignored){}for(Peer peer:connections.values())peer.closePeer();owner.shutdownNow();commands.clear();if(acceptThread!=null)acceptThread.interrupt();}
++    public synchronized void close(){started=true;if(!running.getAndSet(false)){owner.shutdownNow();return;}try{listener.close();}catch(IOException ignored){}for(Peer peer:connections.values())peer.closePeer();owner.shutdownNow();commands.clear();if(acceptThread!=null)acceptThread.interrupt();}
+     public static void main(String[] args)throws Exception{
+         int port=54557;InetAddress address=InetAddress.getLoopbackAddress();boolean lan=false;
+         for(int i=0;i<args.length;i++)switch(args[i]){case "--port"->{if(++i>=args.length)throw new IllegalArgumentException("Porta ausente");port=Integer.parseInt(args[i]);}case "--bind"->{if(++i>=args.length)throw new IllegalArgumentException("Endereco ausente");address=InetAddress.getByName(args[i]);}case "--allow-lan"->lan=true;default->throw new IllegalArgumentException("Uso: [--port N] [--bind IP-PRIVADO --allow-lan]");}
+--- a/server/src/main/java/com/projetok/rpg/LocalSaveStore.java
++++ b/server/src/main/java/com/projetok/rpg/LocalSaveStore.java
+@@ -12,8 +12,9 @@
+     public LocalSaveStore(Path file) { this(file,Files::write); }
+     public LocalSaveStore(Path file, Writer writer) { this.file=file.toAbsolutePath(); this.writer=writer; }
+     public Path file() { return file; }
+-    public synchronized RpgSave load() throws IOException { return decode(Files.readAllBytes(checked(file))); }
+-    public synchronized RpgSave recoverBackup() throws IOException { return decode(Files.readAllBytes(checked(backup()))); }
++    public synchronized RpgSave load() throws IOException { return validated(Files.readAllBytes(checked(file))); }
++    public synchronized RpgSave recoverBackup() throws IOException { return validated(Files.readAllBytes(checked(backup()))); }
++    private static RpgSave validated(byte[] bytes)throws IOException{var state=decode(bytes);RpgWorld.restore(state);return state;}
+     private Path backup() { return file.resolveSibling(file.getFileName()+".bak"); }
+     private static Path checked(Path path) throws IOException {
+         if(Files.size(path)>262144) throw new IOException("Save excessivo"); return path;
+--- /dev/null
++++ b/server/src/test/java/com/projetok/multiplayer/NetworkFightIntegrationTest.java
+@@ -0,0 +1,18 @@
++package com.projetok.multiplayer;
++import org.junit.jupiter.api.Test;
++import java.net.InetAddress;
++import java.time.Duration;
++import static org.junit.jupiter.api.Assertions.*;
++/** Combate completo por TCP real, sem acesso direto ao mundo autoritativo. */
++class NetworkFightIntegrationTest {
++    static Protocol.Actor actor(Protocol.State state,int id){return state.actors().stream().filter(a->a.id()==id).findFirst().orElseThrow();}
++    private void control(LocalClient client,Protocol.State state,boolean first){var p=actor(state,client.id());var boss=actor(state,CoopWorld.BOSS_ID);double distance=Math.hypot(p.x()-boss.x(),p.y()-boss.y());boolean ready=state.actors().stream().filter(a->!a.boss()).allMatch(a->Math.hypot(a.x()-boss.x(),a.y()-boss.y())<=80);if(distance<=80){client.send(Protocol.Action.MOVE,0,0);if(ready)client.send(Protocol.Action.ATTACK,0,0);}else{float x=p.x()<530?550:first?boss.x()-60:boss.x(),y=p.x()<530?(first?345:410):first?boss.y():Math.min(600,boss.y()+60);client.send(Protocol.Action.MOVE,Math.abs(x-p.x())<5?0:Math.signum(x-p.x()),Math.abs(y-p.y())<5?0:Math.signum(y-p.y()));}}
++    @Test void twoClientsDefeatSharedBossAndCannotDuplicateReward()throws Exception{
++        try(var server=new LocalSimulationServer(InetAddress.getLoopbackAddress(),0)){server.start();try(var one=new LocalClient(InetAddress.getLoopbackAddress(),server.port(),"Coop Um");var two=new LocalClient(InetAddress.getLoopbackAddress(),server.port(),"Coop Dois")){
++            Protocol.State state=one.await(s->s.actors().stream().filter(a->!a.boss()).count()==2,Duration.ofSeconds(3));
++            for(int i=0;i<180&&actor(state,CoopWorld.BOSS_ID).hp()>0;i++){control(one,state,true);control(two,state,false);long tick=state.tick();state=one.await(s->s.tick()>tick,Duration.ofSeconds(3));}
++            assertEquals(0,actor(state,CoopWorld.BOSS_ID).hp(),state.toString());assertEquals(20,actor(state,one.id()).coins(),state.toString());assertEquals(20,actor(state,two.id()).coins(),state.toString());
++            for(int i=0;i<4;i++){one.send(Protocol.Action.ATTACK,0,0);two.send(Protocol.Action.ATTACK,0,0);}long done=state.tick();state=one.await(s->s.tick()>=done+6,Duration.ofSeconds(3));assertEquals(20,actor(state,one.id()).coins());assertEquals(20,actor(state,two.id()).coins());assertNull(server.failure());System.out.println("COOP_TCP_REAL bossHp=0 rewards=20,20 tick="+state.tick());
++        }}
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/CorruptBackupProtectionTest.java
+@@ -0,0 +1,15 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import java.nio.file.*;
++import java.io.IOException;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++class CorruptBackupProtectionTest {
++    @TempDir Path folder;
++    @Test void semanticallyCorruptCurrentFileCannotReplaceLastGoodBackup()throws Exception{
++        var world=new RpgWorld();var state=world.save();var store=new LocalSaveStore(folder.resolve("save.properties"));store.save(state);store.save(state);
++        var flags=new TreeSet<>(state.flags());flags.add("pending:crystal:bad");var bad=new RpgSave(state.identity(),state.region(),state.x(),state.y(),state.hp(),state.xp(),state.coins(),state.inventory(),state.equipment(),state.quests(),flags,state.ticks());Files.write(store.file(),LocalSaveStore.encode(bad));
++        assertThrows(IOException.class,()->store.save(state));assertEquals(state,store.recoverBackup());
++    }
++}

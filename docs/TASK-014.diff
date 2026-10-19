@@ -1,0 +1,501 @@
+--- /dev/null
++++ b/docs/TASK-014-testes.txt
+@@ -0,0 +1,35 @@
++TASK-014 - mvn clean test - BUILD SUCCESS
++{'tests': 210, 'failures': 0, 'errors': 0, 'skipped': 0}
++Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.
++
++com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.DomainSequenceRegressionTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaSequenceRegressionTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugLauncherEntrypointTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.DirectionalAnimationTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudPrecisionRegressionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudSkillFeedbackTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SoftObstacleDemoTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
+--- /dev/null
++++ b/docs/TASK-014.md
+@@ -0,0 +1,17 @@
++# TASK-014 - Animacao direcional com fallback
++
++Baseline limpo: 202 testes, zero falhas/erros/ignorados. Arquivos previstos: DebugWorld, DebugRuntime, DebugPanel, DebugLauncher, sequenciador, atlas e testes. Risco: sincronizacao de apresentacao e sinais visuais; regras do dominio preservadas.
++
++DirectionalAnimation avanca por dt na thread de simulacao; IDLE/WALK/ATTACK/HIT/FAINT e quatro direcoes. RUN existe no contrato, mas nunca e emitido pelo mundo atual, que nao possui corrida. Movimento observado define facing dos mobs, facing autoritativo orienta player; empate de eixo estavel e ultima direcao parada. Ataque e dano positivo publicam sinais no ponto real do combate; morte real tem prioridade e usa KO frontal. Freeze pausa o frame; R recria a linha temporal.
++
++Presentation publica atomicamente snapshot historico e lista imutavel de frames. API e construtores antigos preservados; campos e baselines de DebugSnapshot intactos. Renderer recebe apenas valores, sem avancar tempo nem consultar mundo mutavel. Timer Swing preexistente apenas repinta; nenhum timer de animacao foi adicionado.
++
++ValidatedSpriteAtlas carrega exportacao Properties VALIDADO da TASK-013, confere SHA e grade/recortes, usa nearest-neighbor, pivot e offset constantes; leitura de arquivo e cache somente na carga. Frame ausente retorna ao debug original. Sem arte aprovada, launcher permanece com fallback. Nada foi declarado visual final integrado.
++
++Testes novos cobrem quatro direcoes, timing, loop, pausa, freeze/retorno, R, ataque, sinais reais de dano e morte, KO limitado ao ultimo frame, ausencia de corrida, rejeicao de asset sem aprovacao ou adulterado, frame ausente, pivot e render sem mutacao. Captura TASK-014-sintetico.png e FIXTURE SINTETICA magenta, nao arte aprovada do jogo. Os tres replays historicos e demais regressoes executam sem editar baselines.
++
++Falha intermediaria de compilacao em teste: variavel capturada por lambda nao era efetivamente final; corrigida no novo teste, registro TASK-014-falha-intermediaria.log. Execucao parcial: 209 testes verdes; teste adicional de Freeze levou a suite final a 210, zero falhas/erros/ignorados, registrada em TASK-014-final.log e TASK-014-testes.txt.
++
++Reproducao: mvn.cmd -Dmaven.repo.local=.maven-repository -f server/pom.xml clean test. PDF, diff e checkpoints locais anexos. Nenhuma regra de colisao, vigor, dano, cooldown, FIFO, rede ou protocolo alterada.
++
++O QUE FOI REALMENTE EXECUTADO: suite completa, replays e render sintetico. O QUE AINDA EXIGE O USUARIO: arte de personagem 64x64 aprovada e revisao humana de leitura visual. Fallback permanece ativo.
+--- a/server/src/main/java/com/projetok/prototype/DebugLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/DebugLauncher.java
+@@ -34,6 +34,7 @@
+     private static void open() {
+         DebugRuntime runtime = new DebugRuntime();
+         DebugPanel panel = new DebugPanel(runtime::snapshot);
++        panel.setPresentation(runtime::presentation, null);
+         JFrame frame = new JFrame("Spirit Gate | Arena de Debug 2D");
+         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+         frame.setContentPane(panel);
+--- a/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ b/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -25,6 +25,14 @@
+     private static final Color ACCENT = new Color(70, 219, 235);
+     private final Supplier<DebugSnapshot> source;
+     private boolean showHitboxes;
++    private Supplier<DirectionalAnimation.Presentation> presentationSource;
++    private ValidatedSpriteAtlas spriteAtlas;
++
++    /** Ativa somente um atlas ja validado; null mantem a geometria original. */
++    public void setPresentation(Supplier<DirectionalAnimation.Presentation> source, ValidatedSpriteAtlas atlas) {
++        presentationSource = source;
++        spriteAtlas = atlas;
++    }
+ 
+     public DebugPanel(Supplier<DebugSnapshot> source) {
+         this.source = source;
+@@ -49,8 +57,8 @@
+         try {
+             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+-            DebugSnapshot world = source.get();
+-            render(g, world);
++            if (presentationSource == null) render(g, source.get());
++            else render(g, presentationSource.get());
+         } finally {
+             g.dispose();
+         }
+@@ -58,12 +66,25 @@
+ 
+     /** Renderização pura a partir de um snapshot: também é utilizada no smoke visual. */
+     public void render(Graphics2D g, DebugSnapshot s) {
++        renderScene(g, s, java.util.List.of());
++    }
++
++    /** Desenha valores do mesmo tick; o render nunca avanca o sequenciador. */
++    public void render(Graphics2D g, DirectionalAnimation.Presentation presentation) {
++        renderScene(g, presentation.world(), presentation.animations());
++    }
++
++    private void renderScene(Graphics2D g, DebugSnapshot s, java.util.List<DirectionalAnimation.View> animations) {
+         drawWorld(g);
+         drawObstacles(g, s);
+         drawSoftObstacles(g, s);
+         drawIceZones(g, s);
+         drawLightningTrails(g, s);
+-        for (DebugSnapshot.ActorView actor : s.actors()) drawActor(g, actor, s);
++        for (DebugSnapshot.ActorView actor : s.actors()) {
++            DirectionalAnimation.View visual = null;
++            for (var candidate : animations) if (candidate.actorId() == actor.id()) { visual=candidate; break; }
++            if (spriteAtlas == null || visual == null || !spriteAtlas.draw(g, actor, visual)) drawActor(g, actor, s);
++        }
+         drawAttack(g, s.attack());
+         drawEffects(g, s);
+         drawSidebar(g, s);
+--- a/server/src/main/java/com/projetok/prototype/DebugRuntime.java
++++ b/server/src/main/java/com/projetok/prototype/DebugRuntime.java
+@@ -22,6 +22,8 @@
+     private final Supplier<DebugWorld> worldFactory;
+     private volatile DebugWorld world;
+     private volatile DebugSnapshot lastSnapshot;
++    private final DirectionalAnimation animations = new DirectionalAnimation();
++    private volatile DirectionalAnimation.Presentation presentation;
+ 
+     /** Inicializa a arena demonstrativa usada pela janela e pelos reinícios. */
+     public DebugRuntime() {
+@@ -33,6 +35,7 @@
+         this.worldFactory = Objects.requireNonNull(worldFactory, "worldFactory");
+         world = Objects.requireNonNull(worldFactory.get(), "world");
+         lastSnapshot = world.snapshot();
++        presentation = animations.advance(lastSnapshot, java.util.List.of(), 0);
+     }
+ 
+     /** Inicializa o loop local sem banco de dados ou serviço de rede. */
+@@ -55,11 +58,13 @@
+     void advanceOneTick() {
+         DebugCommandBuffer.Frame frame = commands.drain();
+         if (frame.restart()) {
++            animations.reset();
+             world = Objects.requireNonNull(worldFactory.get(), "world");
+             world.synchronizeEffort(frame.input().effort());
+         }
+         world.tickQueued(frame.input(), 1f / 30f, frame.effortPresses(), frame.casts());
+         lastSnapshot = world.snapshot();
++        presentation = animations.advance(lastSnapshot, world.animationSignals(), 1d / 30d);
+     }
+ 
+     /** Recebe entrada do controlador sem modificar entidades fora do loop. */
+@@ -77,8 +82,11 @@
+ 
+     /** Último estado imutável publicado pelo loop, próprio para leitura no EDT. */
+     public DebugSnapshot snapshot() {
+-        return lastSnapshot;
++        return presentation.world();
+     }
++
++    /** Mundo e animacoes do mesmo tick publicados em uma unica referencia imutavel. */
++    public DirectionalAnimation.Presentation presentation() { return presentation; }
+ 
+     @Override
+     public void close() {
+--- a/server/src/main/java/com/projetok/prototype/DebugWorld.java
++++ b/server/src/main/java/com/projetok/prototype/DebugWorld.java
+@@ -101,6 +101,10 @@
+     private float facingY = 0f;
+     private float attackCooldown;
+     private long ticks;
++    private final List<DirectionalAnimation.Signal> animationSignals = new ArrayList<>();
++
++    /** Copia eventos reais do ultimo tick sem modificar o contrato historico do snapshot. */
++    public List<DirectionalAnimation.Signal> animationSignals() { return List.copyOf(animationSignals); }
+     private int defeated;
+     private String lastEvent = "Explore a arena e derrote os tres espiritos.";
+ 
+@@ -188,6 +192,7 @@
+     void tickQueued(DebugInput input, float dt, int effortPresses, List<SkillCastCommand> casts) {
+         if (!Float.isFinite(dt) || dt <= 0f || dt > 0.1f) throw new IllegalArgumentException("dt fora do intervalo (0, 0.1]");
+         ticks++;
++        animationSignals.clear();
+         // Retornos do HUD têm relógio próprio e não substituem o log histórico da arena.
+         cryostasisFeedback = SkillHudMapper.elapse(cryostasisFeedback, dt);
+         lightningStepFeedback = SkillHudMapper.elapse(lightningStepFeedback, dt);
+@@ -324,6 +329,7 @@
+     private void attackNearest() {
+         if (attackCooldown > 0f) return;
+         attackCooldown = PLAYER_COOLDOWN;
++        animationSignals.add(new DirectionalAnimation.Signal(player.getId(), DirectionalAnimation.State.ATTACK));
+         Mob closest = null;
+         float best = Float.POSITIVE_INFINITY;
+         Position origin = player.getPosition();
+@@ -370,6 +376,7 @@
+             length = (float) Math.hypot(target.x() - p.x(), target.y() - p.y());
+             if (length <= MOB_MELEE && enemyCooldowns[i] <= 0f) {
+                 enemyCooldowns[i] = MOB_COOLDOWN;
++                animationSignals.add(new DirectionalAnimation.Signal(mob.getId(), DirectionalAnimation.State.ATTACK));
+                 int amount = combat.attack(mob, player);
+                 addEffect(player, amount, true);
+                 lastEvent = mob.getName() + " atingiu voce: " + amount + " de dano.";
+@@ -380,6 +387,7 @@
+ 
+     /** Registra um efeito de dano temporário sem alterar a regra de HP. */
+     private void addEffect(GameEntity target, int amount, boolean received) {
++        if (amount > 0) animationSignals.add(new DirectionalAnimation.Signal(target.getId(), DirectionalAnimation.State.HIT));
+         effects.add(new DebugSnapshot.EffectView(target.getPosition().x(),
+                 target.getPosition().y() - 25, amount, 0.7f, received));
+     }
+--- /dev/null
++++ b/server/src/main/java/com/projetok/prototype/DirectionalAnimation.java
+@@ -0,0 +1,68 @@
++package com.projetok.prototype;
++
++import java.util.ArrayList;
++import java.util.HashMap;
++import java.util.List;
++import java.util.Map;
++
++/** Sequenciador visual exclusivo da simulacao; nao altera entidades nem usa relogio real. */
++public final class DirectionalAnimation {
++    public enum State { IDLE, WALK, RUN, ATTACK, HIT, FAINT }
++    public enum Direction { FRONT, BACK, LEFT, RIGHT }
++    /** Sinal de combate emitido no ponto real da simulacao, nunca inferido da cor. */
++    public record Signal(int actorId, State state) { }
++    /** Apenas valores imutaveis sao entregues ao renderizador. */
++    public record View(int actorId, State state, Direction direction, int frame) { }
++    /** Publicacao atomica do mundo e de seus estados visuais correspondentes. */
++    public record Presentation(DebugSnapshot world, List<View> animations) {
++        public Presentation { animations = List.copyOf(animations); }
++    }
++    private record Track(DebugSnapshot.ActorView actor, State state, Direction direction, double elapsed) { }
++    private final Map<Integer, Track> tracks = new HashMap<>();
++
++    /** Descarta facing e tempos ao recriar o mundo por R. */
++    public void reset() { tracks.clear(); }
++
++    /** Avanca exclusivamente pelo dt recebido; dt zero pausa a apresentacao. */
++    public Presentation advance(DebugSnapshot world, List<Signal> signals, double dt) {
++        if (!Double.isFinite(dt) || dt < 0 || dt > .1) throw new IllegalArgumentException("dt visual invalido");
++        List<View> result = new ArrayList<>(world.actors().size());
++        for (var actor : world.actors()) {
++            Track old = tracks.get(actor.id());
++            double dx = old == null ? 0 : actor.x()-old.actor().x();
++            double dy = old == null ? 0 : actor.y()-old.actor().y();
++            Direction direction = facing(dx, dy, old == null ? Direction.FRONT : old.direction());
++            if (actor.player()) direction = facing(world.facingX(), world.facingY(), direction);
++            boolean frozen = world.statuses().stream().anyMatch(s -> s.actorId()==actor.id() && s.freezeRemaining()>0);
++            State state = dx*dx+dy*dy > .000001 ? State.WALK : State.IDLE;
++            if (old != null && (old.state()==State.HIT || old.state()==State.ATTACK) && old.elapsed()+dt < duration(old.state())) state=old.state();
++            boolean triggered = false;
++            for (Signal signal : signals) if (signal.actorId()==actor.id()) {
++                if (signal.state()==State.HIT || state!=State.HIT) state=signal.state();
++                triggered=true;
++            }
++            if (!actor.alive()) { state=State.FAINT; direction=Direction.FRONT; }
++            else if (frozen && old != null && !triggered) state=old.state();
++            double elapsed = old == null || old.state()!=state || old.direction()!=direction || triggered ? 0 : old.elapsed()+(frozen ? 0 : dt);
++            Track next = new Track(actor,state,direction,elapsed);
++            tracks.put(actor.id(),next);
++            result.add(new View(actor.id(),state,direction,frame(state,elapsed)));
++        }
++        tracks.keySet().retainAll(world.actors().stream().map(DebugSnapshot.ActorView::id).toList());
++        return new Presentation(world,result);
++    }
++
++    /** Eixo dominante, empate vertical estavel e ultimo facing quando parado. */
++    public static Direction facing(double x, double y, Direction previous) {
++        if (x*x+y*y < .000001) return previous;
++        return Math.abs(x)>Math.abs(y) ? (x>0 ? Direction.RIGHT : Direction.LEFT) : (y>0 ? Direction.FRONT : Direction.BACK);
++    }
++    public static int count(State state) {
++        return switch(state) { case IDLE -> 1; case WALK, RUN -> 4; case ATTACK, FAINT -> 3; case HIT -> 2; };
++    }
++    public static double duration(State state) { return count(state)*.1; }
++    private static int frame(State state, double elapsed) {
++        int index=(int)Math.floor((elapsed+1e-8)/.1);
++        return state==State.FAINT || state==State.HIT || state==State.ATTACK ? Math.min(count(state)-1,index) : index%count(state);
++    }
++}
+--- /dev/null
++++ b/server/src/main/java/com/projetok/prototype/ValidatedSpriteAtlas.java
+@@ -0,0 +1,76 @@
++package com.projetok.prototype;
++
++import java.awt.Graphics2D;
++import java.awt.RenderingHints;
++import java.awt.image.BufferedImage;
++import java.io.IOException;
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.security.MessageDigest;
++import java.security.NoSuchAlgorithmException;
++import java.util.HashMap;
++import java.util.HexFormat;
++import java.util.Map;
++import java.util.Properties;
++import javax.imageio.ImageIO;
++
++/** Carrega uma vez a exportacao VALIDADO da TASK-013; sem IO por frame. */
++public final class ValidatedSpriteAtlas {
++    private final BufferedImage image;
++    private final Map<String,int[]> frames;
++    private final int pivotX, pivotY, offsetX, offsetY;
++    private ValidatedSpriteAtlas(BufferedImage image, Map<String,int[]> frames, Properties p) {
++        this.image=image; this.frames=Map.copyOf(frames);
++        pivotX=Integer.parseInt(p.getProperty("pivotX")); pivotY=Integer.parseInt(p.getProperty("pivotY"));
++        offsetX=Integer.parseInt(p.getProperty("offsetX")); offsetY=Integer.parseInt(p.getProperty("offsetY"));
++        if (pivotX<0 || pivotX>64 || pivotY<0 || pivotY>64) throw new IllegalArgumentException("Pivot invalido");
++    }
++    /** Recusa status, hash, tamanho ou coordenadas inconsistentes antes de ativar o recurso. */
++    public static ValidatedSpriteAtlas load(Path manifest) throws IOException {
++        Properties p=new Properties();
++        try (var reader=Files.newBufferedReader(manifest)) { p.load(reader); }
++        if (!"VALIDADO".equals(p.getProperty("status"))) throw new IOException("Asset sem validacao");
++        Path png=manifest.toAbsolutePath().getParent().resolve(p.getProperty("image")).normalize();
++        byte[] data=Files.readAllBytes(png);
++        try {
++            String sha=HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(data));
++            if (!sha.equals(p.getProperty("sha256"))) throw new IOException("Hash de asset divergente");
++        } catch (NoSuchAlgorithmException error) { throw new IllegalStateException(error); }
++        BufferedImage image=ImageIO.read(new java.io.ByteArrayInputStream(data));
++        if (image==null || image.getWidth()%64!=0 || image.getHeight()%64!=0) throw new IOException("Grade invalida");
++        Map<String,int[]> frames=new HashMap<>();
++        for (var state:DirectionalAnimation.State.values()) for (var direction:DirectionalAnimation.Direction.values()) {
++            if (state==DirectionalAnimation.State.FAINT && direction!=DirectionalAnimation.Direction.FRONT) continue;
++            for (int i=0;i<DirectionalAnimation.count(state);i++) {
++                String key=key(state,direction,i), value=p.getProperty(key);
++                if (value==null) continue; // frame ausente usa geometria de depuracao.
++                String[] parts=value.split(",");
++                if(parts.length!=4) throw new IOException("Recorte invalido");
++                int[] r=new int[4];
++                try { for(int j=0;j<4;j++) r[j]=Integer.parseInt(parts[j]); }
++                catch(NumberFormatException error) { throw new IOException("Coordenada invalida",error); }
++                if(r[0]<0 || r[1]<0 || r[0]%64!=0 || r[1]%64!=0 || r[2]!=64 || r[3]!=64 || r[0]+64>image.getWidth() || r[1]+64>image.getHeight()) throw new IOException("Recorte fora da grade");
++                for (int[] other:frames.values()) if(r[0]==other[0] && r[1]==other[1]) throw new IOException("Frames sobrepostos");
++                frames.put(key,r);
++            }
++        }
++        try { return new ValidatedSpriteAtlas(image,frames,p); }
++        catch (IllegalArgumentException error) { throw new IOException("Metadados invalidos",error); }
++    }
++    private static String key(DirectionalAnimation.State state, DirectionalAnimation.Direction direction, int frame) {
++        String action=switch(state) { case ATTACK -> "PUNCH"; case FAINT -> "KO"; default -> state.name(); };
++        return action+"."+direction+"."+frame;
++    }
++    /** Retorna falso para preservar o desenho anterior quando falta qualquer frame. */
++    public boolean draw(Graphics2D original, DebugSnapshot.ActorView actor, DirectionalAnimation.View view) {
++        int[] r=frames.get(key(view.state(),view.direction(),view.frame()));
++        if(r==null) return false;
++        Graphics2D g=(Graphics2D)original.create();
++        try {
++            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
++            int x=Math.round(actor.x())-pivotX+offsetX, y=Math.round(actor.y())-pivotY+offsetY;
++            g.drawImage(image,x,y,x+64,y+64,r[0],r[1],r[0]+64,r[1]+64,null);
++        } finally {g.dispose();}
++        return true;
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/DirectionalAnimationTest.java
+@@ -0,0 +1,134 @@
++package com.projetok.prototype;
++
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import java.nio.file.Path;
++import java.nio.file.Files;
++import java.util.List;
++import java.util.Properties;
++import java.util.HexFormat;
++import java.security.MessageDigest;
++import java.awt.image.BufferedImage;
++import java.awt.Color;
++import javax.imageio.ImageIO;
++import static org.junit.jupiter.api.Assertions.*;
++
++class DirectionalAnimationTest {
++    @TempDir Path temp;
++    private final DebugSnapshot base=DebugWorld.demo(new java.util.Random(12)).snapshot();
++
++    private DebugSnapshot snapshot(float x,float y,boolean alive) {
++        var a=new DebugSnapshot.ActorView(1,"fixture",x,y,18,alive?100:0,100,false,alive);
++        return new DebugSnapshot(List.of(a),base.obstacles(),List.of(),100,100,0,false,1,"",1,0,0,null,
++                100,100,0,List.of(),List.of(),false,0,0,List.of(),false,base.softObstacles(),base.cryostasisHud(),base.lightningStepHud());
++    }
++    private DirectionalAnimation.View visual(DirectionalAnimation a, float x,float y,double dt) {
++        return a.advance(snapshot(x,y,true),List.of(),dt).animations().get(0);
++    }
++    @Test void fourDirectionsAndStableFacing() {
++        var a=new DirectionalAnimation();
++        visual(a,100,100,0);
++        assertEquals(DirectionalAnimation.Direction.RIGHT,visual(a,101,100,.1).direction());
++        assertEquals(DirectionalAnimation.Direction.LEFT,visual(a,100,100,.1).direction());
++        assertEquals(DirectionalAnimation.Direction.BACK,visual(a,100,99,.1).direction());
++        assertEquals(DirectionalAnimation.Direction.FRONT,visual(a,100,100,.1).direction());
++        assertEquals(DirectionalAnimation.Direction.FRONT,visual(a,100,100,.1).direction());
++    }
++    @Test void timingLoopPauseReturnAndReset() {
++        var a=new DirectionalAnimation();
++        visual(a,100,100,0);
++        assertEquals(0,visual(a,101,100,.1).frame());
++        assertEquals(1,visual(a,102,100,.1).frame());
++        assertEquals(2,visual(a,103,100,.1).frame());
++        assertEquals(3,visual(a,104,100,.1).frame());
++        assertEquals(0,visual(a,105,100,.1).frame());
++        assertEquals(DirectionalAnimation.State.IDLE,visual(a,105,100,.1).state());
++        a.reset();
++        assertEquals(DirectionalAnimation.Direction.FRONT,visual(a,100,100,0).direction());
++        assertThrows(IllegalArgumentException.class,()->visual(a,100,100,Double.NaN));
++    }
++    @Test void attackHitDeathPriorityAndClamp() {
++        var a=new DirectionalAnimation();
++        var attack=new DirectionalAnimation.Signal(1,DirectionalAnimation.State.ATTACK);
++        var hit=new DirectionalAnimation.Signal(1,DirectionalAnimation.State.HIT);
++        assertEquals(DirectionalAnimation.State.ATTACK,a.advance(snapshot(100,100,true),List.of(attack),.1).animations().get(0).state());
++        assertEquals(1,a.advance(snapshot(100,100,true),List.of(),.1).animations().get(0).frame());
++        assertEquals(DirectionalAnimation.State.HIT,a.advance(snapshot(100,100,true),List.of(hit,attack),.1).animations().get(0).state());
++        assertEquals(0,a.advance(snapshot(100,100,true),List.of(),0).animations().get(0).frame());
++        a.advance(snapshot(100,100,true),List.of(),.1);
++        assertEquals(DirectionalAnimation.State.IDLE,a.advance(snapshot(100,100,true),List.of(),.1).animations().get(0).state());
++        for(int i=0;i<20;i++) a.advance(snapshot(100,100,false),List.of(),.1);
++        var ko=a.advance(snapshot(100,100,false),List.of(),.1).animations().get(0);
++        assertEquals(DirectionalAnimation.State.FAINT,ko.state());
++        assertEquals(2,ko.frame());
++        assertEquals(DirectionalAnimation.Direction.FRONT,ko.direction());
++    }
++    @Test void realRuntimeAttackRestartAndNoInventedRun() {
++        try(var runtime=new DebugRuntime(()->DebugWorld.demo(new java.util.Random(2)))) {
++            runtime.setInput(new DebugInput(false,false,false,false,true));
++            runtime.advanceOneTick();
++            assertEquals(DirectionalAnimation.State.ATTACK,runtime.presentation().animations().get(0).state());
++            runtime.setInput(DebugInput.NONE);
++            runtime.restart();runtime.advanceOneTick();
++            assertEquals(DirectionalAnimation.State.IDLE,runtime.presentation().animations().get(0).state());
++            assertEquals(135,runtime.snapshot().actors().get(0).x());
++            assertTrue(runtime.presentation().animations().stream().noneMatch(v->v.state()==DirectionalAnimation.State.RUN));
++        }
++    }
++    @Test void realDamageAndDeathDriveVisuals() {
++        var world=DebugWorld.demo(new java.util.Random(3));var animations=new DirectionalAnimation();
++        boolean hit=false,death=false;
++        for(int i=0;i<5000 && !death;i++) {
++            var s=world.snapshot();var p=s.actors().get(0);var mob=s.actors().get(1);
++            float dx=mob.x()-p.x(),dy=mob.y()-p.y();
++            world.tick(new DebugInput(dy<-4,dy>4,dx<-4,dx>4,false),1f/30f);
++            var signals=world.animationSignals();
++            var v=animations.advance(world.snapshot(),signals,1d/30).animations().get(0);
++            if(signals.stream().anyMatch(e->e.actorId()==1 && e.state()==DirectionalAnimation.State.HIT)) {
++                hit=true;assertTrue(v.state()==DirectionalAnimation.State.HIT || v.state()==DirectionalAnimation.State.FAINT);
++            }
++            if(world.snapshot().gameOver()) {death=true;assertEquals(DirectionalAnimation.State.FAINT,v.state());}
++        }
++        assertTrue(hit);assertTrue(death);
++    }
++    @Test void frozenActorHoldsFrameThenResumes() {
++        var a=new DirectionalAnimation();var s=snapshot(100,100,true);
++        var frozen=new DebugSnapshot(s.actors(),s.obstacles(),s.effects(),100,100,0,false,1,"",1,0,0,null,
++                100,100,0,List.of(),List.of(new DebugSnapshot.StatusView(1,1)),false,0,0,List.of(),false,
++                s.softObstacles(),s.cryostasisHud(),s.lightningStepHud());
++        a.advance(s,List.of(new DirectionalAnimation.Signal(1,DirectionalAnimation.State.HIT)),.1);
++        assertEquals(0,a.advance(frozen,List.of(),.1).animations().get(0).frame());
++        assertEquals(0,a.advance(frozen,List.of(),.1).animations().get(0).frame());
++        assertEquals(1,a.advance(s,List.of(),.1).animations().get(0).frame());
++    }
++    private Path atlas() throws Exception {
++        var image=new BufferedImage(64,64,BufferedImage.TYPE_INT_ARGB);
++        var g=image.createGraphics();g.setColor(Color.MAGENTA);g.fillRect(20,10,24,40);g.dispose();
++        Path png=temp.resolve("synthetic.png");ImageIO.write(image,"png",png.toFile());
++        Properties p=new Properties();p.setProperty("status","VALIDADO");p.setProperty("image","synthetic.png");
++        p.setProperty("sha256",HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(png))));
++        p.setProperty("pivotX","32");p.setProperty("pivotY","48");p.setProperty("offsetX","0");p.setProperty("offsetY","0");
++        p.setProperty("IDLE.FRONT.0","0,0,64,64");
++        Path manifest=temp.resolve("synthetic.properties");try(var out=Files.newBufferedWriter(manifest)){p.store(out,"FIXTURE SINTETICA");}
++        return manifest;
++    }
++    @Test void syntheticAtlasPivotFallbackAndNoMutation() throws Exception {
++        var atlas=ValidatedSpriteAtlas.load(atlas());
++        var a=new DirectionalAnimation();var presentation=a.advance(snapshot(100,100,true),List.of(),0);
++        var image=new BufferedImage(DebugPanel.PANEL_WIDTH,DebugPanel.PANEL_HEIGHT,BufferedImage.TYPE_INT_ARGB);
++        var g=image.createGraphics();
++        assertTrue(atlas.draw(g,presentation.world().actors().get(0),presentation.animations().get(0)));
++        assertEquals(Color.MAGENTA.getRGB(),image.getRGB(88,62));
++        assertFalse(atlas.draw(g,presentation.world().actors().get(0),new DirectionalAnimation.View(1,DirectionalAnimation.State.HIT,DirectionalAnimation.Direction.FRONT,0)));
++        var before=presentation.toString();var panel=new DebugPanel(()->presentation.world());
++        panel.setPresentation(()->presentation,atlas);panel.render(g,presentation);panel.render(g,presentation);
++        assertEquals(before,presentation.toString());g.dispose();
++        Path capture=Path.of("../docs/TASK-014-sintetico.png");ImageIO.write(image,"png",capture.toFile());
++    }
++    @Test void rejectsUnapprovedAndAlteredAsset() throws Exception {
++        Path p=atlas();Files.writeString(p,Files.readString(p).replace("VALIDADO","PENDENTE"));
++        Path unapproved=p;assertThrows(java.io.IOException.class,()->ValidatedSpriteAtlas.load(unapproved));
++        p=atlas();Files.write(temp.resolve("synthetic.png"),new byte[]{1,2,3});
++        Path finalPath=p;assertThrows(java.io.IOException.class,()->ValidatedSpriteAtlas.load(finalPath));
++    }
++}

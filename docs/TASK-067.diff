@@ -1,0 +1,100 @@
+--- /dev/null
++++ b/docs/TASK-067-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 283,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-067.md
+@@ -0,0 +1,11 @@
++# TASK-067 - Fronteira autoritativa e protocolo V1
++
++Inspecionados KServer, Network e Kryonet legados: startup tenta banco e mensagens de movimento carregam coordenadas vindas do cliente. Nenhum desses entrypoints foi executado. O experimento novo fica em com.projetok.multiplayer e nao acessa PostgreSQL nem reutiliza login/senhas legados.
++
++Cliente envia somente intencoes MOVE/ATTACK/LIGHTNING_STEP/CRYOSTASIS com sequencia e alvo/direcao. Identidade e vinculada ao socket pelo servidor; cliente nao envia ID de outro jogador, HP, dano ou moedas. Sessao transitoria nao representa autenticacao de conta.
++
++Frames TCP: int32 big-endian de tamanho 2..4096, byte versao=1, byte tipo (1 Hello, 2 Welcome, 3 Intent, 4 State, 5 Bye, 6 Error). Strings UTF-8 prefixadas por byte, maximo 240 bytes; nomes 3..24 caracteres. State: tick int64, contagem byte <=8, atores tipados. A ordem dos quatro codigos de acao e parte do contrato V1 e nao deve ser reordenada sem nova versao.
++
++DTOs imutaveis validam finitude, IDs, limites e duplicatas. Codec recusa truncamento, desconhecidos, dados excedentes e versoes incompativeis. Sem ObjectInputStream. Fila de comandos e limites de sessao serao implementados no servidor; IO nao pertence a thread de simulacao.
++
++RPG offline 0.66.0-rc2 congelado em ZIP auditado, SHA-256 2f59766f860df6e8db66f2dbc2ca219bad970cffd9e7e0df9f800a13658f8f9e. Nenhum save offline sera compartilhado automaticamente.
+--- /dev/null
++++ b/server/src/main/java/com/projetok/multiplayer/Protocol.java
+@@ -0,0 +1,48 @@
++package com.projetok.multiplayer;
++import java.io.*;
++import java.nio.charset.StandardCharsets;
++import java.util.*;
++/** Protocolo experimental V1: frames limitados e DTOs explicitos, sem serializacao Java. */
++public final class Protocol {
++    public static final int VERSION=1,MAX_FRAME=4096,MAX_ACTORS=8;
++    public sealed interface Message permits Hello,Welcome,Intent,State,Bye,Error { }
++    public enum Action { MOVE,ATTACK,LIGHTNING_STEP,CRYOSTASIS }
++    public record Hello(int version,String name)implements Message{public Hello{if(version<0||version>65535)throw new IllegalArgumentException("Versao invalida");Protocol.name(name);}}
++    public record Welcome(int id)implements Message{public Welcome{if(id<1)throw new IllegalArgumentException("ID invalido");}}
++    public record Intent(long sequence,Action action,float x,float y)implements Message{public Intent{if(sequence<1||sequence>1_000_000_000_000L||action==null||!Float.isFinite(x)||!Float.isFinite(y)||Math.abs(x)>8192||Math.abs(y)>8192)throw new IllegalArgumentException("Intencao invalida");}}
++    public record Actor(int id,String name,float x,float y,int hp,int maxHp,float stamina,int coins,boolean boss) {
++        public Actor{Protocol.name(name);if(id<1||!Float.isFinite(x)||!Float.isFinite(y)||x<18||x>942||y<18||y>622||hp<0||hp>maxHp||maxHp<1||maxHp>10000||!Float.isFinite(stamina)||stamina<0||stamina>1000||coins<0||coins>1_000_000)throw new IllegalArgumentException("Ator invalido");}
++    }
++    public record State(long tick,List<Actor> actors)implements Message{
++        public State{actors=List.copyOf(actors);if(tick<0||tick>1_000_000_000||actors.size()>MAX_ACTORS||actors.stream().map(Actor::id).distinct().count()!=actors.size())throw new IllegalArgumentException("Snapshot invalido");}
++    }
++    public record Bye()implements Message{ }
++    public record Error(String reason)implements Message{public Error{if(reason==null||reason.length()>120)throw new IllegalArgumentException("Erro invalido");}}
++    private Protocol(){ }
++    private static void name(String value){if(value==null||!value.matches("[\\p{L}][\\p{L}\\p{N} _-]{2,23}"))throw new IllegalArgumentException("Nome invalido");}
++    public static void write(OutputStream stream,Message message)throws IOException{
++        var buffer=new ByteArrayOutputStream();var out=new DataOutputStream(buffer);out.writeByte(VERSION);
++        if(message instanceof Hello m){out.writeByte(1);out.writeInt(m.version());text(out,m.name());}
++        else if(message instanceof Welcome m){out.writeByte(2);out.writeInt(m.id());}
++        else if(message instanceof Intent m){out.writeByte(3);out.writeLong(m.sequence());out.writeByte(m.action().ordinal()+1);out.writeFloat(m.x());out.writeFloat(m.y());}
++        else if(message instanceof State m){out.writeByte(4);out.writeLong(m.tick());out.writeByte(m.actors().size());for(Actor a:m.actors()){out.writeInt(a.id());text(out,a.name());out.writeFloat(a.x());out.writeFloat(a.y());out.writeInt(a.hp());out.writeInt(a.maxHp());out.writeFloat(a.stamina());out.writeInt(a.coins());out.writeBoolean(a.boss());}}
++        else if(message instanceof Bye){out.writeByte(5);}
++        else if(message instanceof Error m){out.writeByte(6);text(out,m.reason());}
++        else throw new IOException("Mensagem desconhecida");
++        byte[] bytes=buffer.toByteArray();if(bytes.length>MAX_FRAME)throw new IOException("Frame excessivo");var target=new DataOutputStream(stream);target.writeInt(bytes.length);target.write(bytes);target.flush();
++    }
++    public static Message read(InputStream stream)throws IOException{
++        var source=new DataInputStream(stream);int size=source.readInt();if(size<2||size>MAX_FRAME)throw new IOException("Tamanho de frame invalido");byte[] bytes=source.readNBytes(size);if(bytes.length!=size)throw new EOFException("Frame interrompido");
++        var in=new DataInputStream(new ByteArrayInputStream(bytes));if(in.readUnsignedByte()!=VERSION)throw new IOException("Versao de envelope incompativel");
++        try{
++            Message message=switch(in.readUnsignedByte()){
++                case 1->new Hello(in.readInt(),text(in));case 2->new Welcome(in.readInt());
++                case 3->{long sequence=in.readLong();int action=in.readUnsignedByte();if(action<1||action>4)throw new IOException("Acao desconhecida");yield new Intent(sequence,Action.values()[action-1],in.readFloat(),in.readFloat());}
++                case 4->{long tick=in.readLong();int count=in.readUnsignedByte();if(count>MAX_ACTORS)throw new IOException("Atores excessivos");List<Actor> actors=new ArrayList<>();for(int i=0;i<count;i++)actors.add(new Actor(in.readInt(),text(in),in.readFloat(),in.readFloat(),in.readInt(),in.readInt(),in.readFloat(),in.readInt(),in.readBoolean()));yield new State(tick,actors);}
++                case 5->new Bye();case 6->new Error(text(in));default->throw new IOException("Tipo desconhecido");};
++            if(in.available()!=0)throw new IOException("Dados excedentes");return message;
++        }catch(IllegalArgumentException error){throw new IOException("Mensagem malformada",error);}
++    }
++    private static void text(DataOutputStream out,String text)throws IOException{byte[] bytes=text.getBytes(StandardCharsets.UTF_8);if(bytes.length>240)throw new IOException("Texto excessivo");out.writeByte(bytes.length);out.write(bytes);}
++    private static String text(DataInputStream in)throws IOException{int length=in.readUnsignedByte();if(length>240)throw new IOException("Texto excessivo");byte[] bytes=in.readNBytes(length);if(bytes.length!=length)throw new EOFException();return new String(bytes,StandardCharsets.UTF_8);}
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/multiplayer/ProtocolTest.java
+@@ -0,0 +1,9 @@
++package com.projetok.multiplayer;
++import org.junit.jupiter.api.Test;
++import java.io.*;
++import java.util.List;
++import static org.junit.jupiter.api.Assertions.*;
++class ProtocolTest {
++    @Test void roundTripsExplicitMessages()throws Exception{for(Protocol.Message m:List.of(new Protocol.Hello(1,"Viajante"),new Protocol.Welcome(1),new Protocol.Intent(1,Protocol.Action.MOVE,1,-1),new Protocol.State(12,List.of(new Protocol.Actor(1,"Viajante",100,100,80,100,65,20,false))),new Protocol.Bye(),new Protocol.Error("incompativel"))){var out=new ByteArrayOutputStream();Protocol.write(out,m);assertEquals(m,Protocol.read(new ByteArrayInputStream(out.toByteArray())));}}
++    @Test void rejectsOversizeUnknownTruncationAndNonFinite()throws Exception{for(byte[] bytes:new byte[][]{{0,0,32,0},{0,0,0,2,1,99},{0,0,0,3,1,5},{0,0,0,2,2,5}})assertThrows(IOException.class,()->Protocol.read(new ByteArrayInputStream(bytes)));assertThrows(IllegalArgumentException.class,()->new Protocol.Intent(1,Protocol.Action.MOVE,Float.NaN,0));}
++}

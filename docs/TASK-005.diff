@@ -1,0 +1,1310 @@
+--- a/docs/HISTORICO-TECNICO.md
++++ b/docs/HISTORICO-TECNICO.md
+@@ -1,4 +1,14 @@
+ # Histórico técnico
++
++## 18/10/2026 - TASK-005: Efeitos temporários e Freeze
++
++Criados armazenamento por entidade, serviço de aplicação/atualização de efeitos e ProbabilityService com RandomGenerator injetável. MobFactory anexa componente vazio. Criostase sorteia 30% por dano positivo sobrevivido e aplica Freeze por 1 s; sucesso renova sem acumular, falha não altera. Dano, cinco pulsos, custo, cooldown e alcance foram preservados.
++
++Efeitos antigos avançam antes dos pulsos e comandos. Aplicações novas conservam 1 s inteiro e bloqueiam movimento no próprio tick. MovementService bloqueia mobs congelados nos caminhos discreto, direcionado e contínuo; ataques em alcance continuam ativos. Snapshot publica status por valor em lista separada de ActorView. Painel apenas desenha contorno, tonalidade e legenda.
++
++Validação inicial: 73 testes. Final: `mvn clean test`, BUILD SUCCESS, **105 testes sem falhas ou erros**. Confirmados 0%, 30%, 100%, amostras 0,29/0,30, independência, renovação, expiração, mortos, dano zero/letal, movimento e ataque. Os testes e três baselines antigos foram mantidos. Captura renderizada inspecionada; sessão interativa da janela não realizada.
++
++Entrega: [relatório](TASK-005.md), [PDF](Spirit_Gate_TASK-005.pdf), [testes](TASK-005-testes.txt), [captura](TASK-005-freeze.png) e [diff](TASK-005.diff).
+ 
+ ## 18/10/2026 - TASK-004: Criostase
+ 
+--- /dev/null
++++ b/docs/TASK-005-testes.txt
+@@ -0,0 +1,21 @@
++TASK-005 | 18/10/2026
++Estado inicial: mvn clean test -q; 73 testes aprovados.
++Estado final: mvn clean test; BUILD SUCCESS; compilacao release 17.
++105 testes, 0 falhas, 0 erros, 0 ignorados.
++
++Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.061 s -- in com.projetok.domain.effect.StatusEffectServiceTest
++Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.037 s -- in com.projetok.domain.movement.FreezeMovementTest
++Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.031 s -- in com.projetok.domain.movement.MovementHardeningTest
++Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in com.projetok.domain.movement.MovementServiceTest
++Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.060 s -- in com.projetok.domain.movement.SpatialBodyIndexTest
++Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s -- in com.projetok.domain.probability.ProbabilityServiceTest
++Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in com.projetok.domain.resource.StaminaServiceTest
++Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.013 s -- in com.projetok.domain.skill.CryostasisFreezeTest
++Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.019 s -- in com.projetok.domain.skill.CryostasisServiceTest
++Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.689 s -- in com.projetok.prototype.CryostasisIntegrationTest
++Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in com.projetok.prototype.DebugCommandBufferTest
++Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.093 s -- in com.projetok.prototype.DebugWorldTest
++Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.082 s -- in com.projetok.prototype.FreezeWorldTest
++Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.169 s -- in com.projetok.prototype.MovementReplayTest
++Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.512 s -- in com.projetok.prototype.StaminaInterfaceTest
++Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.017 s -- in com.projetok.prototype.StaminaWorldTest
+--- /dev/null
++++ b/docs/TASK-005.md
+@@ -0,0 +1,103 @@
++# TASK-005 - Efeitos de status e congelamento probabilístico
++
++Spirit Gate | 18/10/2026 | Java 17 e Maven
++
++## Resultado
++
++A Criostase oferece uma tentativa independente de 30% de Freeze a cada mob que receber dano positivo e sobreviver ao pulso. Um sucesso aplica ou renova a duração para exatamente 1 segundo, sem somar o tempo anterior. Fracassos não removem ou renovam o efeito. Mobs congelados não se movimentam, mas continuam podendo atacar em alcance.
++
++Foram preservados os parâmetros da habilidade: dano base 7 ICE, custo 55 de vigor, cooldown 3 segundos, alcance 240, raio 85, duração 2,5 segundos e cinco pulsos em 0/0,5/1/1,5/2 s. Freeze não causa dano, não altera a frequência dos pulsos e não cria um sexto pulso.
++
++## Preparação e proposta
++
++Antes das alterações foram inspecionados CryostasisService, CryostasisZone, CombatService, MobFactory, MovementService, DebugWorld, DebugSnapshot, DebugPanel e testes relacionados. Estado inicial: mvn clean test -q aprovado com 73 testes.
++
++A proposta apresentada separou armazenamento por entidade, aplicação/atualização de efeitos e sorteios por um gerador injetável. O bloqueio fica no serviço autoritativo de movimento, e o snapshot publica uma coleção separada para preservar ActorView e o replay legado. Uma revisão paralela somente de leitura confirmou a ordem temporal e a preservação do ataque; nenhum achado bloqueador foi identificado.
++
++## Domínio reutilizável
++
++StatusEffectType identifica os efeitos; nesta tarefa contém somente FREEZE. StatusEffectsComponent armazena segundos restantes por tipo em EnumMap, com precisão interna double e consultas float. refresh substitui a duração, advance subtrai dt e remove efeitos expirados, e snapshot retorna cópia imutável. Durações precisam ser finitas e positivas; deltas, finitos e não negativos. Uma tolerância de um microssegundo evita resíduos ao somar passos float de 30 Hz.
++
++StatusEffectService separa elegibilidade e coordenação temporal do armazenamento. apply valida duração, recusa alvos mortos e restringe FREEZE a Mob. MobFactory anexa o componente vazio. Para entidades Mob construídas manualmente por código anterior, apply pode anexar o componente no primeiro sucesso, preservando os testes existentes. Jogadores não recebem Freeze nem têm esse componente anexado pelo serviço.
++
++update avança efeitos existentes e limpa o componente quando o portador morre. Não produz dano e não depende da Criostase. O coordenador do mundo, e não a habilidade, define quando atualizar o relógio. O serviço e os componentes são usados somente pela thread proprietária das entidades.
++
++ProbabilityService recebe java.util.random.RandomGenerator da biblioteca padrão do Java 17. succeeds valida chance finita no intervalo [0,1]. Chance zero sempre falha e chance um sempre sucede, sem consumir o gerador. Chances intermediárias usam uma nova amostra e comparação estrita amostra < chance. Assim, para 30%, 0,29 sucede e 0,30 falha. Amostras inválidas de um gerador customizado também são recusadas.
++
++O serviço é reutilizável sem conhecer mobs, skills ou interface. Não há Math.random no caminho da Criostase. O uso normal recebe RandomGenerator.getDefault; testes podem injetar sequências exatas ou geradores com seed.
++
++## Integração da Criostase
++
++CryostasisService mantém seu construtor anterior e acrescenta injeção de StatusEffectService e ProbabilityService. Após combat.attack retornar, verifica dano positivo e sobrevivência. Somente então consome uma amostra de 30% para aquele mob e pulso. Sucesso chama apply(FREEZE,1). O dano continua exclusivamente no CombatService, cujo código e fórmula não foram alterados.
++
++O conjunto já existente de alvos visitados garante uma tentativa no máximo por alvo no mesmo pulso mesmo se a lista contiver duplicatas. Alvos mortos, fora da área, atingidos letalmente ou com dano zero não consomem um sorteio nem recebem novo efeito. Falha de sorteio não chama o serviço de aplicação.
++
++O gerador pertence ao mundo/serviço e não é reinicializado a cada pulso ou mob. DebugWorld permite injetá-lo pelo novo construtor sem perder o construtor padrão. A ordem dos alvos é estável na lista da arena; uma sequência controlada produz resultados reproduzíveis para cada alvo e pulso.
++
++## Ordem autoritativa do tick
++
++Após validar dt, o mundo avança os efeitos anteriores dos mobs. Depois atualiza os relógios e processa os pulsos das zonas existentes. Seguem as ações e lançamentos novos, incluindo o pulso imediato. O movimento e o ataque da IA são processados depois disso.
++
++Assim, Freeze aplicado ou renovado por um pulso não sofre outro decremento no mesmo tick, conserva 1 segundo no snapshot e já bloqueia o deslocamento daquele tick. No tick de expiração, se não houver novo sucesso, o movimento volta a ser permitido. Um sucesso no mesmo tick em que o efeito anterior expirou aplica um novo segundo completo.
++
++MovementService consulta FREEZE para mobs antes de resolver o deslocamento. O bloqueio cobre move, moveDirected e moveContinuous. O caminho bloqueado continua validando coordenadas, deslocamentos, overflow e raio antes de retornar. CollisionService permanece geometria sem conhecimento de status; atualizações de posição realizadas fora do serviço não representam ações normais de movimento.
++
++DebugWorld não pula a IA inteira por Freeze. O bloco de ataque e seus cooldowns permanecem ativos, com cálculo de alcance a partir da posição imobilizada. Jogadores não são bloqueados por esse mecanismo.
++
++O passo de simulação permanece limitado a 0,1 s na arena. Em chamadas diretas que cruzem vários pulsos, todos os pulsos devidos são avaliados na atualização corrente; o coordenador continua responsável por avançar os efeitos antes dos pulsos. Não há reconstrução de movimento contínuo ou de tempos passados de aplicação fora desse modelo de ticks.
++
++## Snapshot e interface
++
++DebugSnapshot acrescenta uma lista imutável de StatusView, com ID do ator e duração restante de Freeze. Só mobs vivos com efeito ativo são publicados. ActorView permanece exatamente no contrato anterior; nenhum hash do replay precisou ser recalculado ou alterado.
++
++DebugPanel desenha tonalidade azul-gelo, contorno e legenda CONGELADO a partir dessa lista. Não acessa componentes, sorteia ou avança temporizadores. Reiniciar a arena cria entidades e armazenamento novos, sem reaproveitar efeitos. A fila de Q e os controles anteriores permanecem intactos.
++
++## Validação e captura
++
++Comando final: mvn clean test na pasta server. Resultado real: BUILD SUCCESS, compilação release 17, 105 testes, zero falhas, zero erros e zero ignorados. Os 73 testes anteriores continuam aprovados e foram acrescentados 32 testes: 9 do serviço de efeitos, 5 de probabilidades, 7 da integração da Criostase com Freeze, 5 de bloqueio de movimento e 6 da ordem temporal e interface no mundo. Resumo por classe em TASK-005-testes.txt.
++
++Os testes novos cobrem os limites exatos 0%, 30% e 100%, probabilidades inválidas, geradores controlados, amostras 0,29/0,30, armazenamento imutável, duração de 1 segundo, renovação sem acumulação, fracasso preservando o tempo anterior e expiração com passos de 30 Hz.
++
++Também verificam tentativas independentes por alvo e pulso, cadáveres, dano letal e zero, ausência de sexto pulso/dano extra, bloqueio nos caminhos de movimento e retomada após expirar. A integração verifica aplicação antes da IA, segundo completo no tick do pulso, ataque de mob congelado em alcance, ausência de Freeze no jogador, reinício e renderização sem mutação.
++
++Os testes anteriores e os três baselines de MovementReplayTest foram preservados. A captura TASK-005-freeze.png foi produzida pelo teste com amostra controlada 0,29 e inspecionada: exibe o mob congelado, a zona, a legenda, o vigor 45/100 e o cooldown 3 s. O teste também comprova que renderizar não altera o snapshot. Não houve sessão interativa com JFrame nesta etapa.
++
++## Arquivos novos e alterados
++
++Novos no domínio, sob server/src/main/java/com/projetok/:
++- entity/component/StatusEffectsComponent.java.
++- effect/StatusEffectType.java e StatusEffectService.java.
++- probability/ProbabilityService.java.
++
++Alterados no domínio:
++- factory/MobFactory.java: armazenamento inicial vazio por mob.
++- skill/CryostasisService.java: injeção e tentativa após dano positivo sobrevivido.
++- movement/MovementService.java: bloqueio de movimento autoritativo.
++
++Alterados no protótipo:
++- prototype/DebugWorld.java: relógio de efeitos antes de pulsos e injeção de RNG.
++- prototype/DebugSnapshot.java: valores visuais separados do ator legado.
++- prototype/DebugPanel.java: tonalidade, contorno e legenda.
++
++Novos testes, sob server/src/test/java/com/projetok/:
++- domain/effect/StatusEffectServiceTest.java.
++- domain/probability/ProbabilityServiceTest.java.
++- domain/skill/CryostasisFreezeTest.java.
++- domain/movement/FreezeMovementTest.java.
++- prototype/FreezeWorldTest.java.
++
++Documentação e ferramenta:
++- README-PROTOTIPO.md e docs/HISTORICO-TECNICO.md.
++- docs/TASK-005.md, docs/TASK-005-testes.txt e docs/TASK-005.diff.
++- docs/Spirit_Gate_TASK-005.pdf e docs/TASK-005-freeze.png.
++- tools/gerar_pdf_task005.py.
++
++## Limitações e revisão
++
++Nenhuma dependência foi adicionada. Não há PvP, resistência a controle, imunidade, Freeze em jogadores, novas skills ou alteração de balanceamento da Criostase. O sistema permite estender tipos de efeitos, mas só FREEZE foi implementado. O armazenamento não tem regras de habilidade; o chamador de gameplay deve usar StatusEffectService para elegibilidade.
++
++A aleatoriedade real varia entre sessões; reproduzir uma sessão exige injetar o mesmo gerador/seed e a mesma ordem de comandos e alvos. Testes usam sequências explícitas, não testes estatísticos sujeitos a flutuação.
++
++Esta pasta não é um checkout Git acessível; não houve commit, merge ou integração em branch. O diff textual é relativo ao início desta tarefa, sem server/target, binários temporários ou inclusão recursiva de si mesmo. PDF e captura são entregas separadas de documentação.
++
++Reproduzir: mvn clean test na pasta server; python -B tools/gerar_pdf_task005.py na pasta Projeto-K para regenerar o PDF. Conferência manual: lançar Q sobre mobs e observar que os congelados param de perseguir, mantêm ataques próximos e retomam o movimento ao expirar. Como a chance é de 30%, nem todo pulso congela.
+--- a/README-PROTOTIPO.md
++++ b/README-PROTOTIPO.md
+@@ -199,3 +199,26 @@
+ - [Diff](docs/TASK-004.diff)
+ 
+ Gerar PDF: `python -B tools/gerar_pdf_task004.py` na pasta `Projeto-K`.
++
++## TASK-005 - Congelamento probabilístico
++
++Cada pulso da Criostase que causar dano positivo a um mob sobrevivente oferece
++**30% de chance de Freeze por 1 segundo**. Sucessos renovam para 1 s sem acumular;
++falhas não alteram o efeito. O mob congelado fica azul-gelo, para de se mover e
++continua atacando se estiver em alcance. Não há dano adicional nem Freeze no jogador.
++
++O relógio dos efeitos avança antes dos pulsos, garantindo duração completa para
++efeitos novos. `StatusEffectsComponent` guarda o estado; `StatusEffectService`
++aplica/atualiza; `ProbabilityService` usa `RandomGenerator` injetável. O painel
++somente desenha o snapshot. Os parâmetros e os cinco pulsos da Criostase permanecem.
++
++Validação: `mvn clean test`, **105 testes aprovados**, incluindo os 73 anteriores
++e seus baselines de regressão intactos.
++
++- [Relatório e arquivos alterados](docs/TASK-005.md)
++- [PDF](docs/Spirit_Gate_TASK-005.pdf)
++- [Testes](docs/TASK-005-testes.txt)
++- [Captura do Freeze](docs/TASK-005-freeze.png)
++- [Diff](docs/TASK-005.diff)
++
++Gerar PDF: `python -B tools/gerar_pdf_task005.py` na pasta `Projeto-K`.
+--- /dev/null
++++ b/server/src/main/java/com/projetok/domain/effect/StatusEffectService.java
+@@ -0,0 +1,53 @@
++package com.projetok.domain.effect;
++
++import com.projetok.domain.entity.GameEntity;
++import com.projetok.domain.entity.Mob;
++import com.projetok.domain.entity.component.HealthComponent;
++import com.projetok.domain.entity.component.StatusEffectsComponent;
++import java.util.Objects;
++
++/** Aplica e atualiza efeitos no domínio, exclusivamente na thread da simulação. */
++public final class StatusEffectService {
++    /** Cria um serviço sem estado compartilhado entre entidades ou habilidades. */
++    public StatusEffectService() { }
++
++    // --- Elegibilidade e aplicação ---
++
++    /**
++     * Renova um efeito por uma duração finita e positiva, sem acumular tempo.
++     * Recusa mortos e, neste ciclo, permite congelamento somente em mobs.
++     *
++     * @return verdadeiro quando o efeito foi aplicado; falso para alvo inelegível
++     */
++    public boolean apply(GameEntity entity, StatusEffectType type, float duration) {
++        Objects.requireNonNull(entity, "entity");
++        Objects.requireNonNull(type, "type");
++        if (!Float.isFinite(duration) || duration <= 0f)
++            throw new IllegalArgumentException("Duração do efeito deve ser finita e positiva");
++        if (type == StatusEffectType.FREEZE && !(entity instanceof Mob)) return false;
++        if (entity.require(HealthComponent.class).isDead()) return false;
++        StatusEffectsComponent effects = entity.get(StatusEffectsComponent.class).orElseGet(() -> {
++            var created = new StatusEffectsComponent();
++            entity.attach(created);
++            return created;
++        });
++        effects.refresh(type, duration);
++        return true;
++    }
++
++    // --- Relógio autoritativo ---
++
++    /**
++     * Avança efeitos anteriores ao próximo pulso ou comando; mortos perdem seus efeitos.
++     * O coordenador chama este método antes de aplicar novos efeitos no mesmo tick.
++     */
++    public void update(GameEntity entity, float dt) {
++        Objects.requireNonNull(entity, "entity");
++        if (!Float.isFinite(dt) || dt < 0f)
++            throw new IllegalArgumentException("Delta do efeito deve ser finito e não negativo");
++        entity.get(StatusEffectsComponent.class).ifPresent(effects -> {
++            if (entity.require(HealthComponent.class).isDead()) effects.clear();
++            else effects.advance(dt);
++        });
++    }
++}
+--- /dev/null
++++ b/server/src/main/java/com/projetok/domain/effect/StatusEffectType.java
+@@ -0,0 +1,7 @@
++package com.projetok.domain.effect;
++
++/** Tipos de efeito temporário reconhecidos pela simulação autoritativa. */
++public enum StatusEffectType {
++    /** Impede deslocamento enquanto ativo, sem impedir ataques. */
++    FREEZE
++}
+--- /dev/null
++++ b/server/src/main/java/com/projetok/domain/entity/component/StatusEffectsComponent.java
+@@ -0,0 +1,56 @@
++package com.projetok.domain.entity.component;
++
++import com.projetok.domain.effect.StatusEffectType;
++import java.util.EnumMap;
++import java.util.Map;
++import java.util.Objects;
++
++/**
++ * Guarda os efeitos e seus segundos restantes por entidade, sem regras de habilidade.
++ * Somente a thread proprietária da entidade modifica este componente.
++ */
++public final class StatusEffectsComponent implements Component {
++    private static final double EXPIRATION_TOLERANCE = 0.000001;
++    private final EnumMap<StatusEffectType, Double> remaining = new EnumMap<>(StatusEffectType.class);
++
++    /** Cria armazenamento sem efeitos ativos. */
++    public StatusEffectsComponent() { }
++
++    /** Informa se o tipo está ativo, sem modificar seu temporizador. */
++    public boolean has(StatusEffectType type) {
++        return remaining.containsKey(Objects.requireNonNull(type, "type"));
++    }
++
++    /** Retorna segundos restantes, ou zero quando o efeito não está ativo. */
++    public float remaining(StatusEffectType type) {
++        return remaining.getOrDefault(Objects.requireNonNull(type, "type"), 0.0).floatValue();
++    }
++
++    /** Publica uma cópia imutável dos temporizadores, sem expor o mapa interno. */
++    public Map<StatusEffectType, Double> snapshot() {
++        return Map.copyOf(remaining);
++    }
++
++    // --- Armazenamento e avanço do tempo ---
++
++    /** Substitui a duração por um valor finito positivo, sem acumular o tempo anterior. */
++    public void refresh(StatusEffectType type, float duration) {
++        Objects.requireNonNull(type, "type");
++        if (!Float.isFinite(duration) || duration <= 0f)
++            throw new IllegalArgumentException("Duração do efeito deve ser finita e positiva");
++        remaining.put(type, (double) duration);
++    }
++
++    /** Avança todos os efeitos; tolerância de um microssegundo evita resíduos de deltas float. */
++    public void advance(float dt) {
++        if (!Float.isFinite(dt) || dt < 0f)
++            throw new IllegalArgumentException("Delta do efeito deve ser finito e não negativo");
++        remaining.replaceAll((type, seconds) -> seconds - dt);
++        remaining.values().removeIf(seconds -> seconds <= EXPIRATION_TOLERANCE);
++    }
++
++    /** Remove todos os efeitos, por exemplo após a morte do portador. */
++    public void clear() {
++        remaining.clear();
++    }
++}
+--- a/server/src/main/java/com/projetok/domain/factory/MobFactory.java
++++ b/server/src/main/java/com/projetok/domain/factory/MobFactory.java
+@@ -8,6 +8,7 @@
+ import com.projetok.domain.entity.component.HealthComponent;
+ import com.projetok.domain.entity.component.RaceComponent;
+ import com.projetok.domain.entity.component.StatsComponent;
++import com.projetok.domain.entity.component.StatusEffectsComponent;
+ import com.projetok.domain.progression.VitalityService;
+ 
+ import java.util.Objects;
+@@ -31,6 +32,7 @@
+         mob.attach(new CombatComponent(archetype.combatStyle()));
+         mob.attach(new AiComponent(archetype.behavior()));
+         mob.attach(new HealthComponent(archetype.race().hpGrowth().baseHp()));
++        mob.attach(new StatusEffectsComponent());
+ 
+         vitalityService.recalculate(mob);
+         return mob;
+--- a/server/src/main/java/com/projetok/domain/movement/MovementService.java
++++ b/server/src/main/java/com/projetok/domain/movement/MovementService.java
+@@ -2,6 +2,9 @@
+ 
+ import com.projetok.domain.entity.GameEntity;
+ import com.projetok.domain.entity.Position;
++import com.projetok.domain.entity.Mob;
++import com.projetok.domain.entity.component.StatusEffectsComponent;
++import com.projetok.domain.effect.StatusEffectType;
+ 
+ /** Movimento autoritativo sem interface; chamado na thread proprietária das entidades. */
+ public final class MovementService {
+@@ -35,12 +38,24 @@
+ 
+     /** Encaminha um deslocamento à resolução de colisões, sem criar threads. */
+     public void move(GameEntity entity, float dx, float dy, float radius, CollisionService.Space space) {
++        if (blockedByFreeze(entity, dx, dy, radius)) return;
+         collisions.resolve(entity, dx, dy, radius, space);
+     }
+ 
+     /** Deslocamento contínuo opcional para dash e velocidades altas, sem tunelamento. */
+     public void moveContinuous(GameEntity entity, float dx, float dy, float radius,
+                                CollisionService.Space space) {
++        if (blockedByFreeze(entity, dx, dy, radius)) return;
+         collisions.resolveContinuous(entity, dx, dy, radius, space);
+     }
++
++    /** Freeze bloqueia só mobs e preserva rejeição de entradas inválidas, mesmo imobilizados. */
++    private boolean blockedByFreeze(GameEntity entity, float dx, float dy, float radius) {
++        if (!(entity instanceof Mob) || !entity.get(StatusEffectsComponent.class)
++                .map(component -> component.has(StatusEffectType.FREEZE)).orElse(false)) return false;
++        Position p = entity.getPosition();
++        MovementValidation.finite(p.x(), p.y(), dx, dy, p.x() + dx, p.y() + dy);
++        MovementValidation.positive(radius);
++        return true;
++    }
+ }
+--- /dev/null
++++ b/server/src/main/java/com/projetok/domain/probability/ProbabilityService.java
+@@ -0,0 +1,29 @@
++package com.projetok.domain.probability;
++
++import java.util.Objects;
++import java.util.random.RandomGenerator;
++
++/** Sorteios reutilizáveis com gerador Java 17 injetável e limites explícitos. */
++public final class ProbabilityService {
++    private final RandomGenerator random;
++
++    /** Recebe o gerador pertencente à thread da simulação ou controlado por um teste. */
++    public ProbabilityService(RandomGenerator random) {
++        this.random = Objects.requireNonNull(random, "random");
++    }
++
++    /**
++     * Testa uma chance finita entre zero e um, usando comparação estrita da amostra.
++     * Chances zero e um são determinísticas e não consomem o gerador.
++     */
++    public boolean succeeds(double chance) {
++        if (!Double.isFinite(chance) || chance < 0.0 || chance > 1.0)
++            throw new IllegalArgumentException("Probabilidade deve ser finita e estar entre zero e um");
++        if (chance == 0.0) return false;
++        if (chance == 1.0) return true;
++        double sample = random.nextDouble();
++        if (!Double.isFinite(sample) || sample < 0.0 || sample >= 1.0)
++            throw new IllegalStateException("Amostra do gerador deve ser finita e estar em [0, 1)");
++        return sample < chance;
++    }
++}
+--- a/server/src/main/java/com/projetok/domain/skill/CryostasisService.java
++++ b/server/src/main/java/com/projetok/domain/skill/CryostasisService.java
+@@ -4,6 +4,10 @@
+ import com.projetok.domain.entity.Mob;
+ import com.projetok.domain.entity.Player;
+ import com.projetok.domain.resource.StaminaService;
++import com.projetok.domain.effect.StatusEffectService;
++import com.projetok.domain.effect.StatusEffectType;
++import com.projetok.domain.probability.ProbabilityService;
++import java.util.random.RandomGenerator;
+ import java.util.ArrayList;
+ import java.util.Collections;
+ import java.util.IdentityHashMap;
+@@ -15,8 +19,13 @@
+ public final class CryostasisService {
+     public static final String ID = "cryostasis";
+     public static final float COST = 55f, COOLDOWN = 3f, RANGE = 240f;
++    /** Chance por dano positivo sobrevivido; sucessos renovam um segundo. */
++    public static final double FREEZE_CHANCE = 0.30;
++    public static final float FREEZE_DURATION = 1f;
+     private final CombatService combat;
+     private final StaminaService stamina;
++    private final StatusEffectService statusEffects;
++    private final ProbabilityService probability;
+     private final CryostasisAttacker attacker = new CryostasisAttacker();
+     private final List<CryostasisZone> zones = new ArrayList<>();
+     private double cooldown;
+@@ -41,7 +50,15 @@
+ 
+     /** Recebe os serviços existentes, sem criar eventos ou caminhos paralelos de dano. */
+     public CryostasisService(CombatService combat, StaminaService stamina) {
++        this(combat, stamina, new StatusEffectService(), new ProbabilityService(RandomGenerator.getDefault()));
++    }
++
++    /** Injeta aplicação de efeitos e sorteios reproduzíveis sem modificar o caminho de dano. */
++    public CryostasisService(CombatService combat, StaminaService stamina,
++                            StatusEffectService statusEffects, ProbabilityService probability) {
+         this.combat = Objects.requireNonNull(combat); this.stamina = Objects.requireNonNull(stamina);
++        this.statusEffects = Objects.requireNonNull(statusEffects);
++        this.probability = Objects.requireNonNull(probability);
+     }
+     /** Cooldown restante, publicável sem referência mutável. */
+     public float cooldown() { return (float) cooldown; }
+@@ -99,8 +116,13 @@
+                 var p = mob.getPosition();
+                 double dx = (double) p.x() - zone.x(), dy = (double) p.y() - zone.y();
+                 double radius = CryostasisZone.RADIUS + (double) target.radius();
+-                if (dx * dx + dy * dy <= radius * radius)
+-                    hits.add(new Hit(mob, combat.attack(attacker, mob)));
++                if (dx * dx + dy * dy <= radius * radius) {
++                    int damage = combat.attack(attacker, mob);
++                    hits.add(new Hit(mob, damage));
++                    // Sorteio somente após dano positivo e sobrevivência, independente por alvo/pulso.
++                    if (damage > 0 && !mob.isDead() && probability.succeeds(FREEZE_CHANCE))
++                        statusEffects.apply(mob, StatusEffectType.FREEZE, FREEZE_DURATION);
++                }
+             }
+         }
+         return hits;
+--- a/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ b/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -168,6 +168,10 @@
+         g.setColor(new Color(236, 253, 255));
+         g.fillOval(Math.round(x - 7), Math.round(y - 6), 5, 5);
+         g.fillOval(Math.round(x + 4), Math.round(y - 6), 5, 5);
++        if (!a.player() && s.statuses().stream().anyMatch(status ->
++                status.actorId() == a.id() && status.freezeRemaining() > 0)) {
++            drawFrozenActor(g, x, y, r);
++        }
+         if (a.player()) {
+             float fx = s.facingX(), fy = s.facingY();
+             g.setColor(new Color(180, 255, 255));
+@@ -202,6 +206,21 @@
+         drawBar(g, Math.round(x - 24), Math.round(y - r - 13), 48, 5,
+                 a.maxHp() == 0 ? 0 : (float) a.hp() / a.maxHp(),
+                 a.player() ? ACCENT : new Color(243, 99, 109));
++    }
++
++    /** Marca Freeze somente com dados publicados; não consulta componentes ou sorteia. */
++    private void drawFrozenActor(Graphics2D original, float x, float y, float radius) {
++        Graphics2D g = (Graphics2D) original.create();
++        try {
++            g.setColor(new Color(130, 225, 255, 100));
++            g.fill(new Ellipse2D.Float(x - radius, y - radius, radius * 2, radius * 2));
++            g.setColor(new Color(185, 245, 255));
++            g.setStroke(new BasicStroke(3f));
++            g.draw(new Ellipse2D.Float(x - radius - 4, y - radius - 4,
++                    (radius + 4) * 2, (radius + 4) * 2));
++            g.setFont(new Font("SansSerif", Font.BOLD, 10));
++            center(g, "CONGELADO", Math.round(x), Math.round(y + radius + 20));
++        } finally { g.dispose(); }
+     }
+ 
+     /** Corte visual: varre o cone frontal e desvanece sem aplicar dano. */
+--- a/server/src/main/java/com/projetok/prototype/DebugSnapshot.java
++++ b/server/src/main/java/com/projetok/prototype/DebugSnapshot.java
+@@ -7,7 +7,11 @@
+         List<ActorView> actors, List<Obstacle> obstacles, List<EffectView> effects,
+         int playerHp, int playerMaxHp, int defeated, boolean gameOver, long ticks,
+         String lastEvent, float facingX, float facingY, float cooldown, AttackView attack,
+-        float stamina, float maxStamina, float cryostasisCooldown, List<IceZoneView> iceZones) {
++        float stamina, float maxStamina, float cryostasisCooldown, List<IceZoneView> iceZones,
++        List<StatusView> statuses) {
++
++    /** Estado visual por ator, separado do contrato histórico de ActorView. */
++    public record StatusView(int actorId, float freezeRemaining) { }
+ 
+     /** Círculo visual fixo; somente valores, sem regras ou entidades. */
+     public record IceZoneView(float x, float y, float radius, float elapsed, float duration) { }
+--- a/server/src/main/java/com/projetok/prototype/DebugWorld.java
++++ b/server/src/main/java/com/projetok/prototype/DebugWorld.java
+@@ -15,6 +15,11 @@
+ import com.projetok.domain.skill.SkillCastCommand;
+ import com.projetok.domain.skill.CryostasisService;
+ import com.projetok.domain.skill.CryostasisZone;
++import com.projetok.domain.effect.StatusEffectService;
++import com.projetok.domain.effect.StatusEffectType;
++import com.projetok.domain.entity.component.StatusEffectsComponent;
++import com.projetok.domain.probability.ProbabilityService;
++import java.util.random.RandomGenerator;
+ import com.projetok.domain.event.GameEventBus;
+ import com.projetok.domain.event.events.EntityDeathEvent;
+ import com.projetok.domain.factory.MobArchetype;
+@@ -56,7 +61,8 @@
+     private final CombatService combat = new CombatService(events);
+     private final MovementService movement = new MovementService(new CollisionService());
+     private final StaminaService staminaService = new StaminaService();
+-    private final CryostasisService cryostasis = new CryostasisService(combat, staminaService);
++    private final StatusEffectService statusEffects = new StatusEffectService();
++    private final CryostasisService cryostasis;
+     private boolean effortHeld;
+     private final Player player;
+     private final List<Mob> mobs = new ArrayList<>();
+@@ -76,6 +82,12 @@
+ 
+     /** Instancia jogador e mobs usando as fábricas reais do domínio existente. */
+     public DebugWorld() {
++        this(RandomGenerator.getDefault());
++    }
++
++    /** Permite reproduzir os sorteios de gameplay sem acoplar testes à interface. */
++    public DebugWorld(RandomGenerator random) {
++        cryostasis = new CryostasisService(combat, staminaService, statusEffects, new ProbabilityService(random));
+         RaceRegistry races = RaceRegistry.withDefaults();
+         VitalityService vitality = new VitalityService();
+         player = new PlayerFactory(vitality).create(1, "Guardiao", new PlayerArchetype(
+@@ -125,6 +137,8 @@
+     void tickQueued(DebugInput input, float dt, int effortPresses, List<SkillCastCommand> casts) {
+         if (!Float.isFinite(dt) || dt <= 0f || dt > 0.1f) throw new IllegalArgumentException("dt fora do intervalo (0, 0.1]");
+         ticks++;
++        // Efeitos antigos avançam antes dos pulsos: um novo sucesso conserva 1 s inteiro.
++        for (Mob mob : mobs) statusEffects.update(mob, dt);
+         if (attack != null) {
+             float remaining = attack.remaining() - dt;
+             attack = remaining <= 0f ? null : new DebugSnapshot.AttackView(
+@@ -293,7 +307,10 @@
+                 player.require(StaminaComponent.class).current(),
+                 player.require(StaminaComponent.class).max(), cryostasis.cooldown(),
+                 cryostasis.zones().stream().map(zone -> new DebugSnapshot.IceZoneView(
+-                        zone.x(), zone.y(), CryostasisZone.RADIUS, zone.elapsed(), CryostasisZone.DURATION)).toList());
++                        zone.x(), zone.y(), CryostasisZone.RADIUS, zone.elapsed(), CryostasisZone.DURATION)).toList(),
++                mobs.stream().filter(mob -> !mob.isDead()).filter(mob -> mob.require(StatusEffectsComponent.class)
++                        .has(StatusEffectType.FREEZE)).map(mob -> new DebugSnapshot.StatusView(mob.getId(),
++                        mob.require(StatusEffectsComponent.class).remaining(StatusEffectType.FREEZE))).toList());
+     }
+ 
+     /** Extrai apenas os campos visuais de uma entidade do domínio. */
+--- /dev/null
++++ b/server/src/test/java/com/projetok/domain/effect/StatusEffectServiceTest.java
+@@ -0,0 +1,153 @@
++package com.projetok.domain.effect;
++
++import com.projetok.domain.entity.Mob;
++import com.projetok.domain.entity.Player;
++import com.projetok.domain.entity.Position;
++import com.projetok.domain.entity.component.HealthComponent;
++import com.projetok.domain.entity.component.StatusEffectsComponent;
++import com.projetok.domain.item.LootTable;
++import com.projetok.domain.network.PlayerConnection;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Regressões do armazenamento, aplicação e relógio de efeitos sem interface ou habilidade. */
++class StatusEffectServiceTest {
++    private final StatusEffectService service = new StatusEffectService();
++
++    /** Cria um mob mínimo sem depender da fábrica ou de componentes de combate. */
++    private Mob mob() {
++        var mob = new Mob(10, "Alvo", new Position(20, 30), LootTable.of());
++        mob.attach(new HealthComponent(100));
++        return mob;
++    }
++
++    /** Cria jogador com vida para verificar a restrição de congelamento. */
++    private Player player() {
++        var player = new Player(1, "Jogador", new Position(0, 0), new PlayerConnection() {
++            @Override public void send(Object packet) { }
++            @Override public void disconnect() { }
++        });
++        player.attach(new HealthComponent(100));
++        return player;
++    }
++
++    /** Componente novo não inventa efeitos; a atualização sem componente não o anexa. */
++    @Test void inicialmenteSemEfeitos() {
++        var effects = new StatusEffectsComponent();
++        assertFalse(effects.has(StatusEffectType.FREEZE));
++        assertEquals(0f, effects.remaining(StatusEffectType.FREEZE));
++        assertTrue(effects.snapshot().isEmpty());
++        var mob = mob();
++        service.update(mob, 1f);
++        assertTrue(mob.get(StatusEffectsComponent.class).isEmpty());
++    }
++
++    /** Aplicação cria armazenamento compatível com entidades antigas e dura um segundo. */
++    @Test void aplicacaoEDuracaoDeUmSegundo() {
++        var mob = mob();
++        assertTrue(service.apply(mob, StatusEffectType.FREEZE, 1f));
++        var effects = mob.require(StatusEffectsComponent.class);
++        assertTrue(effects.has(StatusEffectType.FREEZE));
++        assertEquals(1f, effects.remaining(StatusEffectType.FREEZE));
++        service.update(mob, 0f);
++        assertEquals(1f, effects.remaining(StatusEffectType.FREEZE));
++        service.update(mob, 0.4f);
++        assertEquals(0.6f, effects.remaining(StatusEffectType.FREEZE), 0.000001f);
++        service.update(mob, 0.59f);
++        assertTrue(effects.has(StatusEffectType.FREEZE));
++        service.update(mob, 0.01f);
++        assertFalse(effects.has(StatusEffectType.FREEZE));
++        assertEquals(0f, effects.remaining(StatusEffectType.FREEZE));
++    }
++
++    /** Novo sucesso restaura exatamente um segundo, sem somar à duração anterior. */
++    @Test void renovacaoNaoAcumulaTempo() {
++        var mob = mob();
++        service.apply(mob, StatusEffectType.FREEZE, 1f);
++        service.update(mob, 0.4f);
++        service.apply(mob, StatusEffectType.FREEZE, 1f);
++        var effects = mob.require(StatusEffectsComponent.class);
++        assertEquals(1f, effects.remaining(StatusEffectType.FREEZE));
++        service.update(mob, 0.9f);
++        assertTrue(effects.has(StatusEffectType.FREEZE));
++        service.update(mob, 0.1f);
++        assertFalse(effects.has(StatusEffectType.FREEZE));
++    }
++
++    /** Trinta passos da arena expiram o efeito sem deixar resíduos do arredondamento float. */
++    @Test void expiraComDeltaDeTrintaHertz() {
++        var mob = mob();
++        service.apply(mob, StatusEffectType.FREEZE, 1f);
++        for (int i = 0; i < 29; i++) service.update(mob, 1f / 30f);
++        assertTrue(mob.require(StatusEffectsComponent.class).has(StatusEffectType.FREEZE));
++        service.update(mob, 1f / 30f);
++        assertFalse(mob.require(StatusEffectsComponent.class).has(StatusEffectType.FREEZE));
++    }
++
++    /** Mortos não recebem efeito novo e a atualização limpa um efeito anterior à morte. */
++    @Test void mortoNaoRecebeELimpaEfeitoAnterior() {
++        var mob = mob();
++        service.apply(mob, StatusEffectType.FREEZE, 1f);
++        service.update(mob, 0.3f);
++        mob.receiveDamage(100);
++        assertFalse(service.apply(mob, StatusEffectType.FREEZE, 1f));
++        assertEquals(0.7f, mob.require(StatusEffectsComponent.class).remaining(StatusEffectType.FREEZE), 0.000001f);
++        service.update(mob, 0f);
++        assertTrue(mob.require(StatusEffectsComponent.class).snapshot().isEmpty());
++        var alreadyDead = mob();
++        alreadyDead.receiveDamage(100);
++        assertFalse(service.apply(alreadyDead, StatusEffectType.FREEZE, 1f));
++        assertTrue(alreadyDead.get(StatusEffectsComponent.class).isEmpty());
++    }
++
++    /** Congelamento de jogadores fica fora do escopo e não anexa componente. */
++    @Test void jogadorNaoRecebeCongelamento() {
++        var player = player();
++        assertFalse(service.apply(player, StatusEffectType.FREEZE, 1f));
++        assertTrue(player.get(StatusEffectsComponent.class).isEmpty());
++        assertEquals(100, player.require(HealthComponent.class).current());
++    }
++
++    /** Cópias do mapa não aceitam alterações e não acompanham futuras mutações. */
++    @Test void snapshotImutavelEIndependente() {
++        var effects = new StatusEffectsComponent();
++        effects.refresh(StatusEffectType.FREEZE, 1f);
++        var snapshot = effects.snapshot();
++        assertThrows(UnsupportedOperationException.class, () -> snapshot.clear());
++        effects.advance(0.5f);
++        assertEquals(1.0, snapshot.get(StatusEffectType.FREEZE));
++        assertEquals(0.5f, effects.remaining(StatusEffectType.FREEZE));
++        effects.clear();
++        assertTrue(effects.snapshot().isEmpty());
++        assertEquals(1, snapshot.size());
++    }
++
++    /** Durações inválidas falham antes de anexar ou renovar o armazenamento. */
++    @Test void rejeitaDuracoesInvalidasSemMutacao() {
++        var mob = mob();
++        var component = new StatusEffectsComponent();
++        for (float invalid : new float[] {0f, -1f, Float.NaN, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY}) {
++            assertThrows(IllegalArgumentException.class, () -> service.apply(mob, StatusEffectType.FREEZE, invalid));
++            assertThrows(IllegalArgumentException.class, () -> component.refresh(StatusEffectType.FREEZE, invalid));
++            assertTrue(mob.get(StatusEffectsComponent.class).isEmpty());
++            assertTrue(component.snapshot().isEmpty());
++        }
++        service.apply(mob, StatusEffectType.FREEZE, 1f);
++        assertThrows(IllegalArgumentException.class, () -> service.apply(mob, StatusEffectType.FREEZE, Float.NaN));
++        assertEquals(1f, mob.require(StatusEffectsComponent.class).remaining(StatusEffectType.FREEZE));
++    }
++
++    /** Deltas inválidos não removem efeitos nem alteram seu tempo restante. */
++    @Test void rejeitaDeltasInvalidosSemMutacao() {
++        var mob = mob();
++        service.apply(mob, StatusEffectType.FREEZE, 1f);
++        var effects = mob.require(StatusEffectsComponent.class);
++        for (float invalid : new float[] {-1f, Float.NaN, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY}) {
++            assertThrows(IllegalArgumentException.class, () -> service.update(mob, invalid));
++            assertThrows(IllegalArgumentException.class, () -> effects.advance(invalid));
++            assertEquals(1f, effects.remaining(StatusEffectType.FREEZE));
++        }
++        service.update(mob, Float.MAX_VALUE);
++        assertFalse(effects.has(StatusEffectType.FREEZE));
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/domain/movement/FreezeMovementTest.java
+@@ -0,0 +1,145 @@
++package com.projetok.domain.movement;
++
++import com.projetok.domain.combat.CombatService;
++import com.projetok.domain.effect.StatusEffectService;
++import com.projetok.domain.effect.StatusEffectType;
++import com.projetok.domain.entity.Mob;
++import com.projetok.domain.entity.Player;
++import com.projetok.domain.entity.Position;
++import com.projetok.domain.entity.component.CombatComponent;
++import com.projetok.domain.entity.component.EquipmentComponent;
++import com.projetok.domain.entity.component.HealthComponent;
++import com.projetok.domain.entity.component.RaceComponent;
++import com.projetok.domain.entity.component.StatsComponent;
++import com.projetok.domain.entity.component.StatusEffectsComponent;
++import com.projetok.domain.event.GameEventBus;
++import com.projetok.domain.item.LootTable;
++import com.projetok.domain.network.PlayerConnection;
++import com.projetok.domain.race.RaceRegistry;
++import org.junit.jupiter.api.Test;
++
++import java.util.List;
++
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Comprova imobilização autoritativa sem interferir em dano, jogadores ou validação. */
++class FreezeMovementTest {
++    private final MovementService movement = new MovementService(new CollisionService());
++    private final StatusEffectService effects = new StatusEffectService();
++    private final CollisionService.Space space = new CollisionService.Space(1000, 1000, List.of(), List.of());
++    private final Mob mob = mob();
++
++    /** Monta um mob desarmado real com vida e atributos suficientes para atacar. */
++    private static Mob mob() {
++        Mob mob = new Mob(10, "Mob", new Position(200, 200), LootTable.of());
++        mob.attach(new HealthComponent(120));
++        mob.attach(new RaceComponent(RaceRegistry.withDefaults().get("demon")));
++        mob.attach(new StatsComponent(5, 5, 5, 1, 0));
++        mob.attach(new EquipmentComponent());
++        mob.attach(new CombatComponent(null));
++        return mob;
++    }
++
++    /** Cria jogador neutro ao dano físico recebido do mob. */
++    private static Player player() {
++        Player player = new Player(1, "Jogador", new Position(240, 200), new PlayerConnection() {
++            @Override public void send(Object packet) { }
++            @Override public void disconnect() { }
++        });
++        player.attach(new HealthComponent(100));
++        player.attach(new RaceComponent(RaceRegistry.withDefaults().get("human")));
++        return player;
++    }
++
++    // --- Bloqueio nos caminhos públicos de movimentação ---
++
++    /** Deslocamentos diretos, direcionados e contínuos não mudam a posição congelada. */
++    @Test void freezeBloqueiaTodosOsCaminhosDeMovimento() {
++        assertTrue(effects.apply(mob, StatusEffectType.FREEZE, 1f));
++        Position original = mob.getPosition();
++
++        movement.move(mob, 30, 20, 19, space);
++        assertEquals(original, mob.getPosition());
++        movement.moveDirected(mob, movement.direction(1, 1), 92, 0.5f, 19, space);
++        assertEquals(original, mob.getPosition());
++        movement.moveContinuous(mob, 200, 200, 19, space);
++        assertEquals(original, mob.getPosition());
++        assertEquals(1f, mob.require(StatusEffectsComponent.class).remaining(StatusEffectType.FREEZE));
++    }
++
++    /** O movimento é retomado apenas quando o segundo inteiro do efeito expira. */
++    @Test void movimentoRetornaAposExpirarUmSegundo() {
++        effects.apply(mob, StatusEffectType.FREEZE, 1f);
++        effects.update(mob, 0.75f);
++        movement.move(mob, 10, 0, 19, space);
++        assertEquals(new Position(200, 200), mob.getPosition());
++        assertEquals(0.25f, mob.require(StatusEffectsComponent.class).remaining(StatusEffectType.FREEZE));
++
++        effects.update(mob, 0.25f);
++        assertFalse(mob.require(StatusEffectsComponent.class).has(StatusEffectType.FREEZE));
++        movement.move(mob, 10, 0, 19, space);
++        assertEquals(new Position(210, 200), mob.getPosition());
++        movement.moveDirected(mob, new Position(0, 1), 20, 0.5f, 19, space);
++        assertEquals(new Position(210, 210), mob.getPosition());
++        movement.moveContinuous(mob, 10, 0, 19, space);
++        assertEquals(new Position(220, 210), mob.getPosition());
++    }
++
++    /** Freeze não transforma entradas inválidas em comandos aceitos silenciosamente. */
++    @Test void entradasInvalidasContinuamRejeitadasDuranteFreeze() {
++        effects.apply(mob, StatusEffectType.FREEZE, 1f);
++        Position original = mob.getPosition();
++        for (float invalid : new float[] {Float.NaN, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY}) {
++            assertThrows(IllegalArgumentException.class, () -> movement.move(mob, invalid, 0, 19, space));
++            assertThrows(IllegalArgumentException.class, () -> movement.move(mob, 0, invalid, 19, space));
++            assertThrows(IllegalArgumentException.class, () -> movement.moveContinuous(mob, invalid, 0, 19, space));
++            assertThrows(IllegalArgumentException.class,
++                    () -> movement.moveDirected(mob, new Position(invalid, 0), 92, 0.1f, 19, space));
++            assertThrows(IllegalArgumentException.class,
++                    () -> movement.moveDirected(mob, new Position(1, 0), invalid, 0.1f, 19, space));
++            assertThrows(IllegalArgumentException.class,
++                    () -> movement.moveDirected(mob, new Position(1, 0), 92, invalid, 19, space));
++        }
++        for (float radius : new float[] {0, -1, Float.NaN, Float.POSITIVE_INFINITY}) {
++            assertThrows(IllegalArgumentException.class, () -> movement.move(mob, 1, 0, radius, space));
++            assertThrows(IllegalArgumentException.class,
++                    () -> movement.moveContinuous(mob, 1, 0, radius, space));
++        }
++        assertThrows(IllegalArgumentException.class,
++                () -> movement.moveDirected(mob, new Position(1, 0), -1, 0.1f, 19, space));
++        assertThrows(IllegalArgumentException.class,
++                () -> movement.moveDirected(mob, new Position(1, 0), 92, -1, 19, space));
++        assertEquals(original, mob.getPosition());
++    }
++
++    /** A imobilização não muda o cálculo nem impede o mob de causar dano normal. */
++    @Test void mobCongeladoMantemAtaqueEDano() {
++        Player target = player();
++        CombatService combat = new CombatService(new GameEventBus());
++        int damageBefore = combat.attack(mob, target);
++        assertTrue(damageBefore > 0);
++
++        effects.apply(mob, StatusEffectType.FREEZE, 1f);
++        int damageDuring = combat.attack(mob, target);
++
++        assertEquals(damageBefore, damageDuring);
++        assertEquals(100 - damageBefore - damageDuring, target.require(HealthComponent.class).current());
++        assertTrue(mob.require(StatusEffectsComponent.class).has(StatusEffectType.FREEZE));
++        assertEquals(new Position(200, 200), mob.getPosition());
++    }
++
++    /** Mesmo um componente fabricado não permite congelamento de jogadores nesta tarefa. */
++    @Test void freezeNaoBloqueiaJogadorComComponenteAnexadoManualmente() {
++        Player player = player();
++        StatusEffectsComponent fabricated = new StatusEffectsComponent();
++        fabricated.refresh(StatusEffectType.FREEZE, 1f);
++        player.attach(fabricated);
++
++        movement.move(player, 10, 0, 18, space);
++        assertEquals(new Position(250, 200), player.getPosition());
++        movement.moveDirected(player, new Position(0, 1), 20, 0.5f, 18, space);
++        assertEquals(new Position(250, 210), player.getPosition());
++        movement.moveContinuous(player, 10, 0, 18, space);
++        assertEquals(new Position(260, 210), player.getPosition());
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/domain/probability/ProbabilityServiceTest.java
+@@ -0,0 +1,73 @@
++package com.projetok.domain.probability;
++
++import java.util.random.RandomGenerator;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Sorteios controlados verificam probabilidades sem amostragem estatística instável. */
++class ProbabilityServiceTest {
++    /** Gerador da biblioteca padrão com sequência explícita e contagem de consumo. */
++    private static final class Samples implements RandomGenerator {
++        private final double[] values;
++        private int consumed;
++
++        /** Guarda as amostras que deverão ser consumidas em ordem. */
++        private Samples(double... values) { this.values = values; }
++
++        /** Detecta caminhos inesperados que deixem de usar a amostra double contratada. */
++        @Override public long nextLong() { throw new AssertionError("Sorteio long inesperado"); }
++
++        /** Entrega exatamente uma amostra, falhando quando o consumidor sorteia em excesso. */
++        @Override public double nextDouble() {
++            assertTrue(consumed < values.length, "Não deve haver sorteio extra");
++            return values[consumed++];
++        }
++    }
++
++    /** Chances de zero e cem por cento não consultam o gerador. */
++    @Test void zeroECemPorCentoSemSorteio() {
++        var samples = new Samples();
++        var service = new ProbabilityService(samples);
++        assertFalse(service.succeeds(0));
++        assertTrue(service.succeeds(1));
++        assertEquals(0, samples.consumed);
++    }
++
++    /** Comparação é estrita: 0,29 passa para 30%, mas 0,30 falha. */
++    @Test void limiteExatoDeTrintaPorCento() {
++        var samples = new Samples(0.29, 0.30);
++        var service = new ProbabilityService(samples);
++        assertTrue(service.succeeds(0.30));
++        assertFalse(service.succeeds(0.30));
++        assertEquals(2, samples.consumed);
++    }
++
++    /** Cada tentativa consome uma nova amostra, sem reutilizar sucesso ou falha anterior. */
++    @Test void sorteiosIndependentes() {
++        var samples = new Samples(0.29, 0.99, 0, 0.30);
++        var service = new ProbabilityService(samples);
++        assertTrue(service.succeeds(0.30));
++        assertFalse(service.succeeds(0.30));
++        assertTrue(service.succeeds(0.30));
++        assertFalse(service.succeeds(0.30));
++        assertEquals(4, samples.consumed);
++    }
++
++    /** Probabilidades inválidas são rejeitadas antes de consultar o gerador. */
++    @Test void rejeitaProbabilidadesInvalidas() {
++        var samples = new Samples();
++        var service = new ProbabilityService(samples);
++        for (double invalid : new double[] {-0.01, 1.01, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY})
++            assertThrows(IllegalArgumentException.class, () -> service.succeeds(invalid));
++        assertEquals(0, samples.consumed);
++        assertThrows(NullPointerException.class, () -> new ProbabilityService(null));
++    }
++
++    /** Geradores injetados também devem respeitar o contrato de amostra finita em [0, 1). */
++    @Test void rejeitaAmostrasInvalidas() {
++        for (double invalid : new double[] {-0.01, 1, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY}) {
++            var service = new ProbabilityService(new Samples(invalid));
++            assertThrows(IllegalStateException.class, () -> service.succeeds(0.30));
++        }
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/domain/skill/CryostasisFreezeTest.java
+@@ -0,0 +1,238 @@
++package com.projetok.domain.skill;
++
++import com.projetok.domain.combat.CombatService;
++import com.projetok.domain.effect.StatusEffectService;
++import com.projetok.domain.effect.StatusEffectType;
++import com.projetok.domain.entity.Mob;
++import com.projetok.domain.entity.Player;
++import com.projetok.domain.entity.Position;
++import com.projetok.domain.entity.component.HealthComponent;
++import com.projetok.domain.entity.component.RaceComponent;
++import com.projetok.domain.entity.component.StaminaComponent;
++import com.projetok.domain.entity.component.StatusEffectsComponent;
++import com.projetok.domain.event.GameEventBus;
++import com.projetok.domain.item.LootTable;
++import com.projetok.domain.network.PlayerConnection;
++import com.projetok.domain.probability.ProbabilityService;
++import com.projetok.domain.race.DamageType;
++import com.projetok.domain.race.Race;
++import com.projetok.domain.race.RaceRegistry;
++import com.projetok.domain.resource.StaminaService;
++import org.junit.jupiter.api.Test;
++
++import java.util.List;
++import java.util.Map;
++import java.util.random.RandomGenerator;
++
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Regressões do Freeze aplicado por dano real, com sorteios inteiramente controlados. */
++class CryostasisFreezeTest {
++    private final StatusEffectService effects = new StatusEffectService();
++    private final Player player = player();
++
++    // --- Fixtures sem interface e sem adaptações do caminho de dano ---
++
++    /** Cria um lançador mínimo com o mesmo recurso consumido na arena. */
++    private static Player player() {
++        Player player = new Player(1, "Lançador", new Position(100, 100), new PlayerConnection() {
++            @Override public void send(Object packet) { }
++            @Override public void disconnect() { }
++        });
++        player.attach(new HealthComponent(100));
++        player.attach(new StaminaComponent());
++        return player;
++    }
++
++    /** Cria um alvo neutro a gelo; a vida permite observar os cinco pulsos. */
++    private static Mob mob(int id, int health) {
++        Mob mob = new Mob(id, "Alvo " + id, new Position(200, 200), LootTable.of());
++        mob.attach(new HealthComponent(health));
++        mob.attach(new RaceComponent(RaceRegistry.withDefaults().get("demon")));
++        return mob;
++    }
++
++    /** Injeta uma sequência que falha imediatamente se houver sorteios inesperados. */
++    private CryostasisService service(Sequence random) {
++        return new CryostasisService(new CombatService(new GameEventBus()), new StaminaService(),
++                effects, new ProbabilityService(random));
++    }
++
++    /** Converte mobs em hitboxes iguais às usadas no protótipo. */
++    private static List<CryostasisService.Target> targets(Mob... mobs) {
++        return java.util.Arrays.stream(mobs).map(mob -> new CryostasisService.Target(mob, 19)).toList();
++    }
++
++    /** Executa o pulso imediato pelo contrato público da habilidade. */
++    private CryostasisService.Result cast(CryostasisService service, List<CryostasisService.Target> targets) {
++        return service.cast(player, new SkillCastCommand(CryostasisService.ID, 200, 200), 960, 640, targets);
++    }
++
++    /** Consulta efeitos ausentes como duração zero, sem exigir componente prévio na fixture. */
++    private static float remaining(Mob mob) {
++        return mob.get(StatusEffectsComponent.class)
++                .map(component -> component.remaining(StatusEffectType.FREEZE)).orElse(0f);
++    }
++
++    /** Gerador padrão injetável com amostras predeterminadas e contagem de consumo. */
++    private static final class Sequence implements RandomGenerator {
++        private final double[] samples;
++        private int count;
++
++        /** Copia as amostras para impedir alteração posterior do roteiro do teste. */
++        private Sequence(double... samples) { this.samples = samples.clone(); }
++
++        /** O serviço deve usar nextDouble; outra distribuição denunciaria regressão. */
++        @Override public long nextLong() { throw new AssertionError("Sorteio inesperado por nextLong"); }
++
++        /** Retorna exatamente uma amostra por tentativa elegível. */
++        @Override public double nextDouble() {
++            if (count >= samples.length) throw new AssertionError("Sorteio além da sequência prevista");
++            return samples[count++];
++        }
++    }
++
++    // --- Elegibilidade, independência e limite estrito da probabilidade ---
++
++    /** A mesma chance usa comparador estrito: 0,29 passa e 0,30 falha. */
++    @Test void limiarDeTrintaPorCentoEhEstritoPorMob() {
++        Mob first = mob(10, 120), second = mob(11, 120);
++        Sequence random = new Sequence(0.29, 0.30);
++        CryostasisService service = service(random);
++        var result = cast(service, targets(first, second));
++
++        assertEquals(CryostasisService.Status.CAST, result.status());
++        assertEquals(2, result.hits().size());
++        assertEquals(2, random.count);
++        assertEquals(1f, remaining(first));
++        assertEquals(0f, remaining(second));
++        assertEquals(113, first.require(HealthComponent.class).current());
++        assertEquals(113, second.require(HealthComponent.class).current());
++        assertEquals(45f, player.require(StaminaComponent.class).current());
++        assertEquals(3f, service.cooldown());
++    }
++
++    /** Cada mob recebe outro sorteio no pulso seguinte, sem compartilhar sucesso. */
++    @Test void sorteiosSaoIndependentesPorMobEPorPulso() {
++        Mob first = mob(10, 120), second = mob(11, 120);
++        Sequence random = new Sequence(0.29, 0.80, 0.80, 0.29);
++        CryostasisService service = service(random);
++        var targets = targets(first, second);
++
++        cast(service, targets);
++        effects.update(first, 0.5f);
++        effects.update(second, 0.5f);
++        assertEquals(2, service.update(0.5f, targets).size());
++
++        assertEquals(4, random.count);
++        assertEquals(0.5f, remaining(first));
++        assertEquals(1f, remaining(second));
++        assertEquals(106, first.require(HealthComponent.class).current());
++        assertEquals(106, second.require(HealthComponent.class).current());
++    }
++
++    /** Uma vítima duplicada na lista continua elegível uma única vez por pulso. */
++    @Test void alvoDuplicadoEForaDaZonaNaoGeramSorteiosExtras() {
++        Mob inside = mob(10, 120), outside = mob(11, 120);
++        outside.setPosition(new Position(500, 500));
++        Sequence random = new Sequence(0.29);
++        var insideTarget = new CryostasisService.Target(inside, 19);
++        var result = cast(service(random), List.of(insideTarget, insideTarget,
++                new CryostasisService.Target(outside, 19)));
++
++        assertEquals(1, result.hits().size());
++        assertEquals(1, random.count);
++        assertEquals(113, inside.require(HealthComponent.class).current());
++        assertEquals(120, outside.require(HealthComponent.class).current());
++        assertEquals(0f, remaining(outside));
++    }
++
++    /** Mortos e danos letais não abrem tentativas nem recebem novos efeitos. */
++    @Test void mortosEDanoLetalNaoSorteiamNemAplicamFreeze() {
++        Mob dead = mob(10, 120), dying = mob(11, 7);
++        dead.require(HealthComponent.class).applyDamage(120);
++        Sequence random = new Sequence();
++        CryostasisService service = service(random);
++        var targets = targets(dead, dying);
++
++        var result = cast(service, targets);
++        assertEquals(1, result.hits().size());
++        assertEquals(7, result.hits().get(0).damage());
++        assertTrue(dying.isDead());
++        assertEquals(0f, remaining(dead));
++        assertEquals(0f, remaining(dying));
++        assertTrue(service.update(2.5f, targets).isEmpty());
++        assertEquals(0, random.count);
++    }
++
++    /** Afinidade de gelo zero continua dano zero e não oferece controle gratuito. */
++    @Test void danoZeroNaoSorteiaNemAplicaFreeze() {
++        Mob immune = mob(10, 120);
++        Race base = immune.race();
++        immune.attach(new RaceComponent(new Race("gelo-zero", "Alvo sem dano de gelo", base.hpGrowth(),
++                base.growthBonus(), Map.of(DamageType.ICE, 0.0), List.of())));
++        Sequence random = new Sequence();
++        CryostasisService service = service(random);
++        var targets = targets(immune);
++
++        assertEquals(0, cast(service, targets).hits().get(0).damage());
++        assertEquals(4, service.update(2.5f, targets).size());
++        assertEquals(120, immune.require(HealthComponent.class).current());
++        assertEquals(0f, remaining(immune));
++        assertEquals(0, random.count);
++    }
++
++    // --- Relógio do efeito separado do relógio da habilidade ---
++
++    /** Novo sucesso renova um segundo; uma falha posterior preserva o tempo restante. */
++    @Test void sucessoRenovaSemAcumularEFalhaNaoAlteraDuracao() {
++        Mob mob = mob(10, 120);
++        Sequence random = new Sequence(0.29, 0.29, 0.30);
++        CryostasisService service = service(random);
++        var targets = targets(mob);
++
++        cast(service, targets);
++        effects.update(mob, 0.5f);
++        assertEquals(0.5f, remaining(mob));
++        service.update(0.5f, targets);
++        assertEquals(1f, remaining(mob));
++        effects.update(mob, 0.5f);
++        service.update(0.5f, targets);
++        assertEquals(0.5f, remaining(mob));
++        effects.update(mob, 0.5f);
++
++        assertEquals(0f, remaining(mob));
++        assertFalse(mob.require(StatusEffectsComponent.class).has(StatusEffectType.FREEZE));
++        assertEquals(3, random.count);
++        assertEquals(99, mob.require(HealthComponent.class).current());
++    }
++
++    /** Cinco sucessos não acrescentam dano e a expiração da zona não cria sexto sorteio. */
++    @Test void cincoPulsosNormaisSemDanoExtraNemSextaTentativa() {
++        Mob mob = mob(10, 120);
++        Sequence random = new Sequence(0, 0, 0, 0, 0);
++        CryostasisService service = service(random);
++        var targets = targets(mob);
++        int hits = cast(service, targets).hits().size();
++
++        for (int i = 0; i < 4; i++) {
++            effects.update(mob, 0.5f);
++            var pulse = service.update(0.5f, targets);
++            assertEquals(1, pulse.size());
++            assertEquals(7, pulse.get(0).damage());
++            assertEquals(1f, remaining(mob));
++            hits += pulse.size();
++        }
++        effects.update(mob, 0.5f);
++        assertTrue(service.update(0.5f, targets).isEmpty());
++        assertTrue(service.zones().isEmpty());
++        assertEquals(0.5f, remaining(mob));
++        effects.update(mob, 0.5f);
++        assertTrue(service.update(10f, targets).isEmpty());
++
++        assertEquals(5, hits);
++        assertEquals(5, random.count);
++        assertEquals(85, mob.require(HealthComponent.class).current());
++        assertEquals(0f, remaining(mob));
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/FreezeWorldTest.java
+@@ -0,0 +1,119 @@
++package com.projetok.prototype;
++
++import com.projetok.domain.skill.SkillCastCommand;
++import org.junit.jupiter.api.Test;
++import java.util.List;
++import java.util.random.RandomGenerator;
++import java.awt.image.BufferedImage;
++import java.nio.file.Files;
++import java.nio.file.Path;
++import javax.imageio.ImageIO;
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Ordem autoritativa do Freeze, ataque e publicação de estado visual. */
++class FreezeWorldTest {
++    private static final float DT = 1f / 30f;
++
++    /** Gerador controlado: depois da sequência, todas as tentativas falham. */
++    private RandomGenerator random(double... samples) {
++        return new RandomGenerator() {
++            private int next;
++            @Override public long nextLong() { return 0; }
++            @Override public double nextDouble() { return next < samples.length ? samples[next++] : 0.99; }
++        };
++    }
++
++    /** Lança no primeiro mob, dentro do alcance original. */
++    private void cast(DebugWorld world) {
++        var mob = world.snapshot().actors().get(1);
++        world.tickQueued(DebugInput.NONE, DT, 0,
++                List.of(new SkillCastCommand("cryostasis", mob.x(), mob.y())));
++    }
++
++    /** Freeze recém-aplicado não perde o delta do tick e já impede o movimento. */
++    @Test void duracaoCompletaEExpiracaoNoTick() {
++        var world = new DebugWorld(random(0.29));
++        var origin = world.snapshot().actors().get(1);
++        cast(world);
++        var initial = world.snapshot();
++        assertEquals(1f, initial.statuses().get(0).freezeRemaining());
++        assertEquals(origin.x(), initial.actors().get(1).x());
++        assertEquals(origin.y(), initial.actors().get(1).y());
++        for (int i = 0; i < 29; i++) world.tick(DebugInput.NONE, DT);
++        assertEquals(origin.x(), world.snapshot().actors().get(1).x());
++        assertTrue(world.snapshot().statuses().get(0).freezeRemaining() > 0);
++        world.tick(DebugInput.NONE, DT);
++        assertTrue(world.snapshot().statuses().isEmpty());
++        assertNotEquals(origin.y(), world.snapshot().actors().get(1).y());
++        assertEquals(1f, initial.statuses().get(0).freezeRemaining());
++        assertThrows(UnsupportedOperationException.class, () -> initial.statuses().clear());
++    }
++
++    /** Sucesso no pulso seguinte renova para um segundo, sem somar o tempo anterior. */
++    @Test void renovacaoEntrePulsosSemAcumular() {
++        var world = new DebugWorld(random(0.29, 0.29));
++        cast(world);
++        for (int i = 0; i < 15; i++) world.tick(DebugInput.NONE, DT);
++        assertEquals(1f, world.snapshot().statuses().get(0).freezeRemaining());
++        for (int i = 0; i < 15; i++) world.tick(DebugInput.NONE, DT);
++        assertEquals(0.5f, world.snapshot().statuses().get(0).freezeRemaining(), 0.00001);
++        for (int i = 0; i < 15; i++) world.tick(DebugInput.NONE, DT);
++        assertTrue(world.snapshot().statuses().isEmpty());
++    }
++
++    /** Fracasso em 0,30 não congela; dano e caminhada permanecem ativos. */
++    @Test void limiteTrintaPorCentoNaoCongela() {
++        var world = new DebugWorld(random(0.30));
++        var before = world.snapshot().actors().get(1);
++        cast(world);
++        assertTrue(world.snapshot().statuses().isEmpty());
++        assertEquals(113, world.snapshot().actors().get(1).hp());
++        assertNotEquals(before.y(), world.snapshot().actors().get(1).y());
++    }
++
++    /** Um mob próximo continua atacando mesmo com a movimentação bloqueada. */
++    @Test void mobCongeladoAindaAtacaNoAlcance() {
++        var world = new DebugWorld(random(0.29, 0.29, 0.29, 0.29, 0.29));
++        for (int i = 0; i < 150 && world.snapshot().playerHp() == 100; i++) world.tick(DebugInput.NONE, DT);
++        assertTrue(world.snapshot().playerHp() < 100);
++        cast(world);
++        var snapshot = world.snapshot();
++        assertFalse(snapshot.statuses().isEmpty());
++        int hp = snapshot.playerHp();
++        var position = snapshot.actors().get(1);
++        boolean attackedWhileFrozen = false;
++        for (int i = 0; i < 45; i++) {
++            world.tick(DebugInput.NONE, DT);
++            if (!world.snapshot().statuses().isEmpty() && world.snapshot().playerHp() < hp) {
++                assertEquals(position.x(), world.snapshot().actors().get(1).x());
++                assertEquals(position.y(), world.snapshot().actors().get(1).y());
++                attackedWhileFrozen = true;
++                break;
++            }
++        }
++        assertTrue(attackedWhileFrozen);
++    }
++
++    /** Mundo novo não reaproveita efeitos e jogador não aparece na lista de Freeze. */
++    @Test void reinicioLimpaStatusSemCongelarJogador() {
++        var world = new DebugWorld(random(0.29)); cast(world);
++        assertEquals(100, world.snapshot().statuses().get(0).actorId());
++        var restarted = new DebugWorld(random());
++        assertTrue(restarted.snapshot().statuses().isEmpty());
++        assertTrue(restarted.snapshot().iceZones().isEmpty());
++    }
++
++    /** Captura determinística de um mob congelado sem alterar o snapshot no painel. */
++    @Test void capturaDoCongelamento() throws Exception {
++        var world = new DebugWorld(random(0.29)); cast(world);
++        var snapshot = world.snapshot();
++        var image = new BufferedImage(DebugPanel.PANEL_WIDTH, DebugPanel.PANEL_HEIGHT, BufferedImage.TYPE_INT_ARGB);
++        var graphics = image.createGraphics();
++        try { new DebugPanel(world::snapshot).render(graphics, snapshot); }
++        finally { graphics.dispose(); }
++        assertEquals(snapshot, world.snapshot());
++        assertFalse(snapshot.statuses().isEmpty());
++        Files.createDirectories(Path.of("target"));
++        ImageIO.write(image, "png", Path.of("target/task005-freeze.png").toFile());
++    }
++}
+--- /dev/null
++++ b/tools/gerar_pdf_task005.py
+@@ -0,0 +1,9 @@
++"""Exporta a implementação dos efeitos temporários sem dependências externas."""
++
++from pathlib import Path
++from gerar_pdf_task002 import gerar_pdf
++
++
++if __name__ == "__main__":
++    docs = Path(__file__).resolve().parents[1] / "docs"
++    gerar_pdf(docs / "TASK-005.md", docs / "Spirit_Gate_TASK-005.pdf", "TASK-005")

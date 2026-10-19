@@ -1,0 +1,504 @@
+{
+  "source": "Projeto-K\\assets\\tilesets\\karakura-environment-v3-blend.aseprite",
+  "canvas": [
+    1672,
+    941
+  ],
+  "sprites": [
+    {
+      "name": "grama",
+      "x": 35,
+      "y": 29,
+      "width": 64,
+      "height": 68,
+      "visible_pixels": 4322,
+      "original_name": "sprite-001"
+    },
+    {
+      "name": "terra",
+      "x": 115,
+      "y": 29,
+      "width": 65,
+      "height": 68,
+      "visible_pixels": 4305,
+      "original_name": "sprite-002"
+    },
+    {
+      "name": "grama-terra-transicao-01",
+      "x": 196,
+      "y": 29,
+      "width": 65,
+      "height": 68,
+      "visible_pixels": 4394,
+      "original_name": "sprite-003"
+    },
+    {
+      "name": "grama-terra-transicao-02",
+      "x": 277,
+      "y": 29,
+      "width": 66,
+      "height": 68,
+      "visible_pixels": 4400,
+      "original_name": "sprite-004"
+    },
+    {
+      "name": "asfalto",
+      "x": 376,
+      "y": 29,
+      "width": 66,
+      "height": 68,
+      "visible_pixels": 4401,
+      "original_name": "sprite-005"
+    },
+    {
+      "name": "asfalto-faixa-central",
+      "x": 458,
+      "y": 29,
+      "width": 66,
+      "height": 68,
+      "visible_pixels": 4411,
+      "original_name": "sprite-006"
+    },
+    {
+      "name": "asfalto-faixa-lateral-direita",
+      "x": 541,
+      "y": 29,
+      "width": 66,
+      "height": 67,
+      "visible_pixels": 4405,
+      "original_name": "sprite-007"
+    },
+    {
+      "name": "faixa-de-pedestres",
+      "x": 622,
+      "y": 29,
+      "width": 67,
+      "height": 68,
+      "visible_pixels": 4486,
+      "original_name": "sprite-008"
+    },
+    {
+      "name": "calcada-borda-horizontal",
+      "x": 722,
+      "y": 29,
+      "width": 67,
+      "height": 68,
+      "visible_pixels": 2456,
+      "original_name": "sprite-009"
+    },
+    {
+      "name": "calcada-pavimento",
+      "x": 806,
+      "y": 29,
+      "width": 66,
+      "height": 68,
+      "visible_pixels": 3553,
+      "original_name": "sprite-010"
+    },
+    {
+      "name": "canal-margem-esquerda",
+      "x": 890,
+      "y": 29,
+      "width": 69,
+      "height": 68,
+      "visible_pixels": 4240,
+      "original_name": "sprite-011"
+    },
+    {
+      "name": "agua-ondas-01",
+      "x": 988,
+      "y": 29,
+      "width": 67,
+      "height": 68,
+      "visible_pixels": 4524,
+      "original_name": "sprite-012"
+    },
+    {
+      "name": "agua-ondas-02",
+      "x": 1070,
+      "y": 29,
+      "width": 68,
+      "height": 68,
+      "visible_pixels": 4536,
+      "original_name": "sprite-013"
+    },
+    {
+      "name": "canal-margem-superior",
+      "x": 1152,
+      "y": 30,
+      "width": 68,
+      "height": 67,
+      "visible_pixels": 4556,
+      "original_name": "sprite-014"
+    },
+    {
+      "name": "muro-canal-horizontal",
+      "x": 1271,
+      "y": 29,
+      "width": 92,
+      "height": 86,
+      "visible_pixels": 7911,
+      "original_name": "sprite-015"
+    },
+    {
+      "name": "muro-canal-estreito-01",
+      "x": 1378,
+      "y": 29,
+      "width": 53,
+      "height": 86,
+      "visible_pixels": 4558,
+      "original_name": "sprite-016"
+    },
+    {
+      "name": "muro-canal-estreito-02",
+      "x": 1463,
+      "y": 29,
+      "width": 54,
+      "height": 86,
+      "visible_pixels": 4644,
+      "original_name": "sprite-017"
+    },
+    {
+      "name": "muro-canal-esquina-01",
+      "x": 1531,
+      "y": 29,
+      "width": 101,
+      "height": 114,
+      "visible_pixels": 9524,
+      "original_name": "sprite-018"
+    },
+    {
+      "name": "grama-terra-transicao-03",
+      "x": 34,
+      "y": 114,
+      "width": 65,
+      "height": 67,
+      "visible_pixels": 4246,
+      "original_name": "sprite-019"
+    },
+    {
+      "name": "grama-terra-transicao-04",
+      "x": 115,
+      "y": 114,
+      "width": 65,
+      "height": 66,
+      "visible_pixels": 4259,
+      "original_name": "sprite-020"
+    },
+    {
+      "name": "grama-terra-transicao-05",
+      "x": 196,
+      "y": 114,
+      "width": 66,
+      "height": 67,
+      "visible_pixels": 4319,
+      "original_name": "sprite-021"
+    },
+    {
+      "name": "grama-terra-transicao-06",
+      "x": 277,
+      "y": 114,
+      "width": 66,
+      "height": 67,
+      "visible_pixels": 4341,
+      "original_name": "sprite-022"
+    },
+    {
+      "name": "asfalto-variacao",
+      "x": 376,
+      "y": 114,
+      "width": 66,
+      "height": 67,
+      "visible_pixels": 4334,
+      "original_name": "sprite-023"
+    },
+    {
+      "name": "asfalto-faixa-inferior",
+      "x": 458,
+      "y": 114,
+      "width": 66,
+      "height": 66,
+      "visible_pixels": 4356,
+      "original_name": "sprite-024"
+    },
+    {
+      "name": "asfalto-faixa-lateral-esquerda",
+      "x": 541,
+      "y": 114,
+      "width": 66,
+      "height": 67,
+      "visible_pixels": 4348,
+      "original_name": "sprite-025"
+    },
+    {
+      "name": "asfalto-faixa-esquina-direita",
+      "x": 622,
+      "y": 114,
+      "width": 67,
+      "height": 67,
+      "visible_pixels": 4387,
+      "original_name": "sprite-026"
+    },
+    {
+      "name": "calcada-meio-fio",
+      "x": 722,
+      "y": 114,
+      "width": 66,
+      "height": 67,
+      "visible_pixels": 3606,
+      "original_name": "sprite-027"
+    },
+    {
+      "name": "asfalto-faixa-esquina-esquerda",
+      "x": 806,
+      "y": 114,
+      "width": 66,
+      "height": 67,
+      "visible_pixels": 4402,
+      "original_name": "sprite-028"
+    },
+    {
+      "name": "calcada-esquina",
+      "x": 890,
+      "y": 114,
+      "width": 68,
+      "height": 67,
+      "visible_pixels": 3338,
+      "original_name": "sprite-029"
+    },
+    {
+      "name": "canal-margem-superior-ondas",
+      "x": 988,
+      "y": 114,
+      "width": 67,
+      "height": 67,
+      "visible_pixels": 4488,
+      "original_name": "sprite-030"
+    },
+    {
+      "name": "canal-esquina-01",
+      "x": 1070,
+      "y": 114,
+      "width": 67,
+      "height": 67,
+      "visible_pixels": 4476,
+      "original_name": "sprite-031"
+    },
+    {
+      "name": "canal-esquina-02",
+      "x": 1152,
+      "y": 114,
+      "width": 68,
+      "height": 68,
+      "visible_pixels": 4556,
+      "original_name": "sprite-032"
+    },
+    {
+      "name": "muro-canal-variacao",
+      "x": 1271,
+      "y": 129,
+      "width": 92,
+      "height": 103,
+      "visible_pixels": 9298,
+      "original_name": "sprite-033"
+    },
+    {
+      "name": "muro-canal-escada-metalica",
+      "x": 1378,
+      "y": 129,
+      "width": 53,
+      "height": 103,
+      "visible_pixels": 5354,
+      "original_name": "sprite-034"
+    },
+    {
+      "name": "muro-canal-escadaria",
+      "x": 1463,
+      "y": 130,
+      "width": 54,
+      "height": 102,
+      "visible_pixels": 5392,
+      "original_name": "sprite-035"
+    },
+    {
+      "name": "muro-canal-esquina-02",
+      "x": 1548,
+      "y": 156,
+      "width": 84,
+      "height": 88,
+      "visible_pixels": 7309,
+      "original_name": "sprite-036"
+    },
+    {
+      "name": "arbusto-01",
+      "x": 38,
+      "y": 227,
+      "width": 52,
+      "height": 51,
+      "visible_pixels": 2033,
+      "original_name": "sprite-037"
+    },
+    {
+      "name": "arbusto-flores-brancas-01",
+      "x": 121,
+      "y": 226,
+      "width": 51,
+      "height": 52,
+      "visible_pixels": 2063,
+      "original_name": "sprite-038"
+    },
+    {
+      "name": "arbusto-flores-brancas-02",
+      "x": 203,
+      "y": 226,
+      "width": 52,
+      "height": 52,
+      "visible_pixels": 2063,
+      "original_name": "sprite-039"
+    },
+    {
+      "name": "arbusto-flores-rosas",
+      "x": 286,
+      "y": 227,
+      "width": 53,
+      "height": 51,
+      "visible_pixels": 2066,
+      "original_name": "sprite-040"
+    },
+    {
+      "name": "arbusto-02",
+      "x": 370,
+      "y": 229,
+      "width": 47,
+      "height": 48,
+      "visible_pixels": 1843,
+      "original_name": "sprite-041"
+    },
+    {
+      "name": "cerca-viva",
+      "x": 437,
+      "y": 226,
+      "width": 130,
+      "height": 54,
+      "visible_pixels": 6388,
+      "original_name": "sprite-042"
+    },
+    {
+      "name": "cerca-viva-flores-brancas",
+      "x": 588,
+      "y": 226,
+      "width": 134,
+      "height": 55,
+      "visible_pixels": 6636,
+      "original_name": "sprite-043"
+    },
+    {
+      "name": "cerca-viva-flores-rosas",
+      "x": 741,
+      "y": 226,
+      "width": 135,
+      "height": 55,
+      "visible_pixels": 6615,
+      "original_name": "sprite-044"
+    },
+    {
+      "name": "casa-telhado-azul-01",
+      "x": 867,
+      "y": 270,
+      "width": 364,
+      "height": 263,
+      "visible_pixels": 85224,
+      "original_name": "sprite-045"
+    },
+    {
+      "name": "casa-telhado-cinza",
+      "x": 1263,
+      "y": 270,
+      "width": 374,
+      "height": 266,
+      "visible_pixels": 88638,
+      "original_name": "sprite-046"
+    },
+    {
+      "name": "arvore-01",
+      "x": 26,
+      "y": 302,
+      "width": 134,
+      "height": 217,
+      "visible_pixels": 17572,
+      "original_name": "sprite-047"
+    },
+    {
+      "name": "arvore-02",
+      "x": 169,
+      "y": 315,
+      "width": 135,
+      "height": 199,
+      "visible_pixels": 16272,
+      "original_name": "sprite-048"
+    },
+    {
+      "name": "arvore-03",
+      "x": 314,
+      "y": 298,
+      "width": 152,
+      "height": 221,
+      "visible_pixels": 22123,
+      "original_name": "sprite-049"
+    },
+    {
+      "name": "arvore-cerejeira-01",
+      "x": 476,
+      "y": 306,
+      "width": 185,
+      "height": 221,
+      "visible_pixels": 24656,
+      "original_name": "sprite-050"
+    },
+    {
+      "name": "arvore-cerejeira-02",
+      "x": 669,
+      "y": 308,
+      "width": 183,
+      "height": 219,
+      "visible_pixels": 24310,
+      "original_name": "sprite-051"
+    },
+    {
+      "name": "predio-residencial-01",
+      "x": 26,
+      "y": 541,
+      "width": 459,
+      "height": 358,
+      "visible_pixels": 148336,
+      "original_name": "sprite-052"
+    },
+    {
+      "name": "predio-residencial-02",
+      "x": 522,
+      "y": 553,
+      "width": 439,
+      "height": 348,
+      "visible_pixels": 140113,
+      "original_name": "sprite-053"
+    },
+    {
+      "name": "loja",
+      "x": 988,
+      "y": 607,
+      "width": 312,
+      "height": 289,
+      "visible_pixels": 79396,
+      "original_name": "sprite-054"
+    },
+    {
+      "name": "casa-telhado-azul-02",
+      "x": 1314,
+      "y": 613,
+      "width": 332,
+      "height": 283,
+      "visible_pixels": 80517,
+      "original_name": "sprite-055"
+    }
+  ]
+}

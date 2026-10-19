@@ -1,0 +1,116 @@
+--- /dev/null
++++ b/docs/TASK-064-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 272,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-064.md
+@@ -0,0 +1,5 @@
++# TASK-064 - Diario, mapa e objetivos
++
++J abre diario completo com estados, contagens e todos os objetivos traduzidos do catalogo. Missoes indisponiveis nao revelam detalhes. M mostra representacao da regiao atual, jogador, solidos, NPCs, portais e recursos; inimigos apenas em raio proximo. Regioes futuras nao sao desenhadas. Historico de regioes visitadas persiste.
++
++Janelas atualizam snapshots durante transicao e apos load, sem mudar camera ou dominio. Persistencia da recarga de portal tambem foi ajustada para impedir que reabrir save remova a protecao contra alternancia imediata. Suite completa inclui ciclo de tres regioes/quests/save; nenhuma alteracao de baseline historico.
+--- /dev/null
++++ b/server/src/main/java/com/projetok/prototype/rpg/ExplorationWindow.java
+@@ -0,0 +1,27 @@
++package com.projetok.prototype.rpg;
++import com.projetok.rpg.*;
++import javax.swing.*;
++import java.awt.*;
++/** Diario e representacao da regiao atual; nao revela mapas futuros. */
++final class ExplorationWindow extends JDialog {
++    private final JTextArea journal=new JTextArea(),map=new JTextArea();
++    private final JTabbedPane tabs=new JTabbedPane();
++    private final RpgRuntime runtime;
++    ExplorationWindow(JFrame owner,RpgRuntime runtime){
++        super(owner,"Diario e exploracao",false);this.runtime=runtime;setDefaultCloseOperation(HIDE_ON_CLOSE);
++        journal.setEditable(false);journal.setLineWrap(true);journal.setWrapStyleWord(true);map.setEditable(false);map.setFont(new Font(Font.MONOSPACED,Font.PLAIN,14));
++        tabs.addTab("Diario",new JScrollPane(journal));tabs.addTab("Mapa atual",new JScrollPane(map));setContentPane(tabs);setSize(800,600);setLocationRelativeTo(owner);
++        Timer timer=new Timer(200,e->{if(isVisible())refresh();});timer.start();owner.addWindowListener(new java.awt.event.WindowAdapter(){public void windowClosed(java.awt.event.WindowEvent e){timer.stop();dispose();}});
++    }
++    void showTab(int index){tabs.setSelectedIndex(index);refresh();setVisible(true);}
++    private void refresh(){var v=runtime.snapshot();StringBuilder text=new StringBuilder("DIARIO DE "+v.identity().name()+"\n\n");
++        for(var q:v.journal()){if(q.state()==QuestService.State.UNAVAILABLE){text.append("Missao ainda indisponivel\n\n");continue;}text.append(q.name()).append(" - ").append(q.state()).append(" [").append(q.progress()).append('/').append(q.required()).append("]\n").append(q.objective()).append("\nRecompensas na entrega a Ancia.\n\n");}journal.setText(text.toString());
++        char[][] cells=new char[24][48];for(char[] row:cells)java.util.Arrays.fill(row,'.');
++        for(int y=7;y<12;y++)for(int x=19;x<25;x++)cells[y][x]='#';
++        for(var p:v.portals())mark(cells,p.x(),p.y(),'O');for(var n:v.npcs())mark(cells,n.x(),n.y(),'N');for(var o:v.objects())if(o.available())mark(cells,o.x(),o.y(),'C');
++        for(var enemy:v.enemies())if(enemy.hp()>0&&Math.hypot(enemy.x()-v.x(),enemy.y()-v.y())<=280)mark(cells,enemy.x(),enemy.y(),'!');mark(cells,v.x(),v.y(),'@');
++        StringBuilder grid=new StringBuilder(RpgContent.builtin().get("region",v.state().region()).name()+"\n");for(char[] row:cells)grid.append(row).append('\n');
++        grid.append("@ voce | O portal [F] | N NPC [F] | C recurso [F]\n! inimigo proximo | # solido\n\nRegioes visitadas:\n");v.state().flags().stream().filter(f->f.startsWith("visited:")).sorted().forEach(f->grid.append(RpgContent.builtin().get("region",f.substring(8)).name()).append('\n'));map.setText(grid.toString());
++    }
++    private static void mark(char[][] cells,float x,float y,char marker){cells[Math.max(0,Math.min(23,(int)(y/640*24)))][Math.max(0,Math.min(47,(int)(x/960*48)))]=marker;}
++}
+--- a/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
+@@ -31,6 +31,7 @@
+         JPanel root=new JPanel(new java.awt.BorderLayout());RpgHud hud=new RpgHud(runtime);root.add(panel,java.awt.BorderLayout.CENTER);root.add(hud,java.awt.BorderLayout.SOUTH);
+         frame.setContentPane(root); frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+         InventoryWindow inventory=new InventoryWindow(frame,runtime);bind(panel,"I",()->{inventory.setVisible(!inventory.isVisible());});
++        ExplorationWindow exploration=new ExplorationWindow(frame,runtime);bind(panel,"J",()->exploration.showTab(0));bind(panel,"M",()->exploration.showTab(1));
+         boolean amber=runtime.snapshot().identity().appearance().equals("amber");
+         panel.setActorPalette(id->id==1?(amber?new java.awt.Color(230,177,65):new java.awt.Color(65,190,220)):id>=500?new java.awt.Color(90,200,160):null);
+         JButton menuButton=new JButton("Salvar e voltar ao menu");menuButton.addActionListener(e->frame.dispatchEvent(new WindowEvent(frame,WindowEvent.WINDOW_CLOSING)));root.add(menuButton,java.awt.BorderLayout.NORTH);
+--- a/server/src/main/java/com/projetok/rpg/QuestService.java
++++ b/server/src/main/java/com/projetok/rpg/QuestService.java
+@@ -55,5 +55,5 @@
+         }
+     }
+     private void refreshOne(String id,Map<String,Integer> progress,Set<String> flags,InventoryService inventory){int total=0;var objectives=definition(id).objectives();for(int i=0;i<objectives.size();i++){var o=objectives.get(i);total+=o.type().equals("collect")&&inventory!=null?Math.min(o.count(),inventory.count(o.target())):counter(flags,"qo:"+id+":"+i+":");}progress.put(id,total);}
+-    public List<View> views(Map<String,Integer> progress,Set<String> flags){return content.all("quest").stream().sorted(Comparator.comparing(RpgContent.Definition::id)).map(q->new View(q.id(),q.name(),state(q.id(),progress,flags),progress.getOrDefault(q.id(),0),required(q.id()),q.id().equals("first_steps")?"Derrotar ecos no bosque":"Derrotar o Guardiao do Santuario")).toList();}
++    public List<View> views(Map<String,Integer> progress,Set<String> flags){return content.all("quest").stream().sorted(Comparator.comparing(RpgContent.Definition::id)).map(q->new View(q.id(),q.name(),state(q.id(),progress,flags),progress.getOrDefault(q.id(),0),required(q.id()),definition(q.id()).objectives().stream().map(o->switch(o.type()){case "kill"->"Derrotar ";case "collect"->"Entregar ";case "talk"->"Conversar com ";default->"Visitar ";}+content.get(switch(o.type()){case "kill"->"enemy";case "collect"->"item";case "talk"->"npc";default->"region";},o.target()).name()+" x"+o.count()).collect(java.util.stream.Collectors.joining("; ")))).toList();}
+ }
+--- a/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -71,6 +71,7 @@
+         content.get("region", identity.initialRegion());
+         body = new GameEntity(1, identity.name(), new Position(140, 320)) { };
+         hp=identity.baseHp(); inventory.add("potion",3);
++        flags.add("visited:village");
+     }
+     private final MovementService movement = new MovementService(new CollisionService());
+     private final CollisionService.Space space = new CollisionService.Space(960, 640,
+@@ -96,7 +97,7 @@
+         if(portal.destination().equals("ruins")&&!quests.containsKey("sanctuary")){message="Conclua Ecos no bosque e aceite a missao do Santuario com a Ancia";return false;}
+         if(!new CollisionService().isFree(body,portal.arrivalX(),portal.arrivalY(),18,space))return false;
+         transitioning=true;
+-        try{region=portal.destination();body.setPosition(new Position(portal.arrivalX(),portal.arrivalY()));closeDialogue();portalReadyTick=ticks+30;if(region.equals("ruins"))flags.add("dungeon-started");questService.refresh(quests,flags,inventory,region);message="Chegou a "+content.get("region",region).name();return true;}finally{transitioning=false;}
++        try{region=portal.destination();flags.add("visited:"+region);body.setPosition(new Position(portal.arrivalX(),portal.arrivalY()));closeDialogue();portalReadyTick=ticks+30;if(region.equals("ruins"))flags.add("dungeon-started");questService.refresh(quests,flags,inventory,region);message="Chegou a "+content.get("region",region).name();return true;}finally{transitioning=false;}
+     }
+     private boolean bossUnlocked(){return enemies.current("ruins").stream().filter(e->!e.definition.id().equals("warden")).allMatch(e->e.hp==0);}
+     public boolean returnHome(){if(hp>0)return false;region="village";body.setPosition(new Position(140,320));hp=maxHp();stamina=1000;closeDialogue();message="Recuperado em Aurora. Progresso preservado.";return true;}
+@@ -167,7 +168,7 @@
+     public void collectLoot() { loot.collect(inventory,flags);message="Recompensas pendentes recolhidas quando houver espaco"; }
+     private long ticks;
+     public RpgSave save() {
+-        var persistent=new java.util.TreeSet<>(flags);persistent.removeIf(f->f.startsWith("stamina:")||f.startsWith("mob:")||f.startsWith("attack-until:"));persistent.add("stamina:"+stamina);persistent.add("attack-until:"+attackReadyTick);persistent.addAll(enemies.saveFlags());
++        var persistent=new java.util.TreeSet<>(flags);persistent.removeIf(f->f.startsWith("stamina:")||f.startsWith("mob:")||f.startsWith("attack-until:")||f.startsWith("portal-until:"));persistent.add("stamina:"+stamina);persistent.add("attack-until:"+attackReadyTick);persistent.add("portal-until:"+portalReadyTick);persistent.addAll(enemies.saveFlags());
+         return new RpgSave(identity,region,body.getPosition().x(),body.getPosition().y(),hp,xp,coins,inventory.snapshot(),equipment,quests,persistent,ticks);
+     }
+     public static RpgWorld restore(RpgSave state) {
+@@ -183,6 +184,7 @@
+             if(flag.startsWith("ability-until:"))world.abilityReadyTick=Long.parseLong(flag.substring(14));
+             if(flag.startsWith("stamina:"))world.stamina=Integer.parseInt(flag.substring(8));
+             if(flag.startsWith("attack-until:"))world.attackReadyTick=Long.parseLong(flag.substring(13));
++            if(flag.startsWith("portal-until:"))world.portalReadyTick=Long.parseLong(flag.substring(13));
+         }
+         if(world.stamina<0||world.stamina>1000)throw new IllegalArgumentException("Vigor invalido");
+         world.enemies.restore(state.flags(),world.space);

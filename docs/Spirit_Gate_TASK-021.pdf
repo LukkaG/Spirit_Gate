@@ -1,0 +1,77 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 2787 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-021 - Consolidação e kit de homologação) Tj T*
+() Tj T*
+(18/10/2026. Validação automatizada local aprovada. Homologação humana pendente.) Tj T*
+() Tj T*
+(Release final: dist/SpiritGate-0.21.0-rc1-20261019T001737Z-546ce1c5-portable.zip) Tj T*
+() Tj T*
+(Tamanho: 29.391.539 bytes. SHA-256:) Tj T*
+(303f469b87aa0752d6dcd44e21ae5efef78295cf971884976939b1d8ae6cc534.) Tj T*
+() Tj T*
+(Clean build real, sem reutilizar JAR anterior: 223 JUnit, zero falhas/erros/ignorados.) Tj T*
+(Repetição offline: mesmos 223 verdes. Python: 18 testes verdes. Auditor oficial do ZIP) Tj T*
+(original repetido após compilação offline: PASS. Inventário, manifest, Java 17, PE x64 e) Tj T*
+(bytecode corrente conferidos. Controle negativo em cópia nova rejeitado. ZIP 0.16.0-rc1) Tj T*
+(preservado.) Tj T*
+() Tj T*
+(Smokes reais Windows em pasta com espaços fora de Projeto-K, padrão e --map: JVM) Tj T*
+(integrada comprovada, PATH somente Windows/System32, saídas 0, sem fechamento forçado.) Tj T*
+(Evidências TASK-021-smoke.json, TASK-021-map-smoke.json e capturas correspondentes.) Tj T*
+(Inspeção de rede por CIM indisponível; não afirmada ausência de sockets por esse) Tj T*
+(controle. Sem teste em outro computador. Linux NÃO EXECUTADO.) Tj T*
+() Tj T*
+(Distribuição sintética testada em cópia temporária: pacote revisado fictício aceito pelo) Tj T*
+(auditor completo, imagem adulterada recusada mesmo com SHA externo recalculado. Cópia) Tj T*
+(eliminada pelo TemporaryDirectory; não é release. Release real contém zero) Tj T*
+(PNG/atlas/personagem aprovado. Os 228 PNGs conservaram seus hashes; 99 arquivos Java) Tj T*
+(históricos de domínio/testes comparados sem alteração.) Tj T*
+() Tj T*
+(Revisão final acrescentou marcadores de índice/pivot ao preview e recusou duração/pivot) Tj T*
+(por frame incompatíveis com runtime no staging. Testes negativos de pacote foram) Tj T*
+(isolados para cada caso. Regeneradas prévias em docs/revisao-fontes-021 e) Tj T*
+(docs/autoria-018/revisao-final. Corrigida codificação dos relatórios 018/019 sem mudar) Tj T*
+(resultados.) Tj T*
+() Tj T*
+(Atualizados README-PROTOTIPO, changelog, LEIA-ME do pacote e kit humano: roteiro, modelo) Tj T*
+(de bug, notas e mapa opcional. Novo LEIA-ME explica resize, mira, fallback e limites da) Tj T*
+(câmera. O primeiro candidato intermediário 539628a7 foi preservado para rastreabilidade;) Tj T*
+(somente o candidato 546ce1c5 é indicado para entrega.) Tj T*
+() Tj T*
+(Artefatos finais: relatório consolidado MD/PDF, PDF/diff/checkpoint por task, logs,) Tj T*
+(auditorias, inventário SHA e ZIP de entregas. Não houve push, publicação, acesso remoto,) Tj T*
+(banco, credenciais ou mudança de multiplayer. Nenhuma TASK-022 iniciada.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-021 - página 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+3183
+%%EOF

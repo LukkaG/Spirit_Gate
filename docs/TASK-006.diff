@@ -1,0 +1,1210 @@
+--- a/docs/HISTORICO-TECNICO.md
++++ b/docs/HISTORICO-TECNICO.md
+@@ -1,4 +1,16 @@
+ # Histórico técnico
++
++## 18/10/2026 - TASK-006: Passo Relâmpago e participação validados
++
++Implementado LightningStepService com direção do mouse, custo 35, cooldown 4 s e até 150 px ao longo de 0,25 s. O primeiro deslocamento ocorre no tick após o lançamento, usando moveContinuous e a colisão X/Y existente. WASD é suspenso em cada tick iniciado com dash, inclusive o último fracionário. Colisões consomem o tempo sem compensar distância depois. Sem dano, status ou invulnerabilidade.
++
++Shift usa a mesma fila de SkillCastCommand que Q, com despacho FIFO e saldo compartilhado. Bindings contemplam modificador Shift e os controles anteriores. R limpa dash, rastros e cooldown sem repetir Shift mantido. Snapshot publica rastros imutáveis amarelos de 0,18 s e o painel apenas desenha.
++
++Validação inicial: 118 testes. Primeira entrega: 146 testes. Após a contribuição do usuário: `mvn clean test`, BUILD SUCCESS, **147 testes sem falhas ou erros**. Testes e baselines anteriores intactos. Captura renderizada inspecionada; sessão interativa da janela não realizada.
++
++O usuário escreveu LightningStepZeroDirectionTest.deveRejeitarDashSemDirecao. Revisão confirmou ZERO_DIRECTION, vigor e posição preservados, cooldown zerado e dash inativo. O teste passou na suíte completa e seu código foi preservado integralmente. A participação reservada está concluída; não houve correção obrigatória. Relatório, PDF, resumo e diff foram atualizados.
++
++Entrega: [relatório e participação](TASK-006.md), [PDF](Spirit_Gate_TASK-006.pdf), [testes](TASK-006-testes.txt), [captura](TASK-006-passo-relampago.png) e [diff](TASK-006.diff).
+ 
+ ## 18/10/2026 - Colisões com deslizamento lento
+ 
+--- /dev/null
++++ b/docs/TASK-006-testes.txt
+@@ -0,0 +1,27 @@
++TASK-006 | 18/10/2026
++Inicial: mvn clean test -q; 118 testes aprovados.
++Primeira entrega sem teste reservado: 146 testes aprovados.
++Validacao final apos contribuicao do usuario: mvn clean test; BUILD SUCCESS; release 17.
++147 testes, 0 falhas, 0 erros, 0 ignorados.
++LightningStepZeroDirectionTest: escrito pelo usuario, revisado e aprovado sem alteracoes.
++
++Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.066 s -- in com.projetok.domain.effect.StatusEffectServiceTest
++Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.041 s -- in com.projetok.domain.movement.FreezeMovementTest
++Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.025 s -- in com.projetok.domain.movement.MovementHardeningTest
++Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in com.projetok.domain.movement.MovementServiceTest
++Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.018 s -- in com.projetok.domain.movement.SoftSlideCollisionTest
++Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.057 s -- in com.projetok.domain.movement.SpatialBodyIndexTest
++Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.005 s -- in com.projetok.domain.probability.ProbabilityServiceTest
++Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.005 s -- in com.projetok.domain.resource.StaminaServiceTest
++Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.014 s -- in com.projetok.domain.skill.CryostasisFreezeTest
++Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.021 s -- in com.projetok.domain.skill.CryostasisServiceTest
++Tests run: 19, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.017 s -- in com.projetok.domain.skill.LightningStepServiceTest
++Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 s -- in com.projetok.domain.skill.LightningStepZeroDirectionTest
++Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.636 s -- in com.projetok.prototype.CryostasisIntegrationTest
++Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.010 s -- in com.projetok.prototype.DebugCommandBufferTest
++Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.088 s -- in com.projetok.prototype.DebugWorldTest
++Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.066 s -- in com.projetok.prototype.FreezeWorldTest
++Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.229 s -- in com.projetok.prototype.LightningStepIntegrationTest
++Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.105 s -- in com.projetok.prototype.MovementReplayTest
++Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.470 s -- in com.projetok.prototype.StaminaInterfaceTest
++Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.012 s -- in com.projetok.prototype.StaminaWorldTest
+--- /dev/null
++++ b/docs/TASK-006.md
+@@ -0,0 +1,119 @@
++# TASK-006 - Passo Relâmpago
++
++Spirit Gate | 18/10/2026 | Java 17 e Maven
++
++Estado: implementação e participação do usuário validadas. O teste reservado de direção zero foi escrito pelo usuário e passou na suíte completa. A conferência manual interativa da sensação de jogo continua recomendada.
++
++## Resultado implementado
++
++Shift captura a direção até o ponto do mouse e publica SkillCastCommand com ID lightning_step. Uma ativação custa 35 de vigor e inicia cooldown de 4 segundos. O jogador se desloca progressivamente a 600 px/s durante 0,25 s, com orçamento máximo de 150 px antes das colisões. Não há teleporte no lançamento, dano, invulnerabilidade ou efeito de status.
++
++O ponto do mouse define somente a direção, fixada no início. Um cursor próximo ainda solicita os 150 px nessa direção; colisões podem encurtar o percurso. Essa decisão foi apresentada antes da implementação. O alvo precisa estar dentro da arena e ser finito. A validação de direção zero está implementada e seu teste foi escrito pelo usuário.
++
++## Preparação e arquitetura
++
++Foram inspecionados MovementService, CollisionService, StaminaService, SkillCastCommand, DebugCommandBuffer, DebugRuntime, DebugWorld, DebugLauncher, DebugSnapshot e DebugPanel. O estado inicial passou em mvn clean test -q com 118 testes.
++
++A proposta apresentada criou somente um serviço de habilidade específico e reutilizou contrato, fila, consumo de vigor e física contínua. A movimentação e a Criostase mantêm seus serviços existentes. Não foram adicionadas dependências, exclusões, renomeações, rede ou alterações em banco.
++
++LightningStepService é o estado de uma ativação por jogador: direção, duração restante e cooldown. Recebe MovementService, StaminaService e CollisionService. cast valida comando e geometria inicial antes de gastar. update avança cooldown e deslocamento, retornando um Step imutável com as posições antes/depois. O serviço não conhece Swing, snapshots ou o efeito visual.
++
++O construtor recebe a mesma instância de detecção usada na movimentação. Assim, cast consulta origem livre antes de consumir; não deixa para descobrir uma sobreposição na primeira varredura. Cada recusa mantém vigor e cooldown. Morte durante a ação interrompe o movimento seguinte, sem conceder proteção ou restaurar o recurso consumido.
++
++## Duração, colisões e movimento normal
++
++O serviço usa min(dt, tempo restante) e consome esse tempo mesmo quando bloqueado. A 30 Hz, são sete passos solicitados de 20 px e um último de 10 px. Não há compensação da distância retida na parede em ticks posteriores. A precisão geométrica é float; verificações de distância usam tolerâncias numéricas pequenas nos testes.
++
++O deslocamento passa exclusivamente por MovementService.moveContinuous, usando Space existente. A varredura mantém a prioridade X antes de Y e permite deslizar no eixo livre, parando no contato com paredes, mobs e limites. O índice espacial continua sendo atualizado pelo CollisionService. A assistência lenta de contorno usada para caminhada não é aplicada ao dash; a física contínua existente foi mantida intacta.
++
++Na arena, o serviço é atualizado no slot de movimento. Quando havia dash ativo no começo do tick, WASD não é executado, inclusive no tick fracionário de conclusão. O movimento normal retorna no tick seguinte, sem aplicar sobras de WASD ao orçamento da habilidade.
++
++O lançamento ocorre no slot anterior de comandos de skill, depois do movimento e ataque daquele tick. Ele inicia o estado sem mover; o primeiro avanço ocorre no próximo tick, com latência de até um passo de simulação (cerca de 33 ms). Assim, mantém-se a ordem anterior da Criostase e do ataque. Se havia WASD no tick de lançamento, ele ocorreu antes de aceitar a habilidade; nenhum tick soma movimento de dash com movimento WASD.
++
++Os efeitos existentes avançam antes dos pulsos da Criostase, como antes. Ataque básico e IA continuam ativos durante o dash. A possibilidade de receber dano foi verificada tanto pelo CombatService quanto pela IA real da arena. Não foram modificadas fórmulas, afinidades, congelamento, pulsos ou parâmetros da Criostase.
++
++## Fila e controles
++
++DebugCommandBuffer e DebugRuntime não precisaram ser alterados: a lista de SkillCastCommand já é imutável e preserva a ordem FIFO. DebugWorld despacha lightning_step e cryostasis em um único laço, respeitando o saldo de vigor compartilhado. Se só houver recurso para uma das habilidades, a primeira intenção elegível vence; a recusa da segunda não inicia seu cooldown.
++
++DebugLauncher registra press_SHIFT e release_SHIFT. O conjunto de teclas mantidas publica uma intenção somente na nova pressão; autorepeat e Shift mantido não repetem. Toques completos entre ticks chegam pela fila. A captura do mouse acontece no instante da pressão.
++
++Shift é um modificador do Swing, então os bindings também incluem combinações com SHIFT_DOWN_MASK. Q, WASD, Espaço, E, H e R continuam respondendo quando Shift está mantido. O teste de bindings usa um KeyEvent real com esse modificador.
++
++R cria um mundo novo, eliminando dash, rastros e cooldowns. Comandos anteriores ao reinício são descartados pela fila existente. O conjunto de teclas no EDT não é limpo por R; Shift mantido não cria outra intenção até ser solto e pressionado de novo.
++
++## Rastro e snapshot
++
++O mundo publica lightningStepActive, lightningStepRemaining, lightningStepCooldown e uma cópia imutável de LightningTrailView. Os segmentos vêm apenas de deslocamentos reais. Cada passo pode produzir os dois trechos X/Y, representando o caminho da física sem atravessar visualmente uma quina. Cada segmento vive por 0,18 s e desvanece mesmo depois do dash terminar.
++
++DebugPanel lê os segmentos e desenha um traço amarelo em zigue-zague, com brilho e opacidade baseada no tempo publicado. Não move entidades, não atualiza timers e não executa regras. O HUD mostra Shift, custo e cooldown, inclusive durante o deslocamento, preservando os controles anteriores.
++
++## Validação executada
++
++Comando final, após a contribuição do usuário: mvn clean test na pasta server. Resultado real: BUILD SUCCESS, compilação release 17, 147 testes, zero falhas, zero erros e zero ignorados. São 118 testes anteriores, 28 testes implementados pelo agente e o teste de direção zero escrito pelo usuário. A entrega anterior tinha 146 testes e aguardava essa participação. Resumo por classe em TASK-006-testes.txt.
++
++LightningStepServiceTest acrescenta 19 testes: consumo único, ausência de teleporte no cast, progresso, último tick fracionário, duração, passo grande limitado, diagonal, mouse próximo, cooldown, vigor insuficiente/exato, morto, morte durante a ação, entradas inválidas, geometria inválida, dt inválido/zero, paredes finas, deslizamento X/Y, limites, mobs sem dano/status e recebimento de dano pelo CombatService.
++
++LightningStepIntegrationTest acrescenta 9 testes: ativação/publicação de rastro, duração sem soma WASD, cooldown e ataque, ordem Q/Shift com vigor limitado, dano pela IA, rastro imutável/expiração/captura, bindings Shift, toque rápido com reinício sem repetição e descarte de dash pendente.
++
++Os 118 testes anteriores e os três baselines de MovementReplayTest foram preservados. Nenhum teste existente foi removido ou reescrito. Os campos novos ficam fora da projeção histórica já existente. O teste do usuário foi revisado sem alteração de código e está incluído na contagem final de 147.
++
++Captura: TASK-006-passo-relampago.png, produzida pelo teste e inspecionada. Mostra o jogador após cinco passos, rastro amarelo, vigor em regeneração e cooldown no HUD. Não houve sessão interativa com JFrame; a imagem é uma renderização real do snapshot de jogo, e os bindings são testados no EDT com o runtime real.
++
++## Participação do usuário - teste validado
++
++Arquivo criado pelo usuário e validado:
++server/src/test/java/com/projetok/domain/skill/LightningStepZeroDirectionTest.java
++
++O teste usa o pacote com.projetok.domain.skill, JUnit 5 e as fixtures reais indicadas abaixo. O jogador está em (100,100), e o comando usa exatamente o mesmo ponto. As asserções verificam ZERO_DIRECTION, vigor preservado, cooldown zerado, posição preservada e dash inativo. Nenhuma correção obrigatória foi identificada. O agente não escreveu nem modificou esse teste.
++
++Construtor real:
++LightningStepService(MovementService movement, StaminaService stamina, CollisionService collisions)
++
++Métodos reais:
++- Status cast(Player player, SkillCastCommand command, float radius, CollisionService.Space space).
++- Step update(Player player, float dt, float radius, CollisionService.Space space).
++- boolean active(); float remaining(); float cooldown(); Position direction().
++- SkillCastCommand(String skillId, float targetX, float targetY).
++- Player.getPosition(); Player.require(StaminaComponent.class).current().
++
++As fixtures existentes ficam em LightningStepTestFixtures.java, no mesmo pacote de testes:
++- player(float x, float y): PlayerFactory real; humano com 100 HP e 100 vigor.
++- emptySpace(): CollisionService.Space de 960 por 640, sem obstáculos ou corpos.
++- service(): novo serviço, com MovementService e CollisionService compartilhados.
++- RADIUS: 18f, o mesmo raio do jogador na arena.
++
++São acessíveis diretamente por testes no mesmo pacote. Os resultados possíveis estão no enum LightningStepService.Status. A suíte completa foi executada novamente após o usuário salvar seu teste, e esta entrega foi atualizada. A participação reservada está concluída e validada.
++
++## Arquivos novos e alterados
++
++Novos no domínio:
++- server/src/main/java/com/projetok/domain/skill/LightningStepService.java.
++
++Alterados no protótipo, sob server/src/main/java/com/projetok/prototype/:
++- DebugWorld.java: instância do serviço, despacho FIFO, substituição de WASD e rastros.
++- DebugLauncher.java: Shift e aliases de teclas com modificador.
++- DebugSnapshot.java: estado por valor e lista imutável de rastros.
++- DebugPanel.java: traço elétrico e indicador no HUD.
++
++Novos testes e fixtures, sob server/src/test/java/com/projetok/:
++- domain/skill/LightningStepServiceTest.java.
++- domain/skill/LightningStepZeroDirectionTest.java (autoria do usuário).
++- domain/skill/LightningStepTestFixtures.java.
++- prototype/LightningStepIntegrationTest.java.
++
++Documentação e ferramenta:
++- README-PROTOTIPO.md e docs/HISTORICO-TECNICO.md.
++- docs/TASK-006.md, docs/TASK-006-testes.txt e docs/TASK-006.diff.
++- docs/Spirit_Gate_TASK-006.pdf e docs/TASK-006-passo-relampago.png.
++- tools/gerar_pdf_task006.py.
++
++DebugCommandBuffer, DebugRuntime, SkillCastCommand, CombatService, CryostasisService, congelamento, recursos e serviços de movimento/colisão permaneceram inalterados. Nenhuma dependência, banco, multiplayer ou habilidade adicional foi implementada.
++
++## Reprodução e limites
++
++Na pasta server: mvn clean test. Na pasta Projeto-K: python -B tools/gerar_pdf_task006.py regenera o PDF. Para validar manualmente, iniciar rodar-prototipo.cmd, apontar dentro da arena e pressionar Shift, testar parede/mob, manter WASD, observar retorno da caminhada e usar R mantendo Shift.
++
++A instância do serviço pertence a um jogador e à thread autoritativa. A duração progride mesmo bloqueada; não há busca de caminho. O rastro é apenas visual. A morte interrompe o dash na atualização seguinte; o dano pode continuar sendo aplicado normalmente.
++
++A pasta não é um checkout Git acessível; não houve branch ou merge. O diff é relativo ao estado anterior à TASK-006, sem target, segredos, binários temporários ou o próprio diff recursivamente, e inclui a contribuição do usuário com sua autoria registrada. PDF e captura são artefatos finais separados. A implementação e a participação reservada estão validadas; uma sessão manual continua recomendada para conferir a sensação de jogo.
+--- a/README-PROTOTIPO.md
++++ b/README-PROTOTIPO.md
+@@ -240,3 +240,28 @@
+ 
+ [Detalhes e arquivos](docs/DESLIZAMENTO-COLISOES.md),
+ [testes](docs/DESLIZAMENTO-testes.txt) e [diff](docs/DESLIZAMENTO.diff).
++
++## TASK-006 - Passo Relâmpago
++
++Aponte o mouse dentro da arena e pressione **Shift**. O dash custa **35 de vigor**,
++tem cooldown de **4 s** e percorre até **150 px em 0,25 s** na direção capturada,
++com varredura contínua e rastro elétrico amarelo. A distância pode ser reduzida
++por colisões. O mouse define a direção; não limita a distância quando está próximo.
++
++O deslocamento começa no tick seguinte ao lançamento e substitui WASD durante
++o dash, inclusive no último passo fracionário. Depois retorna à caminhada normal.
++Não causa dano, não concede invulnerabilidade e não aplica status. Q e Shift
++respeitam a ordem da fila e o mesmo vigor. Segurar Shift não repete a ação; R
++limpa o estado sem reativar a tecla mantida.
++
++Validação final após a participação do usuário: `mvn clean test`, **147 testes
++aprovados**, incluindo os 118 anteriores com baselines preservados. O teste
++de direção zero foi escrito pelo usuário, revisado e aprovado sem alterações.
++
++- [Relatório, API real e participação validada](docs/TASK-006.md)
++- [PDF](docs/Spirit_Gate_TASK-006.pdf)
++- [Resultados](docs/TASK-006-testes.txt)
++- [Captura](docs/TASK-006-passo-relampago.png)
++- [Diff](docs/TASK-006.diff)
++
++Gerar PDF: `python -B tools/gerar_pdf_task006.py` na pasta `Projeto-K`.
+--- /dev/null
++++ b/server/src/main/java/com/projetok/domain/skill/LightningStepService.java
+@@ -0,0 +1,131 @@
++package com.projetok.domain.skill;
++
++import com.projetok.domain.entity.Player;
++import com.projetok.domain.entity.Position;
++import com.projetok.domain.movement.CollisionService;
++import com.projetok.domain.movement.MovementService;
++import com.projetok.domain.resource.StaminaService;
++import java.util.Objects;
++
++/**
++ * Controla o Passo Relâmpago de um jogador na thread proprietária da simulação.
++ * Não causa dano, não aplica efeitos e não depende de renderização ou rede.
++ */
++public final class LightningStepService {
++    /** Identificador aceito pelo contrato de intenção de habilidades. */
++    public static final String ID = "lightning_step";
++    /** Distância máxima por ativação, em unidades de mundo. */
++    public static final float MAX_DISTANCE = 150f;
++    /** Duração do deslocamento, em segundos, mesmo quando há bloqueios. */
++    public static final float DURATION = 0.25f;
++    /** Custo provisório de vigor físico. */
++    public static final float COST = 35f;
++    /** Intervalo mínimo entre ativações, em segundos. */
++    public static final float COOLDOWN = 4f;
++    /** Velocidade constante antes da resolução das colisões. */
++    public static final float SPEED = MAX_DISTANCE / DURATION;
++    private static final double CLOCK_TOLERANCE = 0.000001;
++    private final MovementService movement;
++    private final StaminaService stamina;
++    private final CollisionService collisions;
++    private Position direction = new Position(0f, 0f);
++    private double remaining;
++    private double cooldown;
++
++    /** Motivo da aceitação ou recusa, sem efeitos colaterais nas recusas. */
++    public enum Status { STARTED, INVALID, DEAD, ZERO_DIRECTION, COOLDOWN, STAMINA }
++
++    /** Segmento imutável percorrido no tick, próprio para formar um rastro visual. */
++    public record Step(Position from, Position to) {
++        /** Garante que as duas extremidades estejam disponíveis ao consumidor. */
++        public Step {
++            Objects.requireNonNull(from, "from");
++            Objects.requireNonNull(to, "to");
++        }
++
++        /** Informa se houve deslocamento efetivo após a resolução das colisões. */
++        public boolean moved() { return !from.equals(to); }
++    }
++
++    /** Injeta os serviços existentes, mantendo um único caminho para mover e consumir. */
++    public LightningStepService(MovementService movement, StaminaService stamina,
++                                CollisionService collisions) {
++        this.movement = Objects.requireNonNull(movement, "movement");
++        this.stamina = Objects.requireNonNull(stamina, "stamina");
++        this.collisions = Objects.requireNonNull(collisions, "collisions");
++    }
++
++    /** Informa se ainda resta tempo de deslocamento desta ativação. */
++    public boolean active() { return remaining > 0; }
++
++    /** Retorna os segundos restantes de deslocamento. */
++    public float remaining() { return (float) remaining; }
++
++    /** Retorna os segundos restantes até uma nova ativação. */
++    public float cooldown() { return (float) cooldown; }
++
++    /** Retorna a direção imutável fixada no lançamento, sem acompanhar o cursor. */
++    public Position direction() { return direction; }
++
++    // --- Elegibilidade e início sem teleporte ---
++
++    /**
++     * Valida o comando e a origem antes de consumir vigor ou iniciar o cooldown.
++     * O mouse define somente a direção: o orçamento é de até 150 unidades,
++     * inclusive quando o cursor está próximo. O primeiro avanço ocorre em update.
++     */
++    public Status cast(Player player, SkillCastCommand command, float radius,
++                       CollisionService.Space space) {
++        if (player == null || command == null || space == null || !ID.equals(command.skillId())
++                || !Float.isFinite(radius) || radius <= 0f
++                || !Float.isFinite(command.targetX()) || !Float.isFinite(command.targetY())
++                || command.targetX() < 0f || command.targetY() < 0f
++                || command.targetX() >= space.width() || command.targetY() >= space.height())
++            return Status.INVALID;
++        if (player.isDead()) return Status.DEAD;
++        Position origin = player.getPosition();
++        if (!Float.isFinite(origin.x()) || !Float.isFinite(origin.y())
++                || !collisions.isFree(player, origin.x(), origin.y(), radius, space))
++            return Status.INVALID;
++        double dx = (double) command.targetX() - origin.x();
++        double dy = (double) command.targetY() - origin.y();
++        double length = Math.hypot(dx, dy);
++        if (length == 0) return Status.ZERO_DIRECTION;
++        if (cooldown > 0) return Status.COOLDOWN;
++        if (!stamina.tryConsume(player, COST)) return Status.STAMINA;
++        direction = new Position((float) (dx / length), (float) (dy / length));
++        remaining = DURATION;
++        cooldown = COOLDOWN;
++        return Status.STARTED;
++    }
++
++    // --- Relógio e deslocamento contínuo ---
++
++    /**
++     * Avança o cooldown e, quando ativo, move pelo menor tempo entre dt e o restante.
++     * Colisões usam a varredura X/Y existente; um passo bloqueado consome seu tempo
++     * sem compensar a distância depois. A morte interrompe somente o deslocamento.
++     * Delta inválido é rejeitado antes de qualquer mutação; zero é permitido.
++     */
++    public Step update(Player player, float dt, float radius, CollisionService.Space space) {
++        if (!Float.isFinite(dt) || dt < 0f)
++            throw new IllegalArgumentException("Delta deve ser finito e não negativo");
++        Objects.requireNonNull(player, "player");
++        Objects.requireNonNull(space, "space");
++        if (!Float.isFinite(radius) || radius <= 0f)
++            throw new IllegalArgumentException("Raio deve ser finito e positivo");
++        Position from = player.getPosition();
++        cooldown = Math.max(0, cooldown - dt);
++        if (cooldown < CLOCK_TOLERANCE) cooldown = 0;
++        if (player.isDead()) {
++            remaining = 0;
++        } else if (active() && dt > 0f) {
++            double stepTime = Math.min((double) dt, remaining);
++            float distance = (float) (SPEED * stepTime);
++            movement.moveContinuous(player, direction.x() * distance, direction.y() * distance,
++                    radius, space);
++            remaining = Math.max(0, remaining - stepTime);
++        }
++        return new Step(from, player.getPosition());
++    }
++}
+--- a/server/src/main/java/com/projetok/prototype/DebugLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/DebugLauncher.java
+@@ -17,6 +17,7 @@
+ import java.awt.event.MouseEvent;
+ import com.projetok.domain.skill.SkillCastCommand;
+ import com.projetok.domain.skill.CryostasisService;
++import com.projetok.domain.skill.LightningStepService;
+ 
+ /**
+  * Executável do protótipo visual. Não substitui KServer.main nem o login real.
+@@ -73,8 +74,7 @@
+         panel.addMouseListener(new MouseAdapter() {
+             @Override public void mouseExited(MouseEvent event) { aim[0] = Float.NaN; aim[1] = Float.NaN; }
+         });
+-        inputs.put(KeyStroke.getKeyStroke("pressed Q"), "press_Q");
+-        inputs.put(KeyStroke.getKeyStroke("released Q"), "release_Q");
++        bindKey(inputs, "Q", "press_Q", "release_Q");
+         actions.put("press_Q", new AbstractAction() {
+             @Override public void actionPerformed(ActionEvent event) {
+                 if (held.add("Q")) runtime.cast(new SkillCastCommand(CryostasisService.ID, aim[0], aim[1]));
+@@ -83,9 +83,17 @@
+         actions.put("release_Q", new AbstractAction() {
+             @Override public void actionPerformed(ActionEvent event) { held.remove("Q"); }
+         });
++        bindKey(inputs, "SHIFT", "press_SHIFT", "release_SHIFT");
++        actions.put("press_SHIFT", new AbstractAction() {
++            @Override public void actionPerformed(ActionEvent event) {
++                if (held.add("SHIFT")) runtime.cast(new SkillCastCommand(LightningStepService.ID, aim[0], aim[1]));
++            }
++        });
++        actions.put("release_SHIFT", new AbstractAction() {
++            @Override public void actionPerformed(ActionEvent event) { held.remove("SHIFT"); }
++        });
+         for (String key : new String[] {"W", "A", "S", "D", "SPACE", "E"}) {
+-            inputs.put(KeyStroke.getKeyStroke("pressed " + key), "press_" + key);
+-            inputs.put(KeyStroke.getKeyStroke("released " + key), "release_" + key);
++            bindKey(inputs, key, "press_" + key, "release_" + key);
+             actions.put("press_" + key, new AbstractAction() {
+                 @Override public void actionPerformed(ActionEvent e) {
+                     held.add(key);
+@@ -99,16 +107,24 @@
+                 }
+             });
+         }
+-        inputs.put(KeyStroke.getKeyStroke("pressed H"), "hitboxes");
++        bindKey(inputs, "H", "hitboxes", null);
+         actions.put("hitboxes", new AbstractAction() {
+             @Override public void actionPerformed(ActionEvent e) {
+                 panel.setShowHitboxes(!panel.isShowHitboxes());
+             }
+         });
+-        inputs.put(KeyStroke.getKeyStroke("pressed R"), "restart");
++        bindKey(inputs, "R", "restart", null);
+         actions.put("restart", new AbstractAction() {
+             @Override public void actionPerformed(ActionEvent e) { runtime.restart(); }
+         });
++    }
++
++    /** Preserva os controles quando Shift aparece como modificador no evento Swing. */
++    private static void bindKey(InputMap inputs, String key, String press, String release) {
++        for (String prefix : new String[] {"", "shift "}) {
++            inputs.put(KeyStroke.getKeyStroke(prefix + "pressed " + key), press);
++            if (release != null) inputs.put(KeyStroke.getKeyStroke(prefix + "released " + key), release);
++        }
+     }
+ 
+     private static void sendInput(DebugRuntime runtime, Set<String> held) {
+--- a/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ b/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -12,6 +12,7 @@
+ import java.awt.RenderingHints;
+ import java.awt.geom.Ellipse2D;
+ import java.awt.geom.Arc2D;
++import java.awt.geom.Path2D;
+ import java.awt.geom.RoundRectangle2D;
+ import java.util.function.Supplier;
+ 
+@@ -60,6 +61,7 @@
+         drawWorld(g);
+         drawObstacles(g, s);
+         drawIceZones(g, s);
++        drawLightningTrails(g, s);
+         for (DebugSnapshot.ActorView actor : s.actors()) drawActor(g, actor, s);
+         drawAttack(g, s.attack());
+         drawEffects(g, s);
+@@ -68,6 +70,34 @@
+     }
+ 
+     // --- Cenário ---
++
++    /** Rastro amarelo com desvanecimento a partir dos tempos publicados, sem timers da GUI. */
++    private void drawLightningTrails(Graphics2D original, DebugSnapshot snapshot) {
++        Graphics2D g = (Graphics2D) original.create();
++        try {
++            g.clipRect(0, 0, DebugWorld.WIDTH, DebugWorld.HEIGHT);
++            for (var trail : snapshot.lightningTrails()) {
++                float alpha = Math.max(0, Math.min(1, trail.remaining() / trail.duration()));
++                double dx = trail.x1() - trail.x0(), dy = trail.y1() - trail.y0();
++                double length = Math.hypot(dx, dy);
++                if (length == 0) continue;
++                Path2D bolt = new Path2D.Double();
++                bolt.moveTo(trail.x0(), trail.y0());
++                for (int i = 1; i < 6; i++) {
++                    double fraction = i / 6.0, offset = (i % 2 == 0 ? -1 : 1) * 3;
++                    bolt.lineTo(trail.x0() + fraction * dx - dy / length * offset,
++                            trail.y0() + fraction * dy + dx / length * offset);
++                }
++                bolt.lineTo(trail.x1(), trail.y1());
++                g.setStroke(new BasicStroke(9f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
++                g.setColor(new Color(255, 205, 30, Math.round(alpha * 55)));
++                g.draw(bolt);
++                g.setStroke(new BasicStroke(2.2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
++                g.setColor(new Color(255, 240, 110, Math.round(alpha * 245)));
++                g.draw(bolt);
++            }
++        } finally { g.dispose(); }
++    }
+ 
+     /** Desenha gelo e pulsação apenas a partir do relógio publicado pela simulação. */
+     private void drawIceZones(Graphics2D original, DebugSnapshot snapshot) {
+@@ -341,6 +371,12 @@
+         g.drawString(s.cryostasisCooldown() > 0
+                 ? String.format(java.util.Locale.ROOT, "RECARGA %.1f s", s.cryostasisCooldown()) : "CRIOSTASE PRONTA",
+                 650, DebugWorld.HEIGHT + 83);
++        g.setColor(new Color(255, 235, 110));
++        g.drawString("SHIFT  PASSO RELAMPAGO | Mouse | 150 px | 35 vigor", 25, DebugWorld.HEIGHT + 102);
++        g.drawString(s.lightningStepActive()
++                ? String.format(java.util.Locale.ROOT, "ATIVO | RECARGA %.1f s", s.lightningStepCooldown()) : s.lightningStepCooldown() > 0
++                ? String.format(java.util.Locale.ROOT, "RECARGA %.1f s", s.lightningStepCooldown()) : "PASSO PRONTO",
++                650, DebugWorld.HEIGHT + 102);
+     }
+ 
+     /** Pinta uma barra proporcional, limitando visualmente os valores entre 0 e 1. */
+--- a/server/src/main/java/com/projetok/prototype/DebugSnapshot.java
++++ b/server/src/main/java/com/projetok/prototype/DebugSnapshot.java
+@@ -8,7 +8,12 @@
+         int playerHp, int playerMaxHp, int defeated, boolean gameOver, long ticks,
+         String lastEvent, float facingX, float facingY, float cooldown, AttackView attack,
+         float stamina, float maxStamina, float cryostasisCooldown, List<IceZoneView> iceZones,
+-        List<StatusView> statuses) {
++        List<StatusView> statuses, boolean lightningStepActive, float lightningStepRemaining,
++        float lightningStepCooldown, List<LightningTrailView> lightningTrails) {
++
++    /** Segmento visual elétrico com tempo de vida; sem estado mutável da habilidade. */
++    public record LightningTrailView(float x0, float y0, float x1, float y1,
++                                     float remaining, float duration) { }
+ 
+     /** Estado visual por ator, separado do contrato histórico de ActorView. */
+     public record StatusView(int actorId, float freezeRemaining) { }
+--- a/server/src/main/java/com/projetok/prototype/DebugWorld.java
++++ b/server/src/main/java/com/projetok/prototype/DebugWorld.java
+@@ -15,6 +15,7 @@
+ import com.projetok.domain.skill.SkillCastCommand;
+ import com.projetok.domain.skill.CryostasisService;
+ import com.projetok.domain.skill.CryostasisZone;
++import com.projetok.domain.skill.LightningStepService;
+ import com.projetok.domain.effect.StatusEffectService;
+ import com.projetok.domain.effect.StatusEffectType;
+ import com.projetok.domain.entity.component.StatusEffectsComponent;
+@@ -59,7 +60,9 @@
+ 
+     private final GameEventBus events = new GameEventBus();
+     private final CombatService combat = new CombatService(events);
++    private final CollisionService collisions = new CollisionService();
+     private final MovementService movement;
++    private final LightningStepService lightningStep;
+     private final StaminaService staminaService = new StaminaService();
+     private final StatusEffectService statusEffects = new StatusEffectService();
+     private final CryostasisService cryostasis;
+@@ -72,6 +75,8 @@
+             new CollisionService.Obstacle(594, 310, 112, 174),
+             new CollisionService.Obstacle(275, 500, 145, 44));
+     private final List<DebugSnapshot.EffectView> effects = new ArrayList<>();
++    private final List<DebugSnapshot.LightningTrailView> lightningTrails = new ArrayList<>();
++    private static final float TRAIL_DURATION = 0.18f;
+     private final float[] enemyCooldowns = new float[3];
+     private float facingX = 1f;
+     private float facingY = 0f;
+@@ -92,7 +97,8 @@
+ 
+     /** Permite comparar a resposta nova com a referência histórica sem alterar os baselines. */
+     public DebugWorld(RandomGenerator random, MovementService.Response response) {
+-        movement = new MovementService(new CollisionService(), response);
++        movement = new MovementService(collisions, response);
++        lightningStep = new LightningStepService(movement, staminaService, collisions);
+         cryostasis = new CryostasisService(combat, staminaService, statusEffects, new ProbabilityService(random));
+         RaceRegistry races = RaceRegistry.withDefaults();
+         VitalityService vitality = new VitalityService();
+@@ -161,14 +167,38 @@
+             else effects.set(i, new DebugSnapshot.EffectView(effect.x(), effect.y(),
+                     effect.damage(), remaining, effect.received()));
+         }
++        for (int i = lightningTrails.size() - 1; i >= 0; i--) {
++            var trail = lightningTrails.get(i);
++            float remaining = trail.remaining() - dt;
++            if (remaining <= 0) lightningTrails.remove(i);
++            else lightningTrails.set(i, new DebugSnapshot.LightningTrailView(
++                    trail.x0(), trail.y0(), trail.x1(), trail.y1(), remaining, trail.duration()));
++        }
+         publishHits(cryostasis.update(dt, cryostasisTargets()));
++        boolean dashingAtStart = lightningStep.active();
++        var dashStep = lightningStep.update(player, dt, PLAYER_RADIUS, collisionSpace);
++        if (dashStep.moved()) addLightningTrail(dashStep);
+         if (player.isDead()) return;
+         staminaService.regenerate(player, dt);
+         int activations = effortPresses >= 0 ? effortPresses : (input.effort() && !effortHeld ? 1 : 0);
+         effortHeld = input.effort();
+-        movePlayer(input, dt);
++        // O tick fracionário final ainda pertence ao dash; WASD retorna no próximo tick.
++        if (!dashingAtStart) movePlayer(input, dt);
+         if (input.attack()) attackNearest();
+         for (SkillCastCommand command : casts) {
++            // Um único laço preserva a ordem de Q/Shift e o saldo compartilhado de vigor.
++            if (command != null && LightningStepService.ID.equals(command.skillId())) {
++                var status = lightningStep.cast(player, command, PLAYER_RADIUS, collisionSpace);
++                lastEvent = switch (status) {
++                    case STARTED -> "Passo Relampago iniciado: 35 de vigor.";
++                    case INVALID -> "Passo Relampago: alvo invalido.";
++                    case DEAD -> "Passo Relampago: jogador derrotado.";
++                    case ZERO_DIRECTION -> "Passo Relampago: escolha uma direcao.";
++                    case COOLDOWN -> "Passo Relampago em recarga.";
++                    case STAMINA -> "Vigor insuficiente para Passo Relampago (35).";
++                };
++                continue;
++            }
+             var result = cryostasis.cast(player, command, WIDTH, HEIGHT, cryostasisTargets());
+             lastEvent = switch (result.status()) {
+                 case CAST -> "Criostase lancada: zona de gelo ativa.";
+@@ -181,6 +211,15 @@
+         }
+         updateEnemies(dt);
+         if (!player.isDead()) for (int i = 0; i < activations; i++) performEffort();
++    }
++
++    /** Registra só trechos realmente percorridos, incluindo a curva X/Y da física. */
++    private void addLightningTrail(LightningStepService.Step step) {
++        var from = step.from(); var to = step.to();
++        if (from.x() != to.x()) lightningTrails.add(new DebugSnapshot.LightningTrailView(
++                from.x(), from.y(), to.x(), from.y(), TRAIL_DURATION, TRAIL_DURATION));
++        if (from.y() != to.y()) lightningTrails.add(new DebugSnapshot.LightningTrailView(
++                to.x(), from.y(), to.x(), to.y(), TRAIL_DURATION, TRAIL_DURATION));
+     }
+ 
+     /** Fornece hitboxes dos mobs; a skill consulta vida e posição em cada pulso. */
+@@ -316,7 +355,8 @@
+                         zone.x(), zone.y(), CryostasisZone.RADIUS, zone.elapsed(), CryostasisZone.DURATION)).toList(),
+                 mobs.stream().filter(mob -> !mob.isDead()).filter(mob -> mob.require(StatusEffectsComponent.class)
+                         .has(StatusEffectType.FREEZE)).map(mob -> new DebugSnapshot.StatusView(mob.getId(),
+-                        mob.require(StatusEffectsComponent.class).remaining(StatusEffectType.FREEZE))).toList());
++                        mob.require(StatusEffectsComponent.class).remaining(StatusEffectType.FREEZE))).toList(),
++                lightningStep.active(), lightningStep.remaining(), lightningStep.cooldown(), List.copyOf(lightningTrails));
+     }
+ 
+     /** Extrai apenas os campos visuais de uma entidade do domínio. */
+--- /dev/null
++++ b/server/src/test/java/com/projetok/domain/skill/LightningStepServiceTest.java
+@@ -0,0 +1,312 @@
++package com.projetok.domain.skill;
++
++import com.projetok.domain.combat.CombatService;
++import com.projetok.domain.entity.Mob;
++import com.projetok.domain.entity.Position;
++import com.projetok.domain.entity.component.HealthComponent;
++import com.projetok.domain.entity.component.StaminaComponent;
++import com.projetok.domain.entity.component.StatusEffectsComponent;
++import com.projetok.domain.event.GameEventBus;
++import com.projetok.domain.item.LootTable;
++import com.projetok.domain.movement.CollisionService;
++import java.util.List;
++import org.junit.jupiter.api.Test;
++import static com.projetok.domain.skill.LightningStepTestFixtures.*;
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Regras e colisões do dash executadas no domínio, sem abrir uma janela. */
++class LightningStepServiceTest {
++    /** Monta um comando válido que aponta à direita da origem usada nos testes. */
++    private static SkillCastCommand right() {
++        return new SkillCastCommand(LightningStepService.ID, 800f, 100f);
++    }
++
++    /** A ativação gasta uma vez, fixa direção e não teleporta. */
++    @Test void inicioConsomeUmaVezSemMover() {
++        var player = player(100f, 100f);
++        var service = service();
++        assertEquals(100, player.require(HealthComponent.class).current());
++        assertEquals(100, player.require(StaminaComponent.class).current());
++        assertEquals(LightningStepService.Status.STARTED, service.cast(player, right(), RADIUS, emptySpace()));
++        assertEquals(65, player.require(StaminaComponent.class).current());
++        assertEquals(new Position(100f, 100f), player.getPosition());
++        assertEquals(new Position(1f, 0f), service.direction());
++        assertTrue(service.active());
++        assertEquals(0.25f, service.remaining());
++        assertEquals(4f, service.cooldown());
++        assertEquals(LightningStepService.Status.COOLDOWN, service.cast(player, right(), RADIUS, emptySpace()));
++        assertEquals(65, player.require(StaminaComponent.class).current());
++    }
++
++    /** A 30 Hz, sete passos inteiros e um fracionário somam 150 unidades. */
++    @Test void progressoSemTeleporteComUltimoTickFracionario() {
++        var player = player(100f, 100f);
++        var service = service();
++        var space = emptySpace();
++        service.cast(player, right(), RADIUS, space);
++        for (int tick = 1; tick <= 7; tick++) {
++            var step = service.update(player, 1f / 30f, RADIUS, space);
++            assertTrue(step.moved());
++            assertEquals(20f, step.to().x() - step.from().x(), 0.0001);
++            assertEquals(100f + tick * 20f, player.getPosition().x(), 0.0001);
++            assertTrue(service.active());
++        }
++        var last = service.update(player, 1f / 30f, RADIUS, space);
++        assertEquals(10f, last.to().x() - last.from().x(), 0.0001);
++        assertEquals(new Position(250f, 100f), player.getPosition());
++        assertFalse(service.active());
++        assertEquals(0f, service.remaining());
++        assertFalse(service.update(player, 1f / 30f, RADIUS, space).moved());
++        assertEquals(65, player.require(StaminaComponent.class).current());
++    }
++
++    /** Deltas arbitrários preservam velocidade, duração e fração final exata. */
++    @Test void duracaoDeUmQuartoDeSegundo() {
++        var player = player(100f, 100f);
++        var service = service();
++        var space = emptySpace();
++        service.cast(player, right(), RADIUS, space);
++        service.update(player, 0.1f, RADIUS, space);
++        assertEquals(160f, player.getPosition().x(), 0.0001);
++        service.update(player, 0.1f, RADIUS, space);
++        service.update(player, 0.049f, RADIUS, space);
++        assertEquals(249.4f, player.getPosition().x(), 0.0001);
++        assertTrue(service.active());
++        service.update(player, 0.02f, RADIUS, space);
++        assertEquals(250f, player.getPosition().x(), 0.0001);
++        assertFalse(service.active());
++    }
++
++    /** Um delta maior que a duração não amplia o orçamento de deslocamento. */
++    @Test void deltaGrandeNuncaExcedeDistanciaMaxima() {
++        var player = player(100f, 100f);
++        var service = service();
++        var space = emptySpace();
++        service.cast(player, right(), RADIUS, space);
++        service.update(player, 10f, RADIUS, space);
++        assertEquals(new Position(250f, 100f), player.getPosition());
++        assertFalse(service.active());
++        assertEquals(0f, service.cooldown());
++    }
++
++    /** Direção diagonal normalizada mantém o mesmo alcance do deslocamento horizontal. */
++    @Test void diagonalMantemDistanciaSemGanharVelocidade() {
++        var player = player(100f, 100f);
++        var service = service();
++        var space = emptySpace();
++        service.cast(player, new SkillCastCommand(LightningStepService.ID, 700f, 500f), RADIUS, space);
++        for (int i = 0; i < 8; i++) service.update(player, 1f / 30f, RADIUS, space);
++        assertEquals(150f, Math.hypot(player.getPosition().x() - 100f,
++                player.getPosition().y() - 100f), 0.0002);
++        assertEquals(2d / 3d, service.direction().y() / service.direction().x(), 0.000001);
++        assertFalse(service.active());
++    }
++
++    /** O cursor próximo define a direção, sem transformar o dash em movimento curto. */
++    @Test void cursorProximoDefineDirecaoEAlcanceCompleto() {
++        var player = player(100f, 100f);
++        var service = service();
++        var space = emptySpace();
++        service.cast(player, new SkillCastCommand(LightningStepService.ID, 101f, 100f), RADIUS, space);
++        service.update(player, 0.25f, RADIUS, space);
++        assertEquals(new Position(250f, 100f), player.getPosition());
++    }
++
++    /** Cooldown só libera depois de quatro segundos e não depende do fim do dash. */
++    @Test void cooldownBloqueiaEAceitaDepoisDeQuatroSegundos() {
++        var player = player(100f, 100f);
++        var service = service();
++        var space = emptySpace();
++        service.cast(player, right(), RADIUS, space);
++        service.update(player, 0.25f, RADIUS, space);
++        assertEquals(3.75f, service.cooldown());
++        service.update(player, 3.74f, RADIUS, space);
++        assertEquals(LightningStepService.Status.COOLDOWN, service.cast(player, right(), RADIUS, space));
++        assertEquals(65f, player.require(StaminaComponent.class).current());
++        service.update(player, 0.01f, RADIUS, space);
++        assertEquals(0f, service.cooldown());
++        assertEquals(LightningStepService.Status.STARTED, service.cast(player, right(), RADIUS, space));
++        assertEquals(30f, player.require(StaminaComponent.class).current());
++    }
++
++    /** Não há consumo parcial nem cooldown quando o saldo é insuficiente. */
++    @Test void vigorInsuficienteNaoMudaEstado() {
++        var player = player(100f, 100f);
++        var service = service();
++        player.require(StaminaComponent.class).tryConsume(66f);
++        assertEquals(LightningStepService.Status.STAMINA, service.cast(player, right(), RADIUS, emptySpace()));
++        assertEquals(34f, player.require(StaminaComponent.class).current());
++        assertEquals(new Position(100f, 100f), player.getPosition());
++        assertEquals(0f, service.cooldown());
++        assertFalse(service.active());
++    }
++
++    /** Saldo exatamente igual ao custo é suficiente. */
++    @Test void saldoExatoPodeSerConsumido() {
++        var player = player(100f, 100f);
++        var service = service();
++        player.require(StaminaComponent.class).tryConsume(65f);
++        assertEquals(LightningStepService.Status.STARTED, service.cast(player, right(), RADIUS, emptySpace()));
++        assertEquals(0f, player.require(StaminaComponent.class).current());
++    }
++
++    /** Mortos não iniciam a habilidade, mesmo com vigor disponível. */
++    @Test void jogadorMortoNaoInicia() {
++        var player = player(100f, 100f);
++        var service = service();
++        player.require(HealthComponent.class).applyDamage(100);
++        assertEquals(LightningStepService.Status.DEAD, service.cast(player, right(), RADIUS, emptySpace()));
++        assertEquals(100f, player.require(StaminaComponent.class).current());
++        assertEquals(0f, service.cooldown());
++        assertFalse(service.active());
++    }
++
++    /** Morte durante a habilidade cancela movimento, mantendo a passagem do cooldown. */
++    @Test void morteInterrompeDashAtivo() {
++        var player = player(100f, 100f);
++        var service = service();
++        service.cast(player, right(), RADIUS, emptySpace());
++        player.require(HealthComponent.class).applyDamage(100);
++        assertFalse(service.update(player, 0.1f, RADIUS, emptySpace()).moved());
++        assertEquals(new Position(100f, 100f), player.getPosition());
++        assertFalse(service.active());
++        assertEquals(3.9f, service.cooldown(), 0.000001);
++    }
++
++    /** Valores externos inválidos e comandos desconhecidos não iniciam estado. */
++    @Test void comandosInvalidosNaoConsomemNemIniciamCooldown() {
++        var player = player(100f, 100f);
++        var service = service();
++        var space = emptySpace();
++        for (var command : List.of(new SkillCastCommand("outra", 200f, 200f),
++                new SkillCastCommand(null, 200f, 200f),
++                new SkillCastCommand(LightningStepService.ID, Float.NaN, 200f),
++                new SkillCastCommand(LightningStepService.ID, 200f, Float.NaN),
++                new SkillCastCommand(LightningStepService.ID, Float.POSITIVE_INFINITY, 200f),
++                new SkillCastCommand(LightningStepService.ID, 200f, Float.NEGATIVE_INFINITY),
++                new SkillCastCommand(LightningStepService.ID, -1f, 200f),
++                new SkillCastCommand(LightningStepService.ID, 200f, -1f),
++                new SkillCastCommand(LightningStepService.ID, 960f, 200f),
++                new SkillCastCommand(LightningStepService.ID, 200f, 640f))) {
++            assertEquals(LightningStepService.Status.INVALID, service.cast(player, command, RADIUS, space));
++            assertEquals(100f, player.require(StaminaComponent.class).current());
++            assertEquals(0f, service.cooldown());
++            assertFalse(service.active());
++            assertEquals(new Position(100f, 100f), player.getPosition());
++        }
++        assertEquals(LightningStepService.Status.INVALID, service.cast(player, null, RADIUS, space));
++        assertEquals(LightningStepService.Status.INVALID, service.cast(player, right(), RADIUS, null));
++        assertEquals(LightningStepService.Status.INVALID, service.cast(null, right(), RADIUS, space));
++    }
++
++    /** Geometria inicial inválida é rejeitada antes de consumir o recurso. */
++    @Test void geometriaInvalidaRecusaLancamento() {
++        var player = player(100f, 100f);
++        var service = service();
++        for (float radius : new float[] {0f, -1f, Float.NaN, Float.POSITIVE_INFINITY}) {
++            assertEquals(LightningStepService.Status.INVALID, service.cast(player, right(), radius, emptySpace()));
++            assertEquals(100f, player.require(StaminaComponent.class).current());
++        }
++        player.setPosition(new Position(Float.NaN, 100f));
++        assertEquals(LightningStepService.Status.INVALID, service.cast(player, right(), RADIUS, emptySpace()));
++        player.setPosition(new Position(5f, 100f));
++        assertEquals(LightningStepService.Status.INVALID, service.cast(player, right(), RADIUS, emptySpace()));
++        player.setPosition(new Position(100f, 100f));
++        var blocked = new CollisionService.Space(960f, 640f,
++                List.of(new CollisionService.Obstacle(90f, 90f, 20f, 20f)), List.of());
++        assertEquals(LightningStepService.Status.INVALID, service.cast(player, right(), RADIUS, blocked));
++        assertEquals(100f, player.require(StaminaComponent.class).current());
++        assertEquals(0f, service.cooldown());
++    }
++
++    /** Delta inválido não altera relógios, posição ou recurso; zero é inerte. */
++    @Test void deltaInvalidoNaoMudaEstadoEZeroEhPermitido() {
++        var player = player(100f, 100f);
++        var service = service();
++        var space = emptySpace();
++        service.cast(player, right(), RADIUS, space);
++        for (float dt : new float[] {-1f, Float.NaN, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY}) {
++            assertThrows(IllegalArgumentException.class, () -> service.update(player, dt, RADIUS, space));
++            assertEquals(new Position(100f, 100f), player.getPosition());
++            assertEquals(4f, service.cooldown());
++            assertEquals(0.25f, service.remaining());
++            assertEquals(65f, player.require(StaminaComponent.class).current());
++        }
++        assertFalse(service.update(player, 0f, RADIUS, space).moved());
++        assertEquals(4f, service.cooldown());
++        assertEquals(0.25f, service.remaining());
++    }
++
++    /** Parede fina detém a varredura e o tempo bloqueado não acumula distância futura. */
++    @Test void paredeFinaImpedeTunelamentoESemCompensacao() {
++        var player = player(100f, 100f);
++        var service = service();
++        var space = new CollisionService.Space(960f, 640f,
++                List.of(new CollisionService.Obstacle(140f, 0f, 2f, 200f)), List.of());
++        assertEquals(LightningStepService.Status.STARTED, service.cast(player, right(), RADIUS, space));
++        service.update(player, 0.1f, RADIUS, space);
++        assertEquals(122f, player.getPosition().x(), 0.0001);
++        service.update(player, 0.15f, RADIUS, space);
++        assertEquals(122f, player.getPosition().x(), 0.0001);
++        assertFalse(service.active());
++        assertFalse(service.update(player, 0.1f, RADIUS, emptySpace()).moved());
++    }
++
++    /** Um eixo bloqueado preserva o deslocamento do eixo livre na direção fixada. */
++    @Test void colisaoPreservaDeslizamentoPorEixos() {
++        var player = player(100f, 100f);
++        var service = service();
++        var space = new CollisionService.Space(960f, 640f,
++                List.of(new CollisionService.Obstacle(140f, 0f, 2f, 640f)), List.of());
++        service.cast(player, new SkillCastCommand(LightningStepService.ID, 400f, 300f), RADIUS, space);
++        service.update(player, 0.25f, RADIUS, space);
++        assertEquals(122f, player.getPosition().x(), 0.0001);
++        assertEquals(100f + 150f * service.direction().y(), player.getPosition().y(), 0.0001);
++        assertTrue(new CollisionService().isFree(player, player.getPosition().x(),
++                player.getPosition().y(), RADIUS, space));
++    }
++
++    /** A varredura respeita a borda da arena considerando todo o raio do personagem. */
++    @Test void dashNaoUltrapassaLimitesDaArena() {
++        var player = player(920f, 600f);
++        var service = service();
++        var space = emptySpace();
++        service.cast(player, new SkillCastCommand(LightningStepService.ID, 959f, 639f), RADIUS, space);
++        service.update(player, 0.25f, RADIUS, space);
++        assertEquals(new Position(942f, 622f), player.getPosition());
++        assertTrue(new CollisionService().isFree(player, 942f, 622f, RADIUS, space));
++    }
++
++    /** Um mob vivo bloqueia sem receber dano, status ou deslocamento do dash. */
++    @Test void mobBloqueiaSemReceberDanoOuEfeito() {
++        var player = player(100f, 100f);
++        var mob = new Mob(100, "Bloqueio", new Position(160f, 100f), LootTable.of());
++        mob.attach(new HealthComponent(120));
++        mob.attach(new StatusEffectsComponent());
++        var space = new CollisionService.Space(960f, 640f, List.of(), List.of(
++                new CollisionService.Body(player, RADIUS), new CollisionService.Body(mob, 19f)));
++        var service = service();
++        service.cast(player, right(), RADIUS, space);
++        service.update(player, 0.25f, RADIUS, space);
++        assertEquals(123f, player.getPosition().x(), 0.0001);
++        assertEquals(new Position(160f, 100f), mob.getPosition());
++        assertEquals(120, mob.require(HealthComponent.class).current());
++        assertTrue(mob.require(StatusEffectsComponent.class).snapshot().isEmpty());
++        assertEquals(100, player.require(HealthComponent.class).current());
++        assertFalse(service.active());
++    }
++
++    /** A habilidade não impede CombatService de causar dano ao jogador durante o dash. */
++    @Test void jogadorContinuaRecebendoDanoDuranteDash() {
++        var player = player(100f, 100f);
++        var attacker = player(200f, 100f);
++        var service = service();
++        service.cast(player, right(), RADIUS, emptySpace());
++        int before = player.require(HealthComponent.class).current();
++        int damage = new CombatService(new GameEventBus()).attack(attacker, player);
++        assertTrue(service.active());
++        assertTrue(damage > 0);
++        assertEquals(before - damage, player.require(HealthComponent.class).current());
++        assertTrue(service.update(player, 0.05f, RADIUS, emptySpace()).moved());
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/domain/skill/LightningStepTestFixtures.java
+@@ -0,0 +1,44 @@
++package com.projetok.domain.skill;
++
++import com.projetok.domain.entity.Player;
++import com.projetok.domain.entity.Position;
++import com.projetok.domain.factory.PlayerArchetype;
++import com.projetok.domain.factory.PlayerFactory;
++import com.projetok.domain.movement.CollisionService;
++import com.projetok.domain.movement.MovementService;
++import com.projetok.domain.network.PlayerConnection;
++import com.projetok.domain.progression.VitalityService;
++import com.projetok.domain.race.RaceRegistry;
++import com.projetok.domain.resource.StaminaService;
++import java.util.List;
++
++/** Montagem real e reutilizável dos testes de domínio do Passo Relâmpago. */
++final class LightningStepTestFixtures {
++    /** Mesmo raio físico usado pelo jogador na arena. */
++    static final float RADIUS = 18f;
++
++    /** Impede instanciação da coleção de fixtures. */
++    private LightningStepTestFixtures() { }
++
++    /** Cria um jogador humano pela fábrica real, com vida e vigor iniciais de 100. */
++    static Player player(float x, float y) {
++        var archetype = new PlayerArchetype(RaceRegistry.withDefaults().get("human"),
++                30, 8, 14, null, null);
++        return new PlayerFactory(new VitalityService()).create(1, "Teste de dash", archetype,
++                new Position(x, y), new PlayerConnection() {
++                    @Override public void send(Object packet) { /* canal local sem rede */ }
++                    @Override public void disconnect() { /* nenhuma conexão aberta */ }
++                });
++    }
++
++    /** Cria uma arena vazia de 960 por 640 unidades, sem janela ou banco de dados. */
++    static CollisionService.Space emptySpace() {
++        return new CollisionService.Space(960f, 640f, List.of(), List.of());
++    }
++
++    /** Compartilha a mesma detecção de colisões entre o serviço e a movimentação. */
++    static LightningStepService service() {
++        var collisions = new CollisionService();
++        return new LightningStepService(new MovementService(collisions), new StaminaService(), collisions);
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/domain/skill/LightningStepZeroDirectionTest.java
+@@ -0,0 +1,44 @@
++package com.projetok.domain.skill;
++
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++
++import com.projetok.domain.skill.LightningStepService;
++
++import com.projetok.domain.entity.component.StaminaComponent;
++
++import static com.projetok.domain.skill.LightningStepTestFixtures.*;
++
++class LightningStepZeroDirectionTest {
++
++    @Test void deveRejeitarDashSemDirecao() {
++
++        var jogador = player(100f, 100f);
++        var servico = service();
++        var espaco = emptySpace();
++
++        // Guardamos o estado antes da tentativa.
++        var posicaoInicial = jogador.getPosition();
++
++        var vigorInicial = jogador
++            .require(StaminaComponent.class)
++            .current();
++
++        // Criamos um comando apontando para o próprio jogador.
++        var comando = new SkillCastCommand(
++            "lightning_step", 100f, 100f
++        );
++
++        // ACT - Executar a tentativa de dash.
++        var resultado = servico.cast(
++            jogador, comando, RADIUS, espaco
++        );
++
++        // ASSERT - Você implementará as verificações aqui!
++        assertEquals(posicaoInicial, jogador.getPosition());
++        assertEquals(vigorInicial,jogador.require(StaminaComponent.class).current(),0.0001f);
++        assertFalse(servico.active());
++        assertEquals(0f, servico.cooldown(), 0.0001f);
++        assertEquals(LightningStepService.Status.ZERO_DIRECTION, resultado);
++    }
++}--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/LightningStepIntegrationTest.java
+@@ -0,0 +1,197 @@
++package com.projetok.prototype;
++
++import com.projetok.domain.skill.SkillCastCommand;
++import com.projetok.domain.skill.LightningStepService;
++import org.junit.jupiter.api.Test;
++import javax.swing.JComponent;
++import javax.swing.KeyStroke;
++import javax.swing.SwingUtilities;
++import javax.imageio.ImageIO;
++import java.awt.event.InputEvent;
++import java.awt.event.KeyEvent;
++import java.awt.event.MouseEvent;
++import java.awt.event.ActionEvent;
++import java.awt.image.BufferedImage;
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.util.List;
++import java.util.HashSet;
++import java.util.function.BooleanSupplier;
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Integração de fila, deslocamento e rastro; o caso de direção zero pertence ao usuário. */
++class LightningStepIntegrationTest {
++    private static final float DT = 1f / 30f;
++    private static final SkillCastCommand DASH = new SkillCastCommand("lightning_step", 500, 340);
++
++    /** Envia um lote pelo mesmo ponto de entrada usado pelo runtime. */
++    private void cast(DebugWorld world, SkillCastCommand... commands) {
++        world.tickQueued(DebugInput.NONE, DT, 0, List.of(commands));
++    }
++
++    /** Ativação não teleporta e o gasto acontece uma vez no início. */
++    @Test void ativacaoEProgressoSemTeleporte() {
++        var world = new DebugWorld();
++        var before = world.snapshot().actors().get(0);
++        cast(world, DASH);
++        var started = world.snapshot();
++        assertEquals(before.x(), started.actors().get(0).x());
++        assertEquals(before.y(), started.actors().get(0).y());
++        assertEquals(65, started.stamina()); assertEquals(4, started.lightningStepCooldown());
++        assertTrue(started.lightningStepActive()); assertTrue(started.lightningTrails().isEmpty());
++        world.tick(DebugInput.NONE, DT);
++        assertEquals(before.x() + 20, world.snapshot().actors().get(0).x(), 0.0001);
++        assertEquals(65.5f, world.snapshot().stamina());
++        assertFalse(world.snapshot().lightningTrails().isEmpty());
++    }
++
++    /** WASD fica suspenso inclusive no último passo fracionário e retorna depois. */
++    @Test void distanciaEDuracaoSemSomarWasd() {
++        var world = new DebugWorld(); cast(world, DASH);
++        for (int i = 0; i < 8; i++) world.tick(new DebugInput(true, false, false, false, false), DT);
++        var done = world.snapshot();
++        assertFalse(done.lightningStepActive()); assertEquals(0, done.lightningStepRemaining());
++        assertEquals(285, done.actors().get(0).x(), 0.0001);
++        assertEquals(340, done.actors().get(0).y());
++        world.tick(new DebugInput(true, false, false, false, false), DT);
++        assertEquals(340 - DebugWorld.WALK_SPEED * DT, world.snapshot().actors().get(0).y(), 0.0001);
++    }
++
++    /** Cooldown impede outro consumo e não impede o ataque básico. */
++    @Test void cooldownConsumoUnicoEAtaqueBasico() {
++        var world = new DebugWorld(); cast(world, DASH);
++        cast(world, DASH);
++        assertEquals(65.5f, world.snapshot().stamina());
++        world.tick(new DebugInput(false, false, false, false, true), DT);
++        assertNotNull(world.snapshot().attack());
++        assertEquals(0.38f, world.snapshot().cooldown());
++        assertEquals(120, world.snapshot().actors().get(1).hp());
++    }
++
++    /** Q e Shift competem pelo saldo conforme a ordem do lote recebido. */
++    @Test void concorrenciaEntreHabilidadesRespeitaFila() {
++        var ice = new SkillCastCommand("cryostasis", 215, 148);
++        var iceFirst = new DebugWorld();
++        iceFirst.tick(new DebugInput(false, false, false, false, false, true), DT);
++        cast(iceFirst, ice, DASH);
++        assertEquals(25.5f, iceFirst.snapshot().stamina());
++        assertEquals(1, iceFirst.snapshot().iceZones().size());
++        assertFalse(iceFirst.snapshot().lightningStepActive());
++        assertEquals(0, iceFirst.snapshot().lightningStepCooldown());
++        var dashFirst = new DebugWorld();
++        dashFirst.tick(new DebugInput(false, false, false, false, false, true), DT);
++        cast(dashFirst, DASH, ice);
++        assertEquals(45.5f, dashFirst.snapshot().stamina());
++        assertTrue(dashFirst.snapshot().lightningStepActive());
++        assertTrue(dashFirst.snapshot().iceZones().isEmpty());
++        assertEquals(0, dashFirst.snapshot().cryostasisCooldown());
++    }
++
++    /** O avanço do dash não habilita invulnerabilidade nem impede a IA de atacar. */
++    @Test void jogadorRecebeDanoDuranteDash() {
++        var world = new DebugWorld();
++        for (int i = 0; i < 47; i++) world.tick(DebugInput.NONE, DT);
++        int hpBefore = world.snapshot().playerHp();
++        // O mob se aproxima de cima/direita; avançar nessa direção mantém alcance no primeiro passo.
++        cast(world, new SkillCastCommand("lightning_step", 300, 100));
++        boolean damaged = world.snapshot().playerHp() < hpBefore;
++        for (int i = 0; i < 8 && !damaged; i++) {
++            world.tick(DebugInput.NONE, DT);
++            damaged = world.snapshot().playerHp() < hpBefore;
++        }
++        assertTrue(damaged, "O jogador continua elegível ao dano durante a habilidade");
++    }
++
++    /** Segmentos permanecem só por seu tempo de vida; a renderização não altera o mundo. */
++    @Test void capturaERastroImutavelQueExpira() throws Exception {
++        var world = new DebugWorld(); cast(world, DASH);
++        for (int i = 0; i < 5; i++) world.tick(DebugInput.NONE, DT);
++        var snapshot = world.snapshot();
++        assertFalse(snapshot.lightningTrails().isEmpty());
++        assertThrows(UnsupportedOperationException.class, () -> snapshot.lightningTrails().clear());
++        var image = new BufferedImage(DebugPanel.PANEL_WIDTH, DebugPanel.PANEL_HEIGHT, BufferedImage.TYPE_INT_ARGB);
++        var graphics = image.createGraphics();
++        try { new DebugPanel(world::snapshot).render(graphics, snapshot); }
++        finally { graphics.dispose(); }
++        assertEquals(snapshot, world.snapshot());
++        Files.createDirectories(Path.of("target"));
++        ImageIO.write(image, "png", Path.of("target/task006-passo-relampago.png").toFile());
++        for (int i = 0; i < 12; i++) world.tick(DebugInput.NONE, DT);
++        assertFalse(world.snapshot().lightningStepActive());
++        assertTrue(world.snapshot().lightningTrails().isEmpty());
++    }
++
++    /** Shift usa o modificador real do Swing e não remove as combinações dos controles anteriores. */
++    @Test void bindingsComShiftMantemControlesAnteriores() throws Exception {
++        try (var runtime = new DebugRuntime()) {
++            var panel = panel(runtime);
++            var map = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
++            var pressed = new KeyEvent(panel, KeyEvent.KEY_PRESSED, 0, InputEvent.SHIFT_DOWN_MASK,
++                    KeyEvent.VK_SHIFT, KeyEvent.CHAR_UNDEFINED);
++            assertEquals("press_SHIFT", map.get(KeyStroke.getKeyStrokeForEvent(pressed)));
++            for (String key : new String[] {"W", "A", "S", "D", "SPACE", "E", "Q"}) {
++                assertEquals("press_" + key, map.get(KeyStroke.getKeyStroke("shift pressed " + key)));
++                assertEquals("release_" + key, map.get(KeyStroke.getKeyStroke("shift released " + key)));
++            }
++            assertEquals("restart", map.get(KeyStroke.getKeyStroke("shift pressed R")));
++            assertEquals("hitboxes", map.get(KeyStroke.getKeyStroke("shift pressed H")));
++        }
++    }
++
++    /** Um toque completo antes do tick chega ao mundo, e R limpa estado sem repetir Shift mantido. */
++    @Test void toqueRapidoReinicioEShiftMantido() throws Exception {
++        try (var runtime = new DebugRuntime()) {
++            var panel = panel(runtime);
++            action(panel, "press_SHIFT"); action(panel, "release_SHIFT");
++            runtime.start();
++            await(() -> runtime.snapshot().lightningStepCooldown() > 0);
++            assertTrue(runtime.snapshot().stamina() < 70);
++            action(panel, "press_SHIFT"); // mantém após tentativa recusada em cooldown.
++            await(() -> !runtime.snapshot().lightningTrails().isEmpty());
++            action(panel, "restart");
++            await(() -> runtime.snapshot().lightningStepCooldown() == 0);
++            assertEquals(100, runtime.snapshot().stamina());
++            assertFalse(runtime.snapshot().lightningStepActive());
++            assertTrue(runtime.snapshot().lightningTrails().isEmpty());
++            action(panel, "press_SHIFT"); action(panel, "press_SHIFT");
++            long tick = runtime.snapshot().ticks();
++            await(() -> runtime.snapshot().ticks() >= tick + 2);
++            assertEquals(0, runtime.snapshot().lightningStepCooldown());
++            action(panel, "release_SHIFT"); action(panel, "press_SHIFT");
++            await(() -> runtime.snapshot().lightningStepCooldown() > 0);
++        }
++    }
++
++    /** O mesmo reinício ordenado da fila descarta comandos de dash ainda pendentes. */
++    @Test void reinicioDescartaDashPendente() {
++        var buffer = new DebugCommandBuffer();
++        buffer.cast(DASH); buffer.restart();
++        var frame = buffer.drain();
++        assertTrue(frame.restart()); assertTrue(frame.casts().isEmpty());
++        assertTrue(buffer.drain().casts().isEmpty());
++    }
++
++    /** Monta os bindings reais e posiciona o mouse em ponto válido, sem JFrame. */
++    private DebugPanel panel(DebugRuntime runtime) throws Exception {
++        var panel = new DebugPanel(runtime::snapshot);
++        SwingUtilities.invokeAndWait(() -> {
++            DebugLauncher.configureKeys(panel, runtime, new HashSet<>());
++            var event = new MouseEvent(panel, MouseEvent.MOUSE_MOVED, 0, 0, 500, 340, 0, false);
++            for (var listener : panel.getMouseMotionListeners()) listener.mouseMoved(event);
++        });
++        return panel;
++    }
++
++    /** Executa uma ação da janela no EDT. */
++    private void action(DebugPanel panel, String name) throws Exception {
++        SwingUtilities.invokeAndWait(() -> panel.getActionMap().get(name)
++                .actionPerformed(new ActionEvent(panel, ActionEvent.ACTION_PERFORMED, name)));
++    }
++
++    /** Aguarda publicação de um estado sem acessar entidades fora da thread proprietária. */
++    private void await(BooleanSupplier condition) throws InterruptedException {
++        long deadline = System.nanoTime() + 3_000_000_000L;
++        while (!condition.getAsBoolean() && System.nanoTime() < deadline) Thread.sleep(5);
++        assertTrue(condition.getAsBoolean(), "Estado esperado em até 3 s");
++    }
++}
+--- /dev/null
++++ b/tools/gerar_pdf_task006.py
+@@ -0,0 +1,9 @@
++"""Exporta a documentação do Passo Relâmpago sem dependências externas."""
++
++from pathlib import Path
++from gerar_pdf_task002 import gerar_pdf
++
++
++if __name__ == "__main__":
++    docs = Path(__file__).resolve().parents[1] / "docs"
++    gerar_pdf(docs / "TASK-006.md", docs / "Spirit_Gate_TASK-006.pdf", "TASK-006")

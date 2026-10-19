@@ -1,0 +1,120 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3577 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-016 - Candidato consolidado e verificacao final) Tj T*
+() Tj T*
+(18/10/2026. AUTOMATIZADA APROVADA. HOMOLOGACAO HUMANA PENDENTE.) Tj T*
+() Tj T*
+(Baseline exato: mvn.cmd -Dmaven.repo.local=.maven-repository -f server/pom.xml clean) Tj T*
+(test, 216 testes, zero falhas/erros/ignorados. Revisadas TASK-012 a TASK-015: diffs,) Tj T*
+(PDFs, suites, replays e capturas. Nenhum asset reprovado ativado. Risco previsto:) Tj T*
+(empacotamento, ferramentas e kit de teste; sem alteracao de gameplay nesta etapa.) Tj T*
+() Tj T*
+(Build agora exige auditoria oficial do ZIP original antes de anunciar sucesso. Parametro) Tj T*
+(MavenRepository permite cache local gravavel sem alterar configuracao global. Kit) Tj T*
+(permite mapa-demo.properties opcional com nome explicito, mantendo kits historicos de) Tj T*
+(tres arquivos. Smoke admite argumentos para testar a variante local. Revisao reforcou) Tj T*
+(nomes Windows reservados \(incluindo dispositivos especiais e numeros sobrescritos\),) Tj T*
+(symlink de asset e validacao de pivot/offset. Novos testes de exportacao de 59 frames,) Tj T*
+(pivot invalido e CRC adulterado.) Tj T*
+() Tj T*
+(Suite final do proprio build: 216 JUnit, zero falhas/erros/ignorados. Repeticao offline:) Tj T*
+(mesmos 216 verdes. Python: 12 testes verdes. Inventario final repetido byte a byte: 228) Tj T*
+(PNGs reprovados para grade pretendida, zero validados; sem atlas de producao ou) Tj T*
+(personagem aprovado. Arte-fonte preservada e fallback ativo. Manifest Properties de) Tj T*
+(personagens e atlas foram exercitados apenas com fixtures sinteticas temporarias.) Tj T*
+() Tj T*
+(Novo ZIP: dist/SpiritGate-0.16.0-rc1-20261018T230252Z-a6150a66-portable.zip) Tj T*
+(Tamanho: 29.386.343 bytes.) Tj T*
+(SHA-256: 9bc425107d23ccfd9a4d36279be4da23c7f016a74c92fe03a9bb1f0d36eb79c1) Tj T*
+() Tj T*
+(Auditoria original PASS nos seis controles: SHA externo, estrutura segura \(150) Tj T*
+(arquivos\), manifest/inventario, runtime/PE, whitelist/JAR e bytecode \(138 classes) Tj T*
+(comparadas\) e busca de padroes concretos de credenciais. Nenhuma normalizacao) Tj T*
+(intermediaria. Controle negativo: copia descartavel com JAR adulterado e SHA externo) Tj T*
+(recalculado recusada por tamanho do manifest; negativeControl=PASS. Original preservado.) Tj T*
+() Tj T*
+(Dois smokes Windows reais fora de Projeto-K: padrao e --map SpiritGate/mapa-) Tj T*
+(demo.properties. PATH sem Java/Maven; jvm.dll carregada do runtime integrado comprovada;) Tj T*
+(launcher e janela encerraram com codigo 0, sem fechamento forcado. Capturas) Tj T*
+(TASK-016-exe.png e TASK-016-mapa-exe.png. Mapa tem aviso de tiles sinteticos. Testes de) Tj T*
+(sockets por CIM podem estar indisponiveis no ambiente; o JSON registra o limite. Nao) Tj T*
+(houve teste independente em outro computador.) Tj T*
+() Tj T*
+(Falha operacional intermediaria: invocacao direta dos scripts encontrou ExecutionPolicy) Tj T*
+(restrita. Reexecutado em powershell -NoProfile -ExecutionPolicy Bypass somente no) Tj T*
+(processo, sem mudar politica global, pelo script reproduzivel TASK-016-reproduzir-) Tj T*
+(smoke.ps1. A verificacao de Linux/WSL retornou ajuda em vez de ambiente utilizavel; nao) Tj T*
+(foi executada auditoria Linux nesta sessao. Evidencia bruta em TASK-016-linux-) Tj T*
+(disponibilidade.log.) Tj T*
+() Tj T*
+(Reconstruir na raiz Projeto-K: powershell -NoProfile -ExecutionPolicy Bypass -File) Tj T*
+(tools/build-windows-portable.ps1 -Version 0.16.0-rc1 -MavenRepository .maven-repository) Tj T*
+() Tj T*
+(Spirit Gate - TASK-016 - p·gina 1/2) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 1427 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(-TesterKitDirectory docs/kit-homologacao-012-016. O script usa JDK 17, Maven e Python 3) Tj T*
+(da maquina de build; o jogo portatil nao exige essas instalacoes. Nome unico com) Tj T*
+(timestamp e identificador evita sobrescrita. Auditar: python tools/auditar_rc.py --zip) Tj T*
+(ARQUIVO --report RELATORIO. Smoke: powershell -NoProfile -ExecutionPolicy Bypass -File) Tj T*
+(docs/TASK-016-reproduzir-smoke.ps1 -ZipPath ARQUIVO.) Tj T*
+() Tj T*
+(## O QUE FOI REALMENTE EXECUTADO) Tj T*
+() Tj T*
+(Revisao local, suites normal/offline, 12 testes de ferramentas, inventario) Tj T*
+(deterministico, rebuild atual, auditoria original, controle negativo e dois smokes EXE) Tj T*
+(com captura/fechamento real. Kit de teste, relatorios/PDFs/diffs/checkpoints e hashes) Tj T*
+(produzidos. Nenhum push, publicacao, servico, servidor remoto, banco, protocolo ou) Tj T*
+(credencial alterado.) Tj T*
+() Tj T*
+(## O QUE AINDA EXIGE O USUARIO) Tj T*
+() Tj T*
+(Homologacao humana de jogabilidade, teste em outro Windows x64 sem Java/Maven e) Tj T*
+(aprovacao/exportacao da arte. Executavel sem assinatura e sem multiplayer. Pouso com) Tj T*
+(rota totalmente ocupada pode permanecer aguardando saida, comportamento historico) Tj T*
+(preservado. Hashes nao sao assinatura nem prova absoluta de ausencia de segredos. Rodada) Tj T*
+(encerrada na TASK-016.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-016 - p·gina 2/2) Tj T*
+ET
+endstream
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000127 00000 n 
+0000000224 00000 n 
+0000000350 00000 n 
+0000003979 00000 n 
+0000004105 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+5584
+%%EOF

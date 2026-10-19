@@ -1,0 +1,320 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R 10 0 R 12 0 R] /Count 5 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3324 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-006.1 - Colisão seletiva do Passo Relâmpago) Tj T*
+() Tj T*
+(Data: 18/10/2026. Implementação e testes automatizados preparados para revisão.) Tj T*
+(Pendências de aceite: teste reservado ao usuário, conferência jogando na janela e) Tj T*
+(revisão técnica. TASK-007 não iniciada.) Tj T*
+() Tj T*
+(## Proposta e decisões) Tj T*
+() Tj T*
+(Inspecionados LightningStepService, MovementService, CollisionService/Space,) Tj T*
+(SpatialBodyIndex, DebugWorld, DebugSnapshot, DebugPanel e testes relacionados antes das) Tj T*
+(alterações. Estado inicial: mvn clean test -q, código de saída 0, 147 testes, zero) Tj T*
+(falhas/erros/ignorados nos relatórios Surefire.) Tj T*
+() Tj T*
+(A proposta apresentada foi acrescentar categorias e políticas à física existente,) Tj T*
+(registrar os vértices X/Y efetivamente percorridos e corrigir a saída pela mesma) Tj T*
+(geometria. Sem dependências, exclusões ou renomeações. O serviço de habilidade continua) Tj T*
+(responsável pelo relógio e pelo consumo; CollisionService continua responsável por toda) Tj T*
+(a geometria. A simulação mantém uma única thread proprietária.) Tj T*
+() Tj T*
+(CollisionCategory explicita ACTOR, SOFT_OBSTACLE, SOLID_OBSTACLE e WORLD_BOUNDARY.) Tj T*
+(CollisionPolicy disponibiliza SOLID e PHASE_THROUGH_ACTORS_AND_SOFT. Ambas bloqueiam) Tj T*
+(sólidos e limites. Obstáculos retangulares aceitam apenas categorias de obstáculo;) Tj T*
+(corpos de entidades são ACTOR. As bordas continuam implícitas nas dimensões de Space,) Tj T*
+(sem construir quatro paredes artificiais.) Tj T*
+() Tj T*
+(O construtor antigo Obstacle\(x,y,width,height\) continua sólido. A política é aplicada na) Tj T*
+(consulta e varredura, não na montagem do índice espacial. Space e SpatialBodyIndex) Tj T*
+(preservam seus contratos e composição; não foi necessário modificar o índice.) Tj T*
+() Tj T*
+(## Geometria e saída segura) Tj T*
+() Tj T*
+(isFree e resolveContinuous possuem overloads com CollisionPolicy. Os overloads antigos) Tj T*
+(usam SOLID. MovementService.moveContinuous também recebe política opcional; os caminhos) Tj T*
+(do WASD não mudaram. NPCs sem componente de vida bloqueiam normalmente; corpos com vida) Tj T*
+(morta continuam sendo ignorados. Isso permite usar o Npc de diálogo real sem torná-lo) Tj T*
+(combatente.) Tj T*
+() Tj T*
+(axisIntervals é a fonte comum dos intervalos analíticos de contato com retângulos) Tj T*
+(arredondados e círculos para varredura e recuperação. Não foi criado outro algoritmo de) Tj T*
+(colisão para o dash. Tangências continuam permitidas; contatos são validados na) Tj T*
+(geometria existente e arredondamentos internos recuam até oito ULPs, como na varredura) Tj T*
+(anterior.) Tj T*
+() Tj T*
+(O dash guarda origem, fim do eixo X e fim do eixo Y a cada avanço. Ao terminar,) Tj T*
+(recoverAlongPath consulta as posições atuais de todos os corpos pela política SOLID. Se) Tj T*
+(o destino estiver ocupado, busca o primeiro ponto livre em ordem reversa dessa) Tj T*
+(polilinha. A distância usada para escolher a saída é a distância ao longo da rota, não) Tj T*
+(uma aproximação por corda diagonal. Fronteiras analíticas permitem encontrar até uma) Tj T*
+(tangência compartilhada entre dois intervalos; não há amostragem por pixel.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-006.1 - página 1/5) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 3440 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+() Tj T*
+(Cada trecho reverso é limitado pela mesma varredura seletiva contra sólidos e bordas.) Tj T*
+(Uma parede que passe a bloquear o retorno impede examinar pontos além dela. A posição só) Tj T*
+(é alterada após encontrar uma saída válida, e o índice é atualizado imediatamente após a) Tj T*
+(correção. Não há empurrão, dano ou teleporte direto para a origem através de paredes.) Tj T*
+() Tj T*
+(Corpos móveis podem ocupar toda a trajetória, tornando impossível encontrar uma saída) Tj T*
+(que satisfaça as regras. Nesse caso o dash termina em 0,25 s, mantém a posição segura) Tj T*
+(perante paredes/bordas e publica awaitingLanding. WASD e uma nova ativação de dash) Tj T*
+(aguardam; cooldown segue diminuindo e não há novo consumo. A busca é repetida a cada) Tj T*
+(atualização com a geometria atual. A sobreposição com ator ou obstáculo leve permanece) Tj T*
+(transitoriamente até haver saída. O jogador continua vulnerável e pode usar os sistemas) Tj T*
+(de combate existentes.) Tj T*
+() Tj T*
+(Essa espera não garante que a IA resolverá o bloqueio: um mob com origem sobreposta) Tj T*
+(também pode ficar impedido de mover. Morte, remoção ou movimentação de um bloqueador, ou) Tj T*
+(reinício da arena, podem liberar o estado. Não foram adicionados reserva da origem,) Tj T*
+(empurrão, invulnerabilidade ou uma nova regra de movimentação para contornar essa) Tj T*
+(impossibilidade.) Tj T*
+() Tj T*
+(## Habilidade e interface) Tj T*
+() Tj T*
+(O construtor anterior de LightningStepService continua SOLID para compatibilidade e) Tj T*
+(regressão. Um novo construtor recebe CollisionPolicy. DebugWorld escolhe explicitamente) Tj T*
+(PHASE_THROUGH_ACTORS_AND_SOFT. O Passo Relâmpago atravessa jogadores, mobs, NPCs sólidos) Tj T*
+(e obstáculos leves durante o deslocamento.) Tj T*
+() Tj T*
+(Preservados: 150 px de orçamento direcional, normalização diagonal, velocidade 600 px/s,) Tj T*
+(duração 0,25 s, custo único 35 e cooldown 4 s. O último tick continua fracionário.) Tj T*
+(Colisão sólida reduz a distância sem compensação posterior. A correção pode recuar o) Tj T*
+(destino ao fim; esse recuo é uma resolução de sobreposição, não uma extensão do tempo ou) Tj T*
+(alcance da habilidade. Morte interrompe o avanço e limpa uma espera de saída.) Tj T*
+() Tj T*
+(Step.path publica uma cópia imutável dos trechos avançados e eventualmente recuados no) Tj T*
+(tick. O rastro segue esses trechos, sem desenhar cordas que cortem paredes.) Tj T*
+(DebugSnapshot acrescenta somente lightningStepAwaitingLanding; ActorView e Obstacle) Tj T*
+(visuais mantêm o formato usado pelo replay histórico. O painel lê valores e desenha, sem) Tj T*
+(consultar componentes ou atualizar regras.) Tj T*
+() Tj T*
+(O HUD informa a travessia seletiva, as paredes/bordas bloqueantes, custo, cooldown e) Tj T*
+(eventual espera. R cria outro mundo e elimina habilidade, caminho e rastros. A fila de) Tj T*
+(comandos e os bindings de Shift não foram alterados. Q e Shift continuam competindo pelo) Tj T*
+(vigor em ordem FIFO.) Tj T*
+() Tj T*
+(Os três obstáculos da arena continuam sólidos e nas posições anteriores. Nenhum arbusto) Tj T*
+(foi acrescentado ao cenário de regressão. Obstáculos leves são exercitados nos testes do) Tj T*
+(domínio; a captura demonstra a passagem por um ator real da arena. A grama da interface) Tj T*
+(continua apenas decorativa.) Tj T*
+() Tj T*
+() Tj T*
+(Spirit Gate - TASK-006.1 - página 2/5) Tj T*
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 3142 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(CombatService, Criostase, efeitos de Freeze, cálculo de dano, alcance/cone/cooldown e) Tj T*
+(animação do ataque básico não foram modificados. Sem novas habilidades, dependências,) Tj T*
+(banco, login ou rede.) Tj T*
+() Tj T*
+(## Testes e evidências reais) Tj T*
+() Tj T*
+(Comando final na pasta Projeto-K/server: mvn clean test. Resultado: BUILD SUCCESS,) Tj T*
+(compilação release 17, 169 testes, zero falhas, zero erros e zero ignorados; tempo Maven) Tj T*
+(11,917 s. Resumo por classe em TASK-006-1-testes.txt.) Tj T*
+() Tj T*
+(São 147 testes anteriores e 22 novos. Os testes antigos permanecem, incluindo o teste de) Tj T*
+(direção zero escrito pelo usuário. MovementReplayTest e seus três baselines não foram) Tj T*
+(modificados. Combate, Criostase, Freeze, consumo, fila, Shift mantido/toques rápidos e) Tj T*
+(reinício passaram na suíte completa.) Tj T*
+() Tj T*
+(CollisionPolicyTest: 6 casos para classificação sólida por padrão, consulta seletiva,) Tj T*
+(paredes finas/espessas, deslizamento por eixo, quatro bordas e movimento normal) Tj T*
+(bloqueado por leves. As verificações de parede novas operam diretamente na física; o) Tj T*
+(teste de parede do serviço dash foi reservado ao usuário.) Tj T*
+() Tj T*
+(LightningStepSelectiveCollisionTest: 11 casos para atores das três classes, arbustos,) Tj T*
+(construtor sólido anterior, alcance diagonal/bordas, destinos ocupados, união de) Tj T*
+(bloqueadores, recuo pela curva real X/Y, corpos móveis/índice atualizado, ausência de) Tj T*
+(saída com liberação posterior e corpo morto. Preservados dano/efeitos/vigor dos) Tj T*
+(atravessados e parâmetros do dash.) Tj T*
+() Tj T*
+(CollisionRecoveryTest: 4 casos para caminho real em volta de construção sólida, parede) Tj T*
+(surgida no retorno, tangência compartilhada e rejeição de rota inválida sem mutação.) Tj T*
+(SelectiveDashIntegrationTest acrescenta 1 caso usando a arena real: comprova hitboxes) Tj T*
+(sobrepostas durante o dash, término livre, distância de 150 px, mobs sem dano e jogador) Tj T*
+(ainda vulnerável.) Tj T*
+() Tj T*
+(TASK-006-1-colisao-seletiva.png foi gerada pelo teste e inspecionada visualmente. Mostra) Tj T*
+(dois quadros da renderização real: passagem por um mob e término livre, com hitboxes,) Tj T*
+(rastro, HP, vigor e recarga. A renderização não altera o snapshot. Não houve sessão) Tj T*
+(humana interativa com JFrame; a captura não substitui essa conferência.) Tj T*
+() Tj T*
+(## Sua participação reservada) Tj T*
+() Tj T*
+(Não foi escrito o teste devePreservarBloqueioDeParedeNoDashSeletivo, nem criado um) Tj T*
+(método vazio. O arquivo recomendado é) Tj T*
+(server/src/test/java/com/projetok/domain/skill/LightningStepSelectiveCollisionTest.java,) Tj T*
+(no pacote com.projetok.domain.skill. Acrescente seu método nessa classe já existente.) Tj T*
+() Tj T*
+(Fixtures reais disponíveis por import estático de LightningStepTestFixtures, no mesmo) Tj T*
+(pacote:) Tj T*
+() Tj T*
+(- static Player player\(float x, float y\): fábrica real, HP 100 e vigor 100.) Tj T*
+(- static final float RADIUS = 18f.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-006.1 - página 3/5) Tj T*
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 11 0 R >>
+endobj
+11 0 obj
+<< /Length 2936 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(- static LightningStepService selectiveService\(\): política) Tj T*
+(PHASE_THROUGH_ACTORS_AND_SOFT.) Tj T*
+(- static LightningStepService service\(\): política SOLID, compatibilidade anterior.) Tj T*
+(- static CollisionService.Space emptySpace\(\): arena 960 por 640, sem obstáculos.) Tj T*
+() Tj T*
+(Construtores e métodos reais para montar o seu cenário:) Tj T*
+() Tj T*
+(- new CollisionService.Obstacle\(float x, float y, float width, float height\): parede) Tj T*
+(sólida por padrão.) Tj T*
+(- new CollisionService.Space\(float width, float height, List<Obstacle> obstacles,) Tj T*
+(List<Body> bodies\).) Tj T*
+(- new CollisionService.Body\(GameEntity entity, float radius\), caso queira incluir o) Tj T*
+(jogador no espaço.) Tj T*
+(- new SkillCastCommand\(String skillId, float targetX, float targetY\), com) Tj T*
+(LightningStepService.ID.) Tj T*
+(- Status cast\(Player player, SkillCastCommand command, float radius,) Tj T*
+(CollisionService.Space space\).) Tj T*
+(- Step update\(Player player, float dt, float radius, CollisionService.Space space\).) Tj T*
+(- player.getPosition\(\).x\(\)/y\(\); service.active\(\), remaining\(\), cooldown\(\),) Tj T*
+(awaitingLanding\(\).) Tj T*
+(- boolean CollisionService.isFree\(GameEntity entity, float x, float y, float radius,) Tj T*
+(Space space\): validação normal.) Tj T*
+() Tj T*
+(O construtor explícito é LightningStepService\(MovementService movement, StaminaService) Tj T*
+(stamina, CollisionService collisions, CollisionPolicy policy\). Os três serviços devem) Tj T*
+(compartilhar a mesma instância CollisionService. A fixture selectiveService\(\) já faz) Tj T*
+(essa montagem. update aceita delta zero ou positivo finito e limita o tempo de avanço ao) Tj T*
+(restante; a ativação não altera a posição imediatamente.) Tj T*
+() Tj T*
+(Sua implementação deve conferir a parede considerando o raio do jogador. A solução JUnit) Tj T*
+(não foi fornecida. Após sua contribuição, executar mvn clean test novamente e atualizar) Tj T*
+(os resultados antes de encerrar o aceite.) Tj T*
+() Tj T*
+(## Arquivos alterados e novos) Tj T*
+() Tj T*
+(Modificados:) Tj T*
+() Tj T*
+(- server/src/main/java/com/projetok/domain/movement/CollisionService.java.) Tj T*
+(- server/src/main/java/com/projetok/domain/movement/MovementService.java.) Tj T*
+(- server/src/main/java/com/projetok/domain/skill/LightningStepService.java.) Tj T*
+(- server/src/main/java/com/projetok/prototype/DebugWorld.java.) Tj T*
+(- server/src/main/java/com/projetok/prototype/DebugSnapshot.java.) Tj T*
+(- server/src/main/java/com/projetok/prototype/DebugPanel.java.) Tj T*
+(- server/src/test/java/com/projetok/domain/skill/LightningStepTestFixtures.java.) Tj T*
+(- README-PROTOTIPO.md e docs/HISTORICO-TECNICO.md.) Tj T*
+() Tj T*
+(Novos:) Tj T*
+() Tj T*
+(- server/src/main/java/com/projetok/domain/movement/CollisionCategory.java.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-006.1 - página 4/5) Tj T*
+ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 13 0 R >>
+endobj
+13 0 obj
+<< /Length 2248 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(- server/src/main/java/com/projetok/domain/movement/CollisionPolicy.java.) Tj T*
+(- server/src/test/java/com/projetok/domain/movement/CollisionPolicyTest.java.) Tj T*
+(- server/src/test/java/com/projetok/domain/movement/CollisionRecoveryTest.java.) Tj T*
+(-) Tj T*
+(server/src/test/java/com/projetok/domain/skill/LightningStepSelectiveCollisionTest.java.) Tj T*
+(- server/src/test/java/com/projetok/prototype/SelectiveDashIntegrationTest.java.) Tj T*
+(- tools/gerar_pdf_task006_1.py.) Tj T*
+(- docs/TASK-006-1.md, TASK-006-1-testes.txt e TASK-006-1.diff.) Tj T*
+(- docs/Spirit_Gate_TASK-006-1.pdf e TASK-006-1-colisao-seletiva.png.) Tj T*
+() Tj T*
+(## Reprodução e limitações) Tj T*
+() Tj T*
+(Na pasta server, executar mvn clean test. Na pasta Projeto-K, python -B) Tj T*
+(tools/gerar_pdf_task006_1.py regenera o PDF com a biblioteca padrão do Python. A captura) Tj T*
+(é produzida em server/target pelo teste e copiada para docs na entrega.) Tj T*
+() Tj T*
+(Conferência jogando: abrir rodar-prototipo.cmd, usar H para hitboxes, atravessar um mob) Tj T*
+(com Shift, mirar contra as paredes existentes, testar diagonais e bordas, observar) Tj T*
+(término livre e volta do WASD; conferir ataque básico, Q/Freeze e R com Shift mantido. O) Tj T*
+(cenário padrão não contém arbustos físicos.) Tj T*
+() Tj T*
+(O retorno é uma correção de posição no encerramento e pode produzir um recuo visível se) Tj T*
+(o destino estiver ocupado. A rota cresce com os ticks de uma ativação; a arena usa 30) Tj T*
+(Hz. A busca de saída consulta os obstáculos e candidatos da rota; não foi introduzido) Tj T*
+(cache de trajetórias ou otimização para milhares de atores. Em magnitudes extremas de) Tj T*
+(float, o ajuste conservador de oito ULPs pode recusar uma solução matemática; validação) Tj T*
+(final impede aceitar penetração.) Tj T*
+() Tj T*
+(O diff compara os fontes/documentos com o estado inspecionado no início desta tarefa.) Tj T*
+(Artefatos PDF/PNG são entregues separadamente; server/target e dados locais não integram) Tj T*
+(o diff. Não houve merge ou publicação. Aguardar sua implementação, conferência) Tj T*
+(interativa e revisão técnica antes da TASK-007.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-006.1 - página 5/5) Tj T*
+ET
+endstream
+endobj
+xref
+0 14
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000147 00000 n 
+0000000244 00000 n 
+0000000370 00000 n 
+0000003746 00000 n 
+0000003872 00000 n 
+0000007364 00000 n 
+0000007490 00000 n 
+0000010684 00000 n 
+0000010812 00000 n 
+0000013801 00000 n 
+0000013929 00000 n 
+trailer
+<< /Size 14 /Root 1 0 R >>
+startxref
+16230
+%%EOF

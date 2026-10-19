@@ -1,0 +1,137 @@
+--- /dev/null
++++ b/docs/TASK-047-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 255,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-047.md
+@@ -0,0 +1,5 @@
++# TASK-047 - Evolucao RPG
++
++Progressao configuravel: limite 20, XP acumulada para nivel L = 60*L*(L-1)/2; +12 HP e +3 ataque por nivel. Recompensa pode conceder varios niveis; XP satura no limite sem overflow. HP recebe apenas o aumento de capacidade e personagens mortos nao ressuscitam por XP.
++
++Equipamentos agora respeitam nivel derivado. Snapshot publica nivel e HP maximo; save preserva XP e recalcula atributos. Testes de multiplos niveis, limite, valores invalidos e restauracao. Concessao por derrota sera conectada ao ledger de loot na TASK-049.
+--- a/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
+@@ -39,8 +39,8 @@
+         runtime.start(); timer.start(); frame.setVisible(true);
+     }
+     static DebugSnapshot adapt(com.projetok.rpg.RpgWorld.View v, DebugSnapshot t) {
+-        return new DebugSnapshot(List.of(new DebugSnapshot.ActorView(1,v.identity().name(),v.x(),v.y(),18,v.state().hp(),v.identity().baseHp(),true,v.state().hp()>0)),
+-            List.of(new DebugSnapshot.Obstacle(380,180,120,120)),List.of(),v.state().hp(),v.identity().baseHp(),0,v.state().hp()==0,v.ticks(),v.message(),1,0,0,null,
++        return new DebugSnapshot(List.of(new DebugSnapshot.ActorView(1,v.identity().name(),v.x(),v.y(),18,v.state().hp(),v.maxHp(),true,v.state().hp()>0)),
++            List.of(new DebugSnapshot.Obstacle(380,180,120,120)),List.of(),v.state().hp(),v.maxHp(),0,v.state().hp()==0,v.ticks(),v.message(),1,0,0,null,
+             100,100,0,List.of(),List.of(),false,0,0,List.of(),false,List.of(),t.cryostasisHud(),t.lightningStepHud());
+     }
+ }
+--- /dev/null
++++ b/server/src/main/java/com/projetok/rpg/RpgProgression.java
+@@ -0,0 +1,16 @@
++package com.projetok.rpg;
++import java.io.*;
++import java.util.Properties;
++/** XP cumulativa triangular; parametros RPG independentes da arena. */
++public record RpgProgression(int cap,int step,int hpPerLevel,int attackPerLevel) {
++    public RpgProgression { if(cap<2||cap>20||step<1||step>1000||hpPerLevel<0||hpPerLevel>100||attackPerLevel<0||attackPerLevel>20) throw new IllegalArgumentException("Progressao invalida"); }
++    public static RpgProgression builtin() {
++        try(InputStream in=RpgProgression.class.getResourceAsStream("/rpg/progression.properties")) {
++            if(in==null) throw new IOException("Progressao ausente"); Properties p=new Properties();p.load(in);
++            return new RpgProgression(Integer.parseInt(p.getProperty("cap")),Integer.parseInt(p.getProperty("step")),Integer.parseInt(p.getProperty("hpPerLevel")),Integer.parseInt(p.getProperty("attackPerLevel")));
++        } catch(IOException e) { throw new IllegalStateException(e); }
++    }
++    public long threshold(int level) { if(level<1||level>cap) throw new IllegalArgumentException("Nivel invalido"); return (long)step*level*(level-1)/2; }
++    public int level(long xp) { if(xp<0||xp>1_000_000) throw new IllegalArgumentException("XP invalida"); int level=1;while(level<cap&&xp>=threshold(level+1))level++;return level; }
++    public long award(long xp,long amount) { level(xp);if(amount<0||amount>1_000_000)throw new IllegalArgumentException("Recompensa invalida");return Math.min(threshold(cap),xp+amount); }
++}
+--- a/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -11,6 +11,7 @@
+     private final CharacterIdentity identity;
+     private final RpgContent content = RpgContent.builtin();
+     private final ItemCatalog items = new ItemCatalog(content);
++    private final RpgProgression progression = RpgProgression.builtin();
+     private final InventoryService inventory = new InventoryService(items,20);
+     private int hp,coins;
+     private long xp;
+@@ -21,7 +22,12 @@
+     private long potionReadyTick;
+     private boolean transitioning;
+     private String message="Bem-vindo a Aurora";
+-    public int maxHp() { return identity.baseHp(); }
++    public int level() { return progression.level(xp); }
++    public int maxHp() { return identity.baseHp()+(level()-1)*progression.hpPerLevel(); }
++    public void awardExperience(long amount) {
++        int previous=maxHp(); xp=progression.award(xp,amount);
++        if(hp>0) hp+=maxHp()-previous;
++    }
+     public void receiveDamage(int amount) { if(amount<0||amount>10000) throw new IllegalArgumentException("Dano invalido"); hp=Math.max(0,hp-amount); }
+     public boolean use(String id) {
+         ItemCatalog.Item item=items.get(id);
+@@ -31,12 +37,12 @@
+         message=item.name()+": vida recuperada"; return true;
+     }
+     public InventoryService inventory() { return inventory; }
+-    public int attackPower() { return identity.baseAttack()+equipmentPower("weapon"); }
++    public int attackPower() { return identity.baseAttack()+(level()-1)*progression.attackPerLevel()+equipmentPower("weapon"); }
+     public int defense() { return equipmentPower("torso")+equipmentPower("legs")+equipmentPower("accessory"); }
+     private int equipmentPower(String slot) { return equipment.containsKey(slot)?items.get(equipment.get(slot)).power():0; }
+     public boolean equip(String id) {
+         ItemCatalog.Item item=items.get(id);
+-        if(hp==0 || item.category()!=ItemCatalog.Category.EQUIPMENT || item.minimumLevel()>1) return false;
++        if(hp==0 || item.category()!=ItemCatalog.Category.EQUIPMENT || item.minimumLevel()>level()) return false;
+         InventoryService copy=inventory.copy(); if(!copy.remove(id,1)) return false;
+         String old=equipment.get(item.slot()); if(old!=null && !copy.add(old,1)) return false;
+         inventory.replace(copy); equipment.put(item.slot(),id); return true;
+@@ -70,10 +76,10 @@
+         for(String flag:world.flags) if(flag.startsWith("potion-until:")) world.potionReadyTick=Long.parseLong(flag.substring(13));
+         if(world.hp>world.maxHp()) throw new IllegalArgumentException("HP acima do maximo"); return world;
+     }
+-    public record View(float x, float y, long ticks, CharacterIdentity identity, RpgSave state, int attack, int defense, String message) { }
++    public record View(float x, float y, long ticks, CharacterIdentity identity, RpgSave state, int attack, int defense, String message, int maxHp, int level) { }
+     public void tick(float x, float y) {
+         movement.moveDirected(body, movement.direction(x, y), 215, 1f / 30, 18, space);
+         ticks++;
+     }
+-    public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message); }
++    public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message,maxHp(),level()); }
+ }
+--- /dev/null
++++ b/server/src/main/resources/rpg/progression.properties
+@@ -0,0 +1,4 @@
++cap=20
++step=60
++hpPerLevel=12
++attackPerLevel=3
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/RpgProgressionTest.java
+@@ -0,0 +1,12 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class RpgProgressionTest {
++    @Test void multipleLevelsCapAndRestoration() {
++        var w=new RpgWorld();w.receiveDamage(20);int oldHp=w.save().hp();
++        w.awardExperience(360);assertEquals(4,w.level());assertEquals(oldHp+36,w.save().hp());
++        assertEquals(w.attackPower(),RpgWorld.restore(w.save()).attackPower());
++        w.awardExperience(1_000_000);assertEquals(20,w.level());
++        var before=w.save();assertThrows(IllegalArgumentException.class,()->w.awardExperience(-1));assertEquals(before,w.save());
++    }
++}

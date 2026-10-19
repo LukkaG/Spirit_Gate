@@ -1,0 +1,47 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 805 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-065 - Hotbar e controles) Tj T*
+() Tj T*
+(Barra clicavel usa IDs rpg.attack, rpg.ability e item.potion, mesmas operacoes do) Tj T*
+(dominio. Atalhos editaveis por acao, persistidos separadamente em controls.properties) Tj T*
+(com escrita temporaria/atomica. Rebinding aplicado na sessao; WASD, F4 e combinacoes de) Tj T*
+(sistema reservados. Duplicatas recusadas.) Tj T*
+() Tj T*
+(Entradas press/release impedem repeticao do SO; perder foco limpa teclas mantidas. Arena) Tj T*
+(conserva Q/Shift e demais controles originais. Testes de conflito, persistencia,) Tj T*
+(equivalencia hotbar/dominio e repeticao/foco. Textos gerais de ajuda mostram padrao;) Tj T*
+(dialogo Atalhos informa configuracao efetiva.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-065 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1200
+%%EOF

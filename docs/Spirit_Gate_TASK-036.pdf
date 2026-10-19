@@ -1,0 +1,83 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3165 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-036 - Release candidate consolidada) Tj T*
+() Tj T*
+(Objetivo: candidata portátil Windows x64 construída dos fontes consolidados.) Tj T*
+(Base: TASK-035 aprovada, 241 JUnit e 25 Python.) Tj T*
+(Versão 0.36.0-rc1 sem conflito anterior no diretório dist.) Tj T*
+(Situação: AUTOMAÇÃO LOCAL APROVADA; homologação humana pendente.) Tj T*
+() Tj T*
+(Implementação: versão do diagnóstico consolidada; README/changelog e aviso do) Tj T*
+(pacote atualizados; kit novo com roteiro por tarefa, modelo de bug, notas e mapa) Tj T*
+(V2 opcional. Build limpo real com Maven offline, sem SkipMaven; JAR novo criado) Tj T*
+(somente de domain/prototype; jdeps, jlink, jpackage e JVM Java 17 integrada.) Tj T*
+(Não foram incluídas artes pendentes, fontes de teste ou configurações privadas.) Tj T*
+(Revisão final corrigiu o comando do mapa opcional no kit e tornou os caminhos) Tj T*
+(dos previews HTML relativos, para portabilidade do pacote documental.) Tj T*
+() Tj T*
+(Artefato: dist/SpiritGate-0.36.0-rc1-20261019T042237Z-a006aab1-portable.zip) Tj T*
+(Bytes: 29401846) Tj T*
+(SHA-256: 511d59412598be73395391e21a6cfb2315f4855c714059086abc4d02e46cff31) Tj T*
+(Auditoria oficial PASS: ZIP original, inventário, whitelist, hashes, PE x64 e) Tj T*
+(bytecode de todas as classes atuais. Controle negativo e distribuição visual) Tj T*
+(sintética testados em cópias, sem promoção de arte. Ver logs/JSON TASK-036.) Tj T*
+(Smokes reais do EXE padrão e --map em extrações distintas fora de Projeto-K,) Tj T*
+(PATH sem Java externo, JVM integrada comprovada, fechamento normal e códigos 0.) Tj T*
+(Capturas TASK-036-exe.png e TASK-036-mapa-exe.png são reais, não simulações.) Tj T*
+(Inspeção de sockets por CIM pode estar indisponível: ver JSON, sem afirmar o) Tj T*
+(que esse controle não conseguiu medir. Não houve teste em outro computador.) Tj T*
+() Tj T*
+(Preservação: 82 fontes/testes históricos de domínio idênticos;) Tj T*
+(228 PNGs idênticos ao inventário histórico; ZIP 0.21 original intacto.) Tj T*
+(Todos os releases anteriores mantidos. Sem commit, push, publicação ou upload.) Tj T*
+(Arquivos modificados/adicionados e inventário estão no relatório final e diff.) Tj T*
+() Tj T*
+(Reprodução: python tools/qualidade.py --offline --task 036) Tj T*
+(Build: tools/build-windows-portable.ps1 -Version 0.36.0-rc1 -MavenRepository) Tj T*
+(.maven-repository -TesterKitDirectory docs/kit-homologacao-022-036) Tj T*
+(Auditoria: python tools/auditar_rc.py --zip) Tj T*
+(dist/SpiritGate-0.36.0-rc1-20261019T042237Z-a006aab1-portable.zip --report docs/re-) Tj T*
+(auditoria.json) Tj T*
+(Smoke: tools/test-windows-portable.ps1 -ZipPath) Tj T*
+(dist/SpiritGate-0.36.0-rc1-20261019T042237Z-a006aab1-portable.zip) Tj T*
+() Tj T*
+(Limites: sem assinatura do executável, sem arte final aprovada, sem homologação) Tj T*
+(humana em outro Windows. Não é lançamento público. Próximo passo humano: kit de) Tj T*
+(homologação por tarefa. Continuidade em docs/CONTINUIDADE-TASK-022_036.md.) Tj T*
+() Tj T*
+(## Resultado final observado) Tj T*
+(Validação local aprovada: 241 JUnit e 25 Python; zero falhas.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-036 - página 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+3561
+%%EOF

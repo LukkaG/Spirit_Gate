@@ -1,0 +1,47 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 806 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-069 - Duas sessoes transitorias) Tj T*
+() Tj T*
+(LocalClient conecta com timeout, handshake V1 e ID atribuido pelo servidor.) Tj T*
+(Leitor/escritor separados, fila de 32 intencoes e snapshots imutaveis monotÙnicos.) Tj T*
+(Nenhum cliente escolhe identidade de outro. Desconexao fecha socket e sinaliza) Tj T*
+(observadores; reconexao recebe novo ID, sem conta ou importacao de save.) Tj T*
+() Tj T*
+(Teste com dois sockets reais: identidades distintas, observacao de movimento remoto,) Tj T*
+(saida e reconexao. Sequencias antigas e sessoes desconhecidas recusadas no dominio.) Tj T*
+(Corrigida corrida de admissao: conexao encerrada antes do processamento da fila nao pode) Tj T*
+(criar jogador fantasma.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-069 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1201
+%%EOF

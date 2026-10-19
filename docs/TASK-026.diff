@@ -1,0 +1,129 @@
+--- /dev/null
++++ b/docs/TASK-026-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 230,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 22
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-026.md
+@@ -0,0 +1,23 @@
++# TASK-026 - Camadas de cenário
++
++Objetivo: separar terreno, decoração, atores, efeitos e HUD.
++Base: TASK-025, 228 JUnit e 22 Python aprovados.
++Diagnóstico: os descritores já tinham layer, mas todos eram desenhados antes dos
++atores. Reutilizado Renderer; drawLayers desenha intervalos, com ordenação estável
++por layer e ordem original para empates. 0 é terreno, 1-4 decoração traseira,
++5-10 decoração frontal. Atores ficam entre intervalos; ataque e efeitos depois;
++HUD continua em coordenadas de canvas. Gelo e rastros permanecem sob os atores
++conforme apresentação histórica. Nenhum PNG foi acrescentado.
++
++Tiles sintéticos permanecem 32x32 em cache e são desenhados no retângulo explícito
++do descritor, com pivot superior esquerdo e offset zero. Sprites de personagem
++mantêm pivots/offsets no carregador existente. Colisão depende só de physical.
++Mapas V1 existentes usam camadas traseiras e preservam apresentação.
++Arquivos: LocalArenaMap.java, DebugPanel.java, ScenarioLayerTest.java.
++Testes positivos, negativos e determinísticos verificam oclusão, empate de layers,
++camada inválida e igualdade da simulação com aparências diferentes.
++Reprodução: python tools/qualidade.py --offline --task 026
++Resultado e logs: TASK-026-qualidade.json, TASK-026-testes.txt, TASK-026-*.log.
++Checkpoints e diff padronizados; próximo passo TASK-027.
++Limites: sem árvores definitivas ou aprovação artística; homologação humana
++visual pendente. Camadas são numéricas por compatibilidade com Properties.
+--- a/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ b/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -129,7 +129,7 @@
+ 
+     private void renderWorld(Graphics2D g,DebugSnapshot s,java.util.List<DirectionalAnimation.View> animations) {
+         drawWorld(g);
+-        if (mapRenderer != null) mapRenderer.draw(g);
++        if (mapRenderer != null) mapRenderer.drawLayers(g,0,4);
+         drawObstacles(g, s);
+         drawSoftObstacles(g, s);
+         drawIceZones(g, s);
+@@ -141,6 +141,7 @@
+             for (var candidate : animations) if (candidate.actorId() == actor.id()) { visual=candidate; break; }
+             if (spriteAtlas == null || visual == null || !spriteAtlas.draw(g, actor, visual)) drawActor(g, actor, s);
+         }
++        if (mapRenderer != null) mapRenderer.drawLayers(g,5,10);
+         drawAttack(g, s.attack());
+         drawEffects(g, s);
+     }
+--- a/server/src/main/java/com/projetok/prototype/LocalArenaMap.java
++++ b/server/src/main/java/com/projetok/prototype/LocalArenaMap.java
+@@ -127,13 +127,17 @@
+         }
+         /** Renderiza somente dados imutaveis; nenhum efeito no mundo ou na hitbox. */
+         public void draw(Graphics2D original) {
++            drawLayers(original,0,10);
++        }
++        /** Camadas 0-4 ficam atrás dos atores; 5-10 ficam à frente, antes dos efeitos. */
++        public void drawLayers(Graphics2D original,int first,int last) {
+             Graphics2D g=(Graphics2D)original.create();
+             try {
+                 g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+                 for(var tile:tiles) {var v=tile.visual();
+-                    if(g.hitClip(v.x(),v.y(),v.width(),v.height()))
++                    if(v.layer()>=first && v.layer()<=last && g.hitClip(v.x(),v.y(),v.width(),v.height()))
+                         g.drawImage(tile.image(),v.x(),v.y(),v.width(),v.height(),null);}
+-                g.setColor(Color.WHITE);g.drawString("MAPA LOCAL DE TESTE - TILES SINTETICOS",24,24);
++                if(first==0) {g.setColor(Color.WHITE);g.drawString("MAPA LOCAL DE TESTE - TILES SINTETICOS",24,24);}
+             }finally{g.dispose();}
+         }
+     }
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/ScenarioLayerTest.java
+@@ -0,0 +1,36 @@
++package com.projetok.prototype;
++
++import java.awt.image.BufferedImage;
++import java.util.List;
++import java.util.Random;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++
++class ScenarioLayerTest {
++    @Test void foregroundCoversActorsAndNeverChangesCollision() {
++        var base=LargeMapTest.large();
++        var back=new LocalArenaMap(1920,1280,1500,1000,List.of(new LocalArenaMap.Visual("back",1480,980,40,40,2,0xff00ff)),base.physical());
++        var front=new LocalArenaMap(1920,1280,1500,1000,List.of(new LocalArenaMap.Visual("front",1480,980,40,40,6,0xff00ff)),base.physical());
++        var a=DebugWorld.forMap(back,new Random(2));var b=DebugWorld.forMap(front,new Random(2));
++        assertEquals(a.snapshot(),b.snapshot());assertEquals(back.obstacles(),front.obstacles());
++        int[] colors=new int[2];int index=0;
++        for(var map:List.of(back,front)) {
++            var panel=new DebugPanel(a::snapshot);panel.setLocalMap(map);
++            var image=new BufferedImage(1260,750,BufferedImage.TYPE_INT_ARGB);var g=image.createGraphics();
++            panel.render(g,a.snapshot());g.dispose();var p=panel.viewport(a.snapshot()).worldToScreen(1505,1005);
++            colors[index++]=image.getRGB((int)p.x,(int)p.y);
++        }
++        assertNotEquals(colors[0],colors[1]);assertEquals(0xffff00ff,colors[1]);
++        for(int i=0;i<90;i++) {a.tick(DebugInput.NONE,1f/30f);b.tick(DebugInput.NONE,1f/30f);assertEquals(a.snapshot(),b.snapshot());}
++    }
++    @Test void stableLayerOrderRetainsInputOrderAndRejectsInvalidLayer() {
++        var base=LargeMapTest.large();
++        var map=new LocalArenaMap(1920,1280,1500,1000,List.of(
++                new LocalArenaMap.Visual("a",10,10,32,32,5,0xff0000),
++                new LocalArenaMap.Visual("b",10,10,32,32,5,0x0000ff)),base.physical());
++        var image=new BufferedImage(64,64,BufferedImage.TYPE_INT_ARGB);var g=image.createGraphics();
++        map.renderer().drawLayers(g,5,10);g.dispose();assertEquals(0xff0000ff,image.getRGB(15,30));
++        assertThrows(IllegalArgumentException.class,()->new LocalArenaMap(1920,1280,1500,1000,
++                List.of(new LocalArenaMap.Visual("bad",0,0,32,32,11,0)),base.physical()));
++    }
++}

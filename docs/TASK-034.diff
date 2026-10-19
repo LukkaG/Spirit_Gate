@@ -1,0 +1,180 @@
+--- /dev/null
++++ b/docs/TASK-034-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 239,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-034.md
+@@ -0,0 +1,22 @@
++# TASK-034 - Diagnóstico local explícito
++
++Objetivo: pacote pequeno e revisável para relatos de bugs, sem coleta contínua.
++Base aprovada: TASK-033, 237 JUnit e 25 Python.
++Diagnóstico: não existia exportação técnica; copiar logs de build exporia caminhos.
++Implementação: DiagnosticReport usa lista fechada de campos e F2 abre seletor
++para salvar ZIP com único diagnostico.json. Operação CREATE_NEW recusa sobrescrita.
++Inclui versão, família OS, arquitetura, versão JVM, janela, mapa DEFAULT/LOCAL,
++etapa, ticks, contagem de atores, HP, gameOver e estados de habilidades.
++Nenhuma rede, telemetria, leitura de ambiente/configuração, arquivo privado,
++nome de ator, caminho local, mensagem/stack de erro ou gravação de entrada.
++Erros são representados por marcador genérico; detalhes livres são deliberadamente
++omitidos. JSON pode ser revisado antes de compartilhar; nada é enviado.
++Arquivos: DiagnosticReport.java, DebugLauncher.java, DebugPanel.java e teste.
++Testes: exclusão de nomes/caminhos/segredos injetados em evento e exceção, whitelist,
++única entrada ZIP, dimensão inválida e não sobrescrita.
++Reprodução: python tools/qualidade.py --offline --task 034
++Resultados reais em TASK-034-qualidade.json, TASK-034-testes.txt e logs.
++Checkpoints/diff padronizados; próxima TASK-035.
++Limites: versão de desenvolvimento será consolidada na TASK-036. Não coleta crash
++automaticamente. Seletor F2 requer teste humano; API de exportação foi automatizada.
++Para relato, anexar passos de reprodução manualmente, após revisão pessoal do ZIP.
+--- a/server/src/main/java/com/projetok/prototype/DebugLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/DebugLauncher.java
+@@ -139,6 +139,22 @@
+         }
+         bindKey(inputs, "H", "hitboxes", null);
+         bindKey(inputs, "F1", "help", null);
++        bindKey(inputs, "F2", "diagnostic", null);
++        actions.put("diagnostic", new AbstractAction() {
++            @Override public void actionPerformed(ActionEvent e) {
++                var chooser=new javax.swing.JFileChooser();
++                chooser.setDialogTitle("Salvar diagnostico local - revise o JSON antes de compartilhar");
++                chooser.setSelectedFile(new java.io.File("SpiritGate-diagnostico.zip"));
++                if(chooser.showSaveDialog(panel)!=javax.swing.JFileChooser.APPROVE_OPTION)return;
++                try {
++                    DiagnosticReport.export(chooser.getSelectedFile().toPath(),runtime.snapshot(),
++                            panel.getWidth(),panel.getHeight(),panel.hasLocalMap(),DiagnosticReport.Stage.ARENA,null);
++                    javax.swing.JOptionPane.showMessageDialog(panel,"ZIP local criado. Revise diagnostico.json antes de compartilhar.");
++                } catch(java.io.IOException | IllegalArgumentException error) {
++                    javax.swing.JOptionPane.showMessageDialog(panel,"Nao foi possivel criar o ZIP. Escolha um nome novo em pasta gravavel.");
++                }
++            }
++        });
+         actions.put("help", new AbstractAction() {
+             @Override public void actionPerformed(ActionEvent e) { panel.toggleHelp(); }
+         });
+--- a/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ b/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -29,12 +29,13 @@
+     /** Alterna ajuda sem pausar ou enviar comandos ao mundo. */
+     public void toggleHelp() { showHelp=!showHelp;repaint(); }
+     public boolean isHelpVisible() { return showHelp; }
++    boolean hasLocalMap() { return mapRenderer!=null; }
+     /** Texto de apresentação usa somente os valores já publicados pela simulação. */
+     static java.util.List<String> helpLines(DebugSnapshot snapshot) {
+         return java.util.List.of("SPIRIT GATE - AJUDA (F1 para fechar)",
+                 "WASD: mover | ESPACO: golpe | E: vigor fisico",
+                 "SHIFT: Passo Relampago | Q: Criostase | mouse: mirar na arena",
+-                "R: reiniciar | H: hitboxes | F1: ajuda",
++                "R: reiniciar | H: hitboxes | F1: ajuda | F2: diagnostico local",
+                 "HP: vida | VIGOR: recurso para acoes e habilidades",
+                 "SHIFT atravessa obstaculos leves; solidos e bordas interrompem.",
+                 "Congelamento e recargas aparecem no HUD; mire fora do HUD.",
+--- /dev/null
++++ b/server/src/main/java/com/projetok/prototype/DiagnosticReport.java
+@@ -0,0 +1,46 @@
++package com.projetok.prototype;
++
++import java.io.IOException;
++import java.nio.charset.StandardCharsets;
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.nio.file.StandardOpenOption;
++import java.util.zip.ZipEntry;
++import java.util.zip.ZipOutputStream;
++
++/** Diagnóstico local por lista permitida; nunca lê ambiente, nomes ou caminhos pessoais. */
++public final class DiagnosticReport {
++    public static final String VERSION="0.34.0-dev";
++    public enum Stage { ARENA, MAP_LOADING, RENDERING }
++    private DiagnosticReport() { }
++
++    /** Não inclui lastEvent, nomes de atores, mensagens/stack de exceção ou nome do mapa. */
++    public static String json(DebugSnapshot snapshot,int width,int height,boolean localMap,Stage stage,Throwable error) {
++        if(width<=0 || height<=0 || width>32768 || height>32768 || stage==null)
++            throw new IllegalArgumentException("Dimensoes/etapa invalidas");
++        // Valores de propriedades passam por listas fechadas, sem exportar propriedades arbitrárias.
++        String os=System.getProperty("os.name","").toLowerCase(java.util.Locale.ROOT);
++        os=os.startsWith("windows")?"Windows":os.startsWith("linux")?"Linux":os.startsWith("mac")?"macOS":"Other";
++        String arch=System.getProperty("os.arch","");
++        arch=arch.equals("amd64") || arch.equals("x86_64")?"x64":arch.equals("aarch64")?"arm64":"other";
++        String jvm=System.getProperty("java.version","");
++        if(!jvm.matches("[0-9][0-9.+_-]{0,40}"))jvm="unknown";
++        return "{\n  \"schemaVersion\": 1,\n  \"version\": \""+VERSION+"\",\n  \"os\": \""+os+"\",\n"+
++                "  \"arch\": \""+arch+"\",\n  \"jvm\": \""+jvm+"\",\n  \"window\": ["+width+","+height+"],\n"+
++                "  \"map\": \""+(localMap?"LOCAL_MAP":"DEFAULT_ARENA")+"\",\n  \"stage\": \""+stage+"\",\n"+
++                "  \"error\": \""+(error==null?"NONE":"REPORTED_ERROR_DETAILS_OMITTED")+"\",\n"+
++                "  \"ticks\": "+snapshot.ticks()+",\n  \"actors\": "+snapshot.actors().size()+",\n"+
++                "  \"hp\": "+snapshot.playerHp()+",\n  \"gameOver\": "+snapshot.gameOver()+",\n"+
++                "  \"cryostasisState\": \""+snapshot.cryostasisHud().state()+"\",\n"+
++                "  \"dashState\": \""+snapshot.lightningStepHud().state()+"\"\n}\n";
++    }
++
++    /** Exportação explícita e exclusiva; um único JSON revisável, sem arquivos externos. */
++    public static void export(Path destination,DebugSnapshot snapshot,int width,int height,boolean localMap,Stage stage,Throwable error) throws IOException {
++        byte[] data=json(snapshot,width,height,localMap,stage,error).getBytes(StandardCharsets.UTF_8);
++        try(var zip=new ZipOutputStream(Files.newOutputStream(destination,StandardOpenOption.CREATE_NEW,StandardOpenOption.WRITE))) {
++            var entry=new ZipEntry("diagnostico.json");entry.setTime(0);zip.putNextEntry(entry);
++            zip.write(data);zip.closeEntry();
++        }
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/DiagnosticReportTest.java
+@@ -0,0 +1,38 @@
++package com.projetok.prototype;
++
++import java.nio.file.Path;
++import java.nio.charset.StandardCharsets;
++import java.util.zip.ZipFile;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import static org.junit.jupiter.api.Assertions.*;
++
++class DiagnosticReportTest {
++    @TempDir Path temp;
++    @Test void reportUsesWhitelistAndExcludesPrivateMessagesAndProperties() throws Exception {
++        var base=DebugWorld.demo().snapshot();
++        var components=DebugSnapshot.class.getRecordComponents();
++        Object[] values=new Object[components.length];Class<?>[] types=new Class<?>[components.length];
++        for(int i=0;i<components.length;i++) {
++            values[i]=components[i].getAccessor().invoke(base);types[i]=components[i].getType();
++            if(components[i].getName().equals("lastEvent"))values[i]="secret-token C:\\Users\\PrivateName\\private.key";
++        }
++        var snapshot=DebugSnapshot.class.getDeclaredConstructor(types).newInstance(values);
++        String text=DiagnosticReport.json(snapshot,1260,750,true,DiagnosticReport.Stage.ARENA,
++                new RuntimeException("password=private-secret /home/PrivateName"));
++        for(String forbidden:new String[]{"PrivateName","password","secret-token","private.key","user.home","user.name","C:\\Users","/home/"})
++            assertFalse(text.contains(forbidden),forbidden);
++        assertTrue(text.contains("LOCAL_MAP"));assertTrue(text.contains("REPORTED_ERROR_DETAILS_OMITTED"));
++        assertTrue(text.contains("\"hp\": "+base.playerHp()));
++    }
++    @Test void exportIsExplicitSingleEntryAndNeverOverwrites() throws Exception {
++        var snapshot=DebugWorld.demo().snapshot();Path zip=temp.resolve("report.zip");
++        DiagnosticReport.export(zip,snapshot,800,600,false,DiagnosticReport.Stage.ARENA,null);
++        try(var archive=new ZipFile(zip.toFile())) {
++            assertEquals(1,archive.size());var entry=archive.getEntry("diagnostico.json");assertNotNull(entry);
++            assertTrue(new String(archive.getInputStream(entry).readAllBytes(),StandardCharsets.UTF_8).contains("DEFAULT_ARENA"));
++        }
++        assertThrows(java.nio.file.FileAlreadyExistsException.class,()->DiagnosticReport.export(zip,snapshot,800,600,false,DiagnosticReport.Stage.ARENA,null));
++        assertThrows(IllegalArgumentException.class,()->DiagnosticReport.json(snapshot,0,600,false,DiagnosticReport.Stage.ARENA,null));
++    }
++}

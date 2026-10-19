@@ -1,0 +1,174 @@
+--- /dev/null
++++ b/docs/TASK-062-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 272,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-062.md
+@@ -0,0 +1,5 @@
++# TASK-062 - Menu e personagens
++
++Menu principal: criar, continuar selecionado, arena historica e sair. Criacao escolhe nome/arquetipo/aparencia e grava identidade inicial em arquivo por UUID, sem sobrescrever outro personagem. Listagem e IO em SwingWorker. Saves invalidos ficam visiveis/preservados; backup valido pode ser continuado em novo arquivo de recuperacao. Nenhuma exclusao automatica.
++
++Fechar RPG ou botao Menu salva assincronamente antes de voltar. Falha preserva sessao aberta. Pasta portatil de saves resolvida junto ao EXE; execucao por classes usa raiz atual. Testes de catalogo, corrupcao, backup e preservacao. Diagnostico distingue captura de desktop de captura dos componentes Swing da janela em execucao, com JSON de ticks/visibilidade; nenhuma e homologacao humana.
+--- a/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
+@@ -11,7 +11,7 @@
+     public static void main(String[] args) {
+         if(args.length==3&&args[0].equals("--smoke")){System.setProperty("spiritgate.smoke.name",args[1]);System.setProperty("spiritgate.smoke.output",args[2]);}
+         else if(args.length!=0)throw new IllegalArgumentException("Uso: RpgLauncher [--smoke nome captura.png]");
+-        SwingUtilities.invokeLater(RpgLauncher::open);
++        SwingUtilities.invokeLater(()->{if(System.getProperty("spiritgate.smoke.name")!=null)open();else RpgMenu.open();});
+     }
+     static void open() {
+         String name = System.getProperty("spiritgate.smoke.name");
+@@ -20,13 +20,18 @@
+         com.projetok.rpg.CharacterIdentity identity;
+         try { identity = com.projetok.rpg.CharacterIdentity.create(name, "guardian", "azure"); }
+         catch (IllegalArgumentException error) { JOptionPane.showMessageDialog(null, error.getMessage()); open(); return; }
+-        RpgRuntime runtime = new RpgRuntime(new com.projetok.rpg.RpgWorld(identity));
++        play(new com.projetok.rpg.RpgWorld(identity),new com.projetok.rpg.LocalSaveStore(RpgMenu.home().resolve("saves/characters/"+identity.id()+".properties")));
++    }
++    static void play(com.projetok.rpg.RpgWorld world,com.projetok.rpg.LocalSaveStore store) {
++        RpgRuntime runtime = new RpgRuntime(world);
+         DebugSnapshot template = DebugWorld.demo().snapshot();
+         DebugPanel panel = new DebugPanel(() -> adapt(runtime.snapshot(), template));
+         panel.setLocalMap(RpgMaps.region("village"));
+         JFrame frame = new JFrame("Spirit Gate | RPG offline");
+         JPanel root=new JPanel(new java.awt.BorderLayout());RpgHud hud=new RpgHud(runtime);root.add(panel,java.awt.BorderLayout.CENTER);root.add(hud,java.awt.BorderLayout.SOUTH);
+-        frame.setContentPane(root); frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
++        frame.setContentPane(root); frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
++        JButton menuButton=new JButton("Salvar e voltar ao menu");menuButton.addActionListener(e->frame.dispatchEvent(new WindowEvent(frame,WindowEvent.WINDOW_CLOSING)));root.add(menuButton,java.awt.BorderLayout.NORTH);
++        frame.addWindowListener(new WindowAdapter(){public void windowClosing(WindowEvent e){runtime.input(0,0);frame.setEnabled(false);runtime.save(store).whenComplete((unused,error)->SwingUtilities.invokeLater(()->{if(error!=null){frame.setEnabled(true);JOptionPane.showMessageDialog(frame,"Falha ao salvar; sessao preservada: "+error.getMessage());}else frame.dispose();}));}});
+         frame.pack(); frame.setLocationRelativeTo(null);
+         var screen=java.awt.Toolkit.getDefaultToolkit().getScreenSize();frame.setSize(Math.min(1260,screen.width-60),Math.min(900,screen.height-80));frame.setLocationRelativeTo(null);
+         boolean[] held = new boolean[4];
+@@ -36,7 +41,7 @@
+         bind(panel,"ESCAPE",()->runtime.command(w->w.closeDialogue()));
+         bind(panel,"R",()->runtime.command(w->w.returnHome()));
+         bind(panel,"1",()->runtime.command(w->w.use("potion")));
+-        bind(panel,"F5",()->runtime.save(new com.projetok.rpg.LocalSaveStore(java.nio.file.Path.of("saves","offline.properties"))).whenComplete((unused,error)->SwingUtilities.invokeLater(()->JOptionPane.showMessageDialog(frame,error==null?"Progresso salvo":"Falha ao salvar: "+error.getMessage()))));
++        bind(panel,"F5",()->runtime.save(store).whenComplete((unused,error)->SwingUtilities.invokeLater(()->JOptionPane.showMessageDialog(frame,error==null?"Progresso salvo":"Falha ao salvar: "+error.getMessage()))));
+         String[] keys = {"W", "S", "A", "D"};
+         for (int i = 0; i < keys.length; i++) {
+             final int key = i;
+@@ -50,11 +55,14 @@
+         }
+         String[] displayedRegion={"village"};
+         Timer timer = new Timer(33, e -> {var view=runtime.snapshot();panel.setAmbientLight(com.projetok.rpg.EnvironmentCycle.light(view.ticks(),true));if(!displayedRegion[0].equals(view.state().region())){displayedRegion[0]=view.state().region();panel.setLocalMap(RpgMaps.region(displayedRegion[0]));}panel.repaint();hud.update(view);});
+-        frame.addWindowListener(new WindowAdapter() { public void windowClosed(WindowEvent e) { timer.stop(); runtime.close(); } });
++        frame.addWindowListener(new WindowAdapter() { public void windowClosed(WindowEvent e) { timer.stop(); runtime.close();if(System.getProperty("spiritgate.smoke.output")==null)RpgMenu.open(); } });
+         frame.addWindowFocusListener(new WindowAdapter() { public void windowLostFocus(WindowEvent e) { java.util.Arrays.fill(held, false); runtime.input(0, 0); } });
+         runtime.start(); timer.start(); frame.setVisible(true);
+         if(System.getProperty("spiritgate.smoke.output")!=null){Timer capture=new Timer(2000,e->{
+-            java.awt.Rectangle bounds=frame.getBounds();new Thread(()->{try{var image=new java.awt.Robot().createScreenCapture(bounds);javax.imageio.ImageIO.write(image,"png",new java.io.File(System.getProperty("spiritgate.smoke.output")));}catch(Exception error){error.printStackTrace();}finally{SwingUtilities.invokeLater(frame::dispose);}},"rpg-smoke").start();
++            java.awt.Rectangle bounds=frame.getBounds();String output=System.getProperty("spiritgate.smoke.output");
++            var componentImage=new java.awt.image.BufferedImage(frame.getWidth(),frame.getHeight(),java.awt.image.BufferedImage.TYPE_INT_RGB);var graphics=componentImage.createGraphics();frame.printAll(graphics);graphics.dispose();
++            var state=runtime.snapshot();boolean showing=frame.isShowing();
++            new Thread(()->{try{var image=new java.awt.Robot().createScreenCapture(bounds);javax.imageio.ImageIO.write(image,"png",new java.io.File(output));javax.imageio.ImageIO.write(componentImage,"png",new java.io.File(output+".components.png"));java.nio.file.Files.writeString(java.nio.file.Path.of(output+".json"),"{\"windowShowing\":"+showing+",\"ticks\":"+state.ticks()+",\"region\":\""+state.state().region()+"\",\"componentCapture\":true,\"humanApproval\":false}");}catch(Exception error){error.printStackTrace();}finally{SwingUtilities.invokeLater(frame::dispose);}},"rpg-smoke").start();
+         });capture.setRepeats(false);capture.start();}
+     }
+     static DebugSnapshot adapt(com.projetok.rpg.RpgWorld.View v, DebugSnapshot t) {
+--- /dev/null
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgMenu.java
+@@ -0,0 +1,40 @@
++package com.projetok.prototype.rpg;
++import com.projetok.rpg.*;
++import javax.swing.*;
++import java.awt.*;
++import java.nio.file.*;
++/** Menu local. IO em SwingWorker, sem login ou rede. */
++final class RpgMenu {
++    static Path home(){String exe=System.getProperty("jpackage.app-path");return exe==null?Path.of("").toAbsolutePath():Path.of(exe).toAbsolutePath().getParent();}
++    static void open() {
++        JFrame frame=new JFrame("Spirit Gate | Inicio");frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
++        JPanel root=new JPanel(new BorderLayout(16,16));root.setBorder(BorderFactory.createEmptyBorder(24,24,24,24));
++        JLabel title=new JLabel("SPIRIT GATE - RPG OFFLINE");title.setFont(title.getFont().deriveFont(Font.BOLD,26));root.add(title,BorderLayout.NORTH);
++        DefaultListModel<CharacterSaves.Slot> model=new DefaultListModel<>();JList<CharacterSaves.Slot> list=new JList<>(model);root.add(new JScrollPane(list),BorderLayout.CENTER);
++        JLabel status=new JLabel("Lendo personagens locais...");JPanel south=new JPanel(new BorderLayout());south.add(status,BorderLayout.NORTH);JPanel buttons=new JPanel(new GridLayout(2,2,8,8));south.add(buttons,BorderLayout.CENTER);root.add(south,BorderLayout.SOUTH);
++        CharacterSaves repository=new CharacterSaves(home().resolve("saves/characters"));
++        JButton create=new JButton("Criar personagem");JButton resume=new JButton("Continuar selecionado");resume.setEnabled(false);JButton arena=new JButton("Arena historica");JButton exit=new JButton("Sair");
++        buttons.add(create);buttons.add(resume);buttons.add(arena);buttons.add(exit);
++        list.addListSelectionListener(e->resume.setEnabled(list.getSelectedValue()!=null&&list.getSelectedValue().state()!=null));
++        create.addActionListener(e->{
++            JTextField name=new JTextField(20);JComboBox<String> archetype=new JComboBox<>(new String[]{"guardian","mystic"});JComboBox<String> appearance=new JComboBox<>(new String[]{"azure","amber"});
++            JPanel form=new JPanel(new GridLayout(0,2,8,8));form.add(new JLabel("Nome (3-24 caracteres)"));form.add(name);form.add(new JLabel("Guardian: investida | Mystic: cura"));form.add(archetype);form.add(new JLabel("Aparencia geometrica"));form.add(appearance);
++            if(JOptionPane.showConfirmDialog(frame,form,"Criar personagem local",JOptionPane.OK_CANCEL_OPTION)!=JOptionPane.OK_OPTION)return;
++            try{var identity=CharacterIdentity.create(name.getText(),(String)archetype.getSelectedItem(),(String)appearance.getSelectedItem());var world=new RpgWorld(identity);launch(frame,world,new LocalSaveStore(repository.newFile(identity)),true);}catch(IllegalArgumentException error){JOptionPane.showMessageDialog(frame,error.getMessage());}
++        });
++        resume.addActionListener(e->{var slot=list.getSelectedValue();if(slot==null||slot.state()==null)return;Path file=slot.backup()?repository.recoveryFile(slot.state().identity()):slot.file();launch(frame,RpgWorld.restore(slot.state()),new LocalSaveStore(file),slot.backup());});
++        arena.addActionListener(e->com.projetok.prototype.DebugLauncher.main(new String[0]));exit.addActionListener(e->frame.dispose());
++        new SwingWorker<java.util.List<CharacterSaves.Slot>,Void>() {
++            protected java.util.List<CharacterSaves.Slot> doInBackground() throws Exception{return repository.list();}
++            protected void done(){try{var slots=get();slots.forEach(model::addElement);status.setText(slots.stream().anyMatch(s->s.state()!=null)?"Selecione um personagem. Entradas invalidas sao preservadas.":"Nenhum save valido. Crie um personagem para comecar.");if(!slots.isEmpty())list.setSelectedIndex(0);}catch(Exception error){status.setText("Nao foi possivel ler saves: "+error.getMessage());}}
++        }.execute();
++        frame.setContentPane(root);frame.setSize(760,450);frame.setLocationRelativeTo(null);frame.setVisible(true);
++    }
++    private static void launch(JFrame menu,RpgWorld world,LocalSaveStore store,boolean initialSave) {
++        menu.setEnabled(false);
++        new SwingWorker<Void,Void>() {
++            protected Void doInBackground() throws Exception{if(initialSave)store.save(world.save());return null;}
++            protected void done(){try{get();menu.dispose();RpgLauncher.play(world,store);}catch(Exception error){menu.setEnabled(true);JOptionPane.showMessageDialog(menu,"Falha ao abrir personagem: "+error.getMessage());}}
++        }.execute();
++    }
++}
+--- /dev/null
++++ b/server/src/main/java/com/projetok/rpg/CharacterSaves.java
+@@ -0,0 +1,27 @@
++package com.projetok.rpg;
++import java.nio.file.*;
++import java.io.*;
++import java.util.*;
++/** Catalogo de saves locais, sem apagar entradas corrompidas. Chamar fora do EDT/tick. */
++public final class CharacterSaves {
++    public record Slot(Path file,RpgSave state,String problem,boolean backup) {
++        public String toString(){return state==null?file.getFileName()+" - invalido: "+problem:state.identity().name()+" | "+state.identity().archetype()+" | XP "+state.xp()+(backup?" | BACKUP RECUPERAVEL":"");}
++    }
++    private final Path folder;
++    public CharacterSaves(Path folder){this.folder=folder.toAbsolutePath();}
++    public Path newFile(CharacterIdentity identity){return folder.resolve(identity.id()+".properties");}
++    public List<Slot> list() throws IOException {
++        if(!Files.exists(folder))return List.of();List<Slot> result=new ArrayList<>();
++        try(var files=Files.list(folder)) {
++            var candidates=files.filter(p->Files.isRegularFile(p,LinkOption.NOFOLLOW_LINKS)&&p.getFileName().toString().endsWith(".properties")).sorted().limit(101).toList();
++            if(candidates.size()>100)throw new IOException("Mais de 100 saves; organize a pasta antes de continuar");
++            for(Path file:candidates)try{var state=new LocalSaveStore(file).load();RpgWorld.restore(state);result.add(new Slot(file,state,"",false));}
++            catch(IOException|IllegalArgumentException invalid) {
++                result.add(new Slot(file,null,invalid.getMessage(),false));
++                try{var backup=new LocalSaveStore(file).recoverBackup();RpgWorld.restore(backup);result.add(new Slot(file,backup,"",true));}catch(IOException|IllegalArgumentException ignored){ }
++            }
++        }
++        return List.copyOf(result);
++    }
++    public Path recoveryFile(CharacterIdentity identity){return folder.resolve(identity.id()+"-recovery-"+UUID.randomUUID()+".properties");}
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/CharacterSavesTest.java
+@@ -0,0 +1,9 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import java.nio.file.*;
++import static org.junit.jupiter.api.Assertions.*;
++class CharacterSavesTest {
++    @TempDir Path folder;
++    @Test void listsCharactersAndRetainsCorruptFileWithRecoverableBackup() throws Exception {var repo=new CharacterSaves(folder);assertTrue(repo.list().isEmpty());var s=new RpgWorld().save();var file=repo.newFile(s.identity());var store=new LocalSaveStore(file);store.save(s);store.save(s);Files.writeString(file,"corrupt");var list=repo.list();assertEquals(2,list.size());assertNull(list.get(0).state());assertTrue(list.get(1).backup());assertEquals("corrupt",Files.readString(file));assertNotEquals(file,repo.recoveryFile(s.identity()));}
++}

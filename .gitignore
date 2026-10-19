@@ -1,0 +1,25 @@
+# Artefatos Maven e de compilacao local
+target/
+**/target/
+*.class
+out/
+
+# IDEs e arquivos temporarios
+.idea/
+.vscode/
+*.iml
+*.log
+.DS_Store
+
+# Segredos e arquivos locais
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+
+# Pacotes e checkpoints locais da rodada de desenvolvimento
+dist/
+.task-checkpoints/
+.maven-repository/
+__pycache__/

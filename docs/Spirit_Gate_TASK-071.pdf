@@ -1,0 +1,49 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 965 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-071 - LAN configuravel, validacao local parcial) Tj T*
+() Tj T*
+(Servidor permite endereco privado somente com --bind IP-PRIVADO --allow-lan. Sem isso,) Tj T*
+(loopback. Endereco publico, wildcard e multicast recusados. Cliente tem checkbox LAN) Tj T*
+(explicito ou argumento --lan. Nenhum port forwarding, firewall, servico ou bind LAN foi) Tj T*
+(executado nesta rodada.) Tj T*
+() Tj T*
+(Teste TwoProcessTest abre dois PROCESSOS Java de cliente e um servidor local real,) Tj T*
+(confirma identidades distintas, movimento e snapshots. Evidencia TWO_PROCESS_LOCAL no) Tj T*
+(log Java. Isso valida dois processos locais; nao equivale a teste entre computadores.) Tj T*
+(Status de homologacao LAN entre duas maquinas: PARCIAL/NAO REALIZADA por ausencia de) Tj T*
+(segunda maquina configurada. Funcionalidade LAN privada disponivel para teste manual) Tj T*
+(posterior.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-071 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1360
+%%EOF

@@ -1,0 +1,254 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R 10 0 R] /Count 4 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3148 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# Pendências técnicas implementadas) Tj T*
+() Tj T*
+(Spirit Gate | 18/10/2026 | Java 17) Tj T*
+() Tj T*
+(## Escopo e origem) Tj T*
+() Tj T*
+(Após solicitação para implementar os planejamentos registrados, foram revisados a) Tj T*
+(conversa, README, histórico e relatórios TASK-002/TASK-003. Não foi encontrado arquivo) Tj T*
+(separado de memória acessível. A confirmação do usuário foi implementar as pendências, e) Tj T*
+(não somente organizar o planejamento.) Tj T*
+() Tj T*
+(Quatro frentes concretas foram identificadas: validação numérica de movimento; fila de) Tj T*
+(comandos para pressionamentos rápidos; colisão contínua reutilizável para futuros) Tj T*
+(deslocamentos rápidos; busca espacial para reduzir consultas entre entidades. A TASK-003) Tj T*
+(já estava implementada e foi preservada. Multiplayer, skills novas e alterações de) Tj T*
+(balanceamento não foram introduzidos.) Tj T*
+() Tj T*
+(## A-01 - Validação numérica) Tj T*
+() Tj T*
+(MovementValidation concentra validação de números finitos, valores não negativos e) Tj T*
+(dimensões positivas. CollisionService.isFree agora lança IllegalArgumentException para) Tj T*
+(coordenadas NaN ou infinitas e raio inválido. resolve e resolveContinuous validam) Tj T*
+(origem, ambos os deslocamentos e os resultados de ambos os eixos antes da primeira) Tj T*
+(mutação. Assim um Y inválido não pode deixar X parcialmente aplicado.) Tj T*
+() Tj T*
+(MovementService valida direção, velocidade e delta. Overflow nas multiplicações é) Tj T*
+(recusado pela validação do deslocamento resultante. A normalização preserva) Tj T*
+(arredondamento anterior para magnitudes normais e usa double em extremos e subnormais,) Tj T*
+(evitando vetores zero ou não unitários por overflow/underflow. Obstáculos, corpos e) Tj T*
+(dimensões do cenário também são validados.) Tj T*
+() Tj T*
+(Os cálculos de interseção mantêm a aritmética anterior quando representável e usam) Tj T*
+(double como fallback em magnitudes extremas. Position continua sendo o valor genérico do) Tj T*
+(domínio, sem modificação. A validação fica nas fronteiras dos serviços de movimento.) Tj T*
+() Tj T*
+(## Fila de comandos e toques rápidos) Tj T*
+() Tj T*
+(SimulationCommandQueue é uma FIFO genérica, independente de Swing e de rede. submit e) Tj T*
+(drain são sincronizados: a simulação recebe um lote imutável e entradas posteriores) Tj T*
+(ficam para o próximo tick. Nenhum produtor altera entidades.) Tj T*
+() Tj T*
+(DebugCommandBuffer conserva transições completas de DebugInput e comandos de reinício na) Tj T*
+(ordem em que foram publicados. O runtime usa esse lote em vez de sobrescrever a entrada) Tj T*
+(em AtomicReference. O mundo continua sendo alterado somente pela thread de simulação; o) Tj T*
+(EDT apenas publica comandos.) Tj T*
+() Tj T*
+(Cada transição solto/pressionado de E é contada, inclusive múltiplas pressões entre dois) Tj T*
+(ticks. Pressão e soltura rápidas não se perdem. Repetição automática de evento com E) Tj T*
+(mantido não cria outra ativação. Cada ativação passa pelo custo e pela elegibilidade) Tj T*
+() Tj T*
+(Spirit Gate - Pendências técnicas - página 1/4) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 3482 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(existentes; recusa não consome e exige nova pressão. A regeneração continua ocorrendo) Tj T*
+(uma vez por tick, nunca por comando.) Tj T*
+() Tj T*
+(Movimento e ataque mantidos continuam ativos. Toques completos de movimento produzem) Tj T*
+(intenção por um tick; intenções opostas se cancelam como WASD simultâneo. Ataques) Tj T*
+(rápidos chegam à elegibilidade do ataque e continuam respeitando cooldown. A soltura) Tj T*
+(normal de uma tecla mantida não adiciona outro tick artificial de movimento. O) Tj T*
+(construtor antigo de DebugInput e DebugWorld.tick continuam compatíveis.) Tj T*
+() Tj T*
+(Reinícios são comandos ordenados: apagam ativações anteriores ao reset; E mantido exige) Tj T*
+(nova transição. Pressões novas depois do reset permanecem no lote. Testes exercitam a) Tj T*
+(ligação real de E no EDT, inclusive toque completo antes de iniciar a simulação.) Tj T*
+() Tj T*
+(## A-02 - Varredura contínua disponível) Tj T*
+() Tj T*
+(CollisionService.resolveContinuous e MovementService.moveContinuous fornecem a operação) Tj T*
+(para futuros dash e velocidades altas. O algoritmo calcula analiticamente o primeiro) Tj T*
+(contato por eixo: X antes de Y, incluindo círculos contra retângulos com cantos) Tj T*
+(arredondados, círculos contra círculos, tangência e limites do mapa. Mortos e o próprio) Tj T*
+(ator não bloqueiam. A resolução para no contato, sem testar apenas o destino nem) Tj T*
+(depender de amostragem por subpassos.) Tj T*
+() Tj T*
+(A origem deve estar livre; penetração inicial lança IllegalStateException sem deslocar.) Tj T*
+(Arredondamentos de contato para dentro são recuados em ULPs; se a posição calculada) Tj T*
+(continuar inválida, o eixo conserva a origem. Os cálculos representam um trajeto X) Tj T*
+(seguido de Y, não uma varredura vetorial simultânea dos dois eixos.) Tj T*
+() Tj T*
+(A arena mantém resolve discreto para conservar a mecânica aprovada. A operação contínua) Tj T*
+(já está implementada e testada, mas não cria dash nem modifica o alcance de ataque.) Tj T*
+(Chamadores com movimentos rápidos devem usar explicitamente moveContinuous. O) Tj T*
+(tunelamento do caminho discreto continua sendo uma característica de compatibilidade,) Tj T*
+(não uma garantia do novo caminho contínuo.) Tj T*
+() Tj T*
+(## A-04 - Busca espacial e contexto persistente) Tj T*
+() Tj T*
+(SpatialBodyIndex usa uma grade uniforme de centros. A consulta expande a área pelo maior) Tj T*
+(raio, produzindo uma seleção conservadora; os testes exatos continuam em) Tj T*
+(CollisionService. Não há alteração das regras de colisão. Atualizações após resolve ou) Tj T*
+(resolveContinuous mudam somente a célula do corpo que se moveu. Corpos mortos podem) Tj T*
+(permanecer no índice e são descartados na elegibilidade.) Tj T*
+() Tj T*
+(DebugWorld monta Space e a composição dos corpos uma vez por mundo, com células de 96) Tj T*
+(unidades. A simulação reutiliza esse contexto para jogador e mobs; cada movimento) Tj T*
+(atualiza o índice antes do próximo ator. Isso elimina a reconstrução de listas a cada) Tj T*
+(movimento. Consultas que abrangeriam mais de 4.096 células usam fallback para todos os) Tj T*
+(corpos, sem percorrer bilhões de células vazias.) Tj T*
+() Tj T*
+(O construtor anterior de Space com quatro argumentos permanece disponível com busca) Tj T*
+(linear, consultando posições ao vivo. O contexto indexado exige que mutações externas de) Tj T*
+() Tj T*
+(Spirit Gate - Pendências técnicas - página 2/4) Tj T*
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 2959 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(posição, como teleporte, chamem index.update\(entity\). A composição de corpos e seus) Tj T*
+(raios é fixa: adicionar/remover entidades exige reconstruir o contexto nesta versão. O) Tj T*
+(índice cobre corpos; a lista pequena de obstáculos permanece linear.) Tj T*
+() Tj T*
+(## A-03 - Replay e preservação) Tj T*
+() Tj T*
+(MovementReplayTest e seus três baselines não foram alterados. Continuam comparando os) Tj T*
+(campos antigos do snapshot em 1.800 ticks. CombatService, vigor, animação de corte,) Tj T*
+(direção, cone, dano e cooldown mantiveram suas regressões aprovadas. Mudanças futuras na) Tj T*
+(representação dos campos antigos ainda exigem justificativa para atualizar o replay;) Tj T*
+(nenhum hash foi trocado para obter sucesso.) Tj T*
+() Tj T*
+(## Validação executada) Tj T*
+() Tj T*
+(Estado inicial: mvn clean test -q, 30 testes aprovados.) Tj T*
+() Tj T*
+(Estado final: mvn clean test, BUILD SUCCESS, compilação release 17, 53 testes, zero) Tj T*
+(falhas, zero erros e zero ignorados.) Tj T*
+() Tj T*
+(- MovementHardeningTest: 11 testes, com NaN/infinito, validação atômica, overflow,) Tj T*
+(negativos, geometria inválida, magnitudes extremas, paredes finas, movimento nos dois) Tj T*
+(sentidos, cantos, tangência, entidades, limites e origem penetrada.) Tj T*
+(- SpatialBodyIndexTest: 5 testes. Mil consultas com 400 corpos coincidem com busca) Tj T*
+(linear. A consulta local retorna menos de 20 candidatos em vez de 400. Inclui) Tj T*
+(atualização, teleporte, morte, varredura indexada, raio grande e fallback.) Tj T*
+(- DebugCommandBufferTest: 6 testes, com toque rápido, múltiplas pressões, repetição,) Tj T*
+(soltura normal, reinício ordenado, FIFO e dois produtores concorrentes sem perda de) Tj T*
+(comandos.) Tj T*
+(- StaminaInterfaceTest: 3 testes, incluindo um toque real de E no EDT antes do primeiro) Tj T*
+(tick.) Tj T*
+(- Outros 28 testes anteriores preservados: movimento, domínio do vigor, combate, replay) Tj T*
+(e integração do mundo.) Tj T*
+() Tj T*
+(O teste contínuo amostra os segmentos X/Y de 100 trajetos aleatórios determinísticos) Tj T*
+(para verificar ausência de penetração. Os demais testes verificam contatos analíticos) Tj T*
+(diretamente. A redução de candidatos é verificada funcionalmente; não se afirma uma taxa) Tj T*
+(de frames para centenas de jogadores sem um benchmark de servidor.) Tj T*
+() Tj T*
+(## Arquivos modificados e criados) Tj T*
+() Tj T*
+(Sob server/src/main/java/com/projetok/:) Tj T*
+(- domain/movement/MovementValidation.java \(novo\).) Tj T*
+(- domain/movement/SpatialBodyIndex.java \(novo\).) Tj T*
+(- domain/movement/CollisionService.java.) Tj T*
+(- domain/movement/MovementService.java.) Tj T*
+(- domain/command/SimulationCommandQueue.java \(novo\).) Tj T*
+(- prototype/DebugCommandBuffer.java \(novo\).) Tj T*
+(- prototype/DebugRuntime.java.) Tj T*
+(- prototype/DebugWorld.java.) Tj T*
+() Tj T*
+(Spirit Gate - Pendências técnicas - página 3/4) Tj T*
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 11 0 R >>
+endobj
+11 0 obj
+<< /Length 1738 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+() Tj T*
+(Sob server/src/test/java/com/projetok/:) Tj T*
+(- domain/movement/MovementHardeningTest.java \(novo\).) Tj T*
+(- domain/movement/SpatialBodyIndexTest.java \(novo\).) Tj T*
+(- prototype/DebugCommandBufferTest.java \(novo\).) Tj T*
+(- prototype/StaminaInterfaceTest.java.) Tj T*
+() Tj T*
+(Documentação: README-PROTOTIPO.md, docs/HISTORICO-TECNICO.md, este relatório,) Tj T*
+(PENDENCIAS-testes.txt, PENDENCIAS.diff e Spirit_Gate_Pendencias_Tecnicas.pdf.) Tj T*
+(Ferramenta: tools/gerar_pdf_pendencias.py.) Tj T*
+() Tj T*
+(## Limites da entrega e integração) Tj T*
+() Tj T*
+(A fila é para entrada local e não implementa protocolo, autenticação ou política de) Tj T*
+(admissão de comandos de clientes. Ela não cria uma segunda thread de simulação. Não) Tj T*
+(houve alteração de PostgreSQL, Kryonet, pom.xml, CombatService ou regras de stamina.) Tj T*
+() Tj T*
+(Os documentos antigos permanecem como registros históricos; limitações ali descritas) Tj T*
+(devem ser lidas junto a esta atualização. Não houve commit, merge ou teste em branch de) Tj T*
+(destino, pois esta pasta não é um checkout Git acessível. A conferência interativa no) Tj T*
+(Windows permanece necessária para a integração; testes sem JFrame não a substituem. Não) Tj T*
+(foi realizada uma sessão interativa nesta etapa.) Tj T*
+() Tj T*
+(O diff textual é relativo ao estado inicial desta solicitação. Ele não inclui) Tj T*
+(server/target, binários ou o próprio diff recursivamente. O PDF é entregue) Tj T*
+(separadamente.) Tj T*
+() Tj T*
+(Reproduzir: mvn clean test na pasta server. Gerar PDF: python -B) Tj T*
+(tools/gerar_pdf_pendencias.py na pasta Projeto-K.) Tj T*
+() Tj T*
+(Spirit Gate - Pendências técnicas - página 4/4) Tj T*
+ET
+endstream
+endobj
+xref
+0 12
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000140 00000 n 
+0000000237 00000 n 
+0000000363 00000 n 
+0000003563 00000 n 
+0000003689 00000 n 
+0000007223 00000 n 
+0000007349 00000 n 
+0000010360 00000 n 
+0000010488 00000 n 
+trailer
+<< /Size 12 /Root 1 0 R >>
+startxref
+12279
+%%EOF

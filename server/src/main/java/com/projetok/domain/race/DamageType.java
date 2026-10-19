@@ -6,5 +6,6 @@ public enum DamageType {
     WATER,
     HOLY,
     DARK,
-    EARTH
+    EARTH,
+    ICE
 }

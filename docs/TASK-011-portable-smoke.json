@@ -1,0 +1,41 @@
+﻿{
+    "status":  "EXECUCAO LOCAL CONFERIDA",
+    "startedAt":  "2026-10-18T19:01:30.0387280-03:00",
+    "zip":  "C:\\Users\\lucas\\OneDrive\\Desktop\\Spirit_Gate_Prototipo_Jogavel\\Projeto-K\\dist\\SpiritGate-0.11.0-rc1-20261018T220040Z-b2e659ed-portable.zip",
+    "zipSha256":  "7484F90F5DE5CA0475C8D73A918A8868B20A089D5A3FB3A12DD2E40F5FC19D01",
+    "extractionDirectory":  "C:\\Users\\lucas\\OneDrive\\Desktop\\Spirit_Gate_Prototipo_Jogavel\\Validacao Portatil\\20261018-190130-74ba85b5",
+    "environment":  "Microsoft Windows NT 10.0.19045.0",
+    "cleanWindowsWithoutJava":  "PENDENTE DE HOMOLOGACAO HUMANA",
+    "archiveEntries":  150,
+    "launcher":  "C:\\Users\\lucas\\OneDrive\\Desktop\\Spirit_Gate_Prototipo_Jogavel\\Validacao Portatil\\20261018-190130-74ba85b5\\SpiritGate\\SpiritGate.exe",
+    "launcherArchitecture":  "PE x64 (0x8664)",
+    "mainClass":  "com.projetok.prototype.DebugLauncher",
+    "runtimeRelease":  "JAVA_VERSION=\"17.0.20.1\"\r\nMODULES=\"java.base java.datatransfer java.xml java.prefs java.desktop jdk.random\"",
+    "configuration":  "[Application]\r\napp.classpath=$APPDIR\\spirit-gate-arena.jar\r\napp.mainclass=com.projetok.prototype.DebugLauncher\r\n\n[JavaOptions]\r\njava-options=-Djpackage.app-version=0.11.0",
+    "manifestFilesVerified":  148,
+    "packageVersion":  "0.11.0-rc1",
+    "javaModules":  [
+                        "java.base",
+                        "java.desktop",
+                        "jdk.random"
+                    ],
+    "manifestSha256":  "85272611B0F1A0DE1BB92F24A66882391B9543DCADBF99C8E1C6ADC59609C113",
+    "zipSidecarVerified":  true,
+    "processId":  8592,
+    "windowTitle":  "Spirit Gate | Arena de Debug 2D",
+    "windowProcessId":  11132,
+    "ownedProcessIds":  [
+                            8592,
+                            11132
+                        ],
+    "loadedJvmPath":  "C:\\Users\\lucas\\OneDrive\\Desktop\\Spirit_Gate_Prototipo_Jogavel\\Validacao Portatil\\20261018-190130-74ba85b5\\SpiritGate\\runtime\\bin\\server\\jvm.dll",
+    "bundledJvmVerified":  true,
+    "screenshot":  "C:\\Users\\lucas\\OneDrive\\Desktop\\Spirit_Gate_Prototipo_Jogavel\\Validacao Portatil\\20261018-190130-74ba85b5\\SpiritGate-exe-smoke.png",
+    "windowSize":  "1276x789",
+    "networkInspection":  "INDISPONIVEL: Acesso a um recurso CIM não estava disponível para o cliente.",
+    "pathDuringLaunch":  "C:\\Windows\\System32;C:\\Windows",
+    "windowExitCode":  0,
+    "exitCode":  0,
+    "processExited":  true,
+    "finishedAt":  "2026-10-18T19:01:34.9213262-03:00"
+}

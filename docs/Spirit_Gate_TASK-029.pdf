@@ -1,0 +1,63 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 2051 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-029 - Robustez dos pacotes visuais) Tj T*
+() Tj T*
+(Objetivo: corrigir lacunas reais no carregador e staging existentes.) Tj T*
+(Base: TASK-028, 230 JUnit e 25 Python aprovados.) Tj T*
+(Diagnóstico: já havia controle de versão, SHA/revisão, grade, recortes, duplicação) Tj T*
+(de frames, fallback legado individual e carga única sem IO no draw. Lacunas:) Tj T*
+(Properties aceitava chave duplicada; offsets inteiros extremos; arquivos sem teto) Tj T*
+(e decodificação de pixels antes de validar dimensões; caminho indireto externo.) Tj T*
+(Correções em ValidatedSpriteAtlas: Properties estrito, manifest até 1 MB, PNG até) Tj T*
+(16 MB, dimensões até 4096 por eixo inspecionadas por ImageReader antes de decode,) Tj T*
+(offset até 4096 por eixo e conferência de caminho real dentro da pasta do pacote.) Tj T*
+(validar_assets.py compartilha limite de offset para staging recusar antes da cópia.) Tj T*
+(Não foi criado carregador paralelo ou cache global com recursos sem ciclo de vida.) Tj T*
+() Tj T*
+(Testes: Properties duplicado, offsets extremos \(inclusive MIN_VALUE\), arquivo) Tj T*
+(excessivo, negativo de staging. Regressões existentes incluem remoção da fonte após) Tj T*
+(load e desenho ainda funcional, ausente/corrompido, hashes, pivots e versão.) Tj T*
+(Resultados: TASK-029-qualidade.json, TASK-029-testes.txt, logs reais completos.) Tj T*
+(Reprodução: python tools/qualidade.py --offline --task 029) Tj T*
+(Arquivos/diff e checkpoints padronizados; próxima TASK-030.) Tj T*
+(Limites: testes de distribuição usam fixtures sintéticas em temporários; nenhuma) Tj T*
+(arte real foi aprovada ou integrada. Execução sem pacote continua com fallback.) Tj T*
+(Homologação artística e em outro Windows permanece pendente. Limites documentados) Tj T*
+(podem recusar pacotes antigos excessivos; os contratos 59 frames usuais cabem.) Tj T*
+() Tj T*
+(## Resultado final observado) Tj T*
+(Validação local aprovada: 231 JUnit e 25 Python; zero falhas.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-029 - página 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2447
+%%EOF

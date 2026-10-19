@@ -1,0 +1,58 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1581 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-031 - Controles, foco e mira) Tj T*
+() Tj T*
+(Objetivo: preservar entrada sob resize, zoom, câmera e perda de foco.) Tj T*
+(Base: TASK-030, 233 JUnit e 25 Python aprovados.) Tj T*
+(Diagnóstico: desativação já soltava held, porém mira persistia e perda de foco) Tj T*
+(sem desativação não tinha callback explícito. Implementação mínima:) Tj T*
+(configureKeys retorna rotina de liberação testável; limpa held, invalida mira e) Tj T*
+(publica NONE. Usada em windowDeactivated e windowLostFocus. Mantidos bindings,) Tj T*
+(pressão única de Q/Shift e fila FIFO, sem descartar casts já enfileirados.) Tj T*
+(Testes novos sem JFrame: soltar movimento/E, mira inválida após perda de foco,) Tj T*
+(nova pressão aceita, HUD/letterbox rejeitados em zoom 1-4 e resize.) Tj T*
+(Regressões anteriores verificam Q/Shift, restart e competição por vigor.) Tj T*
+(Arquivos: DebugLauncher.java e FocusControlsTest.java.) Tj T*
+(Reprodução: python tools/qualidade.py --offline --task 031) Tj T*
+(Totais, logs e resultado: TASK-031-qualidade.json e TASK-031-testes.txt.) Tj T*
+(Checkpoints/diff padronizados; próxima TASK-032.) Tj T*
+(Limites: eventos de janela são ligados ao callback real, mas alternância física) Tj T*
+(de janelas requer homologação humana. Uma transição anterior ao foco mantém sua) Tj T*
+(posição FIFO; não são apagados comandos para produzir aprovação artificial.) Tj T*
+() Tj T*
+(## Resultado final observado) Tj T*
+(Validação local aprovada: 235 JUnit e 25 Python; zero falhas.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-031 - página 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1977
+%%EOF

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "task": "TASK-011",
+  "auditedAtUtc": "2026-10-18T22:02:55.806930+00:00",
+  "zip": "C:\\Users\\lucas\\OneDrive\\Desktop\\Spirit_Gate_Prototipo_Jogavel\\Projeto-K\\server\\target\\auditoria-rc-negativa\\SpiritGate-byte-jar-alterado.zip",
+  "status": "FAIL",
+  "checks": [
+    {
+      "id": "zip_sha256_sidecar",
+      "status": "PASS",
+      "sha256": "f4661e23a7cc32140230cb11c546649ce1730e9b4bcf6f0e65fe4fa18921585c",
+      "sizeBytes": 29671121
+    },
+    {
+      "id": "estrutura_segura",
+      "status": "PASS",
+      "files": 149,
+      "root": "SpiritGate"
+    }
+  ],
+  "limitations": [
+    "Hashes e inventarios detectam divergencias, mas nao substituem assinatura digital nem autenticam um pacote e sidecars adulterados em conjunto.",
+    "A busca de credenciais inspeciona somente o bytecode das classes do jogo, com padroes concretos; nao comprova ausencia absoluta de segredos, ofuscacao ou credenciais em outros formatos.",
+    "A comparacao prova igualdade com server/target/classes no instante da auditoria; a compilacao recente dos fontes depende do mvn clean test registrado separadamente no processo de release.",
+    "A auditoria nao executa o EXE e nao substitui a homologacao interativa em outro Windows sem Java ou Maven instalados."
+  ],
+  "executedPackagedCode": false,
+  "zipSha256": "f4661e23a7cc32140230cb11c546649ce1730e9b4bcf6f0e65fe4fa18921585c",
+  "version": "0.11.0-rc1",
+  "error": "SHA-256 divergente do manifest: app/spirit-gate-arena.jar"
+}

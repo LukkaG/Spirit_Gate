@@ -1,0 +1,124 @@
+--- /dev/null
++++ b/docs/TASK-022-testes.txt
+@@ -0,0 +1,38 @@
++TASK-022 - mvn clean test - BUILD SUCCESS
++{'tests': 223, 'failures': 0, 'errors': 0, 'skipped': 0}
++Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.
++
++com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.DomainSequenceRegressionTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaSequenceRegressionTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaViewportTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugLauncherEntrypointTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.DirectionalAnimationTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudPrecisionRegressionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudSkillFeedbackTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.prototype.LocalArenaMapTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SoftObstacleDemoTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.VisualPackageTest: tests=3, failures=0, errors=0, skipped=0
+--- /dev/null
++++ b/docs/TASK-022.md
+@@ -0,0 +1,57 @@
++# TASK-022 - Auditoria inicial e baseline
++
++Data local: 19/10/2026. Situação: APROVADA na automação local.
++
++## Objetivo e diagnóstico
++
++Reproduzir a base 0.21.0-rc1 antes de alterar funcionalidades. Não há repositório Git
++neste checkout; preservado o mecanismo tools/checkpoint_rodada.py. A TASK-021
++registra 223 JUnit e 18 Python. Nenhuma fonte funcional foi alterada nesta tarefa.
++
++## Inventário e decisões
++
++server/pom.xml: Java 17, JUnit 5.11.4, Surefire 3.5.2; Kryonet e PostgreSQL
++permanecem legados e são excluídos da arena portátil. Os pacotes domain e prototype
++formam o jogo local. tools contém auditor, empacotador, revisão de sprites,
++validação de assets, snapshots textuais e geração PDF sem dependências adicionais.
++assets conserva arte candidata; dist preserva os releases históricos.
++
++LocalArenaMap: Properties estrito V1, 960x640, limite de 4096 elementos por lista,
++geometria e aparência independentes; validação quadrática de sobreposição.
++DebugWorld: proprietário das entidades, colisões e habilidades; limites constantes
++acoplados ao mundo e à Criostase. DebugRuntime: thread de simulação, fábrica para R,
++fila FIFO e publicação imutável de apresentação. DebugPanel: Java2D, viewport e HUD;
++limites históricos repetidos em clipping e desenho. ArenaViewport já aceita dimensões
++maiores, mas o painel ainda fornece constantes. Não existe índice espacial paralelo.
++DirectionalAnimation publica frames determinísticos. ValidatedSpriteAtlas é o
++carregador único, com fallback. Revisão/autoria e pacote visual reutilizam contratos.
++O ponto de duplicação relevante são limites de arena e contratos entre validadores
++Python e Java; mudanças futuras exigem testes cruzados. Nenhuma remoção foi feita.
++
++## Validações executadas
++
++Java: clean test offline, 223 testes, zero falhas, erros ou ignorados.
++Python: unittest discover, 18 testes, todos aprovados.
++ZIP original 546ce1c5: auditoria PASS após recompilação; inventário, SHA,
++whitelist, Java 17, PE x64 e comparação byte a byte do JAR com classes atuais.
++Evidências: TASK-022-java.log, TASK-022-python.log, TASK-022-auditoria.json.
++A primeira chamada Maven não recebeu corretamente a propriedade no PowerShell;
++reexecutada com argumento inteiro entre aspas e caminho absoluto do cache local.
++Não foram alteradas configurações globais.
++
++## Reprodução
++
++Na raiz Projeto-K:
++python -m unittest discover -s tools -p "test_*.py" -v
++mvn "-Dmaven.repo.local=$PWD/.maven-repository" -o -f server/pom.xml clean test
++python tools/auditar_rc.py --zip dist/SpiritGate-0.21.0-rc1-20261019T001737Z-546ce1c5-portable.zip --report docs/TASK-022-auditoria.json
++
++## Arquivos, checkpoint e limites
++
++Adicionados os documentos/evidências TASK-022 e tools/registrar_task.py para
++reutilizar PDF e fechamento de checkpoint. Antes: .task-checkpoints/TASK-022-before.json;
++depois: TASK-022-after.json e docs/TASK-022.diff. Snapshot inicial contém fontes
++textuais recuperáveis; assets e releases anteriores permanecem preservados.
++Sem smoke de EXE nesta tarefa; a evidência da TASK-021 é histórica, não reexecutada.
++Sem homologação em outro Windows e sem aprovação de arte final.
++Próximo passo: TASK-023, orquestrador de qualidade, com testes próprios.
+--- /dev/null
++++ b/tools/registrar_task.py
+@@ -0,0 +1,20 @@
++"""Documenta resultados reais e reutiliza o gerador PDF e checkpoints existentes."""
++import argparse
++from pathlib import Path
++from gerar_pdf_task002 import gerar_pdf
++from checkpoint_rodada import checkpoint
++
++ROOT = Path(__file__).resolve().parents[1]
++
++def register(task, text):
++    path = ROOT / f'docs/TASK-{task}.md'
++    path.write_text(text, encoding='utf-8')
++    gerar_pdf(path, ROOT / f'docs/Spirit_Gate_TASK-{task}.pdf', f'TASK-{task}')
++    checkpoint(task, True)
++
++if __name__ == '__main__':
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('task')
++    parser.add_argument('text_file', type=Path)
++    args = parser.parse_args()
++    register(args.task, args.text_file.read_text(encoding='utf-8-sig'))

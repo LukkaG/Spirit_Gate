@@ -1,0 +1,71 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 2479 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-024 - Mapas V2 ampliados) Tj T*
+() Tj T*
+(Objetivo: aceitar mapas maiores preservando V1, colisões e reinício.) Tj T*
+(Base aprovada: TASK-023, 223 JUnit e 22 Python. Situação: ver evidências finais) Tj T*
+(TASK-024-qualidade.json e TASK-024-testes.txt, que são a autoridade de aprovação.) Tj T*
+() Tj T*
+(Diagnóstico: LocalArenaMap limitava dimensões ao demo; mundo, Criostase e painel) Tj T*
+(usavam constantes. ArenaViewport já calculava câmera para mundo maior.) Tj T*
+(Decisão: constantes históricas continuam definindo o canvas e o mapa padrão;) Tj T*
+(dimensões do mapa governam Space, alvo da Criostase, câmera e desenho do mundo.) Tj T*
+(DebugRuntime já usa fábrica no reinício e não precisou ser substituído.) Tj T*
+() Tj T*
+(Implementação: schema 1 permanece estritamente 960x640; schema 2 reservado a mapas) Tj T*
+(ampliados, mínimo 960x640 e máximo 8192x8192. Isso impede que apenas trocar a) Tj T*
+(versão de um mapa histórico valide silenciosamente outro contrato. Máximo 4096) Tj T*
+(visuais e 4096 físicos, também no construtor. Spawn, borda, finitude, IDs,) Tj T*
+(categorias e sobreposições continuam validados. Memória visual depende de tiles) Tj T*
+(32x32 por objeto, não de uma imagem com toda a área do mundo.) Tj T*
+() Tj T*
+(Arquivos: LocalArenaMap.java, DebugWorld.java, DebugPanel.java e LargeMapTest.java.) Tj T*
+(Testes novos: V2 1920x1280, V1 ampliado inválido, limite excessivo, NaN, contagem,) Tj T*
+(dash versus sólido em posição além da arena histórica, câmera e R determinístico.) Tj T*
+(Suíte completa: 226 JUnit e 22 Python aprovados na primeira execução; a repetição) Tj T*
+(após corrigir também o clipping do ataque está registrada nos mesmos logs finais.) Tj T*
+(Nenhuma fórmula de combate, custo, duração, FIFO ou expectativa histórica alterada.) Tj T*
+() Tj T*
+(Reprodução: python tools/qualidade.py --offline --task 024) Tj T*
+(Checkpoint inicial .task-checkpoints/TASK-024-before.json; diff e checkpoint final) Tj T*
+(gerados somente depois da validação. Retomada: TASK-025.) Tj T*
+(Limites: mobs mantêm seus três spawns históricos; não foi introduzida autoria) Tj T*
+(de entidades. Sem arte final ou homologação humana. O render ainda percorre todos) Tj T*
+(os objetos; otimização de culling pertence à próxima tarefa.) Tj T*
+() Tj T*
+(## Resultado final observado) Tj T*
+(Validação local aprovada: 226 JUnit e 22 Python; zero falhas.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-024 - página 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2875
+%%EOF

@@ -4,13 +4,27 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DatabaseManager {
+/**
+ * Adaptador JDBC legado: dados de conexão são recebidos do ambiente, jamais do código.
+ * O protótipo visual não usa PostgreSQL; este adaptador permanece para o login antigo.
+ */
+public final class DatabaseManager {
+    private DatabaseManager() { }
 
-    private static final String URL = "jdbc:postgresql://localhost:5432/spirit_gate_db";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "motogames";
-
+    /** Abre uma conexão JDBC utilizando credenciais externas ao repositório. */
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        String url = required("SPIRIT_DB_URL");
+        String username = required("SPIRIT_DB_USER");
+        String password = required("SPIRIT_DB_PASSWORD");
+        return DriverManager.getConnection(url, username, password);
+    }
+
+    /** Recusa configurações ausentes para evitar conexão inesperada com outro banco. */
+    private static String required(String name) throws SQLException {
+        String value = System.getenv(name);
+        if (value == null || value.isBlank()) {
+            throw new SQLException("Variavel de ambiente obrigatoria ausente: " + name);
+        }
+        return value;
     }
 }

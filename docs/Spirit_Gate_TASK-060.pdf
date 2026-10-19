@@ -1,0 +1,47 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 798 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-060 - Ciclo de ambiente) Tj T*
+() Tj T*
+(Ciclo visual de 2400 ticks, luminosidade entre 82% e 100%, calculada somente pelo tick) Tj T*
+(publicado. Overlay aplicado ao mundo pelo renderer compartilhado; HUD permanece legivel.) Tj T*
+(API permite desativar, arena historica tem valor padrao 100% e conserva seus snapshots.) Tj T*
+(Controle do usuario sera integrado nas preferencias.) Tj T*
+() Tj T*
+(Testes de periodicidade, limites e desativacao; suite completa. Captura desktop da) Tj T*
+(TASK-059 gerou imagem preta neste ambiente e NAO foi considerada evidencia visual) Tj T*
+(aprovada. Teste de processo e renderizacao automatizada serao registrados separadamente) Tj T*
+(da homologacao humana.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-060 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1193
+%%EOF

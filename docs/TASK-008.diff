@@ -1,0 +1,538 @@
+--- a/docs/HISTORICO-TECNICO.md
++++ b/docs/HISTORICO-TECNICO.md
+@@ -1,4 +1,17 @@
+ # Histórico técnico
++
++## 18/10/2026 - TASK-008: cenário demonstrativo de colisão leve
++
++Runtime usa DebugWorld.demo() com dois arbustos e um poste SOFT_OBSTACLE.
++Geometria e metadados visuais compartilham os mesmos retângulos; H mostra hitboxes.
++Construtores históricos mantêm o mapa original e os baselines de replay.
++
++`mvn clean test`: base 171, final 177 testes, zero falhas/erros/ignorados.
++Seis testes novos e captura renderizada inspecionada. Domínio e testes anteriores
++intactos. A falha inicial de limpeza do jpackage foi resolvida normalizando apenas
++atributos da saída gerada; a base foi repetida. Homologação jogando pendente.
++
++Entrega: [TASK-008](TASK-008.md), PDF, testes, logs, diff e captura do demo.
+ 
+ ## 18/10/2026 - TASK-007: pacote Windows portátil
+ 
+--- a/docs/RELATORIO-FINAL-RODADA.md
++++ b/docs/RELATORIO-FINAL-RODADA.md
+@@ -11,3 +11,13 @@
+ Artefatos: [relatório](TASK-007.md), [PDF](Spirit_Gate_TASK-007.pdf), [testes](TASK-007-testes.txt), [log](TASK-007-final.log), [diff](TASK-007.diff). ZIP 0.7.0-task007 em dist; candidato consolidado será gerado na TASK-011.
+ 
+ Pendências manuais: outro Windows sem Java/Maven, controles e sensação de jogo. Nenhuma implementação foi reservada ao usuário nesta rodada.
++
++## TASK-008 - Arbustos e poste leves
++
++Status: IMPLEMENTADA. AUTOMATIZADO APROVADO. Testes: inicial 171; final 177, zero falhas/erros/ignorados. Falha inicial de limpeza de arquivos somente leitura do jpackage foi corrigida no build antes das mudanças de cenário e a base foi repetida com sucesso.
++
++Mudanças: variante demo usada pelo runtime, dois arbustos e um poste SOFT_OBSTACLE com hitboxes explícitas, snapshot imutável e Java2D. Mapa original/replay preservados. Seis testes novos cobrem colisões, passagem, pouso e renderização pura.
++
++Artefatos: [relatório](TASK-008.md), [PDF](Spirit_Gate_TASK-008.pdf), [testes](TASK-008-testes.txt), [diff](TASK-008.diff), [captura](TASK-008-demo.png) e logs inicial/final.
++
++Pendências manuais: roteiro de três minutos para WASD, Shift, parede, hitboxes e R. A captura é renderizada; homologação humana ainda pendente.
+--- /dev/null
++++ b/docs/TASK-008-testes.txt
+@@ -0,0 +1,30 @@
++TASK-008 - mvn clean test - BUILD SUCCESS
++{'tests': 177, 'failures': 0, 'errors': 0, 'skipped': 0}
++Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.
++
++com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugLauncherEntrypointTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SoftObstacleDemoTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
+--- /dev/null
++++ b/docs/TASK-008.md
+@@ -0,0 +1,33 @@
++# TASK-008 - Obstáculos leves visíveis
++
++18/10/2026. Implementação sobre a TASK-007, sem alterar os algoritmos de colisão, recuperação, dano ou habilidade.
++
++## Decisão e cenário
++
++DebugWorld.demo() e demo(RandomGenerator) criam a arena demonstrativa. DebugRuntime usa essa fábrica na inicialização e no reinício R; o launcher e os controles permanecem. Os construtores anteriores de DebugWorld preservam o mapa original para testes/replays e ferramentas existentes. Não foi criado menu ou atalho.
++
++O demo mantém os três sólidos anteriores e acrescenta dois arbustos e um poste, todos SOFT_OBSTACLE. Hitboxes retangulares explícitas em unidades de mundo:
++
++- Arbusto 1: x=70, y=420, largura=36, altura=40.
++- Arbusto 2: x=160, y=420, largura=36, altura=40.
++- Poste: x=250, y=425, largura=14, altura=30.
++
++O mesmo descritor fornece a geometria à física e os dados visuais ao snapshot. SoftObstacleView informa tipo e retângulo; sua lista é imutável. O record visual Obstacle anterior continua com quatro campos, conservando sua projeção histórica. DebugPanel desenha arbustos verdes e poste com Java2D e destaca o retângulo real ao usar H. A arte não redefine colisões.
++
++WASD e dash SOLID bloqueiam esses objetos; PHASE_THROUGH_ACTORS_AND_SOFT atravessa. Destino ocupado é corrigido pela implementação anterior. Paredes e limites continuam sólidos. Custo 35, duração 0,25 s, alcance 150 e cooldown 4 s preservados; a travessia não aplica dano. Nenhuma dependência ou sprite externo foi adicionado.
++
++## Validação
++
++Base: 171 testes aprovados. A primeira execução inicial de mvn clean test falhou ao remover EXE temporário somente leitura da TASK-007. O problema do build foi corrigido antes de implementar este cenário e a base passou novamente. Log da falha: TASK-008-inicial-limpeza-falhou.log; repetição aprovada: TASK-008-inicial.log.
++
++Testes novos exercitam as formas reais do demo e a integração com o mundo, além da imutabilidade e renderização. A suíte final, resumo, captura e diff acompanham esta entrega. Testes e baselines anteriores não foram regravados.
++
++AUTOMATIZADO APROVADO: mvn clean test final, 177 testes, zero falhas/erros/ignorados (171 anteriores e 6 de SoftObstacleDemoTest). Log TASK-008-final.log e resumo TASK-008-testes.txt. Captura TASK-008-demo.png gerada pelo renderizador real e inspecionada, mostrando passagem no arbusto e pouso após o poste. Sem sessão humana de jogo nesta etapa. Conferida diretamente a preservação dos 92 fontes de domínio e testes anteriores.
++
++Arquivos modificados: DebugWorld, DebugRuntime, DebugSnapshot e DebugPanel; novo SoftObstacleDemoTest. Documentação, captura, PDF, logs e diff; ajuste da ferramenta de checkpoints para incluir .gitignore. Nenhum arquivo de combate, habilidade, colisão ou teste anterior foi alterado.
++
++## Roteiro de três minutos
++
++HOMOLOGACAO HUMANA PENDENTE. Abrir a arena pelo launcher; usar H para mostrar as hitboxes. Caminhar para a região ao sul do ponto inicial, perto de y=420. Tentar entrar nos dois arbustos e no poste com WASD: devem bloquear. Apontar o mouse além de cada objeto e pressionar Shift uma vez: o dash deve passar, gastar 35, respeitar a recarga e terminar fora da hitbox. Retomar WASD e observar que o objeto voltou a bloquear. Usar as paredes grandes como contraste: Shift continua bloqueado. Testar bordas, ataque básico e R; os três objetos leves devem reaparecer.
++
++O demo não é um novo mapa de multiplayer. A fábrica original é mantida exclusivamente para preservar cenários anteriores e fornecer uma referência reproduzível. O pacote da TASK-007 permanece histórico; a distribuição consolidada será reconstruída na TASK-011.
+--- a/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ b/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -60,6 +60,7 @@
+     public void render(Graphics2D g, DebugSnapshot s) {
+         drawWorld(g);
+         drawObstacles(g, s);
++        drawSoftObstacles(g, s);
+         drawIceZones(g, s);
+         drawLightningTrails(g, s);
+         for (DebugSnapshot.ActorView actor : s.actors()) drawActor(g, actor, s);
+@@ -171,6 +172,44 @@
+                 g.setStroke(new BasicStroke(2f));
+                 g.drawRect(x, y, w, h);
+             }
++        }
++    }
++
++    /** Distingue arbustos e postes leves; H mostra exatamente o retângulo físico publicado. */
++    private void drawSoftObstacles(Graphics2D g, DebugSnapshot world) {
++        for (var obstacle : world.softObstacles()) {
++            int x = Math.round(obstacle.x()), y = Math.round(obstacle.y());
++            int width = Math.round(obstacle.width()), height = Math.round(obstacle.height());
++            g.setColor(new Color(0, 0, 0, 65));
++            g.fillOval(x - 4, y + height - 5, width + 12, 12);
++            if (obstacle.kind() == DebugSnapshot.SoftObstacleKind.BUSH) {
++                g.setColor(new Color(45, 106, 69));
++                g.fillRoundRect(x, y, width, height, 20, 20);
++                g.setColor(new Color(81, 157, 86));
++                g.fillOval(x, y, width * 2 / 3, height * 2 / 3);
++                g.fillOval(x + width / 3, y + height / 5, width * 2 / 3, height * 2 / 3);
++                g.setColor(new Color(142, 197, 110));
++                g.setStroke(new BasicStroke(1.8f));
++                g.drawRoundRect(x, y, width, height, 20, 20);
++            } else {
++                g.setColor(new Color(120, 86, 53));
++                g.fillRoundRect(x, y, width, height, 4, 4);
++                g.setColor(new Color(199, 162, 98));
++                g.fillRoundRect(x, y, width, 6, 3, 3);
++                g.setColor(new Color(224, 192, 137));
++                g.setStroke(new BasicStroke(2f));
++                g.drawLine(x + 4, y + 8, x + 4, y + height - 4);
++            }
++            if (showHitboxes) {
++                g.setColor(new Color(149, 242, 118));
++                g.setStroke(new BasicStroke(2f));
++                g.drawRect(x, y, width, height);
++            }
++        }
++        if (!world.softObstacles().isEmpty()) {
++            g.setColor(new Color(183, 220, 170));
++            g.setFont(new Font("SansSerif", Font.PLAIN, 10));
++            g.drawString("OBSTACULOS LEVES  |  WASD bloqueia / SHIFT atravessa / H hitboxes", 34, 491);
+         }
+     }
+ 
+--- a/server/src/main/java/com/projetok/prototype/DebugRuntime.java
++++ b/server/src/main/java/com/projetok/prototype/DebugRuntime.java
+@@ -17,7 +17,7 @@
+         return thread;
+     });
+     private final DebugCommandBuffer commands = new DebugCommandBuffer();
+-    private volatile DebugWorld world = new DebugWorld();
++    private volatile DebugWorld world = DebugWorld.demo();
+     private volatile DebugSnapshot lastSnapshot = world.snapshot();
+ 
+     /** Inicializa o loop local sem banco de dados ou serviço de rede. */
+@@ -26,7 +26,7 @@
+             try {
+                 DebugCommandBuffer.Frame frame = commands.drain();
+                 if (frame.restart()) {
+-                    world = new DebugWorld();
++                    world = DebugWorld.demo();
+                     world.synchronizeEffort(frame.input().effort());
+                 }
+                 world.tickQueued(frame.input(), 1f / 30f, frame.effortPresses(), frame.casts());
+--- a/server/src/main/java/com/projetok/prototype/DebugSnapshot.java
++++ b/server/src/main/java/com/projetok/prototype/DebugSnapshot.java
+@@ -10,7 +10,18 @@
+         float stamina, float maxStamina, float cryostasisCooldown, List<IceZoneView> iceZones,
+         List<StatusView> statuses, boolean lightningStepActive, float lightningStepRemaining,
+         float lightningStepCooldown, List<LightningTrailView> lightningTrails,
+-        boolean lightningStepAwaitingLanding) {
++        boolean lightningStepAwaitingLanding, List<SoftObstacleView> softObstacles) {
++
++    /** Copia os novos metadados visuais; a interface nunca recebe a lista mutável do mundo. */
++    public DebugSnapshot {
++        softObstacles = List.copyOf(softObstacles);
++    }
++
++    /** Aparências do demo; ambas usam retângulos explícitos de colisão leve. */
++    public enum SoftObstacleKind { BUSH, POST }
++
++    /** Hitbox publicada a partir da mesma geometria usada pela simulação. */
++    public record SoftObstacleView(float x, float y, float width, float height, SoftObstacleKind kind) { }
+ 
+     /** Segmento visual elétrico com tempo de vida; sem estado mutável da habilidade. */
+     public record LightningTrailView(float x0, float y0, float x1, float y1,
+--- a/server/src/main/java/com/projetok/prototype/DebugWorld.java
++++ b/server/src/main/java/com/projetok/prototype/DebugWorld.java
+@@ -2,6 +2,7 @@
+ 
+ import com.projetok.domain.ai.PassiveBehavior;
+ import com.projetok.domain.movement.CollisionService;
++import com.projetok.domain.movement.CollisionCategory;
+ import com.projetok.domain.movement.CollisionPolicy;
+ import com.projetok.domain.movement.MovementService;
+ import com.projetok.domain.movement.SpatialBodyIndex;
+@@ -71,10 +72,24 @@
+     private final Player player;
+     private final List<Mob> mobs = new ArrayList<>();
+     private final CollisionService.Space collisionSpace;
+-    private final List<CollisionService.Obstacle> obstacles = List.of(
++    private static final List<CollisionService.Obstacle> ORIGINAL_OBSTACLES = List.of(
+             new CollisionService.Obstacle(346, 112, 110, 228),
+             new CollisionService.Obstacle(594, 310, 112, 174),
+             new CollisionService.Obstacle(275, 500, 145, 44));
++    private final List<CollisionService.Obstacle> obstacles;
++    private final List<DemoObstacle> softObstacles;
++
++    /** Associa arte e corpo sem inferir a hitbox pelo tamanho do desenho. */
++    private record DemoObstacle(CollisionService.Obstacle body, DebugSnapshot.SoftObstacleKind kind) { }
++
++    // Área demonstrativa ao sul do ponto inicial; não altera o cenário histórico.
++    private static final List<DemoObstacle> DEMO_OBSTACLES = List.of(
++            new DemoObstacle(new CollisionService.Obstacle(70, 420, 36, 40,
++                    CollisionCategory.SOFT_OBSTACLE), DebugSnapshot.SoftObstacleKind.BUSH),
++            new DemoObstacle(new CollisionService.Obstacle(160, 420, 36, 40,
++                    CollisionCategory.SOFT_OBSTACLE), DebugSnapshot.SoftObstacleKind.BUSH),
++            new DemoObstacle(new CollisionService.Obstacle(250, 425, 14, 30,
++                    CollisionCategory.SOFT_OBSTACLE), DebugSnapshot.SoftObstacleKind.POST));
+     private final List<DebugSnapshot.EffectView> effects = new ArrayList<>();
+     private final List<DebugSnapshot.LightningTrailView> lightningTrails = new ArrayList<>();
+     private static final float TRAIL_DURATION = 0.18f;
+@@ -98,6 +113,25 @@
+ 
+     /** Permite comparar a resposta nova com a referência histórica sem alterar os baselines. */
+     public DebugWorld(RandomGenerator random, MovementService.Response response) {
++        this(random, response, false);
++    }
++
++    /** Cria a arena jogável com dois arbustos e um poste de colisão leve. */
++    public static DebugWorld demo() {
++        return demo(RandomGenerator.getDefault());
++    }
++
++    /** Reproduz o cenário demonstrativo com sorteios controláveis nos testes. */
++    public static DebugWorld demo(RandomGenerator random) {
++        return new DebugWorld(random, MovementService.Response.SOFT_SLIDE, true);
++    }
++
++    /** Mantém os construtores históricos e compartilha toda a simulação entre os cenários. */
++    private DebugWorld(RandomGenerator random, MovementService.Response response, boolean demo) {
++        softObstacles = demo ? DEMO_OBSTACLES : List.of();
++        List<CollisionService.Obstacle> geometry = new ArrayList<>(ORIGINAL_OBSTACLES);
++        softObstacles.forEach(obstacle -> geometry.add(obstacle.body()));
++        obstacles = List.copyOf(geometry);
+         movement = new MovementService(collisions, response);
+         lightningStep = new LightningStepService(movement, staminaService, collisions,
+                 CollisionPolicy.PHASE_THROUGH_ACTORS_AND_SOFT);
+@@ -348,7 +382,7 @@
+         actors.add(view(player, PLAYER_RADIUS, true));
+         for (Mob mob : mobs) actors.add(view(mob, MOB_RADIUS, false));
+         HealthComponent hp = player.require(HealthComponent.class);
+-        return new DebugSnapshot(List.copyOf(actors), obstacles.stream().map(o ->
++        return new DebugSnapshot(List.copyOf(actors), ORIGINAL_OBSTACLES.stream().map(o ->
+                         new DebugSnapshot.Obstacle(o.x(), o.y(), o.width(), o.height())).toList(), List.copyOf(effects),
+                 hp.current(), hp.max(), defeated, player.isDead(), ticks,
+                 lastEvent, facingX, facingY, attackCooldown, attack,
+@@ -360,7 +394,11 @@
+                         .has(StatusEffectType.FREEZE)).map(mob -> new DebugSnapshot.StatusView(mob.getId(),
+                         mob.require(StatusEffectsComponent.class).remaining(StatusEffectType.FREEZE))).toList(),
+                 lightningStep.active(), lightningStep.remaining(), lightningStep.cooldown(), List.copyOf(lightningTrails),
+-                lightningStep.awaitingLanding());
++                lightningStep.awaitingLanding(), softObstacles.stream().map(obstacle -> {
++                    var body = obstacle.body();
++                    return new DebugSnapshot.SoftObstacleView(body.x(), body.y(), body.width(), body.height(),
++                            obstacle.kind());
++                }).toList());
+     }
+ 
+     /** Extrai apenas os campos visuais de uma entidade do domínio. */
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/SoftObstacleDemoTest.java
+@@ -0,0 +1,237 @@
++package com.projetok.prototype;
++
++import com.projetok.domain.entity.Player;
++import com.projetok.domain.entity.Position;
++import com.projetok.domain.entity.component.StaminaComponent;
++import com.projetok.domain.factory.PlayerArchetype;
++import com.projetok.domain.factory.PlayerFactory;
++import com.projetok.domain.movement.CollisionCategory;
++import com.projetok.domain.movement.CollisionPolicy;
++import com.projetok.domain.movement.CollisionService;
++import com.projetok.domain.movement.MovementService;
++import com.projetok.domain.network.PlayerConnection;
++import com.projetok.domain.progression.VitalityService;
++import com.projetok.domain.race.RaceRegistry;
++import com.projetok.domain.resource.StaminaService;
++import com.projetok.domain.skill.LightningStepService;
++import com.projetok.domain.skill.SkillCastCommand;
++import org.junit.jupiter.api.Test;
++
++import javax.imageio.ImageIO;
++import java.awt.Color;
++import java.awt.Font;
++import java.awt.Graphics2D;
++import java.awt.image.BufferedImage;
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.util.List;
++import java.util.Random;
++
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Valida os objetos leves reais do demo sem abrir janelas nem alterar baselines históricos. */
++class SoftObstacleDemoTest {
++    private static final float DT = 1f / 30f;
++    private static final float RADIUS = DebugWorld.PLAYER_RADIUS;
++    private static final DebugInput DOWN = new DebugInput(false, true, false, false, false);
++    private static final DebugInput RIGHT = new DebugInput(false, false, false, true, false);
++
++    /** O cenário histórico continua com três sólidos; o demo acrescenta somente metadados leves. */
++    @Test
++    void separaDemoDoCenarioHistoricoEPublicaListaImutavel() {
++        var original = new DebugWorld(new Random(8)).snapshot();
++        var demo = DebugWorld.demo(new Random(8)).snapshot();
++        assertEquals(original.obstacles(), demo.obstacles());
++        assertEquals(3, original.obstacles().size());
++        assertTrue(original.softObstacles().isEmpty());
++        assertEquals(3, demo.softObstacles().size());
++        assertEquals(2, demo.softObstacles().stream()
++                .filter(o -> o.kind() == DebugSnapshot.SoftObstacleKind.BUSH).count());
++        assertEquals(1, demo.softObstacles().stream()
++                .filter(o -> o.kind() == DebugSnapshot.SoftObstacleKind.POST).count());
++        assertThrows(UnsupportedOperationException.class, () -> demo.softObstacles().clear());
++        for (var obstacle : geometry(demo)) assertEquals(CollisionCategory.SOFT_OBSTACLE, obstacle.category());
++        for (var obstacle : original.obstacles()) {
++            var body = new CollisionService.Obstacle(obstacle.x(), obstacle.y(), obstacle.width(), obstacle.height());
++            assertEquals(CollisionCategory.SOLID_OBSTACLE, body.category());
++        }
++    }
++
++    /** A arena aberta pelo launcher usa os objetos demonstrativos, sem iniciar a thread neste teste. */
++    @Test
++    void runtimeAbreOCenarioDemonstrativo() {
++        try (var runtime = new DebugRuntime()) {
++            assertEquals(3, runtime.snapshot().softObstacles().size());
++            assertEquals(3, runtime.snapshot().obstacles().size());
++        }
++    }
++
++    /** Exercita cada hitbox publicada com movimento comum, dash sólido e dash seletivo. */
++    @Test
++    void todosObjetosBloqueiamWasdEDashSolidoMasPermitemDashSeletivo() {
++        for (var obstacle : geometry(DebugWorld.demo(new Random(8)).snapshot())) {
++            var collisions = new CollisionService();
++            float centerX = obstacle.x() + obstacle.width() / 2;
++            float originY = obstacle.y() - 40;
++            var walking = player(centerX, originY);
++            var space = new CollisionService.Space(DebugWorld.WIDTH, DebugWorld.HEIGHT,
++                    List.of(obstacle), List.of());
++            var movement = new MovementService(collisions, MovementService.Response.SOFT_SLIDE);
++            for (int i = 0; i < 20; i++) {
++                movement.moveDirected(walking, new Position(0, 1), DebugWorld.WALK_SPEED, DT, RADIUS, space);
++            }
++            assertTrue(walking.getPosition().y() <= obstacle.y() - RADIUS);
++            assertTrue(collisions.isFree(walking, walking.getPosition().x(), walking.getPosition().y(), RADIUS, space));
++
++            var solid = player(centerX, originY);
++            var solidDash = dash(collisions, CollisionPolicy.SOLID);
++            execute(solidDash, solid, centerX, originY + 200, space);
++            assertEquals(obstacle.y() - RADIUS, solid.getPosition().y(), 0.0001);
++            assertFalse(solidDash.active());
++
++            var selective = player(centerX, originY);
++            var selectiveDash = dash(collisions, CollisionPolicy.PHASE_THROUGH_ACTORS_AND_SOFT);
++            assertEquals(LightningStepService.Status.STARTED, selectiveDash.cast(selective,
++                    new SkillCastCommand(LightningStepService.ID, centerX, originY + 200), RADIUS, space));
++            assertEquals(65, selective.require(StaminaComponent.class).current());
++            for (int i = 0; i < 7; i++) selectiveDash.update(selective, DT, RADIUS, space);
++            assertTrue(selectiveDash.active(), "O bloqueio não altera a duração da habilidade");
++            selectiveDash.update(selective, DT, RADIUS, space);
++            assertFalse(selectiveDash.active());
++            assertFalse(selectiveDash.awaitingLanding());
++            assertEquals(originY + 150, selective.getPosition().y(), 0.0001);
++            assertEquals(4 - 8 * DT, selectiveDash.cooldown(), 0.0001);
++            assertTrue(collisions.isFree(selective, centerX, selective.getPosition().y(), RADIUS, space));
++        }
++    }
++
++    /** A física autoritativa bloqueia a caminhada e atravessa arbusto e poste no mesmo dash. */
++    @Test
++    void arenaDemonstraWasdBloqueadoTravessiaEPousoLivre() throws Exception {
++        var world = DebugWorld.demo(new Random(8));
++        for (int i = 0; i < 13; i++) world.tick(DOWN, DT);
++        var before = world.snapshot();
++        for (int i = 0; i < 3; i++) world.tick(RIGHT, DT);
++        assertEquals(before.actors().get(0).x(), world.snapshot().actors().get(0).x());
++        var origin = world.snapshot().actors().get(0);
++        var mobHp = world.snapshot().actors().stream().skip(1).map(DebugSnapshot.ActorView::hp).toList();
++        world.tickQueued(DebugInput.NONE, DT, 0,
++                List.of(new SkillCastCommand(LightningStepService.ID, 500, origin.y())));
++        assertEquals(65, world.snapshot().stamina());
++        DebugSnapshot crossing = null;
++        for (int i = 0; i < 8; i++) {
++            world.tick(DebugInput.NONE, DT);
++            var current = world.snapshot();
++            if (i == 1) crossing = current;
++            assertEquals(mobHp, current.actors().stream().skip(1).map(DebugSnapshot.ActorView::hp).toList());
++        }
++        var landed = world.snapshot();
++        assertNotNull(crossing);
++        assertTrue(crossing.lightningStepActive());
++        assertTrue(crossing.actors().get(0).x() > 160 && crossing.actors().get(0).x() < 196,
++                "O jogador cruza a hitbox publicada do segundo arbusto");
++        assertEquals(origin.x() + 150, landed.actors().get(0).x(), 0.0001);
++        assertEquals(origin.y(), landed.actors().get(0).y());
++        assertFalse(landed.lightningStepActive());
++        assertFalse(landed.lightningStepAwaitingLanding());
++        assertTrue(landed.actors().get(0).x() - RADIUS >= 264, "Pousa depois do poste, fora da hitbox");
++        capture(world, crossing, landed);
++        assertEquals(landed, world.snapshot(), "O painel não altera o mundo ao renderizar");
++        world.tick(RIGHT, DT);
++        assertEquals(landed.actors().get(0).x() + DebugWorld.WALK_SPEED * DT,
++                world.snapshot().actors().get(0).x(), 0.0001);
++    }
++
++    /** Um destino ocupado no layout real recua até o último ponto normal livre do caminho. */
++    @Test
++    void destinoDentroDoArbustoRecuaSemAtravessarOutroObstaculo() {
++        var collisions = new CollisionService();
++        var player = player(35, 440);
++        var space = new CollisionService.Space(DebugWorld.WIDTH, DebugWorld.HEIGHT,
++                geometry(DebugWorld.demo(new Random(8)).snapshot()), List.of());
++        var service = dash(collisions, CollisionPolicy.PHASE_THROUGH_ACTORS_AND_SOFT);
++        execute(service, player, 500, 440, space);
++        assertEquals(142, player.getPosition().x(), 0.0001);
++        assertEquals(440, player.getPosition().y());
++        assertTrue(collisions.isFree(player, 142, 440, RADIUS, space));
++        assertFalse(service.awaitingLanding());
++    }
++
++    /** As paredes históricas continuam bloqueantes na mesma arena que contém arbustos e poste. */
++    @Test
++    void cenarioDemoPreservaColisaoComParedeSolida() {
++        var world = DebugWorld.demo(new Random(8));
++        for (int i = 0; i < 8; i++) world.tick(RIGHT, DT);
++        world.tickQueued(DebugInput.NONE, DT, 0,
++                List.of(new SkillCastCommand(LightningStepService.ID, 700, 340)));
++        for (int i = 0; i < 8; i++) world.tick(DebugInput.NONE, DT);
++        assertEquals(346 - RADIUS, world.snapshot().actors().get(0).x(), 0.0001);
++        assertFalse(world.snapshot().lightningStepActive());
++    }
++
++    /** Reconstrói somente os valores publicados, para testar cada forma demonstrativa isoladamente. */
++    private static List<CollisionService.Obstacle> geometry(DebugSnapshot snapshot) {
++        return snapshot.softObstacles().stream().map(obstacle -> new CollisionService.Obstacle(
++                obstacle.x(), obstacle.y(), obstacle.width(), obstacle.height(), CollisionCategory.SOFT_OBSTACLE)).toList();
++    }
++
++    /** Cria a habilidade com a física existente; a política não duplica geometria nem resolução. */
++    private static LightningStepService dash(CollisionService collisions, CollisionPolicy policy) {
++        return new LightningStepService(new MovementService(collisions), new StaminaService(), collisions, policy);
++    }
++
++    /** Avança o quarto de segundo em oito ticks, incluindo o último passo fracionário. */
++    private static void execute(LightningStepService dash, Player player, float x, float y, CollisionService.Space space) {
++        assertEquals(LightningStepService.Status.STARTED,
++                dash.cast(player, new SkillCastCommand(LightningStepService.ID, x, y), RADIUS, space));
++        for (int i = 0; i < 8; i++) dash.update(player, DT, RADIUS, space);
++    }
++
++    /** Usa a fábrica real com vida e vigor iniciais, sem rede, banco ou janela. */
++    private static Player player(float x, float y) {
++        var archetype = new PlayerArchetype(RaceRegistry.withDefaults().get("human"), 30, 8, 14, null, null);
++        return new PlayerFactory(new VitalityService()).create(1, "Demo", archetype,
++                new Position(x, y), new PlayerConnection() {
++                    @Override public void send(Object packet) { /* apenas simulação local */ }
++                    @Override public void disconnect() { /* nenhum socket */ }
++                });
++    }
++
++    /** Registra dois quadros da renderização real com hitboxes: durante e depois da travessia. */
++    private static void capture(DebugWorld world, DebugSnapshot crossing, DebugSnapshot landed) throws Exception {
++        int header = 36;
++        var image = new BufferedImage(DebugPanel.PANEL_WIDTH * 2,
++                DebugPanel.PANEL_HEIGHT + header, BufferedImage.TYPE_INT_ARGB);
++        Graphics2D graphics = image.createGraphics();
++        try {
++            graphics.setColor(new Color(10, 21, 35));
++            graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
++            graphics.setFont(new Font("SansSerif", Font.BOLD, 16));
++            graphics.setColor(new Color(181, 238, 132));
++            graphics.drawString("DURANTE: dash atravessa o arbusto (H: hitboxes explícitas)", 18, 24);
++            graphics.drawString("DEPOIS: pouso livre além do poste; WASD volta ao normal",
++                    DebugPanel.PANEL_WIDTH + 18, 24);
++            var panel = new DebugPanel(world::snapshot);
++            panel.setShowHitboxes(true);
++            paintFrame(panel, graphics, crossing, 0, header);
++            paintFrame(panel, graphics, landed, DebugPanel.PANEL_WIDTH, header);
++        } finally {
++            graphics.dispose();
++        }
++        Path output = Path.of("target/task008-demo.png");
++        Files.createDirectories(output.getParent());
++        assertTrue(ImageIO.write(image, "png", output.toFile()));
++    }
++
++    /** Isola o estado gráfico de cada quadro para reproduzir o mesmo painel do launcher. */
++    private static void paintFrame(DebugPanel panel, Graphics2D original, DebugSnapshot snapshot, int x, int y) {
++        Graphics2D graphics = (Graphics2D) original.create();
++        try {
++            graphics.translate(x, y);
++            graphics.clipRect(0, 0, DebugPanel.PANEL_WIDTH, DebugPanel.PANEL_HEIGHT);
++            panel.render(graphics, snapshot);
++        } finally {
++            graphics.dispose();
++        }
++    }
++}
+--- a/tools/checkpoint_rodada.py
++++ b/tools/checkpoint_rodada.py
+@@ -15,7 +15,8 @@
+ def state():
+     """Lê apenas fontes, scripts e documentos textuais da rodada."""
+     return {p.relative_to(ROOT).as_posix(): p.read_text(encoding="utf-8-sig")
+-            for p in ROOT.rglob("*") if p.is_file() and p.suffix.lower() in EXTENSIONS
++            for p in ROOT.rglob("*") if p.is_file()
++            and (p.suffix.lower() in EXTENSIONS or p.name == ".gitignore")
+             and not any(part in EXCLUDED for part in p.relative_to(ROOT).parts)}
+ 
+ 

@@ -1,0 +1,56 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1446 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-032 - HUD e ajuda) Tj T*
+() Tj T*
+(Objetivo: tornar controles e estados existentes compreensíveis ao testador.) Tj T*
+(Base aprovada: TASK-031, 235 JUnit e 25 Python.) Tj T*
+(Diagnóstico: HUD já publicava HP, vigor, recargas, indisponibilidade, Freeze e) Tj T*
+(colisão sólida; evitada duplicação de regras. Adicionado painel F1, sem conflito) Tj T*
+(com atalhos, com controles, significado dos recursos, dash seletivo e estados reais.) Tj T*
+(Ajuda usa o mesmo canvas escalonado da viewport e não pausa a simulação.) Tj T*
+(Arquivos: DebugPanel.java, DebugLauncher.java, HelpPresentationTest.java.) Tj T*
+(Teste verifica binding, alternância, valores publicados, três dimensões e igualdade) Tj T*
+(com runtime de referência. Regressões HUD anteriores permanecem intactas.) Tj T*
+(Comando: python tools/qualidade.py --offline --task 032) Tj T*
+(Totais reais, logs e aceite técnico: TASK-032-qualidade.json e TASK-032-testes.txt.) Tj T*
+(Checkpoints/diff padronizados; próxima TASK-033.) Tj T*
+(Limites: fonte acompanha escala da janela, podendo ficar pequena em janelas muito) Tj T*
+(reduzidas; legibilidade final e homologação humana continuam pendentes. Sem novos) Tj T*
+(custos, cooldowns, comandos de gameplay ou dependências.) Tj T*
+() Tj T*
+(## Resultado final observado) Tj T*
+(Validação local aprovada: 236 JUnit e 25 Python; zero falhas.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-032 - página 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1842
+%%EOF

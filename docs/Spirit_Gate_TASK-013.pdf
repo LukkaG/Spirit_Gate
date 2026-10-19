@@ -1,0 +1,82 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3089 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-013 - Pipeline de validacao de assets) Tj T*
+() Tj T*
+(Baseline limpo: 202 testes, zero falhas/erros/ignorados. Arquivos previstos: ferramentas) Tj T*
+(Python, manifest de assets e documentacao. Risco restrito a ferramentas offline;) Tj T*
+(gameplay preservado.) Tj T*
+() Tj T*
+(Implementado leitor PNG RGB/RGBA 8 bits sem dependencias externas, com assinatura, CRC,) Tj T*
+(filtros e limites. Inventario deterministico inclui dimensoes, SHA-256, grade, alfa,) Tj T*
+(origem, camada, pivot, offset e recortes. Formatos PNG nao suportados ficam pendentes.) Tj T*
+(Coordenadas invalidas, recortes sobrepostos, bordas ocupadas, frame vazio, alfa parcial) Tj T*
+(e fundo opaco em personagens sao reportados. Inspecao de pixels nao comprova qualidade) Tj T*
+(artistica nem detecta todas as linhas internas: revisao humana obrigatoria vinculada ao) Tj T*
+(hash.) Tj T*
+() Tj T*
+(Contrato formal: 64x64; IDLE 1x4, WALK 4x4, RUN 4x4, PUNCH 3x4, HIT 2x4 e KO 3 FRONT,) Tj T*
+(total 59. Nenhum personagem aprovado presente. Exportacao de manifest Java Properties e) Tj T*
+(atlas ocorre exclusivamente para assets VALIDADO; nenhum atlas de producao foi gerado) Tj T*
+(nesta rodada.) Tj T*
+() Tj T*
+(Inventario real: 228 PNGs, {'REPROVADO': 228}. Fontes PNG/Aseprite e recortes anteriores) Tj T*
+(preservados. Nenhuma imagem foi gerada ou importada da conversa.) Tj T*
+() Tj T*
+(Cinco testes Python aprovados: PNG valido, determinismo, dimensoes invalidas, 59) Tj T*
+(frames/frame ausente, fundo irregular/opaco, sobreposicao e aprovacao por hash. Fixtures) Tj T*
+(temporarias sinteticas excluidas da producao. Suite Maven final: consultar) Tj T*
+(TASK-013-final.log e TASK-013-testes.txt. Nenhum Java ou teste historico editado.) Tj T*
+() Tj T*
+(Reproducao: python -m unittest discover -s tools -p test_assets.py -v; python) Tj T*
+(tools/validar_assets.py; mvn.cmd -Dmaven.repo.local=.maven-repository -f server/pom.xml) Tj T*
+(clean test. Manifest: assets/manifest-assets.json; integridade: TASK-013-assets.json.) Tj T*
+(Repeticao comparada byte a byte em TASK-013-determinismo.json.) Tj T*
+() Tj T*
+(## Checklist Aseprite) Tj T*
+() Tj T*
+(- Trabalhar em copia, preservar fontes e conferir grade 32x32/64x64.) Tj T*
+(- Conferir todos os 59 frames, quatro direcoes, KO frontal e indices contiguos.) Tj T*
+(- Remover fundo, revisar pixels semitransparentes, linhas de corte e bordas ocupadas.) Tj T*
+(- Conferir alinhamento, escala e pivot constante em todos os frames.) Tj T*
+(- Conferir continuidade de tiles, paleta e leitura artistica manualmente.) Tj T*
+(- Registrar review.approvedSha256 somente apos aprovacao humana; qualquer edicao) Tj T*
+(invalida o hash.) Tj T*
+(- Reexecutar pipeline e usar somente exportacoes VALIDADO no renderer.) Tj T*
+() Tj T*
+(O QUE FOI REALMENTE EXECUTADO: inventario offline, testes sinteticos e suite. O QUE) Tj T*
+(AINDA EXIGE O USUARIO: revisar/exportar arte no Aseprite e aprovar visualmente. Ausencia) Tj T*
+(de personagem aprovado mantem fallback geometrico.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-013 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+3485
+%%EOF

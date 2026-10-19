@@ -1,0 +1,202 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R] /Count 3 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3073 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# Rodada autônoma Spirit Gate - TASK-007 a TASK-011) Tj T*
+() Tj T*
+(Planejamento fornecido pelo usuário em 18/10/2026. Fonte de verdade: checkout local,) Tj T*
+(base TASK-006.1 com 170 testes aprovados e teste de parede presente. Windows 10 amd64,) Tj T*
+(Java/jpackage Temurin 17.0.20.1, Maven 3.10.0. Sem Git nesta pasta; checkpoints locais e) Tj T*
+(diffs isolados em cada etapa. Sem push, publicação, banco ou integração de rede.) Tj T*
+() Tj T*
+(Rodada concluída na TASK-011. Todas as cinco tarefas estão IMPLEMENTADAS, com automação) Tj T*
+(aprovada. A conferência local do EXE foi realizada; a homologação humana posterior) Tj T*
+(continua pendente.) Tj T*
+() Tj T*
+(| Task | Testes inicial -> final | Resultado |) Tj T*
+(|---|---|---|) Tj T*
+(| 007 | 170 -> 171 | Pacote e EXE local aprovados |) Tj T*
+(| 008 | 171 -> 177 | Demo e colisões aprovados |) Tj T*
+(| 009 | 177 -> 189 | Estados e feedback do HUD aprovados |) Tj T*
+(| 010 | 189 -> 202 | Sequências e repetição offline aprovadas |) Tj T*
+(| 011 | 202 -> 202 | RC reconstruída, auditada e executada |) Tj T*
+() Tj T*
+(Todos os resultados finais têm zero falhas, erros ou ignorados. São 32 testes novos; os) Tj T*
+(26 arquivos de teste originais e os baselines históricos foram preservados.) Tj T*
+() Tj T*
+(## TASK-007 - Pacote Windows portátil) Tj T*
+() Tj T*
+(Status: IMPLEMENTADA. AUTOMATIZADO APROVADO; EXECUCAO LOCAL CONFERIDA. EXE abriu e) Tj T*
+(fechou normalmente fora dos fontes, em pasta com espaços, sem Java/Maven no PATH.) Tj T*
+(Captura e JSON de evidência disponíveis. Inspeção de sockets indisponível por restrição) Tj T*
+(do ambiente; nenhuma homologação externa foi declarada.) Tj T*
+() Tj T*
+(Testes: inicial 170; final 171, zero falhas/erros/ignorados. Mudanças: build com) Tj T*
+(jpackage/jlink, staging por lista permitida, runtime integrado com jdk.random,) Tj T*
+(manifest/inventário/SHA-256 e teste de entrada sem JFrame.) Tj T*
+() Tj T*
+(Artefatos: [relatório]\(TASK-007.md\), [PDF]\(Spirit_Gate_TASK-007.pdf\),) Tj T*
+([testes]\(TASK-007-testes.txt\), [log]\(TASK-007-final.log\), [diff]\(TASK-007.diff\). ZIP) Tj T*
+(0.7.0-task007 em dist; candidato consolidado será gerado na TASK-011.) Tj T*
+() Tj T*
+(Pendências manuais: outro Windows sem Java/Maven, controles e sensação de jogo. Nenhuma) Tj T*
+(implementação foi reservada ao usuário nesta rodada.) Tj T*
+() Tj T*
+(## TASK-008 - Arbustos e poste leves) Tj T*
+() Tj T*
+(Status: IMPLEMENTADA. AUTOMATIZADO APROVADO. Testes: inicial 171; final 177, zero) Tj T*
+(falhas/erros/ignorados. Falha inicial de limpeza de arquivos somente leitura do jpackage) Tj T*
+(foi corrigida no build antes das mudanças de cenário e a base foi repetida com sucesso.) Tj T*
+() Tj T*
+(Mudanças: variante demo usada pelo runtime, dois arbustos e um poste SOFT_OBSTACLE com) Tj T*
+(hitboxes explícitas, snapshot imutável e Java2D. Mapa original/replay preservados. Seis) Tj T*
+(testes novos cobrem colisões, passagem, pouso e renderização pura.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-007 a TASK-011 - página 1/3) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 2973 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+() Tj T*
+(Artefatos: [relatório]\(TASK-008.md\), [PDF]\(Spirit_Gate_TASK-008.pdf\),) Tj T*
+([testes]\(TASK-008-testes.txt\), [diff]\(TASK-008.diff\), [captura]\(TASK-008-demo.png\) e) Tj T*
+(logs inicial/final.) Tj T*
+() Tj T*
+(Pendências manuais: roteiro de três minutos para WASD, Shift, parede, hitboxes e R. A) Tj T*
+(captura é renderizada; homologação humana ainda pendente.) Tj T*
+() Tj T*
+(## TASK-009 - HUD contextual) Tj T*
+() Tj T*
+(Status: IMPLEMENTADA. AUTOMATIZADO APROVADO. Testes: inicial 177; final 189, zero) Tj T*
+(falhas/erros/ignorados. Doze casos novos e captura renderizada em quatro estados.) Tj T*
+() Tj T*
+(Mudanças: views imutáveis, mapper executado na simulação,) Tj T*
+(disponibilidade/vigor/recarga/atividade/espera e motivos temporários reais de cast.) Tj T*
+(Bloqueio deriva do deslocamento efetivo antes da recuperação, sem inferir parede pelo) Tj T*
+(cursor. Nenhuma mudança nas regras ou na fila; lastEvent histórico preservado.) Tj T*
+() Tj T*
+(Artefatos: [relatório]\(TASK-009.md\), [PDF]\(Spirit_Gate_TASK-009.pdf\),) Tj T*
+([testes]\(TASK-009-testes.txt\), [diff]\(TASK-009.diff\), [captura]\(TASK-009-hud.png\) e logs) Tj T*
+(inicial/final.) Tj T*
+() Tj T*
+(Pendências manuais: legibilidade e transições no HUD jogando. Espera/liberação) Tj T*
+(automatizadas no mapper e domínio; R determinístico será acrescentado na etapa seguinte.) Tj T*
+() Tj T*
+(## TASK-010 - Sequências determinísticas) Tj T*
+() Tj T*
+(Status: IMPLEMENTADA. AUTOMATIZADO APROVADO. Testes: inicial 189; final 202, repetidos) Tj T*
+(offline com os mesmos resultados por classe e zero falhas/erros/ignorados. Treze casos) Tj T*
+(novos. Os 26 arquivos originais de teste estão intactos e os baselines históricos foram) Tj T*
+(preservados.) Tj T*
+() Tj T*
+(Mudanças: extração interna do tick real do runtime e fábrica injetável para teste;) Tj T*
+(sequências reais de fila/bindings, R, morte, recursos, Freeze e física. Um bug de) Tj T*
+(apresentação foi reproduzido por teste antes de corrigir: saldo insuficiente arredondado) Tj T*
+(para 35/35 ou55/55. Corrigido somente o texto redundante; regras de vigor mantidas.) Tj T*
+() Tj T*
+(Artefatos: [relatório e lacunas antes/depois]\(TASK-010.md\),) Tj T*
+([PDF]\(Spirit_Gate_TASK-010.pdf\), [testes]\(TASK-010-testes.txt\), [diff]\(TASK-010.diff\),) Tj T*
+(logs completos final/offline e reprodução/correção do bug.) Tj T*
+() Tj T*
+(Pendências manuais: apenas conferência de sensação e transições jogando. Reinício e) Tj T*
+(manutenção dos objetos do demo agora estão cobertos pelo caminho de produção sem) Tj T*
+(sleep/JFrame. Nenhum bloqueio automatizado permanece.) Tj T*
+() Tj T*
+(## TASK-011 - RC e kit de homologação) Tj T*
+() Tj T*
+(Status: IMPLEMENTADA. AUTOMATIZADO APROVADO; EXECUCAO LOCAL CONFERIDA. Base e build) Tj T*
+(final com 202 testes, zero falhas/erros/ignorados. O pacote foi gerado dos fontes) Tj T*
+() Tj T*
+(Spirit Gate - TASK-007 a TASK-011 - página 2/3) Tj T*
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 2908 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(consolidados, sem reaproveitar o JAR histórico.) Tj T*
+() Tj T*
+(RC: dist/SpiritGate-0.11.0-rc1-20261018T220040Z-b2e659ed-portable.zip, 29.359.239 bytes.) Tj T*
+(SHA-256: 7484f90f5de5ca0475c8d73a918a8868b20a089d5a3fb3a12dd2e40f5fc19d01. Sidecar e) Tj T*
+(manifest externo junto ao ZIP. Versão anterior preservada.) Tj T*
+() Tj T*
+(Auditoria independente: ZIP íntegro, 149 arquivos, manifest com 148, inventário com 147;) Tj T*
+(122 classes idênticas à compilação atual, sem arquivos de teste/privados ou legado de) Tj T*
+(banco/servidor. Verificador recusou uma cópia adulterada, sem alterar o original.) Tj T*
+(Limitações de busca de credenciais são explícitas.) Tj T*
+() Tj T*
+(EXE executado em pasta com espaços fora dos fontes e com PATH sem Java/Maven. Módulos do) Tj T*
+(processo confirmam jvm.dll do runtime integrado; janela e processo filho fecharam com) Tj T*
+(código 0. Captura real mostra objetos leves e HUD atualizados. Inspeção de sockets por) Tj T*
+(CIM indisponível; não se declara validação dinâmica de rede.) Tj T*
+() Tj T*
+(Artefatos: [relatório]\(TASK-011.md\), [PDF]\(Spirit_Gate_TASK-011.pdf\),) Tj T*
+([testes]\(TASK-011-testes.txt\), [log completo]\(TASK-011-final.log\),) Tj T*
+([diff]\(TASK-011.diff\), [auditoria]\(TASK-011-auditoria.json\), [smoke]\(TASK-011-portable-) Tj T*
+(smoke.json\), [captura real]\(TASK-011-exe.png\), [estados do HUD]\(TASK-011-hud.png\),) Tj T*
+([changelog RC]\(CHANGELOG-RC.md\) e [guia do tester]\(LEIA-ME-TESTER.txt\).) Tj T*
+() Tj T*
+(Pendências manuais: seguir [roteiro por tarefa]\(kit-homologacao/ROTEIRO-HOMOLOGACAO.md\)) Tj T*
+(em outro Windows x64 sem Java/Maven; usar [modelo de bug]\(kit-homologacao/MODELO-RELATO-) Tj T*
+(BUG.md\). EXE sem assinatura e espera de saída ocupada permanecem limitações. Nenhuma) Tj T*
+(pendência de implementação foi transferida ao usuário.) Tj T*
+() Tj T*
+(## Integridade da entrega e encerramento) Tj T*
+() Tj T*
+(PDFs e diffs individuais estão em docs/TASK-007 a TASK-011. Os JSON locais em .task-) Tj T*
+(checkpoints preservam preimagens e hashes das etapas; não integram o pacote portátil. O) Tj T*
+(diff é textual e os PDFs/capturas são entregues separadamente. Falhas intermediárias de) Tj T*
+(harness/limpeza foram corrigidas, mantidas em logs e explicadas; a falha de precisão do) Tj T*
+(HUD foi reproduzida antes da correção, sem mudar o teste para mascará-la.) Tj T*
+() Tj T*
+(Não há bloqueios automatizados em aberto, nova dependência externa de runtime ou) Tj T*
+(alteração em PostgreSQL/Kryonet/login. A suíte offline estável confirma execução com) Tj T*
+(dependências locais. O pacote inclui apenas a arena e runtime necessários. Não se) Tj T*
+(iniciou TASK-012 ou outra mecânica. O próximo passo é a revisão humana das cinco) Tj T*
+(entregas, sem exigir implementação adicional do usuário.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-007 a TASK-011 - página 3/3) Tj T*
+ET
+endstream
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000133 00000 n 
+0000000230 00000 n 
+0000000356 00000 n 
+0000003481 00000 n 
+0000003607 00000 n 
+0000006632 00000 n 
+0000006758 00000 n 
+trailer
+<< /Size 10 /Root 1 0 R >>
+startxref
+9718
+%%EOF

@@ -1,0 +1,415 @@
+--- a/CHANGELOG-PROTOTIPO.md
++++ b/CHANGELOG-PROTOTIPO.md
+@@ -43,3 +43,9 @@
+ - Não existe física contínua, rollback, XP, skills especiais, movimentação em rede, inventário visual, persistência ou PvP nesta entrega.
+ - Escala de depuração em pixels, ainda sem conversão física para metros.
+ - Autenticação antiga deve ser substituída antes de publicar qualquer servidor na internet.
++# 0.21.0-rc1 — TASK-017 a TASK-021
++
++Auditoria reproduzível da base; autoria/revisão de 59 frames; pacote visual
++versionado opcional e fallback; câmera pura e janela redimensionável com mira
++em coordenadas de mundo. Gameplay preservado. Arte e homologação humana pendentes.
++
+--- a/README-PROTOTIPO.md
++++ b/README-PROTOTIPO.md
+@@ -324,3 +324,25 @@
+ Build: tools\build-windows-portable.ps1 -Version 0.16.0-rc1 -MavenRepository .maven-repository -TesterKitDirectory docs\kit-homologacao-012-016.
+ Python 3 (biblioteca padrao) e ferramenta de build/auditoria; nao dependencia do jogo.
+ Homologacao humana, outro Windows e arte final permanecem pendentes.
++# Rodada TASK-017 a TASK-021 — 0.21.0-rc1
++
++Relatórios individuais em `docs/TASK-017.md` a `docs/TASK-021.md`; kit humano em
++`docs/kit-homologacao-017-021`. A janela aceita redimensionamento proporcional,
++com nearest-neighbor e conversão de mira em coordenadas de mundo. HUD/margens
++não recebem mira. Arena padrão continua 960x640; mapas maiores só nos testes.
++
++Autoria: `python tools/revisar_sprites.py template NOVA_PASTA`. Revisão:
++`python tools/revisar_sprites.py review RAIZ MANIFEST NOVA_PASTA`. Importação
++Aseprite: `python tools/revisar_sprites.py aseprite PNG JSON NOVO_MANIFEST`.
++Exportação aceita json-array, nomes ACTION.DIRECTION.INDEX, 100ms, 64x64,
++sem trim/rotate/pack. Prévia e relatórios não aprovam arte.
++
++Pacote visual opcional v1: `python tools/pacote_visual.py RAIZ MANIFEST NOVA_PASTA`.
++Manifest JSON exige packageVersion=1, assetId estável e um assets[] character
++validado pelo pipeline TASK-013, com review.origin e approvedSha256 do arquivo
++exato aprovado pelo humano. Build admite `-VisualManifest MANIFEST -VisualRoot RAIZ`.
++Sem pacote, ou com pacote inválido, o launcher usa fallback. Nenhuma arte
++existente foi aprovada. Zoom 1 a 4: API `DebugPanel.setCameraZoom`, sem atalho novo.
++
++Build: `powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-windows-portable.ps1 -Version 0.21.0-rc1 -MavenRepository .maven-repository -TesterKitDirectory docs/kit-homologacao-017-021`.
++
+--- /dev/null
++++ b/docs/RELATORIO-TASK-017_021.md
+@@ -0,0 +1,57 @@
++# Spirit Gate - Relatório consolidado TASK-017 a TASK-021
++
++18/10/2026. Trabalho concluído no Projeto-K local. Todas as etapas passaram pelos controles automatizados disponíveis. Aprovação artística e homologação humana continuam pendentes.
++
++## Entrega executável
++
++ZIP final: dist/SpiritGate-0.21.0-rc1-20261019T001737Z-546ce1c5-portable.zip
++
++Tamanho: 29.391.539 bytes.
++
++SHA-256: 303f469b87aa0752d6dcd44e21ae5efef78295cf971884976939b1d8ae6cc534
++
++Extraia integralmente e abra SpiritGate/SpiritGate.exe. Java 17 está integrado. Preserve app/ e runtime/. O EXE não tem assinatura. Kit de teste acompanha o ZIP. O candidato intermediário 539628a7 permanece no dist, mas não é o indicado para entrega.
++
++## O que foi realizado
++
++TASK-017: reexecutada a auditoria da base original 0.16.0-rc1. Confirmados tamanho, hash documentado, manifest, inventário, classes do JAR, runtime e PE x64. 216 JUnit e 12 Python verdes. Controle negativo rejeitado e dois smokes Windows locais aprovados. Sem correção de gameplay necessária.
++
++TASK-018: ferramenta de autoria/revisão baseada no pipeline TASK-013, template transparente vazio com exatamente 59 posições 64x64, índice com ação/direção/frame/duração/pivot, previews HTML e relatório por arquivo. Importação Aseprite estrita, sem autocorreção. Testes de ordem, direção, ausência, pivots, alfa, sobreposição e hash. 216 JUnit e 16 Python verdes.
++
++TASK-019: estendido o loader existente para pacote visual v1, com identidade estável, SHA e origem de revisão, 59 recortes, pivots/offsets e dimensões. Ativação opcional junto ao EXE, uma vez na inicialização; corrupção/ausência mantém fallback. Staging por whitelist e auditoria do pacote. Fixtures exclusivamente sintéticas nos testes. 219 JUnit e 18 Python verdes.
++
++TASK-020: ArenaViewport pura para mundo/tela, limites da câmera, zoom inteiro 1 a 4, escala proporcional e letterbox. Renderer aplica câmera ao mundo e mantém HUD fixo no canvas. Janela redimensionável. Shift/Q convertem mira no momento do comando. 223 JUnit e 18 Python verdes, incluindo comparação integral dos snapshots, colisões, reinício e render puro.
++
++TASK-021: clean rebuild de 0.21.0-rc1, repetição offline, auditoria do ZIP original, controle negativo, teste de distribuição visual sintética e smokes Windows padrão/mapa. Kit humano, documentação, PDFs, diffs, checkpoints e inventário de entregas consolidados.
++
++## Preservação e ajustes
++
++99 arquivos Java históricos de domínio/testes comparados sem alteração. Os 216 testes da base foram mantidos; sete novos testes Java e seis Python acrescentados ao total. Movimento, SOLID/SOFT, dash seletivo, retorno, vigor, Criostase, Freeze, custos/danos/cooldowns, FIFO, morte, R e replays continuam cobertos pela suíte.
++
++Os 228 PNGs preservaram seus SHA-256 e continuam sem aprovação; nenhuma imagem artística foi redimensionada, recortada ou substituída. Produção segue no fallback geométrico. Template vazio e capturas sintéticas estão identificados. Não foi gerado atlas de produção.
++
++Ocorrências resolvidas: argumento Maven passou a ser invocado com aspas no PowerShell; BOM de relatório removido para o gerador PDF; corrigida codificação textual de relatórios; fixture nova de câmera ajustada para alvo visível relativo ao spawn real, após recusa correta de alvo fora da viewport. Nenhuma asserção ou baseline histórico alterado. Logs da primeira execução foram preservados.
++
++## Evidências e reprodução
++
++Relatórios por etapa: docs/TASK-017.md a TASK-021.md e Spirit_Gate_TASK-NNN.pdf. Diffs por etapa: docs/TASK-NNN.diff. Referências da base e estados finais: .task-checkpoints/TASK-NNN-before.json e after.json; sem Git/push.
++
++Logs de Java/Python por etapa, TASK-021-build-final.log e TASK-021-offline.log. Auditoria final TASK-021-auditoria.json; controle negativo TASK-021-negativo.json; pacote sintético TASK-021-visual-distribuicao.json; preservação TASK-021-preservacao.json.
++
++Smokes finais: TASK-021-smoke.json e TASK-021-map-smoke.json. Capturas TASK-021-exe.png, TASK-021-mapa-exe.png e TASK-020-camera-sintetica.png. Template: docs/autoria-018; preview final: autoria-018/revisao-final/preview.html. Revisão dos PNGs: docs/revisao-fontes-021/preview.html e relatorio.json, com referências locais aos originais.
++
++Java: mvn.cmd -o '-Dmaven.repo.local=.maven-repository' -f server/pom.xml clean test
++
++Python: python -m unittest discover -s tools -p 'test_*.py'
++
++Build: powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-windows-portable.ps1 -Version 0.21.0-rc1 -MavenRepository .maven-repository -TesterKitDirectory docs/kit-homologacao-017-021
++
++Auditar: python tools/auditar_rc.py --zip ARQUIVO --report RELATORIO
++
++## Limites e pendências
++
++Smokes ocorreram neste Windows, em pasta com espaços fora do checkout, PATH sem Java/Maven e JVM integrada comprovada. Ambas as variantes encerraram com código 0. Não houve homologação em outro computador, sessão humana de jogabilidade ou auditoria Linux. Inspeção de sockets por CIM indisponível. Hashes verificam integridade; não substituem assinatura/autenticidade ou auditoria absoluta de segredos.
++
++Mapa de produção continua 960x640. Mundo maior foi exercitado somente na transformação sintética. Zoom opcional existe como API de integração, sem atalho novo. Em janelas muito pequenas, redução prejudica legibilidade. Rota de retorno totalmente ocupada pode continuar aguardando saída, comportamento histórico.
++
++Aprovação real de arte exige revisão humana do SHA exato e origem registrada. Qualquer edição invalida aprovação anterior. Nenhum trabalho foi deixado como exercício obrigatório para concluir automação; permanecem somente os limites humanos/externos documentados. Sem rede, banco, credenciais, publicação ou multiplayer alterados. Rodada encerrada na TASK-021.
+--- /dev/null
++++ b/docs/TASK-021-testes.txt
+@@ -0,0 +1,38 @@
++TASK-021 - mvn clean test - BUILD SUCCESS
++{'tests': 223, 'failures': 0, 'errors': 0, 'skipped': 0}
++Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.
++
++com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.DomainSequenceRegressionTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaSequenceRegressionTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaViewportTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugLauncherEntrypointTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.DirectionalAnimationTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudPrecisionRegressionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudSkillFeedbackTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.prototype.LocalArenaMapTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SoftObstacleDemoTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.VisualPackageTest: tests=3, failures=0, errors=0, skipped=0
+--- /dev/null
++++ b/docs/TASK-021.md
+@@ -0,0 +1,19 @@
++# TASK-021 - Consolidação e kit de homologação
++
++18/10/2026. Validação automatizada local aprovada. Homologação humana pendente.
++
++Release final: dist/SpiritGate-0.21.0-rc1-20261019T001737Z-546ce1c5-portable.zip
++
++Tamanho: 29.391.539 bytes. SHA-256: 303f469b87aa0752d6dcd44e21ae5efef78295cf971884976939b1d8ae6cc534.
++
++Clean build real, sem reutilizar JAR anterior: 223 JUnit, zero falhas/erros/ignorados. Repetição offline: mesmos 223 verdes. Python: 18 testes verdes. Auditor oficial do ZIP original repetido após compilação offline: PASS. Inventário, manifest, Java 17, PE x64 e bytecode corrente conferidos. Controle negativo em cópia nova rejeitado. ZIP 0.16.0-rc1 preservado.
++
++Smokes reais Windows em pasta com espaços fora de Projeto-K, padrão e --map: JVM integrada comprovada, PATH somente Windows/System32, saídas 0, sem fechamento forçado. Evidências TASK-021-smoke.json, TASK-021-map-smoke.json e capturas correspondentes. Inspeção de rede por CIM indisponível; não afirmada ausência de sockets por esse controle. Sem teste em outro computador. Linux NÃO EXECUTADO.
++
++Distribuição sintética testada em cópia temporária: pacote revisado fictício aceito pelo auditor completo, imagem adulterada recusada mesmo com SHA externo recalculado. Cópia eliminada pelo TemporaryDirectory; não é release. Release real contém zero PNG/atlas/personagem aprovado. Os 228 PNGs conservaram seus hashes; 99 arquivos Java históricos de domínio/testes comparados sem alteração.
++
++Revisão final acrescentou marcadores de índice/pivot ao preview e recusou duração/pivot por frame incompatíveis com runtime no staging. Testes negativos de pacote foram isolados para cada caso. Regeneradas prévias em docs/revisao-fontes-021 e docs/autoria-018/revisao-final. Corrigida codificação dos relatórios 018/019 sem mudar resultados.
++
++Atualizados README-PROTOTIPO, changelog, LEIA-ME do pacote e kit humano: roteiro, modelo de bug, notas e mapa opcional. Novo LEIA-ME explica resize, mira, fallback e limites da câmera. O primeiro candidato intermediário 539628a7 foi preservado para rastreabilidade; somente o candidato 546ce1c5 é indicado para entrega.
++
++Artefatos finais: relatório consolidado MD/PDF, PDF/diff/checkpoint por task, logs, auditorias, inventário SHA e ZIP de entregas. Não houve push, publicação, acesso remoto, banco, credenciais ou mudança de multiplayer. Nenhuma TASK-022 iniciada.
+--- /dev/null
++++ b/docs/kit-homologacao-017-021/CHANGELOG-RESUMIDO.md
+@@ -0,0 +1,9 @@
++# 0.21.0-rc1 - TASK-017 a TASK-021
++
++- Auditoria da base 0.16.0-rc1 reproduzida, sem reescrever ZIP original.
++- Template vazio de 59 frames, revisão HTML/JSON e importação Aseprite estrita.
++- Integração opcional de pacote visual v1, com SHA/revisão e fallback para arquivo ausente ou inválido.
++- Câmera pura, zoom inteiro de integração, janela redimensionável e mira convertida para coordenadas de mundo.
++- Java 17 integrado, distribuição por whitelist e auditoria do ZIP real.
++
++Preservados física, combate, custos, cooldowns, Freeze, FIFO e replays. Sem arte aprovada; fallback geométrico. Sem mapas maiores em produção, rede, banco ou multiplayer. EXE sem assinatura. Homologação em outro computador e revisão humana pendentes. Linux não executado.
+--- /dev/null
++++ b/docs/kit-homologacao-017-021/MODELO-RELATO-BUG.md
+@@ -0,0 +1,14 @@
++# Relato de teste
++
++- Versão e SHA-256 do ZIP:
++- Windows/arquitetura, resolução e escala do sistema:
++- Modo padrão ou --map:
++- Resultado: aprovado / problema / não executado:
++- Passos exatos e frequência:
++- Resultado esperado:
++- Resultado observado:
++- Captura ou vídeo:
++- Mensagem de erro:
++- Java/Maven ausentes no computador de teste? Integridade conferida?
++
++Não incluir credenciais ou dados pessoais. Separar aprovação de jogabilidade de aprovação artística por SHA.
+--- /dev/null
++++ b/docs/kit-homologacao-017-021/ROTEIRO-HOMOLOGACAO.md
+@@ -0,0 +1,14 @@
++# Homologação humana - 0.21.0-rc1
++
++PENDENTE. Testes locais automatizados não equivalem a jogar ou testar outro PC.
++
++1. Conferir SHA externo e extrair todo o ZIP em pasta com espaços. Em outro Windows x64 sem Java/Maven, abrir SpiritGate/SpiritGate.exe. Preservar app/ e runtime/. EXE sem assinatura; não desativar proteções.
++2. WASD, Espaço, E (20 vigor), Q (55) e Shift (35): conferir custos, cooldowns e feedback, mira por mouse em quatro direções e diagonais. H: hitboxes. R: reinício. Sem nova mecânica de corrida.
++3. Colisões: andar bloqueia leves; dash atravessa leves/atores, bloqueia paredes e bordas, pousa em posição livre. Testar congelamento, morte e reinício. Rota de retorno inteiramente ocupada pode aguardar saída, limitação histórica.
++4. Redimensionar a janela para maior e menor; conferir proporção, barras laterais, mouse sobre arena, hitboxes, efeitos e HUD. HUD e margens não são alvos. A resolução padrão mantém arena 960x640. Redução muito pequena diminui legibilidade.
++5. Variante de mapa: em PowerShell na pasta SpiritGate, executar .\SpiritGate.exe --map mapa-demo.properties. Conferir aviso de tiles sintéticos e R retornando ao mesmo mapa. Reabrir sem argumentos retorna ao padrão. Schema continua 960x640.
++6. Fallback geométrico é intencional. Nenhum dos 228 PNGs foi aprovado. Pacotes futuros precisam revisão humana por SHA e origem documentada; nenhuma aprovação por nome do arquivo.
++
++Câmera/zoom 1 a 4 disponíveis como API de integração em DebugPanel.setCameraZoom; padrão 1, sem novo atalho. Mapas maiores exercitados somente por transformação sintética, sem habilitar schema de produção.
++
++Registrar resultado com MODELO-RELATO-BUG.md, versão e hash. Aprovação visual, jogabilidade e outro Windows continuam dependentes de relato humano. Não publicar automaticamente.
+--- /dev/null
++++ b/docs/kit-homologacao-017-021/mapa-demo.properties
+@@ -0,0 +1,74 @@
++# DEMONSTRACAO SINTETICA - sem arte Karakura ativada
++schemaVersion=1
++width=960
++height=640
++spawnX=135
++spawnY=340
++visual.count=3
++physical.count=7
++visual.0.id=piso
++visual.0.x=32
++visual.0.y=32
++visual.0.width=256
++visual.0.height=256
++visual.0.layer=0
++visual.0.rgb=245342
++visual.1.id=fachada-placeholder
++visual.1.x=320
++visual.1.y=80
++visual.1.width=160
++visual.1.height=288
++visual.1.layer=1
++visual.1.rgb=444c73
++visual.2.id=arbusto-placeholder
++visual.2.x=48
++visual.2.y=400
++visual.2.width=96
++visual.2.height=96
++visual.2.layer=1
++visual.2.rgb=467642
++physical.0.id=limite
++physical.0.x=0
++physical.0.y=0
++physical.0.width=960
++physical.0.height=640
++physical.0.category=WORLD_BOUNDARY
++physical.1.id=predio-a
++physical.1.x=346
++physical.1.y=112
++physical.1.width=110
++physical.1.height=228
++physical.1.category=SOLID_OBSTACLE
++physical.2.id=predio-b
++physical.2.x=594
++physical.2.y=310
++physical.2.width=112
++physical.2.height=174
++physical.2.category=SOLID_OBSTACLE
++physical.3.id=muro
++physical.3.x=275
++physical.3.y=500
++physical.3.width=145
++physical.3.height=44
++physical.3.category=SOLID_OBSTACLE
++physical.4.id=arbusto-a
++physical.4.x=70
++physical.4.y=420
++physical.4.width=36
++physical.4.height=40
++physical.4.category=SOFT_OBSTACLE
++physical.4.kind=BUSH
++physical.5.id=arbusto-b
++physical.5.x=160
++physical.5.y=420
++physical.5.width=36
++physical.5.height=40
++physical.5.category=SOFT_OBSTACLE
++physical.5.kind=BUSH
++physical.6.id=poste
++physical.6.x=250
++physical.6.y=425
++physical.6.width=14
++physical.6.height=30
++physical.6.category=SOFT_OBSTACLE
++physical.6.kind=POST
+--- a/tools/build-windows-portable.ps1
++++ b/tools/build-windows-portable.ps1
+@@ -243,6 +243,12 @@
+ Q Criostase (55 vigor); Shift Passo Relampago (35 vigor), mirando com mouse;
+ H mostrar hitboxes; R reiniciar. Feche a janela para sair.
+ 
++Janela redimensionavel: arena logica 960x640, proporcao preservada e margens.
++Mira Shift/Q usa coordenadas do mundo; HUD e margens nao sao alvos.
++Mapa opcional: .\SpiritGate.exe --map mapa-demo.properties, se incluido no kit.
++Camera/zoom de integracao nao altera fisica; mapas maiores apenas em testes.
++Arte nao aprovada permanece fora do pacote; fallback geometrico e intencional.
++
+ Mantenha app/ e runtime/ junto ao EXE. O runtime Java 17 esta integrado.
+ O executavel nao e assinado; avisos do Windows podem ocorrer. Nao desative
+ protecoes. Confira a origem e o SHA-256 fornecido com a distribuicao.
+--- a/tools/pacote_visual.py
++++ b/tools/pacote_visual.py
+@@ -20,6 +20,8 @@
+     result,_=inspect(root,entry)
+     if result['status'] != 'VALIDADO':
+         raise ValueError('arte nao aprovada ou invalida: '+ '; '.join(result['errors']+result['warnings']))
++    if any(f.get('durationMs',100)!=100 or f.get('pivot',entry['pivot'])!=entry['pivot'] for f in entry['frames']):
++        raise ValueError('pivot/duracao por frame incompativel com runtime')
+     # Pacote duravel usa nomes fixos, sem caminhos externos e sem fontes pendentes.
+     output.mkdir(parents=True,exist_ok=False)
+     shutil.copyfile(root/entry['path'],output/'character.png')
+--- a/tools/revisar_sprites.py
++++ b/tools/revisar_sprites.py
+@@ -83,7 +83,13 @@
+         results.append(result)
+         src = html.escape((root/entry['path']).resolve().as_uri(), quote=True)
+         labels = ' | '.join(html.escape(f"{i}: {f['state']}.{f['direction']}.{f['index']} pivot={f.get('pivot',entry.get('pivot'))}") for i,f in enumerate(actual))
+-        sections.append(f"<section><h2>{html.escape(entry['path'])}</h2><p>{result['sha256']} — {result['status']}</p><div class='sheet'><img src='{src}'></div><p>{labels}</p><pre>{html.escape(json.dumps(result,ensure_ascii=False,indent=2))}</pre></section>")
++        markers=[]
++        for i,f in enumerate(actual):
++            pivot=f.get('pivot',entry.get('pivot',[0,0]))
++            x,y=f['x']+pivot[0],f['y']+pivot[1]
++            markers.append(f"<text x='{f['x']+2}' y='{f['y']+9}' fill='red' font-size='8'>{i}</text><path d='M{x-4},{y}h8 M{x},{y-4}v8' stroke='magenta'/>")
++        overlay=f"<svg style='position:absolute;inset:0' width='{result.get('width',0)}' height='{result.get('height',0)}'>{''.join(markers)}</svg>"
++        sections.append(f"<section><h2>{html.escape(entry['path'])}</h2><p>{result['sha256']} — {result['status']}</p><div class='sheet'><img src='{src}'>{overlay}</div><p>{labels}</p><pre>{html.escape(json.dumps(result,ensure_ascii=False,indent=2))}</pre></section>")
+     (output/'relatorio.json').write_text(json.dumps({'schemaVersion':1,'artApproved':False,'assets':results},ensure_ascii=False,indent=2),encoding='utf-8')
+     (output/'preview.html').write_text("<!doctype html><meta charset='utf-8'><title>Revisao humana - sem aprovacao automatica</title><style>body{font:14px sans-serif;background:#ddd}section{border:1px solid #444;padding:12px}.sheet{width:max-content;background:repeating-conic-gradient(#aaa 0% 25%,#eee 0% 50%) 0/16px 16px;position:relative}.sheet:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#f008 1px,transparent 1px),linear-gradient(#f008 1px,transparent 1px);background-size:64px 64px;pointer-events:none}img{display:block;image-rendering:pixelated;max-width:none}pre{white-space:pre-wrap}</style><h1>REVISAO: nenhuma arte aprovada</h1><p>Grade 64px. Indices em ordem abaixo de cada imagem; pivot e alfa no relatorio. Originais preservados.</p>" + ''.join(sections),encoding='utf-8')
+     return results
+--- /dev/null
++++ b/tools/test_visual_distribution.py
+@@ -0,0 +1,57 @@
++"""Teste de integracao explicito: python tools/test_visual_distribution.py ZIP REPORT.
++
++Adiciona fixture sintetica SOMENTE em copia temporaria de um RC; recalcula todos
++os inventarios e exige auditoria completa. A copia nunca e entregue como release.
++"""
++import copy
++import hashlib
++import json
++from pathlib import Path
++import sys
++import tempfile
++import zipfile
++from auditar_rc import audit, AuditFailure
++from pacote_visual import stage
++import test_sprite_review
++
++
++def run(source, report):
++    fixture=test_sprite_review.SpriteReviewTest()
++    fixture.setUp()
++    try:
++        root=fixture.root
++        entry=copy.deepcopy(fixture.entry)
++        entry['review']={'origin':'FIXTURE SINTETICA EXCLUSIVA DE TESTE',
++            'approvedSha256':hashlib.sha256((root/'hero.png').read_bytes()).hexdigest()}
++        manifest=root/'source.json'
++        manifest.write_text(json.dumps(dict(packageVersion=1,assetId='synthetic.hero',assets=[entry])),encoding='utf-8')
++        stage(root,manifest,root/'visual')
++        with zipfile.ZipFile(source) as z:
++            contents={i.filename.removeprefix('SpiritGate/'):z.read(i) for i in z.infolist() if not i.is_dir()}
++        for p in (root/'visual').iterdir(): contents['visual/'+p.name]=p.read_bytes()
++        config=json.loads(contents.pop('manifest.json').decode('utf-8-sig'))
++        contents.pop('INVENTARIO-SHA256.txt')
++        contents['INVENTARIO-SHA256.txt']=''.join(hashlib.sha256(data).hexdigest()+'  '+name+'\n' for name,data in sorted(contents.items())).encode()
++        config['files']=[dict(path=name,sizeBytes=len(data),sha256=hashlib.sha256(data).hexdigest()) for name,data in sorted(contents.items())]
++        contents['manifest.json']=json.dumps(config).encode()
++        out=root/'synthetic-test-only.zip'
++        def write():
++            with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED) as z:
++                for name,data in contents.items():z.writestr('SpiritGate/'+name,data)
++            Path(str(out)+'.sha256').write_text(hashlib.sha256(out.read_bytes()).hexdigest()+'  '+out.name+'\n')
++            Path(str(out)+'.manifest.json').write_bytes(contents['manifest.json'])
++        write()
++        result={'checks':[]};audit(out,result)
++        assert any(c['id']=='pacote_visual_aprovado_sha' for c in result['checks'])
++        # Troca de hash revisado com ZIP/sidecar recalculado continua recusada.
++        contents['visual/character.png']+=b'ALTERADO'
++        write()
++        try: audit(out,{'checks':[]})
++        except (AuditFailure,ValueError): result['alteredVisualRejected']=True
++        else:raise AssertionError('Auditor aceitou arte alterada')
++        result.update(status='PASS',syntheticOnly=True,temporaryArchiveDestroyed=True)
++        report.write_text(json.dumps(result,indent=2),encoding='utf-8')
++    finally:fixture.doCleanups()
++
++
++if __name__=='__main__':run(Path(sys.argv[1]),Path(sys.argv[2]))
+--- a/tools/test_visual_package.py
++++ b/tools/test_visual_package.py
+@@ -1,5 +1,6 @@
+ """Distribuicao visual exercitada apenas em diretorios temporarios sinteticos."""
+ import hashlib
++import copy
+ import json
+ import unittest
+ import zipfile
+@@ -29,11 +30,15 @@
+             self.assertEqual(set(z.namelist()),{'SpiritGate/visual/'+n for n in ('review.json','character.properties','character.png')})
+ 
+     def test_reject_pending_missing_corrupt_hash_no_output(self):
+-        for case in ('pending','missing','hash','corrupt'):
++        original=copy.deepcopy(self.entry)
++        for case in ('pending','missing','hash','pivot','duration','corrupt'):
++            self.entry=copy.deepcopy(original)
+             config=self.config()
+             if case=='pending': self.entry['review']={}
+             if case=='missing': self.entry['frames'].pop()
+             if case=='hash': self.entry['review']['approvedSha256']='0'*64
++            if case=='pivot': self.entry['frames'][0]['pivot']=[0,0]
++            if case=='duration': self.entry['frames'][0]['durationMs']=200
+             if case=='corrupt': (self.root/'hero.png').write_bytes(b'corrupt')
+             p=self.root/'package.json'; p.write_text(json.dumps(config))
+             with self.subTest(case=case),self.assertRaises(ValueError): stage(self.root,p,self.root/case)

@@ -1,0 +1,71 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 2388 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-020 - Câmera, viewport e entrada) Tj T*
+() Tj T*
+(18/10/2026. Plano apresentado antes das edições: preservar mapa 960x640, criar) Tj T*
+(transformação pura, aplicar câmera somente ao mundo, converter mouse no momento do) Tj T*
+(comando e adaptar canvas à janela.) Tj T*
+() Tj T*
+(ArenaViewport implementa ida/volta mundo/tela, câmera com origem inteira e limites, zoom) Tj T*
+(inteiro 1 a 4, escala inteira quando cabe e redução proporcional quando a janela é) Tj T*
+(menor. Canvas lógico completo permanece 1260x750 \(arena 960x640 e HUD\). Letterbox) Tj T*
+(centralizado; interpolação nearest-neighbor. A janela agora permite redimensionamento.) Tj T*
+() Tj T*
+(DebugPanel separa desenho do mundo e HUD. Toda geometria, mapa, efeitos, trails, sprites) Tj T*
+(e hitboxes usa a mesma câmera e recorte. HUD acompanha escala do canvas, sem) Tj T*
+(deslocamento pela câmera. Câmera calculada do snapshot, sem timers ou mutação. Padrão) Tj T*
+(zoom=1 mantém origem zero e coordenadas históricas; setCameraZoom habilita zoom de) Tj T*
+(integração/teste, sem novo atalho.) Tj T*
+() Tj T*
+(Mouse permanece em tela até Shift/Q: conversão usa câmera atual no momento do comando,) Tj T*
+(mesmo sem novo evento de mouse. HUD e letterbox são alvos inválidos. Física, custos,) Tj T*
+(dano, alcance, FIFO e replays preservados.) Tj T*
+() Tj T*
+(Schema de mapa exige 960x640 e foi preservado. Transformação para mundo sintético) Tj T*
+(1920x1280 testada, sem mapas maiores em produção. Reinício deriva câmera novamente do) Tj T*
+(spawn.) Tj T*
+() Tj T*
+(Validação: 223 JUnit e 18 Python, zero falhas finais. Testes: identidade padrão,) Tj T*
+(resize/letterbox, zoom 1 a 4, limites/diagonais e ida/volta em mundo maior, Shift/Q com) Tj T*
+(câmera deslocada e resize, comparação integral dos snapshots incluindo colisões e) Tj T*
+(reinício, render repetido puro e HUD fixo. Evidência TASK-020-camera-sintetica.png.) Tj T*
+() Tj T*
+(Primeira execução: fixture nova escolheu alvo fora da região visível em zoom 4,) Tj T*
+(corretamente recusado. Corrigido cenário para alvo visível relativo ao spawn real;) Tj T*
+(preservada comparação integral com comando direto. Log inicial TASK-020-java-primeira-) Tj T*
+(tentativa.log; resultado final TASK-020-java.log. Nenhum teste antigo removido ou) Tj T*
+(alterado.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-020 - página 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2784
+%%EOF

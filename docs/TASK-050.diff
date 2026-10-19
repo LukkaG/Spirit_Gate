@@ -1,0 +1,130 @@
+--- /dev/null
++++ b/docs/TASK-050-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 259,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-050.md
+@@ -0,0 +1,5 @@
++# TASK-050 - IA PvE
++
++Maquina de estados PATROL, CHASE, ATTACK e RETURN. Percepcao exige alcance e linha desobstruida; perde alvo por distancia, limite de perseguicao ou morte. Retorno ao spawn reabilita patrulha. Movimento usa MovementService.moveContinuous e as mesmas paredes; IA nunca move jogador diretamente.
++
++Ataques com recarga de 36 ticks, defesa RPG reduz dano com minimo de 1. Estado e recargas dos inimigos persistem; ataque do jogador tambem guarda recarga. Testes deterministas de aquisicao, dano, morte, obstaculos e continuidade apos save. Nenhum sleep.
+--- a/server/src/main/java/com/projetok/rpg/EnemyService.java
++++ b/server/src/main/java/com/projetok/rpg/EnemyService.java
+@@ -45,20 +45,49 @@
+     void respawn(long tick,String region) {
+         for(Enemy e:current(region))if(e.hp==0&&e.definition.respawn()>0&&tick>=e.readyTick){e.hp=e.definition.hp();e.generation++;e.setPosition(e.home);e.behavior="PATROL";}
+     }
++    void update(String region,long tick,Position player,boolean alive,MovementService movement,CollisionService.Space space,java.util.function.IntConsumer damage,java.util.function.Predicate<Position> visible) {
++        for(Enemy e:current(region)) {
++            if(e.hp==0)continue;
++            double d=distance(e.getPosition(),player),homeDistance=distance(e.getPosition(),e.home);
++            if(!alive || homeDistance>e.definition.leash() || d>e.definition.aggro()*1.4) e.behavior="RETURN";
++            else if(d<=e.definition.aggro()&&visible.test(e.getPosition())&&!e.behavior.equals("RETURN"))e.behavior="CHASE";
++            if(e.behavior.equals("RETURN")) {
++                if(homeDistance<4){e.setPosition(e.home);e.behavior="PATROL";}
++                else moveToward(e,e.home,e.definition.speed(),movement,space);
++            } else if(e.behavior.equals("CHASE")||e.behavior.equals("ATTACK")) {
++                if(d<=46 && visible.test(e.getPosition())) {
++                    e.behavior="ATTACK";
++                    if(tick>=e.attackTick){damage.accept(e.definition.attack());e.attackTick=tick+36;}
++                } else moveToward(e,player,e.definition.speed(),movement,space);
++            } else {
++                Position patrol=new Position(e.home.x()+(tick/90%2==0?24:-24),e.home.y());
++                moveToward(e,patrol,e.definition.speed()*0.3f,movement,space);
++            }
++        }
++    }
++    private static double distance(Position a,Position b){return Math.hypot(a.x()-b.x(),a.y()-b.y());}
++    private static void moveToward(Enemy e,Position target,float speed,MovementService movement,CollisionService.Space space) {
++        Position p=e.getPosition(),direction=movement.direction(target.x()-p.x(),target.y()-p.y());
++        movement.moveContinuous(e,direction.x()*speed/30,direction.y()*speed/30,19,space);
++    }
+     Set<String> saveFlags() {
+         Set<String> result=new TreeSet<>();
+-        for(Enemy e:enemies)result.add("mob:"+e.spawn+":"+e.hp+":"+e.getPosition().x()+":"+e.getPosition().y()+":"+e.generation+":"+e.readyTick);
++        for(Enemy e:enemies)result.add("mob:"+e.spawn+":"+e.hp+":"+e.getPosition().x()+":"+e.getPosition().y()+":"+e.generation+":"+e.readyTick+":"+e.behavior+":"+e.attackTick);
+         return result;
+     }
+     void restore(Set<String> flags,CollisionService.Space space) {
+         Set<String> seen=new HashSet<>();
+         for(String f:flags)if(f.startsWith("mob:")) {
+-            String[] v=f.split(":");if(v.length!=7||!seen.add(v[1]))throw new IllegalArgumentException("Estado de mob invalido");
++            String[] v=f.split(":");if((v.length!=7&&v.length!=9)||!seen.add(v[1]))throw new IllegalArgumentException("Estado de mob invalido");
+             Enemy e=enemies.stream().filter(m->m.spawn.equals(v[1])).findFirst().orElseThrow(()->new IllegalArgumentException("Spawn ausente"));
+             e.hp=Integer.parseInt(v[2]);e.generation=Long.parseLong(v[5]);e.readyTick=Long.parseLong(v[6]);
+             float x=Float.parseFloat(v[3]),y=Float.parseFloat(v[4]);
+             if(e.hp<0||e.hp>e.definition.hp()||e.generation<1||e.readyTick<0||!new CollisionService().isFree(e,x,y,19,space))throw new IllegalArgumentException("Estado de inimigo invalido");
+             e.setPosition(new Position(x,y));
++            if(v.length==9) {
++                if(!Set.of("PATROL","CHASE","ATTACK","RETURN").contains(v[7]))throw new IllegalArgumentException("IA invalida");
++                e.behavior=v[7];e.attackTick=Long.parseLong(v[8]);if(e.attackTick<0)throw new IllegalArgumentException("Recarga invalida");
++            }
+         }
+     }
+ }
+--- a/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -105,7 +105,7 @@
+     public void collectLoot() { loot.collect(inventory,flags);message="Recompensas pendentes recolhidas quando houver espaco"; }
+     private long ticks;
+     public RpgSave save() {
+-        var persistent=new java.util.TreeSet<>(flags);persistent.removeIf(f->f.startsWith("stamina:")||f.startsWith("mob:"));persistent.add("stamina:"+stamina);persistent.addAll(enemies.saveFlags());
++        var persistent=new java.util.TreeSet<>(flags);persistent.removeIf(f->f.startsWith("stamina:")||f.startsWith("mob:")||f.startsWith("attack-until:"));persistent.add("stamina:"+stamina);persistent.add("attack-until:"+attackReadyTick);persistent.addAll(enemies.saveFlags());
+         return new RpgSave(identity,region,body.getPosition().x(),body.getPosition().y(),hp,xp,coins,inventory.snapshot(),equipment,quests,persistent,ticks);
+     }
+     public static RpgWorld restore(RpgSave state) {
+@@ -120,6 +120,7 @@
+         for(String flag:world.flags) {
+             if(flag.startsWith("ability-until:"))world.abilityReadyTick=Long.parseLong(flag.substring(14));
+             if(flag.startsWith("stamina:"))world.stamina=Integer.parseInt(flag.substring(8));
++            if(flag.startsWith("attack-until:"))world.attackReadyTick=Long.parseLong(flag.substring(13));
+         }
+         if(world.stamina<0||world.stamina>1000)throw new IllegalArgumentException("Vigor invalido");
+         world.enemies.restore(state.flags(),world.space);
+@@ -135,6 +136,7 @@
+         }
+         ticks++;
+         enemies.respawn(ticks,region);
++        enemies.update(region,ticks,body.getPosition(),hp>0,movement,space,n->receiveDamage(Math.max(1,n-defense())),p->lineClear(body.getPosition(),p));
+     }
+     public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message,maxHp(),level(),enemies.views(region)); }
+ }
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/EnemyAiTest.java
+@@ -0,0 +1,15 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class EnemyAiTest {
++    @Test void perceivesAttacksAndRestoresDeterministically() {
++        var w=EnemyRpgTest.forest();for(int i=0;i<40;i++)w.tick(0,0);
++        assertTrue(w.save().hp()<w.maxHp());assertEquals("ATTACK",w.snapshot().enemies().get(0).state());
++        var copy=RpgWorld.restore(w.save());for(int i=0;i<30;i++){w.tick(-1,0);copy.tick(-1,0);}assertEquals(w.save(),copy.save());
++        w.receiveDamage(10000);int deadHp=w.save().hp();for(int i=0;i<30;i++)w.tick(0,0);assertEquals(deadHp,w.save().hp());
++    }
++    @Test void obstaclesNeverContainEnemies() {
++        var w=EnemyRpgTest.forest();for(int i=0;i<160;i++)w.tick(0,-1);
++        for(var e:w.snapshot().enemies())assertFalse(e.x()>361&&e.x()<519&&e.y()>161&&e.y()<319);
++    }
++}

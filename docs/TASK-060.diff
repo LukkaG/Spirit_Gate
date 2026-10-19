@@ -1,0 +1,87 @@
+--- /dev/null
++++ b/docs/TASK-060-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 270,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-060.md
+@@ -0,0 +1,5 @@
++# TASK-060 - Ciclo de ambiente
++
++Ciclo visual de 2400 ticks, luminosidade entre 82% e 100%, calculada somente pelo tick publicado. Overlay aplicado ao mundo pelo renderer compartilhado; HUD permanece legivel. API permite desativar, arena historica tem valor padrao 100% e conserva seus snapshots. Controle do usuario sera integrado nas preferencias.
++
++Testes de periodicidade, limites e desativacao; suite completa. Captura desktop da TASK-059 gerou imagem preta neste ambiente e NAO foi considerada evidencia visual aprovada. Teste de processo e renderizacao automatizada serao registrados separadamente da homologacao humana.
+--- a/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ b/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -26,6 +26,11 @@
+     private final Supplier<DebugSnapshot> source;
+     private boolean showHitboxes;
+     private boolean showHelp;
++    private float ambientLight=1f;
++    /** Opcao visual explicitamente desativada por padrao na arena historica. */
++    public void setAmbientLight(float value) {
++        if(!Float.isFinite(value)||value<0.5f||value>1f)throw new IllegalArgumentException("Luz invalida");ambientLight=value;
++    }
+     /** Alterna ajuda sem pausar ou enviar comandos ao mundo. */
+     public void toggleHelp() { showHelp=!showHelp;repaint(); }
+     public boolean isHelpVisible() { return showHelp; }
+@@ -138,6 +143,7 @@
+         world.scale(viewport.zoom(),viewport.zoom());
+         world.translate(-viewport.originX(),-viewport.originY());
+         renderWorld(world,s,animations);
++        if(ambientLight<1f){world.setColor(new Color(8,12,35,Math.round((1f-ambientLight)*255)));world.fillRect(0,0,worldWidth,worldHeight);}
+         } finally {world.dispose();}
+         drawSidebar(canvas,s);
+         drawBottom(canvas,s);
+--- a/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
++++ b/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
+@@ -48,7 +48,7 @@
+             }
+         }
+         String[] displayedRegion={"village"};
+-        Timer timer = new Timer(33, e -> {var view=runtime.snapshot();if(!displayedRegion[0].equals(view.state().region())){displayedRegion[0]=view.state().region();panel.setLocalMap(RpgMaps.region(displayedRegion[0]));}panel.repaint();hud.update(view);});
++        Timer timer = new Timer(33, e -> {var view=runtime.snapshot();panel.setAmbientLight(com.projetok.rpg.EnvironmentCycle.light(view.ticks(),true));if(!displayedRegion[0].equals(view.state().region())){displayedRegion[0]=view.state().region();panel.setLocalMap(RpgMaps.region(displayedRegion[0]));}panel.repaint();hud.update(view);});
+         frame.addWindowListener(new WindowAdapter() { public void windowClosed(WindowEvent e) { timer.stop(); runtime.close(); } });
+         frame.addWindowFocusListener(new WindowAdapter() { public void windowLostFocus(WindowEvent e) { java.util.Arrays.fill(held, false); runtime.input(0, 0); } });
+         runtime.start(); timer.start(); frame.setVisible(true);
+--- /dev/null
++++ b/server/src/main/java/com/projetok/rpg/EnvironmentCycle.java
+@@ -0,0 +1,11 @@
++package com.projetok.rpg;
++/** Ciclo de 2400 ticks. Somente apresentacao; nunca altera combate. */
++public final class EnvironmentCycle {
++    private EnvironmentCycle() { }
++    public static float light(long tick,boolean enabled) {
++        if(tick<0)throw new IllegalArgumentException("Tick negativo");
++        if(!enabled)return 1;
++        double phase=(tick%2400)/2400.0;
++        return (float)(0.91+0.09*Math.cos(phase*Math.PI*2));
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/EnvironmentCycleTest.java
+@@ -0,0 +1,6 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class EnvironmentCycleTest {
++    @Test void deterministicOptionalAndPeriodic(){assertEquals(1f,EnvironmentCycle.light(0,true));assertEquals(EnvironmentCycle.light(100,true),EnvironmentCycle.light(2500,true));assertTrue(EnvironmentCycle.light(1200,true)>=0.82f);assertEquals(1,EnvironmentCycle.light(1200,false));}
++}

@@ -1,0 +1,54 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1332 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-075 - Integracao geral) Tj T*
+() Tj T*
+(Suite completa preserva 241 testes historicos e todos os incrementos. Campanha offline) Tj T*
+(ponta a ponta para ambos arquetipos, inventario/equipamento, quests, transicoes,) Tj T*
+(masmorra/chefe, corrupcao e restauracao de save. Stress offline 20000 ticks; rede com) Tj T*
+(falhas deterministicas 2500 ticks, dois processos de clientes e combate por TCP real ate) Tj T*
+(recompensa compartilhada.) Tj T*
+() Tj T*
+(Regressao reproduzida ANTES da correcao em TASK-075-regressao-backup-antes.log: arquivo) Tj T*
+(atual com formato Properties valido mas flag semanticamente corrompida podia substituir) Tj T*
+(backup bom. load/backup agora validam restauracao completa antes de qualquer copia;) Tj T*
+(falha preserva backup e exige recuperacao. Teste CorruptBackupProtectionTest protege) Tj T*
+(esse caso. Novo candidato offline sera reconstruido com essa correcao; 0.66.0-rc2) Tj T*
+(permanece preservado.) Tj T*
+() Tj T*
+(Corrigido ainda lifecycle do servidor fechado antes de start e cleanup de bind) Tj T*
+(malsucedido. Nenhuma conexao externa, alteracao de credenciais ou migracao de banco.) Tj T*
+(Homologacao em outra maquina/LAN e transicoes online continuam pendentes explicitamente.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-075 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1728
+%%EOF

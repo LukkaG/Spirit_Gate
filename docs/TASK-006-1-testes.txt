@@ -1,0 +1,40 @@
+TASK-006.1 - Resultado real dos testes - 18/10/2026
+
+Estado inicial: mvn clean test -q, executado antes das alteracoes.
+147 testes; 0 falhas, 0 erros e 0 ignorados. Exit code 0.
+
+Validacao final: mvn clean test, pasta Projeto-K/server.
+BUILD SUCCESS - compilacao Java release 17 - tempo Maven 11.917 s.
+Tests run: 169, Failures: 0, Errors: 0, Skipped: 0
+
+Resultados por classe (Surefire XML desta execucao):
+com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
+com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
+com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
+com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
+com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
+com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
+com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
+com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
+com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
+com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
+com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
+com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
+com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=11, failures=0, errors=0, skipped=0
+com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
+com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
+com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
+com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
+com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
+com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
+com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
+com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
+com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
+com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
+com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
+
+Todos os testes anteriores e seus baselines foram preservados.
+A unica alteracao em arquivo de teste anterior foi adicionar selectiveService() a fixture.
+MovementReplayTest e LightningStepZeroDirectionTest identicos ao estado inicial.
+22 testes novos; teste reservado do usuario NAO implementado.
+Captura renderizada inspecionada; confer?ncia humana interativa pendente.

@@ -1,0 +1,50 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 955 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-059 - Bau e recursos) Tj T*
+() Tj T*
+(Objetos declarativos: bau inicial com espada, ervas do bosque com duas pocoes e respawn) Tj T*
+(de 600 ticks, cache da ruina com tres pocoes. F coleta a ate 65 unidades, sem inferir) Tj T*
+(hitbox pelo desenho. Ba˙s abertos e tempo de respawn persistem. Inventario cheio nao) Tj T*
+(consome objeto.) Tj T*
+() Tj T*
+(Teste integrado de distancia, coleta unica, save e repeticao. Acrescentado diagnostico) Tj T*
+(--smoke nome captura.png para captura REAL da janela por Robot, sem gravar progresso.) Tj T*
+(Nao substitui homologacao humana.) Tj T*
+() Tj T*
+(Marco A automatizado: OfflineCycleTest percorreu criacao, conversa, quest, portal,) Tj T*
+(combate, loot, recompensa, compra, equipamento, save e retomada sem injetar progresso.) Tj T*
+(Pacote 0.58.0-rc1 gerado e preservado em dist, com Java integrado e hashes.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-059 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1350
+%%EOF

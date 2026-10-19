@@ -1,0 +1,46 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 775 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-048 - Arquetipos e habilidades) Tj T*
+() Tj T*
+(Guardian: 140 HP/18 ataque, Investida de 120 unidades usando varredura continua) Tj T*
+(existente, custo 25, recarga 90 ticks. Mystic: 100 HP/24 ataque, Restauracao de 35 HP,) Tj T*
+(custo 35, recarga 120 ticks. Parametros em archetypes.properties. Vigor maximo 100,) Tj T*
+(regeneracao de 0,5/tick. Recursos e recarga persistentes.) Tj T*
+() Tj T*
+(Habilidades RPG sao distintas das habilidades historicas; Passo Relampago/Criostase nao) Tj T*
+(foram reparametrizados. Validacao recusa morte, transicao, recarga, vigor insuficiente e) Tj T*
+(cura sem necessidade. Testes comprovam diferenca funcional, custo, repeticao e save.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-048 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1170
+%%EOF

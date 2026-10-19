@@ -1,0 +1,61 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1904 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-034 - Diagnóstico local explícito) Tj T*
+() Tj T*
+(Objetivo: pacote pequeno e revisável para relatos de bugs, sem coleta contínua.) Tj T*
+(Base aprovada: TASK-033, 237 JUnit e 25 Python.) Tj T*
+(Diagnóstico: não existia exportação técnica; copiar logs de build exporia caminhos.) Tj T*
+(Implementação: DiagnosticReport usa lista fechada de campos e F2 abre seletor) Tj T*
+(para salvar ZIP com único diagnostico.json. Operação CREATE_NEW recusa sobrescrita.) Tj T*
+(Inclui versão, família OS, arquitetura, versão JVM, janela, mapa DEFAULT/LOCAL,) Tj T*
+(etapa, ticks, contagem de atores, HP, gameOver e estados de habilidades.) Tj T*
+(Nenhuma rede, telemetria, leitura de ambiente/configuração, arquivo privado,) Tj T*
+(nome de ator, caminho local, mensagem/stack de erro ou gravação de entrada.) Tj T*
+(Erros são representados por marcador genérico; detalhes livres são deliberadamente) Tj T*
+(omitidos. JSON pode ser revisado antes de compartilhar; nada é enviado.) Tj T*
+(Arquivos: DiagnosticReport.java, DebugLauncher.java, DebugPanel.java e teste.) Tj T*
+(Testes: exclusão de nomes/caminhos/segredos injetados em evento e exceção, whitelist,) Tj T*
+(única entrada ZIP, dimensão inválida e não sobrescrita.) Tj T*
+(Reprodução: python tools/qualidade.py --offline --task 034) Tj T*
+(Resultados reais em TASK-034-qualidade.json, TASK-034-testes.txt e logs.) Tj T*
+(Checkpoints/diff padronizados; próxima TASK-035.) Tj T*
+(Limites: versão de desenvolvimento será consolidada na TASK-036. Não coleta crash) Tj T*
+(automaticamente. Seletor F2 requer teste humano; API de exportação foi automatizada.) Tj T*
+(Para relato, anexar passos de reprodução manualmente, após revisão pessoal do ZIP.) Tj T*
+() Tj T*
+(## Resultado final observado) Tj T*
+(Validação local aprovada: 239 JUnit e 25 Python; zero falhas.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-034 - página 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2300
+%%EOF

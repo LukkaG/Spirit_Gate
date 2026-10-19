@@ -1,0 +1,856 @@
+--- a/docs/HISTORICO-TECNICO.md
++++ b/docs/HISTORICO-TECNICO.md
+@@ -1,4 +1,18 @@
+ # Histórico técnico
++
++## 18/10/2026 - TASK-010: regressão determinística
++
++Treze testes novos combinam runtime/fila/bindings reais, recursos, dash, retorno
++a WASD, Freeze/ataque, morte/R, colisão, índice e extremos de float. O tick foi
++extraído internamente sem mudar agendador ou ordem, com fábrica de mundo controlada.
++Novos testes não usam sleep/JFrame. Os 26 arquivos originais de teste estão intactos.
++
++Bug de texto do HUD foi reproduzido antes da correção: saldo abaixo do custo
++arredondado para 35/35 ou55/55. Corrigido só o contador redundante no aviso.
++`mvn clean test` e repetição offline: 202 testes, zero falhas/erros/ignorados,
++mesma contagem/resultados por classe e baselines históricos preservados.
++
++Entrega: [TASK-010](TASK-010.md), PDF, testes, logs de reprodução/correção e diff.
+ 
+ ## 18/10/2026 - TASK-009: feedback contextual de habilidades
+ 
+--- a/docs/RELATORIO-FINAL-RODADA.md
++++ b/docs/RELATORIO-FINAL-RODADA.md
+@@ -31,3 +31,13 @@
+ Artefatos: [relatório](TASK-009.md), [PDF](Spirit_Gate_TASK-009.pdf), [testes](TASK-009-testes.txt), [diff](TASK-009.diff), [captura](TASK-009-hud.png) e logs inicial/final.
+ 
+ Pendências manuais: legibilidade e transições no HUD jogando. Espera/liberação automatizadas no mapper e domínio; R determinístico será acrescentado na etapa seguinte.
++
++## TASK-010 - Sequências determinísticas
++
++Status: IMPLEMENTADA. AUTOMATIZADO APROVADO. Testes: inicial 189; final 202, repetidos offline com os mesmos resultados por classe e zero falhas/erros/ignorados. Treze casos novos. Os 26 arquivos originais de teste estão intactos e os baselines históricos foram preservados.
++
++Mudanças: extração interna do tick real do runtime e fábrica injetável para teste; sequências reais de fila/bindings, R, morte, recursos, Freeze e física. Um bug de apresentação foi reproduzido por teste antes de corrigir: saldo insuficiente arredondado para 35/35 ou55/55. Corrigido somente o texto redundante; regras de vigor mantidas.
++
++Artefatos: [relatório e lacunas antes/depois](TASK-010.md), [PDF](Spirit_Gate_TASK-010.pdf), [testes](TASK-010-testes.txt), [diff](TASK-010.diff), logs completos final/offline e reprodução/correção do bug.
++
++Pendências manuais: apenas conferência de sensação e transições jogando. Reinício e manutenção dos objetos do demo agora estão cobertos pelo caminho de produção sem sleep/JFrame. Nenhum bloqueio automatizado permanece.
+--- /dev/null
++++ b/docs/TASK-010-testes.txt
+@@ -0,0 +1,34 @@
++TASK-010 - mvn clean test - BUILD SUCCESS
++{'tests': 202, 'failures': 0, 'errors': 0, 'skipped': 0}
++Windows 10 amd64; Temurin JDK 17.0.20.1+1; Maven 3.10.0.
++
++com.projetok.domain.effect.StatusEffectServiceTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionPolicyTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.CollisionRecoveryTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.FreezeMovementTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementHardeningTest: tests=11, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.MovementServiceTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SoftSlideCollisionTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.movement.SpatialBodyIndexTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.probability.ProbabilityServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.resource.StaminaServiceTest: tests=5, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisFreezeTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.CryostasisServiceTest: tests=13, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.DomainSequenceRegressionTest: tests=4, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepSelectiveCollisionTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepServiceTest: tests=19, failures=0, errors=0, skipped=0
++com.projetok.domain.skill.LightningStepZeroDirectionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.ArenaSequenceRegressionTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.CryostasisIntegrationTest: tests=7, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugCommandBufferTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugLauncherEntrypointTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.DebugWorldTest: tests=8, failures=0, errors=0, skipped=0
++com.projetok.prototype.FreezeWorldTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudPrecisionRegressionTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.HudSkillFeedbackTest: tests=12, failures=0, errors=0, skipped=0
++com.projetok.prototype.LightningStepIntegrationTest: tests=9, failures=0, errors=0, skipped=0
++com.projetok.prototype.MovementReplayTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SelectiveDashIntegrationTest: tests=1, failures=0, errors=0, skipped=0
++com.projetok.prototype.SoftObstacleDemoTest: tests=6, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaInterfaceTest: tests=3, failures=0, errors=0, skipped=0
++com.projetok.prototype.StaminaWorldTest: tests=8, failures=0, errors=0, skipped=0
+--- /dev/null
++++ b/docs/TASK-010.md
+@@ -0,0 +1,33 @@
++# TASK-010 - Regressão determinística da arena
++
++18/10/2026. Base: TASK-009 com 189 testes aprovados por mvn clean test. O inventário considerou MovementReplayTest, suites de colisão/recuperação, habilidades, Freeze, vigor, demo e HUD. Escopo: sequências e invariantes das mecânicas existentes, sem novas funcionalidades de jogo.
++
++## Lacunas antes e abordagem
++
++Os testes anteriores já cobriam os serviços isolados, a fila, três replays históricos de 600 ticks, renderização pura e alguns fluxos assíncronos. Faltava executar o caminho real de reinício do runtime de forma determinística, combinar comandos/recursos/colisões por mais de um tick e proteger a informação de vigor nos valores imediatamente abaixo do custo.
++
++DebugRuntime mantém a mesma thread agendada e a mesma ordem de comandos. O corpo de um tick é disponibilizado internamente para execução pelo proprietário do estado; os testes usam esse método sem iniciar a thread. Uma fábrica interna de DebugWorld permite controlar a aleatoriedade e recriar o demo no R. O loop de produção usa o mesmo método, evitando reproduzir a implementação do runtime dentro dos testes. Não foi introduzido um novo motor de simulação.
++
++As sequências novas usam deltas explícitos de 1/30 s, comandos reais e gerador controlado. Não usam Thread.sleep, janela JFrame, servidor, banco ou rede. Os replays e os testes anteriores permanecem como referências; nenhum baseline foi atualizado.
++
++## Bug reproduzido antes da correção
++
++O HUD anterior formatava o saldo insuficiente com zero casas decimais. Math.nextDown(35f) continua insuficiente para custo 35, mas aparecia como 35/35; o mesmo ocorria com custo 55. HudPrecisionRegressionTest foi escrito primeiro e falhou de fato, registrado em TASK-010-hud-reproducao-falha.log. Após a correção mínima, o mesmo teste passou em TASK-010-hud-correcao.log.
++
++A correção remove apenas essa contagem redundante do aviso, mantendo VIGOR INSUFICIENTE, custo e dados numéricos do snapshot/barra. Não houve alteração no saldo, na comparação do domínio, no consumo ou na regeneração. A suíte completa será executada após as sequências novas e repetida para conferir estabilidade.
++
++## Cobertura depois
++
++ArenaSequenceRegressionTest acrescenta 8 sequências pelo runtime/fila/bindings reais, com EDT somente para entrada: Shift rápido e mantido além da recarga, competição FIFO com 80/100 de vigor, suspensão/retomada WASD e ataque, Freeze com ataque da IA, R limpando recursos/efeitos/feedback/comandos anteriores e preservando os três leves, morte e reinício. Compara também 100 snapshots completos de duas execuções controladas, sem criar um baseline novo.
++
++DomainSequenceRegressionTest acrescenta 4 sequências: travessia de ator sem dano automático e retorno à física normal/combate; cinco pulsos de ICE e Freeze com geometria sólida ou leve; corpo móvel sobre o destino com recuo e atualização da grade seguida de movimento; floats vizinhos a tangências e bordas. O gerador injetado falha se houver sorteios extras. A referência sem índice é comparada à indexada após corrigir a posição.
++
++HudPrecisionRegressionTest acrescenta 1 caso para o bug descrito acima. No total são 13 testes novos. Os 26 arquivos originais de teste da base 170 foram comparados diretamente e permanecem intactos, assim como seus baselines.
++
++AUTOMATIZADO APROVADO: primeira suíte completa mvn clean test e repetição mvn clean test -o, ambas com 202 testes, zero falhas/erros/ignorados. Contagens e resultados por classe são idênticos. O modo offline confirmou a execução sem acesso a repositório remoto, com as dependências locais. Logs completos TASK-010-final.log e TASK-010-repeticao-offline.log; resumo TASK-010-testes.txt. O teste isolado do runtime também passou (8 casos).
++
++Arquivos: DebugRuntime, correção pontual em SkillHudMapper e três classes novas de teste; documentação/PDF, resumos, logs e diff. Não foram alterados física, fórmula de dano, habilidades ou testes antigos. A exposição de advanceOneTick e da fábrica é restrita ao pacote e exige a thread proprietária; a produção mantém um único agendador.
++
++## Critérios de evidência
++
++Registrar a contagem real e os dois logs finais da suíte; conferir estabilidade sem trocar resultados esperados. Documentar as sequências adicionadas, eventuais limitações e o diff isolado. A homologação humana continua pendente e não impede avançar à TASK-011 se a base automatizada estiver verde.
+--- a/server/src/main/java/com/projetok/prototype/DebugRuntime.java
++++ b/server/src/main/java/com/projetok/prototype/DebugRuntime.java
+@@ -2,9 +2,11 @@
+ 
+ import com.projetok.domain.skill.SkillCastCommand;
+ 
++import java.util.Objects;
+ import java.util.concurrent.Executors;
+ import java.util.concurrent.ScheduledExecutorService;
+ import java.util.concurrent.TimeUnit;
++import java.util.function.Supplier;
+ 
+ /**
+  * Laço fixo a 30 ticks/segundo: somente sua thread acessa o mundo mutável.
+@@ -17,26 +19,47 @@
+         return thread;
+     });
+     private final DebugCommandBuffer commands = new DebugCommandBuffer();
+-    private volatile DebugWorld world = DebugWorld.demo();
+-    private volatile DebugSnapshot lastSnapshot = world.snapshot();
++    private final Supplier<DebugWorld> worldFactory;
++    private volatile DebugWorld world;
++    private volatile DebugSnapshot lastSnapshot;
++
++    /** Inicializa a arena demonstrativa usada pela janela e pelos reinícios. */
++    public DebugRuntime() {
++        this(DebugWorld::demo);
++    }
++
++    /** Permite sorteios reproduzíveis nos testes, inclusive depois do reinício. */
++    DebugRuntime(Supplier<DebugWorld> worldFactory) {
++        this.worldFactory = Objects.requireNonNull(worldFactory, "worldFactory");
++        world = Objects.requireNonNull(worldFactory.get(), "world");
++        lastSnapshot = world.snapshot();
++    }
+ 
+     /** Inicializa o loop local sem banco de dados ou serviço de rede. */
+     public void start() {
+         gameThread.scheduleAtFixedRate(() -> {
+             try {
+-                DebugCommandBuffer.Frame frame = commands.drain();
+-                if (frame.restart()) {
+-                    world = DebugWorld.demo();
+-                    world.synchronizeEffort(frame.input().effort());
+-                }
+-                world.tickQueued(frame.input(), 1f / 30f, frame.effortPresses(), frame.casts());
+-                lastSnapshot = world.snapshot();
++                advanceOneTick();
+             } catch (RuntimeException exception) {
+                 System.err.println("[Spirit Gate] Falha no tick de debug:");
+                 exception.printStackTrace();
+                 throw exception; // falha visível; não finge que o mundo continua funcionando
+             }
+         }, 0, 33_333_333L, TimeUnit.NANOSECONDS);
++    }
++
++    /**
++     * Processa o mesmo tick usado pelo agendador, sempre em uma única thread proprietária.
++     * Testes do pacote podem avançá-lo sem iniciar o agendador nem consultar relógio real.
++     */
++    void advanceOneTick() {
++        DebugCommandBuffer.Frame frame = commands.drain();
++        if (frame.restart()) {
++            world = Objects.requireNonNull(worldFactory.get(), "world");
++            world.synchronizeEffort(frame.input().effort());
++        }
++        world.tickQueued(frame.input(), 1f / 30f, frame.effortPresses(), frame.casts());
++        lastSnapshot = world.snapshot();
+     }
+ 
+     /** Recebe entrada do controlador sem modificar entidades fora do loop. */
+--- a/server/src/main/java/com/projetok/prototype/SkillHudMapper.java
++++ b/server/src/main/java/com/projetok/prototype/SkillHudMapper.java
+@@ -47,8 +47,9 @@
+             case AWAITING_LANDING -> "AGUARDANDO SAIDA LIVRE";
+             case ACTIVE -> String.format(Locale.ROOT, "EM MOVIMENTO | RECARGA %.1f s", cooldown);
+             case COOLDOWN -> String.format(Locale.ROOT, "RECARGA %.1f s", cooldown);
+-            case INSUFFICIENT_STAMINA -> String.format(Locale.ROOT,
+-                    "VIGOR INSUFICIENTE (%.0f/%.0f)", stamina, cost);
++            // O saldo exato fica no view/barra; arredondá-lo aqui poderia exibir
++            // 35/35 para um float ainda abaixo do custo e contradizer a recusa.
++            case INSUFFICIENT_STAMINA -> "VIGOR INSUFICIENTE";
+             case READY -> "DISPONIVEL";
+         };
+         return new SkillHudView(id, key, label, cost, cooldown, stamina, state, stateText, feedback);
+--- /dev/null
++++ b/server/src/test/java/com/projetok/domain/skill/DomainSequenceRegressionTest.java
+@@ -0,0 +1,293 @@
++package com.projetok.domain.skill;
++
++import com.projetok.domain.ai.PassiveBehavior;
++import com.projetok.domain.combat.CombatService;
++import com.projetok.domain.effect.StatusEffectService;
++import com.projetok.domain.effect.StatusEffectType;
++import com.projetok.domain.entity.Mob;
++import com.projetok.domain.entity.Position;
++import com.projetok.domain.entity.component.HealthComponent;
++import com.projetok.domain.entity.component.StaminaComponent;
++import com.projetok.domain.entity.component.StatusEffectsComponent;
++import com.projetok.domain.event.GameEventBus;
++import com.projetok.domain.factory.MobArchetype;
++import com.projetok.domain.factory.MobFactory;
++import com.projetok.domain.item.LootTable;
++import com.projetok.domain.movement.CollisionCategory;
++import com.projetok.domain.movement.CollisionService;
++import com.projetok.domain.movement.MovementService;
++import com.projetok.domain.movement.SpatialBodyIndex;
++import com.projetok.domain.probability.ProbabilityService;
++import com.projetok.domain.progression.VitalityService;
++import com.projetok.domain.race.RaceRegistry;
++import com.projetok.domain.resource.StaminaService;
++import org.junit.jupiter.api.Test;
++
++import java.util.ArrayList;
++import java.util.List;
++import java.util.random.RandomGenerator;
++
++import static com.projetok.domain.skill.LightningStepTestFixtures.*;
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Regride sequências de serviços reais sem relógio do SO, interface ou novos baselines. */
++class DomainSequenceRegressionTest {
++    private static final float DT = 1f / 30f;
++    private static final float MOB_RADIUS = 19f;
++    private static final float WALK_SPEED = 215f;
++
++    // --- Dash, dano recebido e retorno à colisão normal ---
++
++    /** Travessia não causa dano nem invulnerabilidade; depois, caminhada e ataque básico continuam normais. */
++    @Test
++    void atravessaAtorRecebeDanoERetomaMovimentoEAtaqueSemCusto() {
++        var player = player(100, 100);
++        var mob = mob(175, 100);
++        var collisions = new CollisionService();
++        var movement = new MovementService(collisions);
++        var combat = new CombatService(new GameEventBus());
++        var bodies = List.of(new CollisionService.Body(player, RADIUS), new CollisionService.Body(mob, MOB_RADIUS));
++        var index = new SpatialBodyIndex(bodies, 16);
++        var space = new CollisionService.Space(960, 640, List.of(), bodies, index);
++        var dash = selectiveService();
++
++        assertEquals(LightningStepService.Status.STARTED, dash.cast(player, right(), RADIUS, space));
++        dash.update(player, DT, RADIUS, space);
++        assertEquals(120, player.getPosition().x(), 0.0001);
++        assertEquals(120, mob.require(HealthComponent.class).current(), "Mover não aplica dano aos corpos atravessados");
++        assertTrue(Math.abs(mob.getPosition().x() - player.getPosition().x()) <= 58,
++                "O atacante está no alcance usado pela arena durante o dash");
++        assertEquals(6, combat.attack(mob, player));
++        assertEquals(94, player.require(HealthComponent.class).current(), "O dash não concede invulnerabilidade");
++        for (int i = 1; i < 8; i++) dash.update(player, DT, RADIUS, space);
++
++        assertFalse(dash.active());
++        assertFalse(dash.awaitingLanding());
++        assertEquals(new Position(250, 100), player.getPosition());
++        assertEquals(120, mob.require(HealthComponent.class).current());
++        assertTrue(mob.require(StatusEffectsComponent.class).snapshot().isEmpty());
++        for (int i = 0; i < 5; i++) {
++            movement.moveDirected(player, new Position(-1, 0), WALK_SPEED, DT, RADIUS, space);
++        }
++        var touching = player.getPosition();
++        assertTrue(touching.x() - mob.getPosition().x() >= RADIUS + MOB_RADIUS);
++        movement.moveDirected(player, new Position(-1, 0), WALK_SPEED, DT, RADIUS, space);
++        assertEquals(touching, player.getPosition(), "A caminhada volta a ser bloqueada pelo mesmo ator");
++        assertTrue(collisions.isFree(player, touching.x(), touching.y(), RADIUS, space));
++
++        assertEquals(15, combat.attack(player, mob));
++        assertEquals(105, mob.require(HealthComponent.class).current());
++        assertEquals(65, player.require(StaminaComponent.class).current(), "Andar e atacar não consomem vigor");
++        assertEquals(94, player.require(HealthComponent.class).current());
++    }
++
++    // --- Categoria de cenário não altera dano, sorteios ou temporizadores ---
++
++    /** Trocar somente a categoria conserva os cinco pulsos, Freeze, ataques e estados quadro a quadro. */
++    @Test
++    void categoriaDeObstaculoNaoAlteraSequenciaDeCombateECongelamento() {
++        var solid = combatTrace(CollisionCategory.SOLID_OBSTACLE);
++        var soft = combatTrace(CollisionCategory.SOFT_OBSTACLE);
++        assertEquals(solid, soft, "Geometria idêntica não muda dano, duração ou probabilidades do combate");
++        assertEquals(5, solid.draws());
++        assertEquals(5, solid.hits());
++        assertEquals(70, solid.frames().get(solid.frames().size() - 1).mobHp(),
++                "Cinco pulsos de sete e um ataque desarmado de quinze");
++        assertEquals(88, solid.frames().get(solid.frames().size() - 1).playerHp(),
++                "Dois ataques de seis foram permitidos enquanto o mob estava congelado");
++        assertTrue(solid.frames().stream().filter(frame -> frame.freeze() > 0)
++                .allMatch(frame -> frame.mobPosition().equals(new Position(250, 100))));
++        assertTrue(solid.frames().get(solid.frames().size() - 1).mobPosition().y() < 100,
++                "Após expirar o Freeze, a perseguição volta a deslocar o mob");
++    }
++
++    // --- Recuperação ocupada, grade espacial e movimento no tick seguinte ---
++
++    /** Um corpo móvel com coordenada fracionária exige recuo e a grade continua correta após caminhar. */
++    @Test
++    void destinoOcupadoPorCorpoMovelCorrigeIndiceERetomaMovimento() {
++        var player = player(100, 100);
++        var mob = mob(400, 100);
++        var collisions = new CollisionService();
++        var movement = new MovementService(collisions);
++        var stamina = new StaminaService();
++        var playerBody = new CollisionService.Body(player, RADIUS);
++        var mobBody = new CollisionService.Body(mob, MOB_RADIUS);
++        var bodies = List.of(playerBody, mobBody);
++        var index = new SpatialBodyIndex(bodies, 16);
++        var indexed = new CollisionService.Space(960, 640, List.of(), bodies, index);
++        var reference = new CollisionService.Space(960, 640, List.of(), bodies);
++        var dash = selectiveService();
++        assertEquals(LightningStepService.Status.STARTED, dash.cast(player, right(), RADIUS, indexed));
++        dash.update(player, 0.1f, RADIUS, indexed);
++
++        float movingTargetX = Math.nextAfter(250f, Double.POSITIVE_INFINITY);
++        mob.setPosition(new Position(movingTargetX, 100));
++        index.update(mob);
++        dash.update(player, 0.15f, RADIUS, indexed);
++        var recovered = player.getPosition();
++        assertEquals(movingTargetX - RADIUS - MOB_RADIUS, recovered.x(), Math.ulp(movingTargetX) * 2);
++        assertTrue(collisions.isFree(player, recovered.x(), recovered.y(), RADIUS, indexed));
++        assertFalse(collisions.isFree(player, Math.nextAfter(recovered.x(), Double.POSITIVE_INFINITY),
++                recovered.y(), RADIUS, indexed), "O próximo float já penetraria o corpo atual");
++        assertTrue(index.query(recovered.x(), recovered.y(), recovered.x(), recovered.y()).contains(playerBody));
++        assertFalse(index.query(250, 100, 250, 100).contains(playerBody), "A célula anterior não retém o jogador");
++
++        for (int i = 0; i < 20; i++) {
++            dash.update(player, DT, RADIUS, indexed);
++            stamina.regenerate(player, DT);
++            movement.moveDirected(player, i < 12 ? new Position(-1, 0) : new Position(0, 1),
++                    WALK_SPEED, DT, RADIUS, indexed);
++        }
++        var walking = player.getPosition();
++        assertEquals(recovered.x() - WALK_SPEED * DT * 12, walking.x(), 0.0002);
++        assertEquals(100 + WALK_SPEED * DT * 8, walking.y(), 0.0002);
++        assertTrue(index.query(walking.x(), walking.y(), walking.x(), walking.y()).contains(playerBody));
++        assertFalse(index.query(recovered.x(), recovered.y(), recovered.x(), recovered.y()).contains(playerBody));
++        assertTrue(index.query(movingTargetX, 100, movingTargetX, 100).contains(mobBody));
++        for (var point : List.of(walking, recovered, new Position(movingTargetX, 100),
++                new Position(movingTargetX + RADIUS + MOB_RADIUS, 100), new Position(100, 100))) {
++            assertEquals(collisions.isFree(player, point.x(), point.y(), RADIUS, reference),
++                    collisions.isFree(player, point.x(), point.y(), RADIUS, indexed),
++                    "O índice mantém o mesmo resultado da consulta sem grade após recuo e WASD");
++        }
++        assertEquals(75, player.require(StaminaComponent.class).current());
++        assertEquals(120, mob.require(HealthComponent.class).current());
++        assertFalse(dash.active());
++        assertFalse(dash.awaitingLanding());
++    }
++
++    // --- Vizinhos float de tangência e borda ---
++
++    /** Um ULP distingue origem válida de sobreposição; o dash conserva raio, custo e duração. */
++    @Test
++    void floatsAdjacentesATangenciaELimiteContinuamSeguros() {
++        var collisions = new CollisionService();
++        var wall = new CollisionService.Space(960, 640,
++                List.of(new CollisionService.Obstacle(200, 50, 15, 100)), List.of());
++        float tangent = 182;
++        float outside = Math.nextAfter(tangent, Double.NEGATIVE_INFINITY);
++        float inside = Math.nextAfter(tangent, Double.POSITIVE_INFINITY);
++        var player = player(outside, 100);
++        assertTrue(collisions.isFree(player, outside, 100, RADIUS, wall));
++        assertTrue(collisions.isFree(player, tangent, 100, RADIUS, wall));
++        assertFalse(collisions.isFree(player, inside, 100, RADIUS, wall));
++        var dash = selectiveService();
++        assertEquals(LightningStepService.Status.STARTED, dash.cast(player, right(), RADIUS, wall));
++        var stopped = dash.update(player, 0.25f, RADIUS, wall);
++        assertEquals(tangent, player.getPosition().x());
++        assertTrue(stopped.blocked());
++        assertFalse(dash.active());
++        assertEquals(65, player.require(StaminaComponent.class).current());
++
++        var invalid = player(inside, 100);
++        var refused = selectiveService();
++        assertEquals(LightningStepService.Status.INVALID, refused.cast(invalid, right(), RADIUS, wall));
++        assertEquals(new Position(inside, 100), invalid.getPosition());
++        assertEquals(100, invalid.require(StaminaComponent.class).current());
++        assertEquals(0, refused.cooldown());
++
++        var empty = emptySpace();
++        float nearBorder = Math.nextAfter(RADIUS, Double.POSITIVE_INFINITY);
++        var edgePlayer = player(nearBorder, 100);
++        assertFalse(collisions.isFree(edgePlayer, Math.nextAfter(RADIUS, Double.NEGATIVE_INFINITY), 100, RADIUS, empty));
++        assertTrue(collisions.isFree(edgePlayer, RADIUS, 100, RADIUS, empty));
++        var edgeDash = selectiveService();
++        assertEquals(LightningStepService.Status.STARTED, edgeDash.cast(edgePlayer,
++                new SkillCastCommand(LightningStepService.ID, 0, 100), RADIUS, empty));
++        edgeDash.update(edgePlayer, 0.25f, RADIUS, empty);
++        assertEquals(new Position(RADIUS, 100), edgePlayer.getPosition());
++        assertFalse(edgeDash.active());
++        assertFalse(edgeDash.awaitingLanding());
++        assertEquals(65, edgePlayer.require(StaminaComponent.class).current());
++        assertEquals(3.75f, edgeDash.cooldown());
++    }
++
++    // --- Fixtures e roteiros determinísticos ---
++
++    /** Posiciona o alvo sem alterar a direção positiva fixada no lançamento. */
++    private static SkillCastCommand right() { return new SkillCastCommand(LightningStepService.ID, 800, 100); }
++
++    /** Cria o mesmo arquétipo real da arena, incluindo combate, raça, vida e efeitos. */
++    private static Mob mob(float x, float y) {
++        var archetype = new MobArchetype(RaceRegistry.withDefaults().get("demon"), "Alvo de regressão",
++                1, 12, 4, 9, null, LootTable.of(), new PassiveBehavior());
++        return new MobFactory(new VitalityService()).spawn(200, archetype, new Position(x, y));
++    }
++
++    /** Captura somente valores, permitindo comparar as duas categorias sem hashes de apresentação. */
++    private record Frame(int mobHp, int playerHp, float freeze, Position mobPosition) { }
++
++    /** Resultado imutável do roteiro de combate, incluindo o número exato de sorteios e pulsos. */
++    private record Trace(List<Frame> frames, int draws, int hits) {
++        /** Preserva a sequência para comparações posteriores sem compartilhar a lista mutável. */
++        private Trace { frames = List.copyOf(frames); }
++    }
++
++    /** Repete cinco pulsos e tentativas de movimento; a única variável é a categoria do mesmo retângulo. */
++    private static Trace combatTrace(CollisionCategory category) {
++        var player = player(200, 100);
++        var mob = mob(250, 100);
++        var effects = new StatusEffectService();
++        var combat = new CombatService(new GameEventBus());
++        var sequence = new ControlledSequence(0.29, 0.30, 0.29, 0.30, 0.99);
++        var cryo = new CryostasisService(combat, new StaminaService(), effects, new ProbabilityService(sequence));
++        var movement = new MovementService(new CollisionService());
++        var bodies = List.of(new CollisionService.Body(player, RADIUS), new CollisionService.Body(mob, MOB_RADIUS));
++        var space = new CollisionService.Space(960, 640,
++                List.of(new CollisionService.Obstacle(220, 70, 10, 60, category)), bodies,
++                new SpatialBodyIndex(bodies, 16));
++        var targets = List.of(new CryostasisService.Target(mob, MOB_RADIUS));
++        var result = cryo.cast(player, new SkillCastCommand(CryostasisService.ID, 250, 100), 960, 640, targets);
++        assertEquals(CryostasisService.Status.CAST, result.status());
++        assertEquals(7, result.hits().get(0).damage());
++        assertEquals(1, remaining(mob));
++        assertEquals(6, combat.attack(mob, player));
++        var frames = new ArrayList<Frame>();
++        frames.add(frame(mob, player.require(HealthComponent.class).current()));
++        int hits = result.hits().size();
++        for (int tick = 1; tick <= 75; tick++) {
++            effects.update(mob, DT);
++            var pulse = cryo.update(DT, targets);
++            for (var hit : pulse) assertEquals(7, hit.damage());
++            hits += pulse.size();
++            movement.moveDirected(mob, new Position(0, -1), 92, DT, MOB_RADIUS, space);
++            if (tick == 20) {
++                assertTrue(remaining(mob) > 0);
++                assertEquals(6, combat.attack(mob, player));
++            }
++            frames.add(frame(mob, player.require(HealthComponent.class).current()));
++        }
++        assertTrue(cryo.zones().isEmpty());
++        assertEquals(0, remaining(mob));
++        assertEquals(15, combat.attack(player, mob));
++        frames.add(frame(mob, player.require(HealthComponent.class).current()));
++        return new Trace(frames, sequence.index, hits);
++    }
++
++    /** Lê somente os valores usados nas invariantes do roteiro. */
++    private static Frame frame(Mob mob, int playerHp) {
++        return new Frame(mob.require(HealthComponent.class).current(), playerHp, remaining(mob), mob.getPosition());
++    }
++
++    /** A fábrica anexa o armazenamento de efeitos antes de iniciar a sequência. */
++    private static float remaining(Mob mob) { return mob.require(StatusEffectsComponent.class).remaining(StatusEffectType.FREEZE); }
++
++    /** Falha imediatamente se algum caminho consumir aleatoriedade fora dos cinco pulsos planejados. */
++    private static final class ControlledSequence implements RandomGenerator {
++        private final double[] samples;
++        private int index;
++
++        /** Copia o roteiro para impedir alterações externas durante o teste. */
++        private ControlledSequence(double... samples) { this.samples = samples.clone(); }
++
++        /** O contrato reutilizável de probabilidade usa amostras uniformes de double. */
++        @Override public long nextLong() { throw new AssertionError("Distribuição inesperada"); }
++
++        /** Entrega uma tentativa independente por pulso e denuncia tentativas extras. */
++        @Override public double nextDouble() {
++            if (index >= samples.length) throw new AssertionError("Sorteio extra fora do roteiro");
++            return samples[index++];
++        }
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/ArenaSequenceRegressionTest.java
+@@ -0,0 +1,335 @@
++package com.projetok.prototype;
++
++import com.projetok.domain.skill.CryostasisService;
++import com.projetok.domain.skill.LightningStepService;
++import com.projetok.domain.skill.SkillCastCommand;
++import com.projetok.prototype.DebugSnapshot.SkillFeedbackKind;
++import com.projetok.prototype.DebugSnapshot.SkillState;
++import org.junit.jupiter.api.Test;
++
++import javax.swing.SwingUtilities;
++import java.awt.event.ActionEvent;
++import java.awt.event.MouseEvent;
++import java.util.ArrayList;
++import java.util.HashSet;
++import java.util.List;
++import java.util.random.RandomGenerator;
++
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Sequências do runtime e dos controles reais, sem agendador, espera ou JFrame. */
++class ArenaSequenceRegressionTest {
++    private static final float DT = 1f / 30f;
++
++    // --- Entrada real, FIFO e duração discreta ---
++
++    /** Toques entre ticks chegam à fila; autorepeat não reativa após a recarga terminar. */
++    @Test
++    void shiftRapidoEMantidoNaoRepeteMesmoDepoisDoCooldown() throws Exception {
++        try (var runtime = runtime()) {
++            var panel = panel(runtime);
++            aim(panel, 500, 340);
++            action(panel, "press_SHIFT", "release_SHIFT");
++            runtime.advanceOneTick();
++            var started = runtime.snapshot();
++            assertTrue(started.lightningStepActive());
++            assertEquals(65, started.stamina());
++
++            // Esta pressão é recusada por cooldown e continua mantida até a recarga acabar.
++            action(panel, "press_SHIFT", "press_SHIFT", "press_SHIFT");
++            runtime.advanceOneTick();
++            assertEquals(SkillFeedbackKind.COOLDOWN, runtime.snapshot().lightningStepHud().feedback().kind());
++            assertEquals(65.5f, runtime.snapshot().stamina());
++            advance(runtime, 121);
++            var ready = runtime.snapshot();
++            assertFalse(ready.gameOver());
++            assertEquals(0, ready.lightningStepCooldown());
++            assertFalse(ready.lightningStepActive());
++            assertEquals(100, ready.stamina());
++            action(panel, "press_SHIFT", "press_SHIFT");
++            runtime.advanceOneTick();
++            assertFalse(runtime.snapshot().lightningStepActive());
++            assertEquals(100, runtime.snapshot().stamina());
++
++            action(panel, "release_SHIFT", "press_SHIFT", "release_SHIFT");
++            runtime.advanceOneTick();
++            assertTrue(runtime.snapshot().lightningStepActive());
++            assertEquals(65, runtime.snapshot().stamina());
++            assertEquals(4, runtime.snapshot().lightningStepCooldown());
++        }
++    }
++
++    /** A ordem efetiva dos bindings decide qual habilidade recebe o saldo compartilhado. */
++    @Test
++    void qEShiftCompetemEmFifoComVigorInsuficienteParaAmbas() throws Exception {
++        for (boolean cryoFirst : new boolean[] {true, false}) {
++            try (var runtime = runtime()) {
++                var panel = panel(runtime);
++                action(panel, "press_E", "release_E");
++                runtime.advanceOneTick();
++                assertEquals(80, runtime.snapshot().stamina());
++                aim(panel, 500, 340);
++                action(panel, cryoFirst ? "press_Q" : "press_SHIFT",
++                        cryoFirst ? "press_SHIFT" : "press_Q");
++                runtime.advanceOneTick();
++                var result = runtime.snapshot();
++                assertEquals(cryoFirst ? 25.5f : 45.5f, result.stamina());
++                assertEquals(cryoFirst, !result.iceZones().isEmpty());
++                assertEquals(!cryoFirst, result.lightningStepActive());
++                assertEquals(cryoFirst ? 3 : 0, result.cryostasisCooldown());
++                assertEquals(cryoFirst ? 0 : 4, result.lightningStepCooldown());
++                assertEquals(cryoFirst ? SkillFeedbackKind.ACCEPTED : SkillFeedbackKind.INSUFFICIENT_STAMINA,
++                        result.cryostasisHud().feedback().kind());
++                assertEquals(cryoFirst ? SkillFeedbackKind.INSUFFICIENT_STAMINA : SkillFeedbackKind.ACCEPTED,
++                        result.lightningStepHud().feedback().kind());
++            }
++        }
++    }
++
++    /** O lote suficiente aceita ambas; novas pressões durante cooldown só regeneram vigor. */
++    @Test
++    void qEShiftNoMesmoTickConsomemUmaVezERecusasNaoCobramNovamente() throws Exception {
++        try (var runtime = runtime()) {
++            var panel = panel(runtime);
++            aim(panel, 500, 340);
++            action(panel, "press_Q", "release_Q", "press_SHIFT", "release_SHIFT");
++            runtime.advanceOneTick();
++            assertEquals(10, runtime.snapshot().stamina());
++            assertEquals(1, runtime.snapshot().iceZones().size());
++            assertTrue(runtime.snapshot().lightningStepActive());
++            assertEquals(SkillFeedbackKind.ACCEPTED, runtime.snapshot().cryostasisHud().feedback().kind());
++            assertEquals(SkillFeedbackKind.ACCEPTED, runtime.snapshot().lightningStepHud().feedback().kind());
++            action(panel, "press_SHIFT", "release_SHIFT", "press_Q", "release_Q");
++            runtime.advanceOneTick();
++            assertEquals(10.5f, runtime.snapshot().stamina());
++            assertEquals(1, runtime.snapshot().iceZones().size());
++            assertEquals(SkillFeedbackKind.COOLDOWN, runtime.snapshot().cryostasisHud().feedback().kind());
++            assertEquals(SkillFeedbackKind.COOLDOWN, runtime.snapshot().lightningStepHud().feedback().kind());
++            assertEquals(3 - DT, runtime.snapshot().cryostasisCooldown(), 0.00001);
++            assertEquals(4 - DT, runtime.snapshot().lightningStepCooldown(), 0.00001);
++        }
++    }
++
++    /** A troca de direção durante o dash espera o último tick fracionário; ataque continua disponível. */
++    @Test
++    void wasdEAtaqueAtravessamInicioFimDoDashSemSomarDeslocamento() throws Exception {
++        try (var runtime = runtime()) {
++            var panel = panel(runtime);
++            aim(panel, 500, 340);
++            action(panel, "press_D", "press_SHIFT", "release_SHIFT");
++            runtime.advanceOneTick();
++            var origin = runtime.snapshot().actors().get(0);
++            assertEquals(135 + DebugWorld.WALK_SPEED * DT, origin.x(), 0.0001);
++            assertEquals(340, origin.y());
++            action(panel, "release_D", "press_W", "press_SPACE");
++            runtime.advanceOneTick();
++            assertNotNull(runtime.snapshot().attack());
++            assertEquals(65.5f, runtime.snapshot().stamina());
++            assertEquals(origin.y(), runtime.snapshot().actors().get(0).y());
++            action(panel, "release_SPACE");
++            advance(runtime, 7);
++            var completed = runtime.snapshot();
++            assertFalse(completed.lightningStepActive());
++            assertEquals(origin.x() + 150, completed.actors().get(0).x(), 0.0001);
++            assertEquals(origin.y(), completed.actors().get(0).y());
++            runtime.advanceOneTick();
++            var resumed = runtime.snapshot();
++            assertEquals(completed.actors().get(0).x(), resumed.actors().get(0).x());
++            assertEquals(origin.y() - DebugWorld.WALK_SPEED * DT, resumed.actors().get(0).y(), 0.0001);
++            assertEquals(0, resumed.facingX());
++            assertEquals(-1, resumed.facingY());
++        }
++    }
++
++    // --- Efeitos, morte e reinício no mesmo runtime ---
++
++    /** Um Freeze renovado pelos pulsos trava a perseguição, mas preserva o próximo ataque da IA. */
++    @Test
++    void freezeDaFilaImpedeMovimentoMasPermiteAtaqueDoMob() {
++        try (var runtime = runtime()) {
++            for (int tick = 0; tick < 200 && runtime.snapshot().playerHp() == 100; tick++)
++                runtime.advanceOneTick();
++            assertTrue(runtime.snapshot().playerHp() < 100);
++            var mob = runtime.snapshot().actors().get(1);
++            runtime.cast(new SkillCastCommand(CryostasisService.ID, mob.x(), mob.y()));
++            runtime.advanceOneTick();
++            var frozen = runtime.snapshot();
++            assertEquals(1, frozen.statuses().size());
++            assertEquals(mob.id(), frozen.statuses().get(0).actorId());
++            assertEquals(1, frozen.statuses().get(0).freezeRemaining());
++            boolean attacked = false;
++            for (int tick = 0; tick < 45; tick++) {
++                runtime.advanceOneTick();
++                var current = runtime.snapshot();
++                assertFalse(current.statuses().isEmpty());
++                assertEquals(mob.x(), current.actors().get(1).x());
++                assertEquals(mob.y(), current.actors().get(1).y());
++                if (current.playerHp() < frozen.playerHp()) attacked = true;
++            }
++            assertTrue(attacked, "O cooldown da IA termina sem exigir remoção do Freeze");
++            assertTrue(runtime.snapshot().actors().get(1).hp() < frozen.actors().get(1).hp(),
++                    "Os pulsos de dano continuam durante o congelamento");
++        }
++    }
++
++    /** R recria o demo, descarta ações anteriores e não reativa Shift/E mantidos. */
++    @Test
++    void reinicioRealLimpaAtivosStatusRastrosHudEFilaSemReativarTeclasMantidas() throws Exception {
++        try (var runtime = runtime()) {
++            var panel = panel(runtime);
++            var mob = runtime.snapshot().actors().get(1);
++            aim(panel, (int) mob.x(), (int) mob.y());
++            action(panel, "press_Q", "release_Q");
++            aim(panel, 500, 340);
++            action(panel, "press_SHIFT");
++            runtime.advanceOneTick();
++            runtime.advanceOneTick();
++            var old = runtime.snapshot();
++            assertTrue(old.lightningStepActive());
++            assertFalse(old.lightningTrails().isEmpty());
++            assertFalse(old.iceZones().isEmpty());
++            assertFalse(old.statuses().isEmpty());
++
++            // Estes gastos pendentes são anteriores a R e devem desaparecer da nova arena.
++            action(panel, "press_E", "press_Q", "restart", "press_SHIFT");
++            runtime.advanceOneTick();
++            var restarted = runtime.snapshot();
++            assertEquals(1, restarted.ticks());
++            assertEquals(100, restarted.stamina());
++            assertEquals(100, restarted.playerHp());
++            assertEquals(0, restarted.cryostasisCooldown());
++            assertEquals(0, restarted.lightningStepCooldown());
++            assertFalse(restarted.lightningStepActive());
++            assertFalse(restarted.lightningStepAwaitingLanding());
++            assertTrue(restarted.lightningTrails().isEmpty());
++            assertTrue(restarted.iceZones().isEmpty());
++            assertTrue(restarted.statuses().isEmpty());
++            assertEquals(SkillState.READY, restarted.cryostasisHud().state());
++            assertEquals(SkillState.READY, restarted.lightningStepHud().state());
++            assertEquals(SkillFeedbackKind.NONE, restarted.cryostasisHud().feedback().kind());
++            assertEquals(SkillFeedbackKind.NONE, restarted.lightningStepHud().feedback().kind());
++            assertEquals(old.softObstacles(), restarted.softObstacles());
++            assertEquals(3, restarted.softObstacles().size());
++
++            action(panel, "press_SHIFT", "press_SHIFT", "press_E");
++            advance(runtime, 3);
++            assertEquals(100, runtime.snapshot().stamina());
++            assertFalse(runtime.snapshot().lightningStepActive());
++            action(panel, "release_E", "release_Q", "release_SHIFT", "press_SHIFT", "release_SHIFT");
++            runtime.advanceOneTick();
++            assertTrue(runtime.snapshot().lightningStepActive());
++            assertEquals(65, runtime.snapshot().stamina());
++        }
++    }
++
++    /** Após morrer, lotes completos não movem, atacam ou regeneram; R restaura a mesma arena demo. */
++    @Test
++    void morteRecusaLoteDeAcoesEReinicioRestauraRecursosEDisponibilidade() throws Exception {
++        try (var runtime = runtime()) {
++            var panel = panel(runtime);
++            for (int tick = 0; tick < 1800 && runtime.snapshot().playerHp() > 20; tick++)
++                runtime.advanceOneTick();
++            assertFalse(runtime.snapshot().gameOver());
++            assertTrue(runtime.snapshot().playerHp() <= 20);
++            for (int press = 0; press < 5; press++) action(panel, "press_E", "release_E");
++            runtime.advanceOneTick();
++            assertEquals(0, runtime.snapshot().stamina());
++            for (int tick = 0; tick < 150 && !runtime.snapshot().gameOver(); tick++)
++                runtime.advanceOneTick();
++            var dead = runtime.snapshot();
++            assertTrue(dead.gameOver());
++            assertTrue(dead.stamina() < 100);
++
++            aim(panel, 500, 340);
++            action(panel, "press_D", "press_SPACE", "press_E", "press_Q", "press_SHIFT");
++            advance(runtime, 20);
++            var refused = runtime.snapshot();
++            assertEquals(dead.actors().get(0), refused.actors().get(0));
++            assertEquals(dead.stamina(), refused.stamina());
++            assertEquals(0, refused.cryostasisCooldown());
++            assertEquals(0, refused.lightningStepCooldown());
++            assertTrue(refused.iceZones().isEmpty());
++            assertFalse(refused.lightningStepActive());
++            assertNull(refused.attack());
++            assertEquals(SkillState.DEAD, refused.cryostasisHud().state());
++            assertEquals(SkillState.DEAD, refused.lightningStepHud().state());
++
++            action(panel, "release_D", "release_SPACE", "release_E", "release_Q", "release_SHIFT", "restart");
++            runtime.advanceOneTick();
++            var restarted = runtime.snapshot();
++            assertFalse(restarted.gameOver());
++            assertEquals(100, restarted.playerHp());
++            assertEquals(100, restarted.stamina());
++            assertEquals(SkillState.READY, restarted.cryostasisHud().state());
++            assertEquals(SkillState.READY, restarted.lightningStepHud().state());
++            assertEquals(3, restarted.softObstacles().size());
++        }
++    }
++
++    /** A fábrica reinicia também a sequência aleatória; estados completos repetem sem hash novo. */
++    @Test
++    void sequenciaCompletaEReinicioSaoReproduziveisComSorteiosControlados() {
++        assertEquals(replay(), replay());
++    }
++
++    // --- Fixtures: somente portas existentes da simulação e da entrada ---
++
++    /** Cria o demo verdadeiro; cada reinício possui um gerador próprio com amostra 0,29. */
++    private static DebugRuntime runtime() {
++        return new DebugRuntime(() -> DebugWorld.demo(new RandomGenerator() {
++            @Override public long nextLong() { return 0; }
++            @Override public double nextDouble() { return 0.29; }
++        }));
++    }
++
++    /** Monta o controlador real no EDT sem janela nem laço agendado. */
++    private static DebugPanel panel(DebugRuntime runtime) throws Exception {
++        var panel = new DebugPanel(runtime::snapshot);
++        SwingUtilities.invokeAndWait(() -> DebugLauncher.configureKeys(panel, runtime, new HashSet<>()));
++        return panel;
++    }
++
++    /** Captura o alvo pelos mesmos listeners de mouse usados pela arena. */
++    private static void aim(DebugPanel panel, int x, int y) throws Exception {
++        SwingUtilities.invokeAndWait(() -> {
++            var event = new MouseEvent(panel, MouseEvent.MOUSE_MOVED, 0, 0, x, y, 0, false);
++            for (var listener : panel.getMouseMotionListeners()) listener.mouseMoved(event);
++        });
++    }
++
++    /** Entrega um lote de ações no EDT antes de qualquer tick da simulação. */
++    private static void action(DebugPanel panel, String... names) throws Exception {
++        SwingUtilities.invokeAndWait(() -> {
++            for (String name : names) panel.getActionMap().get(name)
++                    .actionPerformed(new ActionEvent(panel, ActionEvent.ACTION_PERFORMED, name));
++        });
++    }
++
++    /** Avança passos fixos da produção; não inicia a thread de agendamento. */
++    private static void advance(DebugRuntime runtime, int ticks) {
++        for (int tick = 0; tick < ticks; tick++) runtime.advanceOneTick();
++    }
++
++    /** Registra uma sequência inteira por valores, preservando os baselines históricos. */
++    private static List<DebugSnapshot> replay() {
++        List<DebugSnapshot> states = new ArrayList<>();
++        try (var runtime = runtime()) {
++            for (int round = 0; round < 2; round++) {
++                if (round > 0) {
++                    runtime.restart();
++                    runtime.advanceOneTick();
++                }
++                var mob = runtime.snapshot().actors().get(1);
++                runtime.cast(new SkillCastCommand(CryostasisService.ID, mob.x(), mob.y()));
++                runtime.cast(new SkillCastCommand(LightningStepService.ID, 500, 340));
++                runtime.setInput(new DebugInput(true, false, false, false, false));
++                for (int tick = 0; tick < 50; tick++) {
++                    runtime.advanceOneTick();
++                    states.add(runtime.snapshot());
++                }
++                runtime.setInput(DebugInput.NONE);
++            }
++        }
++        return List.copyOf(states);
++    }
++}
+--- /dev/null
++++ b/server/src/test/java/com/projetok/prototype/HudPrecisionRegressionTest.java
+@@ -0,0 +1,24 @@
++package com.projetok.prototype;
++
++import com.projetok.domain.skill.CryostasisService;
++import com.projetok.domain.skill.LightningStepService;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++
++/** Impede que arredondamentos no aviso contradigam a elegibilidade real. */
++class HudPrecisionRegressionTest {
++    /** O float imediatamente abaixo do custo continua insuficiente, sem mostrar saldo igual ao custo. */
++    @Test void avisoNaoArredondaVigorInsuficienteParaSaldoSuficiente() {
++        float dashBalance = Math.nextDown(LightningStepService.COST);
++        var dash = SkillHudMapper.lightningStep(false, dashBalance, 0, false, false, SkillHudMapper.none());
++        assertEquals(DebugSnapshot.SkillState.INSUFFICIENT_STAMINA, dash.state());
++        assertEquals(dashBalance, dash.stamina());
++        assertFalse(dash.stateText().contains("35/35"), "O aviso não pode apresentar saldo suficiente para uma ação recusada");
++
++        float cryoBalance = Math.nextDown(CryostasisService.COST);
++        var cryo = SkillHudMapper.cryostasis(false, cryoBalance, 0, SkillHudMapper.none());
++        assertEquals(DebugSnapshot.SkillState.INSUFFICIENT_STAMINA, cryo.state());
++        assertEquals(cryoBalance, cryo.stamina());
++        assertFalse(cryo.stateText().contains("55/55"), "O aviso não deve arredondar a falta de vigor para cima");
++    }
++}

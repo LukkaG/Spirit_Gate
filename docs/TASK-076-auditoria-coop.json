@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "package": "SpiritGate-Coop-Experimental-0.76.0-rc1-20261019T062500Z-9556a9e2.zip",
+  "sha256": "417eb711e03499ce0a4e3f93e800d60fed539ec109637fb18dca5fade51b0c27",
+  "automatedApproved": true,
+  "humanApproved": false,
+  "checks": {
+    "zipIntegrity": true,
+    "productionClasses": 169,
+    "contentIncluded": true,
+    "manifestHashes": true,
+    "javaIntegrated": true
+  }
+}

@@ -1,0 +1,74 @@
+--- /dev/null
++++ b/docs/TASK-037-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 241,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-037.md
+@@ -0,0 +1,13 @@
++# TASK-037 - Auditoria da base real
++
++Base encontrada: 0.36.0-rc1, TASK-036 concluida. Nao existe repositorio Git neste checkout. Fontes e documentos recuperaveis no checkpoint TASK-037-before.json; distribuicoes e assets anteriores preservados.
++
++Baseline reproduzido: 241 testes Java e 25 Python, zero falhas. Logs completos TASK-037-java.log e TASK-037-python.log. Nenhuma regra ou baseline historico alterado.
++
++Arquitetura: dominio RPG em com.projetok.rpg, sem Swing; apresentacao em com.projetok.prototype.rpg; persistencia local versionada separada da simulacao. Reutilizar MovementService, CollisionService, ArenaViewport e renderizacao Java2D. DebugWorld permanece exclusivo da arena historica. Nao reutilizar seus spawns e recompensas demonstrativos para progresso persistente.
++
++Dependencias: modo -> identidade -> conteudo -> save -> inventario/equipamento -> PvE/progressao -> NPC/missoes/comercio -> regioes/masmorra -> interface/configuracoes. Rede somente depois do marco offline e em pacote separado.
++
++Os servicos de combate da arena tem formulas historicas e dependem de componentes criados para demonstracao. Regras RPG deverao ser explicitas e isoladas; geometria e resolucao de movimento permanecem compartilhadas. Snapshots imutaveis atravessam a fronteira da UI; IO em executor separado.
++
++Limitacoes: teste automatizado nao constitui homologacao humana. Nenhum acesso a PostgreSQL, rede publica ou sprites reprovados.
+--- /dev/null
++++ b/tools/rpg_stage.py
+@@ -0,0 +1,32 @@
++"""Fecha uma etapa somente depois da suite completa aprovada; sem Git ou rede."""
++from pathlib import Path
++import argparse
++import json
++import subprocess
++import sys
++from checkpoint_rodada import checkpoint
++from gerar_pdf_task002 import gerar_pdf
++
++ROOT = Path(__file__).resolve().parents[1]
++
++def main():
++    parser = argparse.ArgumentParser()
++    parser.add_argument('task')
++    parser.add_argument('--existing', action='store_true')
++    args = parser.parse_args()
++    task = args.task
++    if not args.existing:
++        result = subprocess.run([sys.executable, 'tools/qualidade.py', '--offline', '--task', task], cwd=ROOT)
++        if result.returncode:
++            raise SystemExit(result.returncode)
++    report = json.loads((ROOT / f'docs/TASK-{task}-qualidade.json').read_text(encoding='utf-8'))
++    if report['exitCode'] != 0:
++        raise SystemExit('Etapa bloqueada: suite reprovada')
++    document = ROOT / f'docs/TASK-{task}.md'
++    if not document.exists():
++        raise SystemExit('Relatorio da etapa ausente')
++    gerar_pdf(document, ROOT / f'docs/Spirit_Gate_TASK-{task}.pdf', f'TASK-{task}')
++    checkpoint(task, True)
++
++if __name__ == '__main__':
++    main()

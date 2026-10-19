@@ -1,0 +1,147 @@
+--- /dev/null
++++ b/docs/TASK-055-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 264,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 25
++    }
++  }
++}
+--- /dev/null
++++ b/docs/TASK-055.md
+@@ -0,0 +1,5 @@
++# TASK-055 - Objetivos e recompensas
++
++quests.properties define objetivos kill/collect/talk/visit e recompensas XP/moedas/itens. Eventos de derrota possuem origem e geracao, ledger rejeita repeticao. Coleta consulta posse real; itens exigidos sao consumidos na entrega. Visita e conversa registradas pela simulacao.
++
++Entrega valida copia do inventario antes de conceder itens/moedas/XP e marcar conclusao. Cheio recusa sem recompensa parcial. Primeira quest: dois ecos, 80 XP, 45 moedas e duas pocoes. Santuario: chefe, reliquia, visita e conversa. Testes de evento duplicado, recompensa unica e persistencia; suite completa.
+--- a/server/src/main/java/com/projetok/rpg/QuestService.java
++++ b/server/src/main/java/com/projetok/rpg/QuestService.java
+@@ -4,9 +4,26 @@
+ public final class QuestService {
+     public enum State { UNAVAILABLE, AVAILABLE, ACTIVE, READY, COMPLETED }
+     public record View(String id,String name,State state,int progress,int required,String objective) { }
++    public record Objective(String type,String target,int count) { }
++    public record Definition(List<Objective> objectives,int xp,int coins,String item,int quantity) { public Definition { objectives=List.copyOf(objectives); } }
+     private final RpgContent content;
+-    public QuestService(RpgContent content){this.content=content;}
+-    public int required(String id){content.get("quest",id);return id.equals("first_steps")?2:1;}
++    private final Map<String,Definition> definitions=new TreeMap<>();
++    public QuestService(RpgContent content){
++        this.content=content;
++        try(var in=QuestService.class.getResourceAsStream("/rpg/quests.properties")) {
++            if(in==null)throw new java.io.IOException("Quests ausentes");Properties p=new Properties();p.load(in);
++            for(String id:p.stringPropertyNames()) {
++                content.get("quest",id);String[] v=p.getProperty(id).split("\\|",-1);if(v.length!=5)throw new IllegalArgumentException("Quest invalida");List<Objective> objectives=new ArrayList<>();
++                for(String objective:v[0].split(",")) {
++                    String[] o=objective.split(":");if(o.length!=3||!Set.of("kill","collect","talk","visit").contains(o[0]))throw new IllegalArgumentException("Objetivo invalido");int n=Integer.parseInt(o[2]);if(n<1||n>100)throw new IllegalArgumentException("Contagem invalida");
++                    content.get(switch(o[0]){case "kill"->"enemy";case "collect"->"item";case "talk"->"npc";default->"region";},o[1]);objectives.add(new Objective(o[0],o[1],n));
++                }
++                content.get("item",v[3]);int xp=Integer.parseInt(v[1]),coins=Integer.parseInt(v[2]),n=Integer.parseInt(v[4]);if(objectives.size()>8||xp<0||xp>10000||coins<0||coins>10000||n<1||n>99)throw new IllegalArgumentException("Recompensa invalida");definitions.put(id,new Definition(objectives,xp,coins,v[3],n));
++            }
++        }catch(java.io.IOException e){throw new IllegalStateException(e);}
++    }
++    public Definition definition(String id){var d=definitions.get(id);if(d==null)throw new IllegalArgumentException("Quest ausente");return d;}
++    public int required(String id){return definition(id).objectives().stream().mapToInt(Objective::count).sum();}
+     public State state(String id,Map<String,Integer> progress,Set<String> flags) {
+         content.get("quest",id);
+         if(flags.contains("quest-done:"+id))return State.COMPLETED;
+@@ -17,8 +34,26 @@
+     public boolean accept(String id,Map<String,Integer> progress,Set<String> flags){if(state(id,progress,flags)!=State.AVAILABLE)return false;progress.put(id,0);return true;}
+     public boolean complete(String id,Map<String,Integer> progress,Set<String> flags){if(state(id,progress,flags)!=State.READY)return false;flags.add("quest-done:"+id);return true;}
+     public void defeat(String enemy,Map<String,Integer> progress,Set<String> flags) {
+-        String id=enemy.equals("warden")?"sanctuary":"first_steps";
+-        if(state(id,progress,flags)==State.ACTIVE)progress.put(id,Math.min(required(id),progress.get(id)+1));
++        event("kill",enemy,"test_"+enemy,progress.getOrDefault("first_steps",0)+1,progress,flags);
+     }
++    public void event(String type,String target,String source,long sequence,Map<String,Integer> progress,Set<String> flags) {
++        if(!source.matches("[a-z][a-z0-9_]{0,39}")||sequence<1)throw new IllegalArgumentException("Evento invalido");String ledger="qe:"+type+":"+source+":";
++        for(String f:flags)if(f.startsWith(ledger)&&Long.parseLong(f.substring(ledger.length()))>=sequence)return;
++        for(var entry:definitions.entrySet())if(state(entry.getKey(),progress,flags)==State.ACTIVE) {
++            var objectives=entry.getValue().objectives();
++            for(int i=0;i<objectives.size();i++){var o=objectives.get(i);if(!o.type().equals(type)||!o.target().equals(target))continue;String prefix="qo:"+entry.getKey()+":"+i+":";int count=counter(flags,prefix);flags.removeIf(f->f.startsWith(prefix));flags.add(prefix+Math.min(o.count(),count+1));}
++            refreshOne(entry.getKey(),progress,flags,null);
++        }
++        flags.removeIf(f->f.startsWith(ledger));flags.add(ledger+sequence);
++    }
++    private int counter(Set<String> flags,String prefix){return flags.stream().filter(f->f.startsWith(prefix)).mapToInt(f->Integer.parseInt(f.substring(prefix.length()))).max().orElse(0);}
++    public void refresh(Map<String,Integer> progress,Set<String> flags,InventoryService inventory,String region){
++        for(String id:definitions.keySet())if(progress.containsKey(id)&&!flags.contains("quest-done:"+id)) {
++            var objectives=definition(id).objectives();
++            for(int i=0;i<objectives.size();i++){var o=objectives.get(i);if(o.type().equals("visit")&&o.target().equals(region)){String prefix="qo:"+id+":"+i+":";flags.removeIf(f->f.startsWith(prefix));flags.add(prefix+o.count());}}
++            refreshOne(id,progress,flags,inventory);
++        }
++    }
++    private void refreshOne(String id,Map<String,Integer> progress,Set<String> flags,InventoryService inventory){int total=0;var objectives=definition(id).objectives();for(int i=0;i<objectives.size();i++){var o=objectives.get(i);total+=o.type().equals("collect")&&inventory!=null?Math.min(o.count(),inventory.count(o.target())):counter(flags,"qo:"+id+":"+i+":");}progress.put(id,total);}
+     public List<View> views(Map<String,Integer> progress,Set<String> flags){return content.all("quest").stream().sorted(Comparator.comparing(RpgContent.Definition::id)).map(q->new View(q.id(),q.name(),state(q.id(),progress,flags),progress.getOrDefault(q.id(),0),required(q.id()),q.id().equals("first_steps")?"Derrotar ecos no bosque":"Derrotar o Guardiao do Santuario")).toList();}
+ }
+--- a/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ b/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -83,8 +83,13 @@
+     private String activeNpc="";
+     private final DialogueService dialogues=new DialogueService();
+     private final QuestService questService=new QuestService(content);
+-    public boolean acceptQuest(String id){if(!canTalkElder())return false;return questService.accept(id,quests,flags);}
+-    public boolean completeQuest(String id){if(!canTalkElder())return false;return questService.complete(id,quests,flags);}
++    public boolean acceptQuest(String id){if(!canTalkElder()||!questService.accept(id,quests,flags))return false;questService.event("talk","elder","elder",ticks+1,quests,flags);questService.refresh(quests,flags,inventory,region);message="Missao aceita";return true;}
++    public boolean completeQuest(String id){
++        if(!canTalkElder())return false;questService.refresh(quests,flags,inventory,region);if(questService.state(id,quests,flags)!=QuestService.State.READY)return false;
++        var d=questService.definition(id);var copy=inventory.copy();for(var o:d.objectives())if(o.type().equals("collect")&&!copy.remove(o.target(),o.count()))return false;
++        if(coins>1_000_000-d.coins()||!copy.add(d.item(),d.quantity())){message="Libere espaco para a recompensa";return false;}
++        inventory.replace(copy);coins+=d.coins();awardExperience(d.xp());questService.complete(id,quests,flags);message="Missao concluida: XP, moedas e itens";return true;
++    }
+     private boolean canTalkElder(){return hp>0&&activeNpc.equals("elder")&&npcs.nearest(region,body.getPosition()).filter(n->n.id().equals("elder")).isPresent();}
+     private boolean dialogueCondition(String condition){return switch(condition){case "always"->true;case "first_ready"->questService.state("first_steps",quests,flags)==QuestService.State.READY;case "first_done"->flags.contains("quest-done:first_steps");case "boss_ready"->questService.state("sanctuary",quests,flags)==QuestService.State.READY;default->false;};}
+     private String dialogueNode="";
+@@ -115,7 +120,8 @@
+         if(target.hp==0) {
+             target.readyTick=ticks+target.definition.respawn();
+             if(loot.award(target.spawn,target.generation,target.definition.id(),inventory,flags,random)) {
+-                questService.defeat(target.definition.id(),quests,flags);
++                questService.event("kill",target.definition.id(),target.spawn,target.generation,quests,flags);
++                questService.refresh(quests,flags,inventory,region);
+                 awardExperience(content.get("enemy",target.definition.id()).value());coins=Math.min(1_000_000,coins+5);
+                 message="Derrotado: +XP, loot e moedas";
+                 if(target.definition.id().equals("warden")){flags.add("boss-defeated");message="Guardiao derrotado! Reliquia conquistada.";}
+@@ -163,6 +169,7 @@
+         }
+         ticks++;
+         enemies.respawn(ticks,region);
++        questService.refresh(quests,flags,inventory,region);
+         enemies.update(region,ticks,body.getPosition(),hp>0,movement,space,n->receiveDamage(Math.max(1,n-defense())),p->lineClear(body.getPosition(),p));
+     }
+     public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message,maxHp(),level(),enemies.views(region),npcs.views(region),activeNpc,dialogue(),questService.views(quests,flags)); }
+--- /dev/null
++++ b/server/src/main/resources/rpg/quests.properties
+@@ -0,0 +1,2 @@
++first_steps=kill:slime:2|80|45|potion|2
++sanctuary=kill:warden:1,collect:relic:1,visit:ruins:1,talk:elder:1|180|100|robe|1
+--- /dev/null
++++ b/server/src/test/java/com/projetok/rpg/QuestRewardsTest.java
+@@ -0,0 +1,12 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++class QuestRewardsTest {
++    @Test void stableEventsAndWorldRewardsAreIdempotent() {
++        var service=new QuestService(RpgContent.builtin());Map<String,Integer> p=new TreeMap<>();Set<String> f=new TreeSet<>();service.accept("first_steps",p,f);
++        service.event("kill","slime","forest_a",1,p,f);service.event("kill","slime","forest_a",1,p,f);assertEquals(1,p.get("first_steps"));service.event("kill","slime","forest_a",2,p,f);assertEquals(QuestService.State.READY,service.state("first_steps",p,f));
++        var w=new RpgWorld();w.interact();w.acceptQuest("first_steps");var s=w.save();Map<String,Integer> progress=new TreeMap<>(s.quests());progress.put("first_steps",2);Set<String> flags=new TreeSet<>(s.flags());flags.add("qo:first_steps:0:2");
++        w=RpgWorld.restore(new RpgSave(s.identity(),s.region(),s.x(),s.y(),s.hp(),s.xp(),s.coins(),s.inventory(),s.equipment(),progress,flags,s.ticks()));w.interact();assertTrue(w.completeQuest("first_steps"));assertEquals(80,w.save().xp());assertEquals(45,w.save().coins());assertEquals(5,w.inventory().count("potion"));var before=w.save();assertFalse(w.completeQuest("first_steps"));assertEquals(before,w.save());
++    }
++}

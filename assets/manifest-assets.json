@@ -1,0 +1,3901 @@
+{
+  "schemaVersion": 1,
+  "characterContract": {
+    "frameSize": 64,
+    "totalFrames": 59,
+    "directions": [
+      "FRONT",
+      "BACK",
+      "LEFT",
+      "RIGHT"
+    ],
+    "states": {
+      "IDLE": 1,
+      "WALK": 4,
+      "RUN": 4,
+      "PUNCH": 3,
+      "HIT": 2
+    },
+    "KO": {
+      "FRONT": 3
+    }
+  },
+  "assets": [
+    {
+      "path": "source/karakura-environment-v1.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/agua-ondas-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/agua-ondas-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arbusto-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arbusto-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arbusto-flores-brancas-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arbusto-flores-brancas-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arbusto-flores-rosas.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arvore-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arvore-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arvore-03.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arvore-cerejeira-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/arvore-cerejeira-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/asfalto-faixa-central.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/asfalto-faixa-esquina-direita.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/asfalto-faixa-esquina-esquerda.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/asfalto-faixa-inferior.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/asfalto-faixa-lateral-direita.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/asfalto-faixa-lateral-esquerda.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/asfalto-variacao.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/asfalto.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/atlas-verificacao.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/calcada-borda-horizontal.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/calcada-esquina.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/calcada-meio-fio.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/calcada-pavimento.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/canal-esquina-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/canal-esquina-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/canal-margem-esquerda.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/canal-margem-superior-ondas.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/canal-margem-superior.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/casa-telhado-azul-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/casa-telhado-azul-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/casa-telhado-cinza.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/cerca-viva-flores-brancas.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/cerca-viva-flores-rosas.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/cerca-viva.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/faixa-de-pedestres.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/grama-terra-transicao-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/grama-terra-transicao-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/grama-terra-transicao-03.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/grama-terra-transicao-04.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/grama-terra-transicao-05.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/grama-terra-transicao-06.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/grama.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/loja.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/muro-canal-escada-metalica.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/muro-canal-escadaria.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/muro-canal-esquina-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/muro-canal-esquina-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/muro-canal-estreito-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/muro-canal-estreito-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/muro-canal-horizontal.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/muro-canal-variacao.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/predio-residencial-01.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/predio-residencial-02.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-extraidos-2026-10-18/terra.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/atlas-verificacao.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-001.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-002.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-003.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-004.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-005.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-006.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-007.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-008.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-009.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-010.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-011.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-012.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-013.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-014.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-015.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-016.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-017.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-018.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-019.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-020.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-021.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-022.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-023.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-024.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-025.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-026.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-027.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-028.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-029.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-030.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-031.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-032.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-033.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-034.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-035.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-036.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-037.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-038.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-039.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-040.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-041.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-042.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-043.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-044.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-045.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-046.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-047.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-048.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-049.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-050.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-051.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-052.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-053.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-054.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-final/sprite-055.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/atlas-verificacao.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-001.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-002.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-003.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-004.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-005.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-006.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-007.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-008.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-009.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-010.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-011.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-012.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-013.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-014.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-015.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-016.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-017.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-018.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-019.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-020.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-021.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-022.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-023.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-024.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-025.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-026.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-027.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-028.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-029.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-030.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-031.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-032.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-033.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-034.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-035.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-036.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-037.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-038.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-039.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-040.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-041.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-042.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-043.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-044.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-045.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-046.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-047.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-048.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-049.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-050.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-051.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-052.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-053.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-054.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-recortes/sprite-055.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/atlas-verificacao.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-001.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-002.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-003.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-004.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-005.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-006.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-007.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-008.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-009.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-010.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-011.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-012.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-013.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-014.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-015.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-016.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-017.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-018.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-019.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-020.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-021.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-022.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-023.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-024.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-025.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-026.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-027.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-028.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-029.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-030.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-031.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-032.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-033.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-034.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-035.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-036.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-037.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-038.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-039.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-040.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-041.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-042.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-043.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-044.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-045.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-046.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-047.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-048.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-049.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-050.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-051.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-052.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-053.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-054.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-055.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "sprites/karakura-v3-separated/sprite-056.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "tilesets/karakura-environment-atlas.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    },
+    {
+      "path": "tilesets/karakura-environment-v3-blend.png",
+      "kind": "candidate",
+      "grid": 32,
+      "frames": [],
+      "pivot": [
+        0,
+        0
+      ],
+      "offset": [
+        0,
+        0
+      ],
+      "layer": "scenario",
+      "origin": "checkout existente; revisar assets/README.md",
+      "status": "PENDENTE"
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3032 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# TASK-014 - Animacao direcional com fallback) Tj T*
+() Tj T*
+(Baseline limpo: 202 testes, zero falhas/erros/ignorados. Arquivos previstos: DebugWorld,) Tj T*
+(DebugRuntime, DebugPanel, DebugLauncher, sequenciador, atlas e testes. Risco:) Tj T*
+(sincronizacao de apresentacao e sinais visuais; regras do dominio preservadas.) Tj T*
+() Tj T*
+(DirectionalAnimation avanca por dt na thread de simulacao; IDLE/WALK/ATTACK/HIT/FAINT e) Tj T*
+(quatro direcoes. RUN existe no contrato, mas nunca e emitido pelo mundo atual, que nao) Tj T*
+(possui corrida. Movimento observado define facing dos mobs, facing autoritativo orienta) Tj T*
+(player; empate de eixo estavel e ultima direcao parada. Ataque e dano positivo publicam) Tj T*
+(sinais no ponto real do combate; morte real tem prioridade e usa KO frontal. Freeze) Tj T*
+(pausa o frame; R recria a linha temporal.) Tj T*
+() Tj T*
+(Presentation publica atomicamente snapshot historico e lista imutavel de frames. API e) Tj T*
+(construtores antigos preservados; campos e baselines de DebugSnapshot intactos. Renderer) Tj T*
+(recebe apenas valores, sem avancar tempo nem consultar mundo mutavel. Timer Swing) Tj T*
+(preexistente apenas repinta; nenhum timer de animacao foi adicionado.) Tj T*
+() Tj T*
+(ValidatedSpriteAtlas carrega exportacao Properties VALIDADO da TASK-013, confere SHA e) Tj T*
+(grade/recortes, usa nearest-neighbor, pivot e offset constantes; leitura de arquivo e) Tj T*
+(cache somente na carga. Frame ausente retorna ao debug original. Sem arte aprovada,) Tj T*
+(launcher permanece com fallback. Nada foi declarado visual final integrado.) Tj T*
+() Tj T*
+(Testes novos cobrem quatro direcoes, timing, loop, pausa, freeze/retorno, R, ataque,) Tj T*
+(sinais reais de dano e morte, KO limitado ao ultimo frame, ausencia de corrida, rejeicao) Tj T*
+(de asset sem aprovacao ou adulterado, frame ausente, pivot e render sem mutacao. Captura) Tj T*
+(TASK-014-sintetico.png e FIXTURE SINTETICA magenta, nao arte aprovada do jogo. Os tres) Tj T*
+(replays historicos e demais regressoes executam sem editar baselines.) Tj T*
+() Tj T*
+(Falha intermediaria de compilacao em teste: variavel capturada por lambda nao era) Tj T*
+(efetivamente final; corrigida no novo teste, registro TASK-014-falha-intermediaria.log.) Tj T*
+(Execucao parcial: 209 testes verdes; teste adicional de Freeze levou a suite final a) Tj T*
+(210, zero falhas/erros/ignorados, registrada em TASK-014-final.log e) Tj T*
+(TASK-014-testes.txt.) Tj T*
+() Tj T*
+(Reproducao: mvn.cmd -Dmaven.repo.local=.maven-repository -f server/pom.xml clean test.) Tj T*
+(PDF, diff e checkpoints locais anexos. Nenhuma regra de colisao, vigor, dano, cooldown,) Tj T*
+(FIFO, rede ou protocolo alterada.) Tj T*
+() Tj T*
+(O QUE FOI REALMENTE EXECUTADO: suite completa, replays e render sintetico. O QUE AINDA) Tj T*
+(EXIGE O USUARIO: arte de personagem 64x64 aprovada e revisao humana de leitura visual.) Tj T*
+(Fallback permanece ativo.) Tj T*
+() Tj T*
+(Spirit Gate - TASK-014 - p·gina 1/1) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000344 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+3428
+%%EOF
