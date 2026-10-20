@@ -1,0 +1,96 @@
+--- before/server/src/test/java/com/projetok/rpg/CorujaoEnemyTest.java
++++ after/server/src/test/java/com/projetok/rpg/CorujaoEnemyTest.java
+@@ -0,0 +1,29 @@
++package com.projetok.rpg;
++import com.projetok.domain.entity.*;
++import com.projetok.domain.movement.*;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class CorujaoEnemyTest {
++    @Test void patrolDoesNotOvershootAndAttackStateReturnsToChase() {
++        var space=new CollisionService.Space(960,640,java.util.List.of(),java.util.List.of());
++        var service=new EnemyService(RpgContent.builtin(),space);var e=service.current("forest").get(0);
++        e.setPosition(new Position(e.home.x()+23.9f,e.home.y()));
++        var movement=new MovementService(new CollisionService());
++        service.update("forest",1,new Position(900,600),false,movement,space,n->fail("Ataque sem alvo vivo"),p->true,true);
++        assertTrue(Math.abs(e.getPosition().x()-e.home.x())<24);
++        e.setPosition(new Position(280,360));e.behavior="ATTACK";
++        service.update("forest",2,new Position(360,360),true,movement,space,n->fail("Ataque fora de alcance"),p->true,true);
++        assertEquals("CHASE",e.behavior);
++        for(int i=0;i<200;i++)service.update("forest",i+3,new Position(900,600),false,movement,space,n->fail("Ataque em retorno"),p->true,true);
++        assertEquals(e.home,e.getPosition());assertEquals("PATROL",e.behavior);
++    }
++    @Test void pursuitCollisionRespawnAndSaveRemainDeterministic() {
++        var a=EnemyRpgTest.forest();var b=RpgWorld.restore(a.save());
++        for(int i=0;i<500;i++) {
++            if(i%12==0){a.attack();b.attack();}
++            int x=i<60?-1:0;a.tick(x,0);b.tick(x,0);
++            if(i%50==0)b=RpgWorld.restore(b.save());
++            assertEquals(a.save(),b.save());
++        }
++    }
++}
+--- before/server/src/main/java/com/projetok/rpg/EnemyService.java
++++ after/server/src/main/java/com/projetok/rpg/EnemyService.java
+@@ -72,7 +72,7 @@
+                 if(d<=46 && visible.test(e.getPosition())) {
+                     e.behavior="ATTACK";
+                     if(tick>=e.attackTick){damage.accept(e.definition.attack());e.attackTick=tick+36;}
+-                } else moveToward(e,player,e.definition.speed(),movement,space);
++                } else {e.behavior="CHASE";moveToward(e,player,e.definition.speed(),movement,space);}
+             } else {
+                 Position patrol=new Position(e.home.x()+(tick/90%2==0?24:-24),e.home.y());
+                 moveToward(e,patrol,e.definition.speed()*0.3f,movement,space);
+@@ -82,7 +82,9 @@
+     private static double distance(Position a,Position b){return Math.hypot(a.x()-b.x(),a.y()-b.y());}
+     private static void moveToward(Enemy e,Position target,float speed,MovementService movement,CollisionService.Space space) {
+         Position p=e.getPosition(),direction=movement.direction(target.x()-p.x(),target.y()-p.y());
+-        movement.moveContinuous(e,direction.x()*speed/30,direction.y()*speed/30,19,space);
++        // Limita o ultimo passo ao destino para evitar oscilacao em torno do ponto de patrulha.
++        float step=(float)Math.min(speed/30,distance(p,target));
++        movement.moveContinuous(e,direction.x()*step,direction.y()*step,19,space);
+     }
+     Set<String> saveFlags() {
+         Set<String> result=new TreeSet<>();
+--- before/docs/TASK-086-RELATORIO-FINAL.md
++++ after/docs/TASK-086-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-086 - Corujao I
++
++Estado: **VALIDADA**.
++
++Percepcao, leash, pausa, respawn e encontros preservados. Ultimo passo limitado a distancia restante evita ultrapassar ponto de patrulha; inimigo saindo do alcance de ataque volta a publicar CHASE. Movimento continua pelo CollisionService. Testes deterministas com recargas, retorno e save/reload, alem da campanha antiga, aprovados. Nenhuma variante ou ajuste de numeros de inimigos.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-086/corujao-i/`. Logs da suite: `docs/TASK-corujao-086-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-086-TESTES.md
++++ after/docs/TASK-086-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-086 - Corujao I
++
++Comando: `python tools/qualidade.py --offline --task corujao-086`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 328,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-086.md
++++ after/docs/TASK-086.md
+@@ -0,0 +1,3 @@
++# TASK-086 - Corujao I
++
++Percepcao, leash, pausa, respawn e encontros preservados. Ultimo passo limitado a distancia restante evita ultrapassar ponto de patrulha; inimigo saindo do alcance de ataque volta a publicar CHASE. Movimento continua pelo CollisionService. Testes deterministas com recargas, retorno e save/reload, alem da campanha antiga, aprovados. Nenhuma variante ou ajuste de numeros de inimigos.

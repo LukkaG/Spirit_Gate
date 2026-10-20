@@ -1,0 +1,22 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/StudioLayersTest.java",
+    "server/src/main/java/com/projetok/studio/EditorOperations.java",
+    "server/src/main/java/com/projetok/studio/LayerTools.java",
+    "server/src/main/java/com/projetok/studio/WorldStudio.java",
+    "server/src/main/java/com/projetok/studio/WrapToolbar.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-095-RELATORIO-FINAL.md",
+    "docs/TASK-095-TESTES.md",
+    "docs/TASK-095.md",
+    "docs/TASK-studio-095-java-version.log",
+    "docs/TASK-studio-095-java.log",
+    "docs/TASK-studio-095-maven-version.log",
+    "docs/TASK-studio-095-python-version.log",
+    "docs/TASK-studio-095-python.log",
+    "docs/TASK-studio-095-qualidade.json",
+    "docs/TASK-studio-095-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

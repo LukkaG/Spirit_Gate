@@ -1,0 +1,5 @@
+SPIRIT GATE RPG OFFLINE 0.66.1-rc1
+Extraia todo o ZIP. Abra SpiritGateRPG.exe. Java integrado; sem banco ou rede.
+WASD mover; F interagir/portal; SPACE atacar; Q habilidade; 1 pocao; F5 salvar.
+Arena historica continua disponivel separadamente. Arte geometrica provisoria.
+Build usa classes da ultima suite completa; execute qualidade.py antes de empacotar.

@@ -1,0 +1,967 @@
+[
+  {
+    "path": ".task-checkpoints/TASK-022-after.json",
+    "sizeBytes": 29525,
+    "sha256": "920b592aff224fd2b6b78f09c53ee79658b401d7fea18e1a3449a9622fa93b70"
+  },
+  {
+    "path": ".task-checkpoints/TASK-023-after.json",
+    "sizeBytes": 29941,
+    "sha256": "2d6e5c2532ed0e34de2aecf3ea9178836c8bf41086a1762336b3beb254af9d96"
+  },
+  {
+    "path": ".task-checkpoints/TASK-024-after.json",
+    "sizeBytes": 30491,
+    "sha256": "92ee21c2996258760899750e818911a5c232a7b3aab3dc802a9a5b51e54ba9fb"
+  },
+  {
+    "path": ".task-checkpoints/TASK-025-after.json",
+    "sizeBytes": 30824,
+    "sha256": "14f91ca2eccd838c4c8783a2d4ad8e41ed12620e41fe0d1c75c73f3cf85c2466"
+  },
+  {
+    "path": ".task-checkpoints/TASK-026-after.json",
+    "sizeBytes": 31096,
+    "sha256": "e264dcb07017aa22233f5d24d532e2cdf744e8a6ad7ee2b08eae3274c94ead3d"
+  },
+  {
+    "path": ".task-checkpoints/TASK-027-after.json",
+    "sizeBytes": 31529,
+    "sha256": "9227ce94a8fffbd08d09e14fb40ed828a77fab23045474904c136998b0f67747"
+  },
+  {
+    "path": ".task-checkpoints/TASK-028-after.json",
+    "sizeBytes": 31632,
+    "sha256": "1d5c9c4b23b31f76e20dd47aefa20c7ebc9baff7901eaf1d7f1a6b175d556453"
+  },
+  {
+    "path": ".task-checkpoints/TASK-029-after.json",
+    "sizeBytes": 31979,
+    "sha256": "54ac054076cb3389e58981970d2f3e0031caa657b7de27295f879e0eea43344c"
+  },
+  {
+    "path": ".task-checkpoints/TASK-030-after.json",
+    "sizeBytes": 32033,
+    "sha256": "8a41085eed9e340115747dd63b96e059e8e600bfb5574e3b6485467925cbb79b"
+  },
+  {
+    "path": ".task-checkpoints/TASK-031-after.json",
+    "sizeBytes": 32434,
+    "sha256": "02bf4a21c545bd453cea7a470336a6049f56e67759ec63331ac43de3ef9bc4fa"
+  },
+  {
+    "path": ".task-checkpoints/TASK-032-after.json",
+    "sizeBytes": 32845,
+    "sha256": "3c77a3fbeab6b9a6ef77acf132a1a2aff060df20ff497c2a91a3a4864cfc5530"
+  },
+  {
+    "path": ".task-checkpoints/TASK-033-after.json",
+    "sizeBytes": 33205,
+    "sha256": "08a4d3318524866cfb8da9e889b56758e76344dad14a6b44f30af03abe8d6356"
+  },
+  {
+    "path": ".task-checkpoints/TASK-034-after.json",
+    "sizeBytes": 33751,
+    "sha256": "a7ef931f26df8272672d162b9c2ab60a2d630142414ec6856e2208057b6b9af0"
+  },
+  {
+    "path": ".task-checkpoints/TASK-035-after.json",
+    "sizeBytes": 33876,
+    "sha256": "12bdee731cc0cea743396a5833e6ebefd5ce3902f23629bbe077ab3e25903e8b"
+  },
+  {
+    "path": ".task-checkpoints/TASK-036-after.json",
+    "sizeBytes": 35776,
+    "sha256": "89cca7c8749179250207d5f58934863080970da5e2298beda20497aef98a82bf"
+  },
+  {
+    "path": "docs/ALTERACOES-TASK-022_036.json",
+    "sizeBytes": 4430,
+    "sha256": "f61d43780298a83b57792ebe34650b7388affd5c6affc868deffec11e6824082"
+  },
+  {
+    "path": "docs/autoria-028-sintetica/manifest.json",
+    "sizeBytes": 17751,
+    "sha256": "67339d50074534c087072abeb25366e157c10733282f28548c37114dfe08fca3"
+  },
+  {
+    "path": "docs/autoria-028-sintetica/revisao/preview.html",
+    "sizeBytes": 39447,
+    "sha256": "5ca022bce9a45cfcf85f6998e26f51bc200f4927f427effeed30ebbb4c8f35b8"
+  },
+  {
+    "path": "docs/autoria-028-sintetica/revisao/relatorio.json",
+    "sizeBytes": 18198,
+    "sha256": "59042b5dba0714fbd97144b92f6e4f810b0ce7e1088fdfb5c22fcc326f74ecc6"
+  },
+  {
+    "path": "docs/autoria-028-sintetica/revisao-portatil/preview.html",
+    "sizeBytes": 39447,
+    "sha256": "5ca022bce9a45cfcf85f6998e26f51bc200f4927f427effeed30ebbb4c8f35b8"
+  },
+  {
+    "path": "docs/autoria-028-sintetica/revisao-portatil/relatorio.json",
+    "sizeBytes": 18198,
+    "sha256": "59042b5dba0714fbd97144b92f6e4f810b0ce7e1088fdfb5c22fcc326f74ecc6"
+  },
+  {
+    "path": "docs/autoria-028-sintetica/template-vazio.png",
+    "sizeBytes": 1097,
+    "sha256": "b262bd68d44f93637b9949caf7ff7ce0b6b6ed839c3a2468681952b215ec4d95"
+  },
+  {
+    "path": "docs/CONTINUIDADE-TASK-022_036.md",
+    "sizeBytes": 846,
+    "sha256": "2b8c3d2461a93085eeaedb099aa9d01f89c7c19793013cc70e33cb035bae059a"
+  },
+  {
+    "path": "docs/kit-homologacao-022-036/CHANGELOG-RESUMIDO.md",
+    "sizeBytes": 623,
+    "sha256": "2bfedadbffc302706e32485f3c78af103579a46abbd1f0cf0970eb8bbd9789fb"
+  },
+  {
+    "path": "docs/kit-homologacao-022-036/mapa-demo.properties",
+    "sizeBytes": 849,
+    "sha256": "80a1a8a76e77cc600ab6db4c8b4681b16f75ba90d83f3a760c5beae5e2da9d12"
+  },
+  {
+    "path": "docs/kit-homologacao-022-036/MODELO-RELATO-BUG.md",
+    "sizeBytes": 462,
+    "sha256": "8830333c0462065a50bd2b637bd9d2b42346237189fbc16134b44185e30a7631"
+  },
+  {
+    "path": "docs/kit-homologacao-022-036/ROTEIRO-HOMOLOGACAO.md",
+    "sizeBytes": 2498,
+    "sha256": "4bd84ef75810fb6289badc81bdc4eda1f3b197a1617351a7a333cd09ec8e109b"
+  },
+  {
+    "path": "docs/mapas/demo-v2.properties",
+    "sizeBytes": 547,
+    "sha256": "bd36325fba27f136cc4237de31fdc02f34477ee8dc3b46a8286e795c1eb8f14c"
+  },
+  {
+    "path": "docs/RELATORIO-FINAL-TASK-022_036.md",
+    "sizeBytes": 7768,
+    "sha256": "163ad408bfd22ee9917a3240d7b5e4c866598f48f0e850224c6ceedfaab4d35e"
+  },
+  {
+    "path": "docs/Spirit_Gate_Relatorio_Final_TASK-022_036.pdf",
+    "sizeBytes": 9752,
+    "sha256": "f5eaac90c20b0996e57a42520a06f4d9b2e62c42e478db7c532c623043ad63e4"
+  },
+  {
+    "path": "docs/Spirit_Gate_TASK-022.pdf",
+    "sizeBytes": 4753,
+    "sha256": "ae72800f8d191ee2e0f5a4a5229f9d5fc1301f685b74201e92316c7a618bd192"
+  },
+  {
+    "path": "docs/Spirit_Gate_TASK-023.pdf",
+    "sizeBytes": 2513,
+    "sha256": "78c718e2a0e17be1c2c99de81dc50c654a813296c33fadf3c0f4e22a60bd8a09"
+  },
+  {
+    "path": "docs/Spirit_Gate_TASK-024.pdf",
+    "sizeBytes": 3059,
+    "sha256": "98b33f3679e77f5971e497314232b82ff22056dc462fc32c90167bfc7c4ea21a"
+  },
+  {
+    "path": "docs/Spirit_Gate_TASK-025.pdf",
+    "sizeBytes": 2599,
+    "sha256": "b7901bad1c82b788b74585c538194f5fa4b5dcc3a5bb156436e5a4490cbf264a"
+  },
+  {
+    "path": "docs/Spirit_Gate_TASK-026.pdf",
+    "sizeBytes": 2450,
+    "sha256": "0203d2f2817fb8729cfa1c4b3aef0fe05ed915890e5f30e01a0c12fb7e5d49c1"
+  },
+  {
+    "path": "docs/Spirit_Gate_TASK-027.pdf",
+    "sizeBytes": 2648,
+    "sha256": "c7ac562c657830869d03d52401eeb3c963262eada81b8c4e0e60d8d65d8dd259"
+  },
+  {
+    "path": "docs/Spirit_Gate_TASK-028.pdf",
+    "sizeBytes": 2495,
+    "sha256": "fd24e8db352a48746325ee22e881baca8703020de9462033eaa2f3bbf3c09849"
+  },
+  {
+    "path": "docs/Spirit_Gate_TASK-029.pdf",
+    "sizeBytes": 2631,
+    "sha256": "4840f9c4732ef5a04faa6e6103bc4f0f470a6889a336fd79212dafd5179e3511"
+  },
+  {
+    "path": "docs/Spirit_Gate_TASK-030.pdf",
+    "sizeBytes": 2396,
+    "sha256": "5864ce9566f9589546631fb1fa8b4564bb513b9f995482fce7d97ace404f1e39"
+  },
+  {
+    "path": "docs/Spirit_Gate_TASK-031.pdf",
+    "sizeBytes": 2161,
+    "sha256": "60cc2e52f7e06efb932fbe253770a4d2223a0527883a78c559d5c24bab2c179f"
+  },
+  {
+    "path": "docs/Spirit_Gate_TASK-032.pdf",
+    "sizeBytes": 2026,
+    "sha256": "a2da1e28a99bcba13d476971a2d32acb112dfe1afa554b30d7378fb0f1824781"
+  },
+  {
+    "path": "docs/Spirit_Gate_TASK-033.pdf",
+    "sizeBytes": 2371,
+    "sha256": "4923aba82694bfef15a63805fe512bfc8f5baba8737b7c27f1475dc471986320"
+  },
+  {
+    "path": "docs/Spirit_Gate_TASK-034.pdf",
+    "sizeBytes": 2484,
+    "sha256": "c2430062b7aa543b0e6e8661a92d07996a3b7376c7529fb664b54eb01dd0a261"
+  },
+  {
+    "path": "docs/Spirit_Gate_TASK-035.pdf",
+    "sizeBytes": 2557,
+    "sha256": "aa6a369a94825f0e92bfbb54173a5b42c20d0ad53952dd8df37c74122b88578e"
+  },
+  {
+    "path": "docs/Spirit_Gate_TASK-036.pdf",
+    "sizeBytes": 3745,
+    "sha256": "1cfb49e8a1d68f92f7ed121c2fc6fcb656707175e756e9068bb707d740998792"
+  },
+  {
+    "path": "docs/TASK-022-auditoria.json",
+    "sizeBytes": 3013,
+    "sha256": "db3a973b9960b978312e35fed1b726a7eafe08698595265d0078d2bed8a3b382"
+  },
+  {
+    "path": "docs/TASK-022-java.log",
+    "sizeBytes": 20250,
+    "sha256": "3c0bf4475d5df6e5e7fbce8efbc747da76e98ce53b6b390b1935892691660ef0"
+  },
+  {
+    "path": "docs/TASK-022-python.log",
+    "sizeBytes": 4914,
+    "sha256": "413e34bc312c56a6f84376cda30630b793503d7b26b12c1040abd31e5561e030"
+  },
+  {
+    "path": "docs/TASK-022-testes.txt",
+    "sizeBytes": 3266,
+    "sha256": "4e47f28e5f483533a74dd887d45876afa763b45cb68965aac3030d18c87e68a8"
+  },
+  {
+    "path": "docs/TASK-022.diff",
+    "sizeBytes": 7649,
+    "sha256": "5f769861e4f7ca9b5e8d36026f94fc8bd34b24336d28400804971281e98d379b"
+  },
+  {
+    "path": "docs/TASK-022.md",
+    "sizeBytes": 3420,
+    "sha256": "ed73cb364bcabcf5029da25b4f823d1676b8a5d65ae81d9320a1f114d4ee0348"
+  },
+  {
+    "path": "docs/TASK-023-java-version.log",
+    "sizeBytes": 196,
+    "sha256": "2c05c59b13a701146c37d79936303eb8080cd353e096756dfab1cd833a306423"
+  },
+  {
+    "path": "docs/TASK-023-java.log",
+    "sizeBytes": 10115,
+    "sha256": "9d5af294bef671b95c708592b7b7fa234e4b9b25e534ee348b4b38442e08069e"
+  },
+  {
+    "path": "docs/TASK-023-maven-version.log",
+    "sizeBytes": 379,
+    "sha256": "e412f7da944f0f53d628f48ff76b5000178a8ada26621fcd8afcc87c0608a68e"
+  },
+  {
+    "path": "docs/TASK-023-python-version.log",
+    "sizeBytes": 15,
+    "sha256": "cf25165865edf0baea5fff58088b4987aa3f34df958a794c11cdf73702d4c9c7"
+  },
+  {
+    "path": "docs/TASK-023-python.log",
+    "sizeBytes": 2662,
+    "sha256": "893baf2a373427df294f1ace266af35330ae34049a2536cfb3924e34c57188c3"
+  },
+  {
+    "path": "docs/TASK-023-qualidade.json",
+    "sizeBytes": 1010,
+    "sha256": "b71929981ee07e58f29b0b37661ffd7695394a5387102fde9e1cae064ef6a2b8"
+  },
+  {
+    "path": "docs/TASK-023-testes.txt",
+    "sizeBytes": 317,
+    "sha256": "5f074e3e02527afba524279d5216e949f9891d805daf50198d68c240d2e20985"
+  },
+  {
+    "path": "docs/TASK-023.diff",
+    "sizeBytes": 8094,
+    "sha256": "7522861d196fb89e757f3660f61e67b61362beff3e53fa9875e8e5de7d14f35a"
+  },
+  {
+    "path": "docs/TASK-023.md",
+    "sizeBytes": 1700,
+    "sha256": "0bef54dff8a2c1d2f4bff0fd0aaeb3bf0ff39b0090af9b5288a9b75d6dd0279d"
+  },
+  {
+    "path": "docs/TASK-024-java-version.log",
+    "sizeBytes": 196,
+    "sha256": "2c05c59b13a701146c37d79936303eb8080cd353e096756dfab1cd833a306423"
+  },
+  {
+    "path": "docs/TASK-024-java.log",
+    "sizeBytes": 10294,
+    "sha256": "32ac328b9dfe41dc9504fc10ef459847afc6cf570bd103c8384e93c341f26357"
+  },
+  {
+    "path": "docs/TASK-024-maven-version.log",
+    "sizeBytes": 379,
+    "sha256": "e412f7da944f0f53d628f48ff76b5000178a8ada26621fcd8afcc87c0608a68e"
+  },
+  {
+    "path": "docs/TASK-024-python-version.log",
+    "sizeBytes": 15,
+    "sha256": "cf25165865edf0baea5fff58088b4987aa3f34df958a794c11cdf73702d4c9c7"
+  },
+  {
+    "path": "docs/TASK-024-python.log",
+    "sizeBytes": 2662,
+    "sha256": "aa7eec7edfbe1260e6c914b88dea616579e95b92d0a239fbb74696a18db69f7f"
+  },
+  {
+    "path": "docs/TASK-024-qualidade.json",
+    "sizeBytes": 1010,
+    "sha256": "39b334642f545a3eded21db95a3c5776cd2ece956a4751fd53a8b4dc0390fae3"
+  },
+  {
+    "path": "docs/TASK-024-testes.txt",
+    "sizeBytes": 317,
+    "sha256": "f3e91b2ad0671a80b6238b108f36a3672beabbc0981b8ed5afef79b0a6812446"
+  },
+  {
+    "path": "docs/TASK-024.diff",
+    "sizeBytes": 15733,
+    "sha256": "296e87a80bb0d84bfaf1494aa6713cb3eeb3e251d07a704046d95568bb8a8edd"
+  },
+  {
+    "path": "docs/TASK-024.md",
+    "sizeBytes": 2222,
+    "sha256": "00ccf2d1996ac05bb00aefd1f4d1e7b2a98f6b3f869aa1f489d26290bffb182c"
+  },
+  {
+    "path": "docs/TASK-025-java-version.log",
+    "sizeBytes": 196,
+    "sha256": "2c05c59b13a701146c37d79936303eb8080cd353e096756dfab1cd833a306423"
+  },
+  {
+    "path": "docs/TASK-025-java.log",
+    "sizeBytes": 10466,
+    "sha256": "eda6b6180961254b22191cae6c465d1d56370dcbb64e14634cf0576f49503aed"
+  },
+  {
+    "path": "docs/TASK-025-maven-version.log",
+    "sizeBytes": 379,
+    "sha256": "e412f7da944f0f53d628f48ff76b5000178a8ada26621fcd8afcc87c0608a68e"
+  },
+  {
+    "path": "docs/TASK-025-python-version.log",
+    "sizeBytes": 15,
+    "sha256": "cf25165865edf0baea5fff58088b4987aa3f34df958a794c11cdf73702d4c9c7"
+  },
+  {
+    "path": "docs/TASK-025-python.log",
+    "sizeBytes": 2662,
+    "sha256": "acf7d07c79f22237209c8fa0029a2ef327a946a928ccf2fedc78cecc6a2556aa"
+  },
+  {
+    "path": "docs/TASK-025-qualidade.json",
+    "sizeBytes": 1010,
+    "sha256": "7dd1debff89d8642438495d072cc7546561f7ed5930c1d5ee4bff71eb0b2b2ae"
+  },
+  {
+    "path": "docs/TASK-025-testes.txt",
+    "sizeBytes": 317,
+    "sha256": "f1d7597041a3639f9ccf285e656ca87d413a1bec5b29be8ec49e835b0dd72f7b"
+  },
+  {
+    "path": "docs/TASK-025.diff",
+    "sizeBytes": 8236,
+    "sha256": "f0bd940585d464186771a52cca915241e16f4f784b8c7fe4d63cf5e719ea973d"
+  },
+  {
+    "path": "docs/TASK-025.md",
+    "sizeBytes": 1777,
+    "sha256": "e69f3088b1d55d7893e28ca0de059de11caa9190dae4e0473459cf2f7b6e76bd"
+  },
+  {
+    "path": "docs/TASK-026-java-version.log",
+    "sizeBytes": 196,
+    "sha256": "2c05c59b13a701146c37d79936303eb8080cd353e096756dfab1cd833a306423"
+  },
+  {
+    "path": "docs/TASK-026-java.log",
+    "sizeBytes": 10642,
+    "sha256": "dcdbe7f9dfa28d13d10fa946e784e7926a5bbeec92fc70342024fdb34030523b"
+  },
+  {
+    "path": "docs/TASK-026-maven-version.log",
+    "sizeBytes": 379,
+    "sha256": "e412f7da944f0f53d628f48ff76b5000178a8ada26621fcd8afcc87c0608a68e"
+  },
+  {
+    "path": "docs/TASK-026-python-version.log",
+    "sizeBytes": 15,
+    "sha256": "cf25165865edf0baea5fff58088b4987aa3f34df958a794c11cdf73702d4c9c7"
+  },
+  {
+    "path": "docs/TASK-026-python.log",
+    "sizeBytes": 2662,
+    "sha256": "a8f2c271e57e8475e7335139a5af17a82b38890bc12a6d942053bfb669aca4b1"
+  },
+  {
+    "path": "docs/TASK-026-qualidade.json",
+    "sizeBytes": 1010,
+    "sha256": "e5aa6238cf3d7d569c79cf35d9e3659079e2c3728e0de67c6bea7d2edf015f2b"
+  },
+  {
+    "path": "docs/TASK-026-testes.txt",
+    "sizeBytes": 317,
+    "sha256": "445de089f2d85909f7884d25f659b26d255aecaf30c0d198299f059cacd90e00"
+  },
+  {
+    "path": "docs/TASK-026.diff",
+    "sizeBytes": 6709,
+    "sha256": "6015e9e667c4ac9ff43720477b08a7b502d6cf02be272136c4293f5c8097de76"
+  },
+  {
+    "path": "docs/TASK-026.md",
+    "sizeBytes": 1648,
+    "sha256": "81467628e878ab48cc0c0106040bd9114294a34f7f9c2d573198c3fa74e18eea"
+  },
+  {
+    "path": "docs/TASK-027-java-version.log",
+    "sizeBytes": 196,
+    "sha256": "2c05c59b13a701146c37d79936303eb8080cd353e096756dfab1cd833a306423"
+  },
+  {
+    "path": "docs/TASK-027-java.log",
+    "sizeBytes": 10653,
+    "sha256": "6c87e0065c714a819a26ce0154077f5ab035fd937ea9b006c699f0b286b0f5c7"
+  },
+  {
+    "path": "docs/TASK-027-maven-version.log",
+    "sizeBytes": 379,
+    "sha256": "e412f7da944f0f53d628f48ff76b5000178a8ada26621fcd8afcc87c0608a68e"
+  },
+  {
+    "path": "docs/TASK-027-python-version.log",
+    "sizeBytes": 15,
+    "sha256": "cf25165865edf0baea5fff58088b4987aa3f34df958a794c11cdf73702d4c9c7"
+  },
+  {
+    "path": "docs/TASK-027-python.log",
+    "sizeBytes": 2948,
+    "sha256": "d5949a16df32f85e207fe7a7fb431ea5a9b050ca755c4b686947e840b1a42d08"
+  },
+  {
+    "path": "docs/TASK-027-qualidade.json",
+    "sizeBytes": 1010,
+    "sha256": "77635906c085c11bf108a15cea06a86aebad5695afeb650a57db828597635a73"
+  },
+  {
+    "path": "docs/TASK-027-testes.txt",
+    "sizeBytes": 317,
+    "sha256": "1e0ec9156b02c312bb8fd0f962bdc4f872a40dfa7624ba7f9c76b7200e5c54c5"
+  },
+  {
+    "path": "docs/TASK-027.diff",
+    "sizeBytes": 11746,
+    "sha256": "feb820258f1bcbf38dc308d71ec95763bbdc09214bcf888497ca8f79c441ec8a"
+  },
+  {
+    "path": "docs/TASK-027.md",
+    "sizeBytes": 1823,
+    "sha256": "031d500af9bee1e9b1cb87f5f92f8cd66f4cd8c83a3528fa1a9a129227fcb4c7"
+  },
+  {
+    "path": "docs/TASK-028-java-version.log",
+    "sizeBytes": 196,
+    "sha256": "2c05c59b13a701146c37d79936303eb8080cd353e096756dfab1cd833a306423"
+  },
+  {
+    "path": "docs/TASK-028-java.log",
+    "sizeBytes": 10650,
+    "sha256": "535c94fcee78ba5142bb31d9c095d2aafef55fa8ca015831b92091cb383b6e59"
+  },
+  {
+    "path": "docs/TASK-028-maven-version.log",
+    "sizeBytes": 379,
+    "sha256": "e412f7da944f0f53d628f48ff76b5000178a8ada26621fcd8afcc87c0608a68e"
+  },
+  {
+    "path": "docs/TASK-028-python-version.log",
+    "sizeBytes": 15,
+    "sha256": "cf25165865edf0baea5fff58088b4987aa3f34df958a794c11cdf73702d4c9c7"
+  },
+  {
+    "path": "docs/TASK-028-python.log",
+    "sizeBytes": 3090,
+    "sha256": "20f572bab551419ae7a7e0f17593e75d8cb53c9686e9403dcfd38c783e46794b"
+  },
+  {
+    "path": "docs/TASK-028-qualidade.json",
+    "sizeBytes": 1010,
+    "sha256": "f4ca943e0412752ec97dc22e16654722ecf715943f8f8532b0c1c7ee3b20fa30"
+  },
+  {
+    "path": "docs/TASK-028-testes.txt",
+    "sizeBytes": 317,
+    "sha256": "2ddb0d22fcc41da350c5be0ac52cd2a01a3df83581d24df22ea796886d1b3c84"
+  },
+  {
+    "path": "docs/TASK-028.diff",
+    "sizeBytes": 8146,
+    "sha256": "686d43903761717f263c9258d087181ec6ce0e3db512d233747c6e4fb367c2a9"
+  },
+  {
+    "path": "docs/TASK-028.md",
+    "sizeBytes": 1702,
+    "sha256": "741a6a7c4b848e63c9dd91339a6866e9e5488fceb185d3987cfbdbb2d084ce9f"
+  },
+  {
+    "path": "docs/TASK-029-java-version.log",
+    "sizeBytes": 196,
+    "sha256": "2c05c59b13a701146c37d79936303eb8080cd353e096756dfab1cd833a306423"
+  },
+  {
+    "path": "docs/TASK-029-java.log",
+    "sizeBytes": 11038,
+    "sha256": "272ad0efbdf01e6a62cd49fed498ab1eb4021a0b080d3cd1effd9c5979d9bea1"
+  },
+  {
+    "path": "docs/TASK-029-maven-version.log",
+    "sizeBytes": 379,
+    "sha256": "e412f7da944f0f53d628f48ff76b5000178a8ada26621fcd8afcc87c0608a68e"
+  },
+  {
+    "path": "docs/TASK-029-python-version.log",
+    "sizeBytes": 15,
+    "sha256": "cf25165865edf0baea5fff58088b4987aa3f34df958a794c11cdf73702d4c9c7"
+  },
+  {
+    "path": "docs/TASK-029-python.log",
+    "sizeBytes": 3090,
+    "sha256": "2686fc7867c61331637e6a970f28cfa5bc0cf3eb207f3c2ce8930603f082328e"
+  },
+  {
+    "path": "docs/TASK-029-qualidade.json",
+    "sizeBytes": 1010,
+    "sha256": "ce3ecc078c34793c0e6526e7e87d73461b39ba29895c555654b53b209e55a608"
+  },
+  {
+    "path": "docs/TASK-029-testes.txt",
+    "sizeBytes": 317,
+    "sha256": "51618ce08ca0ce25f4dfc66f360b661f36913bc9f861e41f7fcc9c010107868d"
+  },
+  {
+    "path": "docs/TASK-029.diff",
+    "sizeBytes": 8355,
+    "sha256": "cecf66438fc3227251cc63175bb796b4151f5223f5a643758bf77a8adcc21d69"
+  },
+  {
+    "path": "docs/TASK-029.md",
+    "sizeBytes": 1815,
+    "sha256": "2d544614d49fa44746794f27f600fb702e37d36bec6f89ce17c62871d9ea1635"
+  },
+  {
+    "path": "docs/TASK-030-java-version.log",
+    "sizeBytes": 196,
+    "sha256": "2c05c59b13a701146c37d79936303eb8080cd353e096756dfab1cd833a306423"
+  },
+  {
+    "path": "docs/TASK-030-java.log",
+    "sizeBytes": 11032,
+    "sha256": "d326f7eb9495d228f5eaa3d24dd8fe0c9e8ec54c3ace2963a2ed9cb991ab23df"
+  },
+  {
+    "path": "docs/TASK-030-maven-version.log",
+    "sizeBytes": 379,
+    "sha256": "e412f7da944f0f53d628f48ff76b5000178a8ada26621fcd8afcc87c0608a68e"
+  },
+  {
+    "path": "docs/TASK-030-python-version.log",
+    "sizeBytes": 15,
+    "sha256": "cf25165865edf0baea5fff58088b4987aa3f34df958a794c11cdf73702d4c9c7"
+  },
+  {
+    "path": "docs/TASK-030-python.log",
+    "sizeBytes": 3090,
+    "sha256": "58e50c9df7a69edfd2da413260f9b9cb039aae1aee4abd610fb77aabe2035720"
+  },
+  {
+    "path": "docs/TASK-030-qualidade.json",
+    "sizeBytes": 1010,
+    "sha256": "cfb97cc0a5deba3f3d40c433c258ec60ceb5a7fdb2495315e2e817e5ee09d10a"
+  },
+  {
+    "path": "docs/TASK-030-testes.txt",
+    "sizeBytes": 317,
+    "sha256": "e4e40d57e2519636c45f1f7a01155b231b9cbc199d72358bfe64f5ef6c846068"
+  },
+  {
+    "path": "docs/TASK-030.diff",
+    "sizeBytes": 4360,
+    "sha256": "b6aa3772e7055e176415e42cd35b8eaceb599d44602003bc6b68c5c8d497400a"
+  },
+  {
+    "path": "docs/TASK-030.md",
+    "sizeBytes": 1605,
+    "sha256": "dbdecd0b7daf82de59661268c9ad84bfe8d3a7fb5d0e2993112167b82ca1ba54"
+  },
+  {
+    "path": "docs/TASK-031-java-version.log",
+    "sizeBytes": 196,
+    "sha256": "2c05c59b13a701146c37d79936303eb8080cd353e096756dfab1cd833a306423"
+  },
+  {
+    "path": "docs/TASK-031-java.log",
+    "sizeBytes": 11218,
+    "sha256": "40161f466083816a02880130e69e6d8b62e3421bdce233b86320efef4b151800"
+  },
+  {
+    "path": "docs/TASK-031-maven-version.log",
+    "sizeBytes": 379,
+    "sha256": "e412f7da944f0f53d628f48ff76b5000178a8ada26621fcd8afcc87c0608a68e"
+  },
+  {
+    "path": "docs/TASK-031-python-version.log",
+    "sizeBytes": 15,
+    "sha256": "cf25165865edf0baea5fff58088b4987aa3f34df958a794c11cdf73702d4c9c7"
+  },
+  {
+    "path": "docs/TASK-031-python.log",
+    "sizeBytes": 3090,
+    "sha256": "6ce6b2e8c38b9ab53ba61f6d1ae4283dcc200092702eeb1b33f10c066ad89ef1"
+  },
+  {
+    "path": "docs/TASK-031-qualidade.json",
+    "sizeBytes": 1010,
+    "sha256": "ebb4043b14862fa868e7a05f43b9697f4fb4e83917a61ac52b251375703c51bc"
+  },
+  {
+    "path": "docs/TASK-031-testes.txt",
+    "sizeBytes": 317,
+    "sha256": "4378b6b62a1fe93dbcf0e3554c179544a9041109189228369641217a05e9a764"
+  },
+  {
+    "path": "docs/TASK-031.diff",
+    "sizeBytes": 6335,
+    "sha256": "70ab112f44a117c323a5af3c0d19005c82dba07f9f419f77e208d2c2e1a52b78"
+  },
+  {
+    "path": "docs/TASK-031.md",
+    "sizeBytes": 1387,
+    "sha256": "1017d4c298d06cf48bb7508c820fa9c23a7194520080106a5e6c9092e1fe2fd4"
+  },
+  {
+    "path": "docs/TASK-032-java-version.log",
+    "sizeBytes": 196,
+    "sha256": "2c05c59b13a701146c37d79936303eb8080cd353e096756dfab1cd833a306423"
+  },
+  {
+    "path": "docs/TASK-032-java.log",
+    "sizeBytes": 11408,
+    "sha256": "933ba8c99c249a8f5431e1ea5ca55b19243e131425a326cee4ab60e252ea817e"
+  },
+  {
+    "path": "docs/TASK-032-maven-version.log",
+    "sizeBytes": 379,
+    "sha256": "e412f7da944f0f53d628f48ff76b5000178a8ada26621fcd8afcc87c0608a68e"
+  },
+  {
+    "path": "docs/TASK-032-python-version.log",
+    "sizeBytes": 15,
+    "sha256": "cf25165865edf0baea5fff58088b4987aa3f34df958a794c11cdf73702d4c9c7"
+  },
+  {
+    "path": "docs/TASK-032-python.log",
+    "sizeBytes": 3090,
+    "sha256": "e8c216ced459cd8649a67182a9a2644d4795471f6537b4135edcd4ad71f8aa03"
+  },
+  {
+    "path": "docs/TASK-032-qualidade.json",
+    "sizeBytes": 1010,
+    "sha256": "9fa55a40774542ed7f3fb2650e17fb7a8de1445e22eefc9cd6b3a93ca73881e1"
+  },
+  {
+    "path": "docs/TASK-032-testes.txt",
+    "sizeBytes": 317,
+    "sha256": "982535d1e2aa86be09db0398e8592daee687e7814b04255a47a03034a36406ed"
+  },
+  {
+    "path": "docs/TASK-032.diff",
+    "sizeBytes": 6266,
+    "sha256": "7adacf1ab658dd7f99aa66fb35d16e179962956ff8703fb483b84106286bc766"
+  },
+  {
+    "path": "docs/TASK-032.md",
+    "sizeBytes": 1244,
+    "sha256": "5c6d72461284ac1a1f738b807d2dd7f99781c949a8e8f127e89979333507952d"
+  },
+  {
+    "path": "docs/TASK-033-java-version.log",
+    "sizeBytes": 196,
+    "sha256": "2c05c59b13a701146c37d79936303eb8080cd353e096756dfab1cd833a306423"
+  },
+  {
+    "path": "docs/TASK-033-java.log",
+    "sizeBytes": 11619,
+    "sha256": "957f85c96995db170bd72dadf6e7e6fed6932dc38061f06fe7732eb1d6bae9e5"
+  },
+  {
+    "path": "docs/TASK-033-maven-version.log",
+    "sizeBytes": 379,
+    "sha256": "e412f7da944f0f53d628f48ff76b5000178a8ada26621fcd8afcc87c0608a68e"
+  },
+  {
+    "path": "docs/TASK-033-python-version.log",
+    "sizeBytes": 15,
+    "sha256": "cf25165865edf0baea5fff58088b4987aa3f34df958a794c11cdf73702d4c9c7"
+  },
+  {
+    "path": "docs/TASK-033-python.log",
+    "sizeBytes": 3090,
+    "sha256": "36dcfd931dea31808ffe19a28238277e32672a911452985d6cd82d415b4ff512"
+  },
+  {
+    "path": "docs/TASK-033-qualidade.json",
+    "sizeBytes": 1010,
+    "sha256": "395dc7be9cfca4e9708be172198135cb611b7a2a89b2d231d5f7bae7c0c98eb4"
+  },
+  {
+    "path": "docs/TASK-033-testes.txt",
+    "sizeBytes": 317,
+    "sha256": "1bfc18e174e9543342623bfd77f5c33731441cd5f0b03c41a4d05bd15d9296ca"
+  },
+  {
+    "path": "docs/TASK-033.diff",
+    "sizeBytes": 6459,
+    "sha256": "fd7784b9ea0a61bde1805ec0bd5127756d89ccab951c91b938424d0a92828378"
+  },
+  {
+    "path": "docs/TASK-033.md",
+    "sizeBytes": 1572,
+    "sha256": "4a9da4639fb2a36ae9156743a6396f91dbc18fab4674cee6040e346c4492922c"
+  },
+  {
+    "path": "docs/TASK-034-java-version.log",
+    "sizeBytes": 196,
+    "sha256": "2c05c59b13a701146c37d79936303eb8080cd353e096756dfab1cd833a306423"
+  },
+  {
+    "path": "docs/TASK-034-java.log",
+    "sizeBytes": 11809,
+    "sha256": "f43f8dd706d17c54ae0bc5fffbe7f38917849950289f3d1c13aebbad010c3da6"
+  },
+  {
+    "path": "docs/TASK-034-maven-version.log",
+    "sizeBytes": 379,
+    "sha256": "e412f7da944f0f53d628f48ff76b5000178a8ada26621fcd8afcc87c0608a68e"
+  },
+  {
+    "path": "docs/TASK-034-python-version.log",
+    "sizeBytes": 15,
+    "sha256": "cf25165865edf0baea5fff58088b4987aa3f34df958a794c11cdf73702d4c9c7"
+  },
+  {
+    "path": "docs/TASK-034-python.log",
+    "sizeBytes": 3090,
+    "sha256": "7ff0b6a57434afef28dbccefd2a2f6752a3ed5e67c571d6f1ceb8516c450d088"
+  },
+  {
+    "path": "docs/TASK-034-qualidade.json",
+    "sizeBytes": 1010,
+    "sha256": "ad5668daaa49e6f120252bce6b312f973322c2d5ab841dac68a88ae52ab4b8c2"
+  },
+  {
+    "path": "docs/TASK-034-testes.txt",
+    "sizeBytes": 317,
+    "sha256": "e74c84242a4d984f3fa9e1521de635a41434e81f9b075cc910d67a31b39fd47f"
+  },
+  {
+    "path": "docs/TASK-034.diff",
+    "sizeBytes": 10649,
+    "sha256": "c46c6f14b1ed56f47ebc89614e08de965f49e7cb2ce3449e38e26674fb89edac"
+  },
+  {
+    "path": "docs/TASK-034.md",
+    "sizeBytes": 1691,
+    "sha256": "ab14445a4222c584b0ca0ce671a7f00657f73ad774de063cdf5fbf89d6e4aa7b"
+  },
+  {
+    "path": "docs/TASK-035-estresse.json",
+    "sizeBytes": 147,
+    "sha256": "fc59f0406b5fe86132386959c6f97cd3c2b8defa8ec6c6cbabad80690ed0fb6e"
+  },
+  {
+    "path": "docs/TASK-035-java-version.log",
+    "sizeBytes": 196,
+    "sha256": "2c05c59b13a701146c37d79936303eb8080cd353e096756dfab1cd833a306423"
+  },
+  {
+    "path": "docs/TASK-035-java.log",
+    "sizeBytes": 11992,
+    "sha256": "758bb5603c969826ed7e91a49e5375e4d84d6b16e9beab85e0aadefde0dbb4f5"
+  },
+  {
+    "path": "docs/TASK-035-maven-version.log",
+    "sizeBytes": 379,
+    "sha256": "e412f7da944f0f53d628f48ff76b5000178a8ada26621fcd8afcc87c0608a68e"
+  },
+  {
+    "path": "docs/TASK-035-primeira-compilacao.log",
+    "sizeBytes": 3188,
+    "sha256": "a4b154e3d63ccf3fe998826d360945944f8acfa5c764ae326de2a0ec196f48ac"
+  },
+  {
+    "path": "docs/TASK-035-primeira-qualidade.json",
+    "sizeBytes": 890,
+    "sha256": "ce2840c677c8c771b472ecda8f8c947be07078e4fea3bdf48171fb47b442a421"
+  },
+  {
+    "path": "docs/TASK-035-python-version.log",
+    "sizeBytes": 15,
+    "sha256": "cf25165865edf0baea5fff58088b4987aa3f34df958a794c11cdf73702d4c9c7"
+  },
+  {
+    "path": "docs/TASK-035-python.log",
+    "sizeBytes": 3090,
+    "sha256": "845696f0eb936a292aaaf995e01cdc07dd6c7f5d8cc588464105c8a10b739e3e"
+  },
+  {
+    "path": "docs/TASK-035-qualidade.json",
+    "sizeBytes": 1010,
+    "sha256": "ca89f3646167c8b4a37046af88187570eeb12cda3f56e88072b31c5a2824a880"
+  },
+  {
+    "path": "docs/TASK-035-testes.txt",
+    "sizeBytes": 317,
+    "sha256": "63e2aed2fea54ea3dede3e0d8686264630380caa79cdf3a79fead02d996cf090"
+  },
+  {
+    "path": "docs/TASK-035.diff",
+    "sizeBytes": 6493,
+    "sha256": "3d12a002c8deb8404077ca6affe4d3a609ce7aa019bb8e816e8d98a514c35866"
+  },
+  {
+    "path": "docs/TASK-035.md",
+    "sizeBytes": 1743,
+    "sha256": "caace4f818995059b27839bd70ebc2db36512e770542dd73f608bad1f1699386"
+  },
+  {
+    "path": "docs/TASK-036-auditoria.json",
+    "sizeBytes": 3013,
+    "sha256": "ce2591f8ce788cb35aa317bad9d4af01768a330c15c0ca948b22e1f996014375"
+  },
+  {
+    "path": "docs/TASK-036-build-final.log",
+    "sizeBytes": 26534,
+    "sha256": "13bb0723e4d9b0319967d670b4642ac20be40cbcc41c4bbec8c062b4d7175b35"
+  },
+  {
+    "path": "docs/TASK-036-build.log",
+    "sizeBytes": 26544,
+    "sha256": "1ae298acbfe306792644ac63d176ae8c08fefb2f4053249d2a0a3b26e43789e7"
+  },
+  {
+    "path": "docs/TASK-036-exe.png",
+    "sizeBytes": 133785,
+    "sha256": "61060cda894128c16f083e3c5f9c8fee0db16a0877e37e07dadccd6223f7a93a"
+  },
+  {
+    "path": "docs/TASK-036-java-version.log",
+    "sizeBytes": 196,
+    "sha256": "2c05c59b13a701146c37d79936303eb8080cd353e096756dfab1cd833a306423"
+  },
+  {
+    "path": "docs/TASK-036-java.log",
+    "sizeBytes": 11989,
+    "sha256": "54629be27a0ba631a321c3c733191c506f276c58dc4078189e113e04f11e2f1d"
+  },
+  {
+    "path": "docs/TASK-036-map-smoke.json",
+    "sizeBytes": 2757,
+    "sha256": "e49bcdfb18bfdfe472d2a27b98cc758954bd1615b8e89244f7adb8e10199e34c"
+  },
+  {
+    "path": "docs/TASK-036-map-smoke.log",
+    "sizeBytes": 258,
+    "sha256": "2c83fac754e88076536a826f6a6ef7261d2771764de5d110132b7bee3ec5a8bb"
+  },
+  {
+    "path": "docs/TASK-036-mapa-exe.png",
+    "sizeBytes": 99358,
+    "sha256": "287a560bdd9642b23f90588aeaa48d7b8a576bd4273b030a682d705cc0565d96"
+  },
+  {
+    "path": "docs/TASK-036-maven-version.log",
+    "sizeBytes": 379,
+    "sha256": "e412f7da944f0f53d628f48ff76b5000178a8ada26621fcd8afcc87c0608a68e"
+  },
+  {
+    "path": "docs/TASK-036-negativo.json",
+    "sizeBytes": 593,
+    "sha256": "66682a4c28f4be86d8c8bfb787b019254755cf8ff2a0753e9b3486bc0264e725"
+  },
+  {
+    "path": "docs/TASK-036-preservacao.json",
+    "sizeBytes": 273,
+    "sha256": "92277669548bf228578552b0b4b2dc3f37915e52a0170b38700fc0f33acd9611"
+  },
+  {
+    "path": "docs/TASK-036-python-final.log",
+    "sizeBytes": 6904,
+    "sha256": "6b0a14ef3a45dbeffa6ed912eaf904615226f716c752f6ec131f8d7cf2803f72"
+  },
+  {
+    "path": "docs/TASK-036-python-version.log",
+    "sizeBytes": 15,
+    "sha256": "cf25165865edf0baea5fff58088b4987aa3f34df958a794c11cdf73702d4c9c7"
+  },
+  {
+    "path": "docs/TASK-036-python.log",
+    "sizeBytes": 3090,
+    "sha256": "05e5e121ddf1f2c1bde31920674a2e30b773e03cb471997d4244b5ee0982a1fc"
+  },
+  {
+    "path": "docs/TASK-036-qualidade.json",
+    "sizeBytes": 1010,
+    "sha256": "ca89f3646167c8b4a37046af88187570eeb12cda3f56e88072b31c5a2824a880"
+  },
+  {
+    "path": "docs/TASK-036-smoke.json",
+    "sizeBytes": 2654,
+    "sha256": "b0bbf84eb5006492e8f1b487f47ea796b08396f636939d5e99a1d7428d959064"
+  },
+  {
+    "path": "docs/TASK-036-smoke.log",
+    "sizeBytes": 250,
+    "sha256": "007d9f5e70676f17de5d62a750f54d25c767591869da2f83dbb049c7abceb395"
+  },
+  {
+    "path": "docs/TASK-036-testes.txt",
+    "sizeBytes": 317,
+    "sha256": "63e2aed2fea54ea3dede3e0d8686264630380caa79cdf3a79fead02d996cf090"
+  },
+  {
+    "path": "docs/TASK-036-visual-distribuicao.json",
+    "sizeBytes": 2220,
+    "sha256": "0c2d8ba9b1f183f77e9bcd8462401a1d7fb2f0f51aade1d6e70bc443882c1557"
+  },
+  {
+    "path": "docs/TASK-036.diff",
+    "sizeBytes": 43768,
+    "sha256": "492ad52a6d5280d70d295f18cf9663c9c08d1947e3699bc42006cdd5ccb5df17"
+  },
+  {
+    "path": "docs/TASK-036.md",
+    "sizeBytes": 2814,
+    "sha256": "b53d72c48f64e719963906f4f226ed79ce22608e6eeb97f528054beeac52395c"
+  }
+]

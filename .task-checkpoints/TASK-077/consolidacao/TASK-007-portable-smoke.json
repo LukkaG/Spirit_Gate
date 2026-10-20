@@ -1,0 +1,39 @@
+﻿{
+    "status":  "EXECUCAO LOCAL CONFERIDA",
+    "startedAt":  "2026-10-18T18:28:29.9970840-03:00",
+    "zip":  "C:\\Users\\lucas\\OneDrive\\Desktop\\Spirit_Gate_Prototipo_Jogavel\\Projeto-K\\dist\\SpiritGate-0.7.0-task007-20261018T212519Z-bccb553f-portable.zip",
+    "zipSha256":  "C786F095445747111270AE7DCCFF791944A58CC3B689D4E40898F358824326B2",
+    "extractionDirectory":  "C:\\Users\\lucas\\OneDrive\\Desktop\\Spirit_Gate_Prototipo_Jogavel\\Validacao Portatil\\20261018-182829-e41f26ab",
+    "environment":  "Microsoft Windows NT 10.0.19045.0",
+    "cleanWindowsWithoutJava":  "PENDENTE DE HOMOLOGACAO HUMANA",
+    "archiveEntries":  147,
+    "launcher":  "C:\\Users\\lucas\\OneDrive\\Desktop\\Spirit_Gate_Prototipo_Jogavel\\Validacao Portatil\\20261018-182829-e41f26ab\\SpiritGate\\SpiritGate.exe",
+    "launcherArchitecture":  "PE x64 (0x8664)",
+    "mainClass":  "com.projetok.prototype.DebugLauncher",
+    "runtimeRelease":  "JAVA_VERSION=\"17.0.20.1\"\r\nMODULES=\"java.base java.datatransfer java.xml java.prefs java.desktop jdk.random\"",
+    "configuration":  "[Application]\r\napp.classpath=$APPDIR\\spirit-gate-arena.jar\r\napp.mainclass=com.projetok.prototype.DebugLauncher\r\n\n[JavaOptions]\r\njava-options=-Djpackage.app-version=0.7.0",
+    "manifestFilesVerified":  145,
+    "packageVersion":  "0.7.0-task007",
+    "javaModules":  [
+                        "java.base",
+                        "java.desktop",
+                        "jdk.random"
+                    ],
+    "manifestSha256":  "330C8CD41E624B2FB52A9C1CBC59391EF38645472C332DC8B3463729B0BC85C3",
+    "zipSidecarVerified":  true,
+    "processId":  19584,
+    "windowTitle":  "Spirit Gate | Arena de Debug 2D",
+    "windowProcessId":  10976,
+    "ownedProcessIds":  [
+                            10976,
+                            19584
+                        ],
+    "screenshot":  "C:\\Users\\lucas\\OneDrive\\Desktop\\Spirit_Gate_Prototipo_Jogavel\\Validacao Portatil\\20261018-182829-e41f26ab\\SpiritGate-exe-smoke.png",
+    "windowSize":  "1276x789",
+    "networkInspection":  "INDISPONIVEL: Acesso a um recurso CIM não estava disponível para o cliente.",
+    "pathDuringLaunch":  "C:\\Windows\\System32;C:\\Windows",
+    "windowExitCode":  0,
+    "exitCode":  0,
+    "processExited":  true,
+    "finishedAt":  "2026-10-18T18:28:34.7535168-03:00"
+}

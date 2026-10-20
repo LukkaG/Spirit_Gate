@@ -1,0 +1,177 @@
+--- before/server/src/test/java/com/projetok/rpg/CorujaoAbilitiesTest.java
++++ after/server/src/test/java/com/projetok/rpg/CorujaoAbilitiesTest.java
+@@ -0,0 +1,32 @@
++package com.projetok.rpg;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class CorujaoAbilitiesTest {
++    static RpgWorld forest(String archetype,float x) {
++        var s=new RpgWorld(CharacterIdentity.create("Teste",archetype,"azure")).save();
++        return RpgWorld.restore(new RpgSave(s.identity(),"forest",x,360,s.hp(),s.xp(),s.coins(),s.inventory(),s.equipment(),s.quests(),s.flags(),s.ticks()));
++    }
++    @Test void bothAdditionalAbilitiesHaveExactCostSingleDamageAndPersistedCooldown() throws Exception {
++        for(String archetype:new String[]{"guardian","mystic"}) {
++            var w=forest(archetype,240);var ability=RpgSecondaryAbility.forArchetype(archetype);
++            int hp=w.snapshot().enemies().get(0).hp();assertTrue(w.castSecondaryAbility());
++            assertEquals(hp-w.attackPower()-ability.bonus(),w.snapshot().enemies().get(0).hp());
++            assertTrue(w.save().flags().contains("stamina:"+(1000-ability.cost()*10)));
++            assertFalse(w.castSecondaryAbility());assertFalse(w.castAbility());assertFalse(w.attack());
++            var restored=RpgWorld.restore(LocalSaveStore.decode(LocalSaveStore.encode(w.save())));
++            assertEquals(w.save(),restored.save());assertFalse(restored.castSecondaryAbility());
++            assertEquals(1,w.snapshot().events().stream().filter(e->e.kind()==RpgCombatEvent.Kind.HIT).count());
++        }
++    }
++    @Test void missesAndInsufficientResourcesDoNotConsumeAndRangesDiffer() {
++        var guardian=forest("guardian",180);assertFalse(guardian.castSecondaryAbility());
++        assertTrue(forest("mystic",180).castSecondaryAbility());
++        var s=guardian.save();assertTrue(s.flags().contains("stamina:1000"));
++        guardian.receiveDamage(10000);assertFalse(guardian.castSecondaryAbility());
++        var near=forest("guardian",240).save();var flags=new java.util.TreeSet<>(near.flags());
++        flags.removeIf(f->f.startsWith("stamina:"));flags.add("stamina:100");
++        var tired=RpgWorld.restore(new RpgSave(near.identity(),near.region(),near.x(),near.y(),near.hp(),near.xp(),near.coins(),near.inventory(),near.equipment(),near.quests(),flags,near.ticks()));
++        assertFalse(tired.castSecondaryAbility());assertEquals(near.hp(),tired.save().hp());
++        assertThrows(IllegalArgumentException.class,()->RpgSecondaryAbility.forArchetype("other"));
++    }
++}
+--- before/server/src/main/java/com/projetok/rpg/RpgSecondaryAbility.java
++++ after/server/src/main/java/com/projetok/rpg/RpgSecondaryAbility.java
+@@ -0,0 +1,13 @@
++package com.projetok.rpg;
++
++/** Habilidade adicional experimental; compartilha recarga persistente com a habilidade primaria. */
++public record RpgSecondaryAbility(String name,int range,int bonus,int cost,int cooldown) {
++    /** Parametros conservadores dos dois arquetipos; custos em pontos de vigor. */
++    public static RpgSecondaryAbility forArchetype(String id) {
++        return switch(id) {
++            case "guardian"->new RpgSecondaryAbility("Golpe de Impacto",82,6,20,120);
++            case "mystic"->new RpgSecondaryAbility("Pulso Arcano",110,4,25,150);
++            default->throw new IllegalArgumentException("Arquetipo desconhecido");
++        };
++    }
++}
+--- before/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ after/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -60,7 +60,7 @@
+         message=item.name()+": vida recuperada"; return true;
+     }
+     public InventoryService inventory() { return inventory; }
+-    public boolean activate(String action){boolean accepted=switch(action){case "rpg.attack"->attack();case "rpg.ability"->castAbility();case "item.potion"->use("potion");default->throw new IllegalArgumentException("Acao de hotbar desconhecida");};if(!accepted)event(RpgCombatEvent.Kind.REJECT,1,body.getPosition().x(),body.getPosition().y(),0);return accepted;}
++    public boolean activate(String action){boolean accepted=switch(action){case "rpg.attack"->attack();case "rpg.ability"->castAbility();case "rpg.secondary"->castSecondaryAbility();case "item.potion"->use("potion");default->throw new IllegalArgumentException("Acao de hotbar desconhecida");};if(!accepted)event(RpgCombatEvent.Kind.REJECT,1,body.getPosition().x(),body.getPosition().y(),0);return accepted;}
+     public int attackPower() { return identity.baseAttack()+(level()-1)*progression.attackPerLevel()+equipmentPower("weapon"); }
+     public int defense() { return equipmentPower("torso")+equipmentPower("legs")+equipmentPower("accessory"); }
+     private int equipmentPower(String slot) { return equipment.containsKey(slot)?items.get(equipment.get(slot)).power():0; }
+@@ -152,13 +152,24 @@
+         activeNpc=npc.get().id();questService.event("talk",activeNpc,activeNpc,ticks+1,quests,flags);questService.refresh(quests,flags,inventory,region);dialogueNode=activeNpc+".start";message=npc.get().name()+": seja bem-vindo!";return true;
+     }
+     public RpgWorld(CharacterIdentity identity,java.util.random.RandomGenerator random) { this(identity);this.random=java.util.Objects.requireNonNull(random); }
+-    public boolean attack() {
++    /** Ataque basico conserva alcance, dano e recarga anteriores. */
++    public boolean attack() { return strike(identity.archetype().equals("mystic")?145:82,attackPower()); }
++    /** Acao adicional com custo e recarga compartilhada; nenhuma mudanca de formato de save. */
++    public boolean castSecondaryAbility() {
++        var ability=RpgSecondaryAbility.forArchetype(identity.archetype());
++        if(hp==0||transitioning||ticks<abilityReadyTick||stamina<ability.cost()*10)return false;
++        if(!strike(ability.range(),attackPower()+ability.bonus()))return false;
++        stamina-=ability.cost()*10;abilityReadyTick=ticks+ability.cooldown();
++        flags.removeIf(f->f.startsWith("ability-until:"));flags.add("ability-until:"+abilityReadyTick);
++        message=ability.name()+"!";return true;
++    }
++    private boolean strike(int range,int power) {
+         if(hp==0||transitioning||ticks<attackReadyTick)return false;
+-        EnemyService.Enemy target=enemies.current(region).stream().filter(e->e.hp>0&&(!e.definition.id().equals("warden")||bossUnlocked())&&distance(body.getPosition(),e.getPosition())<= (identity.archetype().equals("mystic")?145:82))
++        EnemyService.Enemy target=enemies.current(region).stream().filter(e->e.hp>0&&(!e.definition.id().equals("warden")||bossUnlocked())&&distance(body.getPosition(),e.getPosition())<= range)
+             .min(java.util.Comparator.comparingDouble(e->distance(body.getPosition(),e.getPosition()))).orElse(null);
+         if(target==null||!lineClear(body.getPosition(),target.getPosition()))return false;
+-        attackReadyTick=ticks+12;int previousHp=target.hp;target.hp=Math.max(0,target.hp-attackPower());
+-        message="Golpe em "+target.getName()+": "+attackPower();
++        attackReadyTick=ticks+12;int previousHp=target.hp;target.hp=Math.max(0,target.hp-power);
++        message="Golpe em "+target.getName()+": "+(previousHp-target.hp);
+         if(target.hp==0) {
+             target.readyTick=ticks+target.definition.respawn();
+             if(loot.award(target.spawn,target.generation,target.definition.id(),inventory,flags,random==null?new java.util.Random(741L^((long)target.spawn.hashCode()<<16)^target.generation):random)) {
+--- before/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
++++ after/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
+@@ -54,6 +54,10 @@
+         JButton menuButton=new JButton("Salvar e voltar ao menu");menuButton.addActionListener(e->frame.dispatchEvent(new WindowEvent(frame,WindowEvent.WINDOW_CLOSING)));JPanel toolbar=new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));toolbar.add(menuButton);root.add(toolbar,java.awt.BorderLayout.NORTH);
+         java.util.Map<String,JButton> hotbar=new java.util.TreeMap<>();
+         for(String action:new String[]{"attack","ability","potion","inventory","journal","map"}){JButton button=new JButton(actionLabel(action)+" ["+controls[0].key(action)+"]");button.addActionListener(e->{audio.play(RpgAudio.Cue.UI);actions.get(action).run();});toolbar.add(button);hotbar.put(action,button);}
++        var secondary=com.projetok.rpg.RpgSecondaryAbility.forArchetype(world.snapshot().identity().archetype());
++        JButton secondaryButton=new JButton(secondary.name());
++        secondaryButton.setToolTipText("Custo "+secondary.cost()+" vigor; recarga compartilhada "+RpgCombatStatus.cooldown(secondary.cooldown()));
++        secondaryButton.addActionListener(e->runtime.command(w->w.activate("rpg.secondary")));toolbar.add(secondaryButton);
+         JButton configure=new JButton("Atalhos");configure.addActionListener(e->ControlsDialog.open(frame,controls[0],controlsFile,next->{for(String key:controls[0].keys().values())for(boolean down:new boolean[]{true,false}){panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(KeyStroke.getKeyStroke((down?"pressed ":"released ")+key));panel.getActionMap().remove(key+down);}resetHeld(panel);controls[0]=next;bindActions.run();hotbar.forEach((id,button)->button.setText(actionLabel(id)+" ["+next.key(id)+"]"));}));toolbar.add(configure);
+         JButton settings=new JButton("Audio / ambiente");settings.addActionListener(e->PreferencesDialog.open(frame,preferences[0],preferencesFile,next->{preferences[0]=next;audio.preferences(next);audio.play(RpgAudio.Cue.UI);}));toolbar.add(settings);
+         frame.addWindowListener(new WindowAdapter(){public void windowClosing(WindowEvent e){runtime.input(0,0);inventory.setVisible(false);exploration.setVisible(false);frame.setEnabled(false);runtime.saveAndPause(store).whenComplete((unused,error)->SwingUtilities.invokeLater(()->{if(error!=null){frame.setEnabled(true);JOptionPane.showMessageDialog(frame,"Falha ao salvar; sessao preservada: "+error.getMessage());}else frame.dispose();}));}});
+--- before/server/src/main/java/com/projetok/prototype/rpg/RpgPlayerSprites.java
++++ after/server/src/main/java/com/projetok/prototype/rpg/RpgPlayerSprites.java
+@@ -22,6 +22,7 @@
+     private final RpgPlayerAnimation animation;
+     private final double scale;
+     private final RpgVisualState visual=new RpgVisualState();
++    private boolean mystic;
+     private RpgPlayerSprites(Map<String,Frame> frames,int frameMillis,double scale) {
+         this.frames=Map.copyOf(frames);animation=new RpgPlayerAnimation(frameMillis);this.scale=scale;
+     }
+@@ -79,7 +80,7 @@
+         return new RpgPlayerSprites(frames,frameMillis,scale);
+     }
+     public double scale() { return scale; }
+-    public RpgPlayerAnimation.Pose update(com.projetok.rpg.RpgWorld.View view) { var pose=animation.update(view);visual.update(view,pose.walking());return pose; }
++    public RpgPlayerAnimation.Pose update(com.projetok.rpg.RpgWorld.View view) { mystic=view.identity().archetype().equals("mystic");var pose=animation.update(view);visual.update(view,pose.walking());return pose; }
+     /** Estado visual sem influencia nas regras do mundo. */
+     public RpgVisualState.State visualState(){return visual.state();}
+     public RpgPlayerAnimation.Pose pose() { return animation.pose(); }
+@@ -102,9 +103,9 @@
+         try {
+             int x=Math.round(actor.x()),y=Math.round(actor.y());
+             if(visual.state()==RpgVisualState.State.ATTACK) {
+-                effect.setColor(new Color(255,220,110));effect.setStroke(new BasicStroke(3));
++                effect.setColor(mystic?new Color(165,125,255):new Color(255,220,110));effect.setStroke(new BasicStroke(3));
+                 int angle=switch(animation.pose().direction()){case FRONT->210;case BACK->30;case LEFT->120;case RIGHT->300;};
+-                effect.drawArc(x-32,y-45,64,64,angle,120);
++                if(mystic)effect.drawOval(x-32,y-45,64,64);else effect.drawArc(x-32,y-45,64,64,angle,120);
+             } else if(visual.state()==RpgVisualState.State.HIT) {
+                 effect.setColor(new Color(255,100,100,190));effect.setStroke(new BasicStroke(2));
+                 effect.drawOval(x-24,y-24,48,30);
+--- before/docs/TASK-085-RELATORIO-FINAL.md
++++ after/docs/TASK-085-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-085 - Corujao I
++
++Estado: **VALIDADA COM RESSALVAS**.
++
++Inventario original: Guardian Investida (25 vigor/90 ticks), Mystic Restauracao (35/120). Acrescentados Golpe de Impacto (82 alcance, +6 dano, 20 vigor/120 ticks) e Pulso Arcano (110 alcance, +4 dano, 25/150), ambos alvo unico, acionados por botao. Compartilham recarga persistente ability-until com primaria e respeitam recarga de golpe. Nenhum schema/controle/save migrado. Efeitos provisorios amarelo/violeta; balanceamento humano pendente. Primeira compilacao do teste falhou por IOException nao declarada, corrigida; log preservado.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-085/corujao-i/`. Logs da suite: `docs/TASK-corujao-085-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-085-TESTES.md
++++ after/docs/TASK-085-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-085 - Corujao I
++
++Comando: `python tools/qualidade.py --offline --task corujao-085`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 326,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-085.md
++++ after/docs/TASK-085.md
+@@ -0,0 +1,3 @@
++# TASK-085 - Corujao I
++
++Inventario original: Guardian Investida (25 vigor/90 ticks), Mystic Restauracao (35/120). Acrescentados Golpe de Impacto (82 alcance, +6 dano, 20 vigor/120 ticks) e Pulso Arcano (110 alcance, +4 dano, 25/150), ambos alvo unico, acionados por botao. Compartilham recarga persistente ability-until com primaria e respeitam recarga de golpe. Nenhum schema/controle/save migrado. Efeitos provisorios amarelo/violeta; balanceamento humano pendente. Primeira compilacao do teste falhou por IOException nao declarada, corrigida; log preservado.

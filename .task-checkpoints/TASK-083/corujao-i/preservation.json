@@ -1,0 +1,20 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/prototype/rpg/CorujaoHudTest.java",
+    "server/src/main/java/com/projetok/prototype/rpg/RpgCombatStatus.java",
+    "server/src/main/java/com/projetok/prototype/rpg/RpgHud.java",
+    "docs/CORUJAO-I-PROGRESSO.json",
+    "docs/TASK-083-RELATORIO-FINAL.md",
+    "docs/TASK-083-TESTES.md",
+    "docs/TASK-083.md",
+    "docs/TASK-corujao-083-java-version.log",
+    "docs/TASK-corujao-083-java.log",
+    "docs/TASK-corujao-083-maven-version.log",
+    "docs/TASK-corujao-083-python-version.log",
+    "docs/TASK-corujao-083-python.log",
+    "docs/TASK-corujao-083-qualidade.json",
+    "docs/TASK-corujao-083-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

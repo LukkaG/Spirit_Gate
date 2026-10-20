@@ -1,0 +1,19 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/prototype/rpg/CorujaoAttackPresentationTest.java",
+    "server/src/main/java/com/projetok/prototype/rpg/RpgPlayerSprites.java",
+    "docs/CORUJAO-I-PROGRESSO.json",
+    "docs/TASK-082-RELATORIO-FINAL.md",
+    "docs/TASK-082-TESTES.md",
+    "docs/TASK-082.md",
+    "docs/TASK-corujao-082-java-version.log",
+    "docs/TASK-corujao-082-java.log",
+    "docs/TASK-corujao-082-maven-version.log",
+    "docs/TASK-corujao-082-python-version.log",
+    "docs/TASK-corujao-082-python.log",
+    "docs/TASK-corujao-082-qualidade.json",
+    "docs/TASK-corujao-082-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

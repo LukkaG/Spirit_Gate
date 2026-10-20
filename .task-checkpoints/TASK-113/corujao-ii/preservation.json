@@ -1,0 +1,29 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/CanvasIndexTest.java",
+    "server/src/main/java/com/projetok/studio/AssetCatalog.java",
+    "server/src/main/java/com/projetok/studio/AssetImages.java",
+    "server/src/main/java/com/projetok/studio/Autotiling.java",
+    "server/src/main/java/com/projetok/studio/CanvasIndex.java",
+    "server/src/main/java/com/projetok/studio/StudioGeometry.java",
+    "server/src/main/java/com/projetok/studio/WorldCanvas.java",
+    "tools/WorldStudioBenchmark.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-113-RELATORIO-FINAL.md",
+    "docs/TASK-113-TESTES.md",
+    "docs/TASK-113.md",
+    "docs/TASK-studio-113-java-version.log",
+    "docs/TASK-studio-113-java.log",
+    "docs/TASK-studio-113-maven-version.log",
+    "docs/TASK-studio-113-python-version.log",
+    "docs/TASK-studio-113-python.log",
+    "docs/TASK-studio-113-qualidade.json",
+    "docs/TASK-studio-113-testes.txt",
+    "docs/WORLD-STUDIO-PERFORMANCE.md",
+    "docs/world-studio/performance/baseline.json",
+    "docs/world-studio/performance/optimized.json",
+    "docs/world-studio/performance/serialization-profile.json"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

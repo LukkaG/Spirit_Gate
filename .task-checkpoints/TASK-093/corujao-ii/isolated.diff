@@ -1,0 +1,222 @@
+--- before/server/src/test/java/com/projetok/studio/StudioViewportTest.java
++++ after/server/src/test/java/com/projetok/studio/StudioViewportTest.java
+@@ -0,0 +1,8 @@
++package com.projetok.studio;
++import org.junit.jupiter.api.Test;
++import java.awt.image.BufferedImage;
++import static org.junit.jupiter.api.Assertions.*;
++class StudioViewportTest {
++    @Test void zoomAnchorsCursorAndPanRoundTrips(){var v=new StudioViewport(.5,40,-20);var p=v.world(200,100);var next=v.zoomAt(2,200,100);assertEquals(p,next.world(200,100));assertEquals(200,next.screen(p.x,p.y).x);assertThrows(IllegalArgumentException.class,()->new StudioViewport(Double.NaN,0,0));}
++    @Test void canvasPaintsFromMemoryWithoutFiles(){var cache=new AssetImages();var panel=new WorldCanvas(()->WorldDocument.empty("mapa",960,640),cache);panel.setSize(900,600);var image=new BufferedImage(900,600,2);var g=image.createGraphics();panel.paint(g);g.dispose();assertEquals(0,cache.bytes());assertNotEquals(0,image.getRGB(100,100));}
++}
+--- before/server/src/main/java/com/projetok/studio/AssetImages.java
++++ after/server/src/main/java/com/projetok/studio/AssetImages.java
+@@ -8,19 +8,26 @@
+ public final class AssetImages {
+     private final LinkedHashMap<String,BufferedImage> images=new LinkedHashMap<>(16,.75f,true);
+     private long bytes;
++    private long generation;
++    private final Map<String,String> revisions=new HashMap<>();
+     /** Carrega fora da EDT, conferindo a revisao indexada antes da decodificacao. */
+-    public synchronized BufferedImage load(AssetCatalog.Asset asset)throws IOException {
+-        BufferedImage cached=images.get(asset.id());if(cached!=null)return cached;
++    public BufferedImage load(AssetCatalog.Asset asset)throws IOException {
++        long epoch;
++        synchronized(this){BufferedImage cached=images.get(asset.id());if(cached!=null&&asset.sha().equals(revisions.get(asset.id())))return cached;epoch=generation;}
+         if(!AssetCatalog.hash(asset.file()).equals(asset.sha()))throw new IOException("Asset alterado: reindexe e revise "+asset.path());
+         BufferedImage image=ImageIO.read(asset.file().toFile());if(image==null||(long)image.getWidth()*image.getHeight()>8_000_000)throw new IOException("Imagem recusada");
+         long size=(long)image.getWidth()*image.getHeight()*4;
++        synchronized(this) {
++        if(epoch!=generation)return image;
++        BufferedImage prior=images.remove(asset.id());if(prior!=null)bytes-=(long)prior.getWidth()*prior.getHeight()*4;
+         while(bytes+size>64L*1024*1024&&!images.isEmpty()){var first=images.entrySet().iterator().next();bytes-=(long)first.getValue().getWidth()*first.getValue().getHeight()*4;images.remove(first.getKey());}
+-        images.put(asset.id(),image);bytes+=size;return image;
++        images.put(asset.id(),image);revisions.put(asset.id(),asset.sha());bytes+=size;return image;
++        }
+     }
+     /** Leitura em memoria, nunca acessa o disco durante paintComponent. */
+     public synchronized BufferedImage peek(String id){return images.get(id);}
+     /** Memoria aproximada dos pixels residentes. */
+     public synchronized long bytes(){return bytes;}
+     /** Invalida revisoes ao reindexar manualmente. */
+-    public synchronized void clear(){images.clear();bytes=0;}
++    public synchronized void clear(){images.clear();revisions.clear();bytes=0;generation++;}
+ }
+--- before/server/src/main/java/com/projetok/studio/StudioViewport.java
++++ after/server/src/main/java/com/projetok/studio/StudioViewport.java
+@@ -0,0 +1,12 @@
++package com.projetok.studio;
++import java.awt.geom.Point2D;
++/** Transformacao unica utilizada para renderizar e editar sob zoom/pan. */
++public record StudioViewport(double zoom,double panX,double panY) {
++    public StudioViewport {if(!Double.isFinite(zoom+panX+panY)||zoom<.1||zoom>8)throw new IllegalArgumentException("Viewport invalida");}
++    /** Coordenada de mundo continua, sem arredondar antes de aplicar snap. */
++    public Point2D.Double world(double x,double y){return new Point2D.Double((x-panX)/zoom,(y-panY)/zoom);}
++    /** Coordenada de tela para diagnostico e gestos. */
++    public Point2D.Double screen(double x,double y){return new Point2D.Double(x*zoom+panX,y*zoom+panY);}
++    /** Zoom ancorado no cursor evita salto do ponto sob o mouse. */
++    public StudioViewport zoomAt(double value,double x,double y){var p=world(x,y);double next=Math.max(.1,Math.min(8,value));return new StudioViewport(next,x-p.x*next,y-p.y*next);}
++}
+--- before/server/src/main/java/com/projetok/studio/WorldCanvas.java
++++ after/server/src/main/java/com/projetok/studio/WorldCanvas.java
+@@ -0,0 +1,51 @@
++package com.projetok.studio;
++import javax.swing.*;
++import java.awt.*;
++import java.awt.event.*;
++import java.util.*;
++import java.util.function.*;
++
++/** Canvas de autoria; paintComponent consulta apenas documento e imagens residentes. */
++public final class WorldCanvas extends JPanel {
++    final Supplier<WorldDocument> source;
++    final AssetImages images;
++    StudioViewport viewport=new StudioViewport(.75,20,20);
++    boolean grid=true,collisions=true;
++    String activeLayer="ground";
++    final Set<String> selected=new LinkedHashSet<>();
++    Consumer<Point> pointer=p->{};
++    Consumer<MouseEvent> pressed=e->{},dragged=e->{},released=e->{};
++    Point panStart;double startX,startY;
++    /** Canvas independente de arquivo e de regras de combate. */
++    public WorldCanvas(Supplier<WorldDocument> source,AssetImages images) {
++        this.source=source;this.images=images;setBackground(new Color(27,31,40));setFocusable(true);
++        var mouse=new MouseAdapter(){
++            @Override public void mousePressed(MouseEvent e){requestFocusInWindow();if(SwingUtilities.isMiddleMouseButton(e)){panStart=e.getPoint();startX=viewport.panX();startY=viewport.panY();}else pressed.accept(e);}
++            @Override public void mouseDragged(MouseEvent e){if(panStart!=null){viewport=new StudioViewport(viewport.zoom(),startX+e.getX()-panStart.x,startY+e.getY()-panStart.y);repaint();}else dragged.accept(e);mouseMoved(e);}
++            @Override public void mouseReleased(MouseEvent e){if(panStart!=null)panStart=null;else released.accept(e);}
++            @Override public void mouseMoved(MouseEvent e){pointer.accept(worldPoint(e));}
++            @Override public void mouseWheelMoved(MouseWheelEvent e){viewport=viewport.zoomAt(viewport.zoom()*Math.pow(1.12,-e.getWheelRotation()),e.getX(),e.getY());repaint();}
++        };addMouseListener(mouse);addMouseMotionListener(mouse);addMouseWheelListener(mouse);
++    }
++    /** Conversao utilizada por todas as ferramentas. */
++    public Point worldPoint(MouseEvent event){var p=viewport.world(event.getX(),event.getY());return new Point((int)Math.floor(p.x),(int)Math.floor(p.y));}
++    /** Zoom explicito conserva o centro da area de trabalho. */
++    public void zoom(double value){viewport=viewport.zoomAt(value,getWidth()/2d,getHeight()/2d);repaint();}
++    @Override protected void paintComponent(Graphics original) {
++        super.paintComponent(original);Graphics2D g=(Graphics2D)original.create();
++        try {
++            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
++            var d=source.get();g.translate(viewport.panX(),viewport.panY());g.scale(viewport.zoom(),viewport.zoom());g.clipRect(0,0,d.width(),d.height());
++            g.setColor(new Color(43,70,59));g.fillRect(0,0,d.width(),d.height());Rectangle visible=g.getClipBounds();
++            for(var layer:d.orderedLayers())if(layer.visible())for(var e:d.elements())if(e.visible()&&e.layer().equals(layer.id())&&visible.intersects(e.x(),e.y(),e.width(),e.height())) {
++                var image=images.peek(e.asset());var c=e.crop();
++                if(image!=null&&c.x()+c.width()<=image.getWidth()&&c.y()+c.height()<=image.getHeight())g.drawImage(image,e.x(),e.y(),e.x()+e.width(),e.y()+e.height(),c.x(),c.y(),c.x()+c.width(),c.y()+c.height(),null);
++                else {g.setColor(e.kind()==WorldDocument.Kind.PLAYER?Color.CYAN:new Color(130,170,175));g.drawRect(e.x(),e.y(),e.width(),e.height());g.setFont(new Font("SansSerif",0,11));g.drawString(e.reference().isEmpty()?e.kind().name():e.reference(),e.x(),e.y()+12);}
++                if(selected.contains(e.id())){g.setColor(Color.YELLOW);g.setStroke(new BasicStroke((float)(2/viewport.zoom())));g.drawRect(e.x(),e.y(),e.width(),e.height());}
++            }
++            if(grid&&d.grid()*viewport.zoom()>=8){g.setColor(new Color(255,255,255,30));g.setStroke(new BasicStroke((float)(1/viewport.zoom())));int cell=d.grid();for(int x=Math.max(0,visible.x/cell*cell);x<=Math.min(d.width(),visible.x+visible.width);x+=cell)g.drawLine(x,visible.y,x,visible.y+visible.height);for(int y=Math.max(0,visible.y/cell*cell);y<=Math.min(d.height(),visible.y+visible.height);y+=cell)g.drawLine(visible.x,y,visible.x+visible.width,y);}
++            if(collisions)for(var h:d.hitboxes()) {g.setColor(h.solid()?new Color(255,85,70,80):new Color(65,220,160,60));g.fillRect(h.x(),h.y(),h.width(),h.height());g.setColor(h.solid()?Color.RED:Color.GREEN);g.drawRect(h.x(),h.y(),h.width(),h.height());}
++            for(var p:d.portals()){g.setColor(Color.MAGENTA);g.drawOval(p.x()-12,p.y()-12,24,24);g.drawString(p.destination(),p.x()+14,p.y());}
++        }finally{g.dispose();}
++    }
++}
+--- before/server/src/main/java/com/projetok/studio/WorldStudio.java
++++ after/server/src/main/java/com/projetok/studio/WorldStudio.java
+@@ -0,0 +1,53 @@
++package com.projetok.studio;
++import javax.swing.*;
++import javax.swing.event.*;
++import java.awt.*;
++import java.nio.file.*;
++import java.util.*;
++
++/** Entrada desktop independente do Spirit Gate World Studio. */
++public final class WorldStudio extends JFrame {
++    final Path project;
++    WorldDocument document=WorldDocument.empty("primeiro_mapa",960,640);
++    AssetCatalog.Result catalog=new AssetCatalog.Result(java.util.List.of(),java.util.List.of(),java.util.List.of());
++    final AssetImages images=new AssetImages();
++    final WorldCanvas canvas=new WorldCanvas(()->document,images);
++    final DefaultListModel<AssetCatalog.Asset> assets=new DefaultListModel<>();
++    final JList<AssetCatalog.Asset> library=new JList<>(assets);
++    final JTextField search=new JTextField();final JComboBox<String> categories=new JComboBox<>(new String[]{"Todas","Sem categoria","Terrenos","Arvores","Construcoes","Decoracao","Personagens","NPCs","Inimigos","Interativos","Efeitos","Tilesets"});
++    final JTextArea details=new JTextArea();final JLabel status=new JLabel("Indexe os assets do projeto para comecar.");
++    final JToolBar toolbar=new JToolBar();final JButton refresh=new JButton("Atualizar biblioteca");
++    final JPanel inspector=new JPanel(new BorderLayout());
++    AssetCatalog.Asset brush;
++    WorldDocument.Crop brushCrop;
++    /** Abre projeto local; indexacao e carregamento ocorrem em workers. */
++    public WorldStudio(Path project) {
++        super("Spirit Gate | World Studio");this.project=project.toAbsolutePath();setDefaultCloseOperation(DISPOSE_ON_CLOSE);
++        setSize(1400,900);setMinimumSize(new Dimension(900,600));setLocationRelativeTo(null);
++        toolbar.setFloatable(false);toolbar.add(refresh);refresh.addActionListener(e->rescan());
++        JButton minus=new JButton("Zoom -"),plus=new JButton("Zoom +");toolbar.add(minus);toolbar.add(plus);minus.addActionListener(e->canvas.zoom(canvas.viewport.zoom()/1.2));plus.addActionListener(e->canvas.zoom(canvas.viewport.zoom()*1.2));
++        JCheckBox grid=new JCheckBox("Grade",true);grid.addActionListener(e->{canvas.grid=grid.isSelected();canvas.repaint();});toolbar.add(grid);
++        JPanel left=new JPanel(new BorderLayout(4,4)),filters=new JPanel(new GridLayout(0,1,4,4));filters.add(search);filters.add(categories);left.add(filters,BorderLayout.NORTH);left.add(new JScrollPane(library));
++        library.setFixedCellHeight(70);library.setCellRenderer((list,value,index,selected,focus)->{JLabel label=new JLabel(Path.of(value.path()).getFileName().toString(),new ImageIcon(value.thumbnail()),SwingConstants.LEFT);label.setOpaque(true);label.setBackground(selected?new Color(180,210,225):Color.WHITE);label.setToolTipText(value.path());return label;});
++        search.getDocument().addDocumentListener(new DocumentListener(){public void insertUpdate(DocumentEvent e){filter();}public void removeUpdate(DocumentEvent e){filter();}public void changedUpdate(DocumentEvent e){filter();}});categories.addActionListener(e->filter());
++        library.addListSelectionListener(e->{if(!e.getValueIsAdjusting()){brush=library.getSelectedValue();if(brush!=null){brushCrop=new WorldDocument.Crop(0,0,brush.width(),brush.height());details.setText(brush.path()+"\n"+brush.width()+" x "+brush.height()+"\nCanal alfa: "+brush.alpha()+"\nCategoria: "+brush.category()+"\nSHA-256: "+brush.sha()+"\nIndexado: "+brush.indexedAt());warmImages();}}});
++        JButton category=new JButton("Definir categoria");category.addActionListener(e->{if(brush==null)return;String next=(String)JOptionPane.showInputDialog(this,"Categoria manual","Biblioteca",JOptionPane.PLAIN_MESSAGE,null,new String[]{"Terrenos","Arvores","Construcoes","Decoracao","Personagens","NPCs","Inimigos","Interativos","Efeitos","Tilesets","Sem categoria"},brush.category());if(next!=null){String id=brush.id();catalog=new AssetCatalog.Result(catalog.assets().stream().map(a->a.id().equals(id)?a.category(next):a).toList(),catalog.warnings(),catalog.changes());filter();}});left.add(category,BorderLayout.SOUTH);
++        details.setEditable(false);details.setLineWrap(true);details.setWrapStyleWord(true);inspector.add(new JScrollPane(details));inspector.setPreferredSize(new Dimension(260,400));
++        JSplitPane center=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,canvas,inspector);center.setResizeWeight(1);JSplitPane all=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,left,center);all.setDividerLocation(270);all.setResizeWeight(0);
++        setLayout(new BorderLayout(6,6));add(toolbar,BorderLayout.NORTH);add(all);add(status,BorderLayout.SOUTH);
++        canvas.pointer=p->status.setText(document.name()+" | "+p.x+", "+p.y+" | Grade "+document.grid()+" | Zoom "+Math.round(canvas.viewport.zoom()*100)+"% | Camada "+canvas.activeLayer);
++        canvas.pressed=e->{Point p=canvas.worldPoint(e);canvas.selected.clear();document.elements().stream().filter(a->new Rectangle(a.x(),a.y(),a.width(),a.height()).contains(p)).reduce((a,b)->b).ifPresent(a->{canvas.selected.add(a.id());details.setText(a.toString());});canvas.repaint();};
++    }
++    void filter(){assets.clear();AssetCatalog.search(catalog,search.getText(),(String)categories.getSelectedItem()).forEach(assets::addElement);}
++    void rescan(){refresh.setEnabled(false);status.setText("Indexando somente assets e recursos autorizados...");new SwingWorker<AssetCatalog.Result,Void>(){
++        protected AssetCatalog.Result doInBackground()throws Exception{return AssetCatalog.scan(project,catalog);}
++        protected void done(){try{catalog=get();images.clear();filter();warmImages();status.setText(catalog.assets().size()+" imagens | "+catalog.changes().size()+" alteracoes | "+catalog.warnings().size()+" avisos");if(!catalog.warnings().isEmpty())details.setText(String.join("\n",catalog.warnings()));}catch(Exception error){error(error);}finally{refresh.setEnabled(true);}}
++    }.execute();}
++    void warmImages(){var ids=new HashSet<String>();document.elements().forEach(e->ids.add(e.asset()));if(brush!=null)ids.add(brush.id());var selected=catalog.byId();new SwingWorker<Void,Void>(){
++        protected Void doInBackground()throws Exception{for(String id:ids)if(selected.containsKey(id))images.load(selected.get(id));return null;}
++        protected void done(){try{get();canvas.repaint();}catch(Exception error){error(error);}}
++    }.execute();}
++    void error(Exception error){status.setText("Operacao recusada: "+(error.getCause()==null?error.getMessage():error.getCause().getMessage()));}
++    /** Inicializa a ferramenta sem iniciar banco, servidor ou personagem. */
++    public static void main(String[] args){Path root=args.length==2&&args[0].equals("--project")?Path.of(args[1]):Path.of("");SwingUtilities.invokeLater(()->{var studio=new WorldStudio(root);studio.setVisible(true);studio.rescan();});}
++}
+--- before/docs/TASK-093-RELATORIO-FINAL.md
++++ after/docs/TASK-093-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-093 - Corujao II
++
++Estado: **VALIDADA**.
++
++Janela Swing independente com biblioteca pesquisavel, miniaturas, dados de asset, canvas central, inspector, grade, zoom ancorado, pan pelo botao central e status de coordenadas/camada. Scanner/cache em SwingWorker; paint sem disco e locks curtos. Testes de conversao e pintura em memoria. Iniciador world-studio.cmd; persistencia e ferramentas acrescentadas nas tarefas seguintes.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-093/corujao-ii/`. Logs da suite: `docs/TASK-studio-093-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-093-TESTES.md
++++ after/docs/TASK-093-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-093 - Corujao II
++
++Comando: `python tools/qualidade.py --offline --task studio-093`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 340,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-093.md
++++ after/docs/TASK-093.md
+@@ -0,0 +1,3 @@
++# TASK-093 - Corujao II
++
++Janela Swing independente com biblioteca pesquisavel, miniaturas, dados de asset, canvas central, inspector, grade, zoom ancorado, pan pelo botao central e status de coordenadas/camada. Scanner/cache em SwingWorker; paint sem disco e locks curtos. Testes de conversao e pintura em memoria. Iniciador world-studio.cmd; persistencia e ferramentas acrescentadas nas tarefas seguintes.
+--- before/world-studio.cmd
++++ after/world-studio.cmd
+@@ -0,0 +1,8 @@
++@echo off
++setlocal
++cd /d "%~dp0"
++if not exist "server\target\classes\com\projetok\studio\WorldStudio.class" (
++  echo Compile primeiro: python tools/qualidade.py --offline --task studio-local
++  exit /b 1
++)
++java -cp "server\target\classes" com.projetok.studio.WorldStudio --project "%~dp0."

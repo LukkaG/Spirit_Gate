@@ -1,0 +1,29 @@
+{
+  "changed": [
+    "server/src/main/java/com/projetok/prototype/DebugPanel.java",
+    "server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java"
+  ],
+  "removed": [],
+  "added": [
+    "docs/TASK-078-ASSETS.md",
+    "docs/TASK-078-RELATORIO-FINAL.md",
+    "docs/TASK-078-TESTES.md",
+    "docs/TASK-078-VALIDACAO-VISUAL.md",
+    "docs/TASK-078-java-version.log",
+    "docs/TASK-078-java.log",
+    "docs/TASK-078-maven-version.log",
+    "docs/TASK-078-python-version.log",
+    "docs/TASK-078-python.log",
+    "docs/TASK-078-qualidade.json",
+    "docs/TASK-078-testes.txt",
+    "docs/TASK-078.md",
+    "server/src/main/java/com/projetok/prototype/rpg/RpgPlayerAnimation.java",
+    "server/src/main/java/com/projetok/prototype/rpg/RpgPlayerSprites.java",
+    "server/src/main/resources/rpg/experimental-player.properties",
+    "server/src/test/java/com/projetok/prototype/rpg/RpgPlayerSpritesTest.java",
+    "testar-rpg-sprites.cmd"
+  ],
+  "onlyAuthorizedExistingSourcesChanged": true,
+  "originalAssetsUnchanged": true,
+  "worldRuntimeSaveProtocolCoopUnchanged": true
+}

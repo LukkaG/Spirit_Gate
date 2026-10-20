@@ -1,0 +1,112 @@
+--- before/server/src/test/java/com/projetok/prototype/rpg/CorujaoHudTest.java
++++ after/server/src/test/java/com/projetok/prototype/rpg/CorujaoHudTest.java
+@@ -0,0 +1,18 @@
++package com.projetok.prototype.rpg;
++import com.projetok.rpg.*;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class CorujaoHudTest {
++    @Test void cooldownStaminaAndLowHpFollowWorldAndPersistedValues() {
++        var w=new RpgWorld();var v=RpgCombatStatus.from(w.snapshot());assertEquals(1000,v.stamina());assertTrue(v.abilityReady());
++        assertTrue(w.castAbility());v=RpgCombatStatus.from(w.snapshot());assertEquals(750,v.stamina());assertEquals(90,v.abilityTicks());assertFalse(v.abilityReady());
++        assertEquals("3.0 s",RpgCombatStatus.cooldown(v.abilityTicks()));
++        assertEquals(v,RpgCombatStatus.from(RpgWorld.restore(w.save()).snapshot()));
++        w.receiveDamage(110);assertTrue(RpgCombatStatus.from(w.snapshot()).lowHp());
++        w.receiveDamage(10000);v=RpgCombatStatus.from(w.snapshot());assertEquals(0,v.hp());assertFalse(v.abilityReady());assertFalse(v.lowHp());
++    }
++    @Test void mysticFullHealthIsUnavailableAndCooldownNeverNegative() {
++        var w=new RpgWorld(CharacterIdentity.create("Teste","mystic","azure"));assertFalse(RpgCombatStatus.from(w.snapshot()).abilityReady());
++        w.receiveDamage(10);assertTrue(RpgCombatStatus.from(w.snapshot()).abilityReady());assertEquals("Pronto",RpgCombatStatus.cooldown(-1));
++    }
++}
+--- before/server/src/main/java/com/projetok/prototype/rpg/RpgCombatStatus.java
++++ after/server/src/main/java/com/projetok/prototype/rpg/RpgCombatStatus.java
+@@ -0,0 +1,20 @@
++package com.projetok.prototype.rpg;
++import com.projetok.rpg.*;
++import java.util.Locale;
++
++/** Modelo puro do HUD, calculado dos valores publicados pelo mundo. */
++public record RpgCombatStatus(int hp,int maxHp,int stamina,long attackTicks,long abilityTicks,boolean abilityReady,boolean lowHp) {
++    /** Le valores de save existentes; nao cria selecao de alvo nem recursos paralelos. */
++    public static RpgCombatStatus from(RpgWorld.View v) {
++        int stamina=(int)value(v,"stamina",1000);long attack=Math.max(0,value(v,"attack-until",0)-v.ticks());
++        long ability=Math.max(0,value(v,"ability-until",0)-v.ticks());var definition=Archetypes.get(v.identity().archetype());
++        return new RpgCombatStatus(v.state().hp(),v.maxHp(),stamina,attack,ability,
++            v.state().hp()>0&&ability==0&&stamina>=definition.cost()*10&&(!definition.ability().equals("mend")||v.state().hp()<v.maxHp()),
++            v.state().hp()>0&&v.state().hp()*4<=v.maxHp());
++    }
++    private static long value(RpgWorld.View v,String prefix,long fallback){return v.state().flags().stream().filter(f->f.startsWith(prefix+":" )).mapToLong(f->Long.parseLong(f.substring(prefix.length()+1))).findFirst().orElse(fallback);}
++    /** Duracao restante arredondada para decimos; usa 30 ticks por segundo. */
++    public static String cooldown(long ticks){return ticks<=0?"Pronto":String.format(Locale.ROOT,"%.1f s",ticks/30.0);}
++    /** Resumo curto para janelas pequenas. */
++    public String text(){return "Golpe: "+cooldown(attackTicks)+" | Habilidade: "+cooldown(abilityTicks)+(abilityReady?"":" (indisponivel)")+(lowHp?" | HP BAIXO":"");}
++}
+--- before/server/src/main/java/com/projetok/prototype/rpg/RpgHud.java
++++ after/server/src/main/java/com/projetok/prototype/rpg/RpgHud.java
+@@ -9,8 +9,22 @@
+     private final JPanel dialogue=new JPanel(new BorderLayout(4,4));
+     private DialogueService.Node last;
+     private final RpgRuntime runtime;
+-    RpgHud(RpgRuntime runtime) {super(new BorderLayout());this.runtime=runtime;add(status,BorderLayout.NORTH);add(dialogue,BorderLayout.CENTER);journal.setEditable(false);add(journal,BorderLayout.SOUTH);}
++    private final JProgressBar hp=new JProgressBar(),stamina=new JProgressBar(0,1000);
++    private final JLabel combat=new JLabel();
++    private long previousXp=-1,xpUntil;
++    private String xpNotice="";
++    RpgHud(RpgRuntime runtime) {
++        super(new BorderLayout());this.runtime=runtime;
++        JPanel bars=new JPanel(new GridLayout(0,1));hp.setStringPainted(true);stamina.setStringPainted(true);
++        bars.add(hp);bars.add(stamina);bars.add(combat);bars.add(status);add(bars,BorderLayout.NORTH);
++        add(dialogue,BorderLayout.CENTER);journal.setEditable(false);add(new JScrollPane(journal),BorderLayout.SOUTH);
++    }
+     void update(RpgWorld.View view) {
++        var values=RpgCombatStatus.from(view);hp.setMaximum(values.maxHp());hp.setValue(values.hp());hp.setString("HP "+values.hp()+" / "+values.maxHp());
++        hp.setForeground(values.lowHp()?new Color(210,85,55):new Color(65,165,100));
++        stamina.setValue(values.stamina());stamina.setString("Vigor "+values.stamina()/10+" / 100");
++        if(previousXp>=0&&view.state().xp()>previousXp){xpNotice=" | +"+(view.state().xp()-previousXp)+" XP";xpUntil=view.ticks()+90;}
++        previousXp=view.state().xp();combat.setText(values.text()+(view.ticks()<xpUntil?xpNotice:"")+" | "+view.message());
+         journal.setText(view.journal().stream().map(q->q.name()+" | "+q.state()+" | "+q.progress()+"/"+q.required()+" - "+q.objective()).collect(java.util.stream.Collectors.joining("\n")));
+         status.setText("  "+view.identity().name()+" | Nivel "+view.level()+" | XP "+view.state().xp()+" | Moedas "+view.state().coins()+" | Ataque "+view.attack()+" | Defesa "+view.defense()+" | "+view.state().region()+" | Atalhos na barra superior");
+         if(!java.util.Objects.equals(last,view.dialogue())) {
+--- before/docs/TASK-083-RELATORIO-FINAL.md
++++ after/docs/TASK-083-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-083 - Corujao I
++
++Estado: **VALIDADA COM RESSALVAS**.
++
++HUD existente ampliado com barras de HP e vigor, recargas por ticks, disponibilidade da habilidade, aviso de HP baixo e notificacao temporaria de XP. Modelo puro testa extremos, cura Mystic e dados retomados. Nao existe selecao de alvo e nenhuma foi criada. Layout em linhas e diario rolavel; legibilidade humana em dispositivos distintos permanece pendente.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-083/corujao-i/`. Logs da suite: `docs/TASK-corujao-083-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-083-TESTES.md
++++ after/docs/TASK-083-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-083 - Corujao I
++
++Comando: `python tools/qualidade.py --offline --task corujao-083`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 322,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-083.md
++++ after/docs/TASK-083.md
+@@ -0,0 +1,3 @@
++# TASK-083 - Corujao I
++
++HUD existente ampliado com barras de HP e vigor, recargas por ticks, disponibilidade da habilidade, aviso de HP baixo e notificacao temporaria de XP. Modelo puro testa extremos, cura Mystic e dados retomados. Nao existe selecao de alvo e nenhuma foi criada. Layout em linhas e diario rolavel; legibilidade humana em dispositivos distintos permanece pendente.

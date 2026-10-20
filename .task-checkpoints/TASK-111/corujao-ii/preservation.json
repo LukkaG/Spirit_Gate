@@ -1,0 +1,22 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/NavigationAnalysisTest.java",
+    "server/src/main/java/com/projetok/studio/MinimapPanel.java",
+    "server/src/main/java/com/projetok/studio/NavigationAnalysis.java",
+    "server/src/main/java/com/projetok/studio/NavigationTools.java",
+    "server/src/main/java/com/projetok/studio/WorldStudio.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-111-RELATORIO-FINAL.md",
+    "docs/TASK-111-TESTES.md",
+    "docs/TASK-111.md",
+    "docs/TASK-studio-111-java-version.log",
+    "docs/TASK-studio-111-java.log",
+    "docs/TASK-studio-111-maven-version.log",
+    "docs/TASK-studio-111-python-version.log",
+    "docs/TASK-studio-111-python.log",
+    "docs/TASK-studio-111-qualidade.json",
+    "docs/TASK-studio-111-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

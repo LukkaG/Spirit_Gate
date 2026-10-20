@@ -1,0 +1,20 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/WorldDocumentTest.java",
+    "server/src/main/java/com/projetok/studio/WorldDocument.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-091-RELATORIO-FINAL.md",
+    "docs/TASK-091-TESTES.md",
+    "docs/TASK-091.md",
+    "docs/TASK-studio-091-java-version.log",
+    "docs/TASK-studio-091-java.log",
+    "docs/TASK-studio-091-maven-version.log",
+    "docs/TASK-studio-091-python-version.log",
+    "docs/TASK-studio-091-python.log",
+    "docs/TASK-studio-091-qualidade.json",
+    "docs/TASK-studio-091-testes.txt",
+    "docs/WORLD-EDITOR-ARQUITETURA.md"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

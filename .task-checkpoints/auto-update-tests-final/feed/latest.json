@@ -1,0 +1,22 @@
+﻿{
+    "files":  [
+                  {
+                      "path":  "runtime/bin/java.exe",
+                      "sha256":  "0967115f2813a3541eaef77de9d9d5773f1c0c04314b0bbfe4ff3b3b1c55b5d5",
+                      "bytes":  4
+                  },
+                  {
+                      "path":  "app/spirit-gate-rpg.jar",
+                      "sha256":  "b1e99324505bd32da0e1f85dcf5e19a09db0481e8a15f62c41eb320304a8e927",
+                      "bytes":  5
+                  },
+                  {
+                      "path":  "assets/dev/player-base/test.png",
+                      "sha256":  "0967115f2813a3541eaef77de9d9d5773f1c0c04314b0bbfe4ff3b3b1c55b5d5",
+                      "bytes":  4
+                  }
+              ],
+    "schemaVersion":  1,
+    "basePath":  "v3",
+    "version":  "v3"
+}

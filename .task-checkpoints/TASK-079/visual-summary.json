@@ -1,0 +1,30 @@
+[
+  {
+    "configuration": "anterior",
+    "captures": 13,
+    "sequenceSamples": 16,
+    "scale": 0.5,
+    "frameMillis": 150
+  },
+  {
+    "configuration": "recomendada",
+    "captures": 13,
+    "sequenceSamples": 15,
+    "scale": 0.4,
+    "frameMillis": 220
+  },
+  {
+    "configuration": "menor",
+    "captures": 13,
+    "sequenceSamples": 15,
+    "scale": 0.35,
+    "frameMillis": 220
+  },
+  {
+    "configuration": "mais-lenta",
+    "captures": 13,
+    "sequenceSamples": 16,
+    "scale": 0.4,
+    "frameMillis": 280
+  }
+]

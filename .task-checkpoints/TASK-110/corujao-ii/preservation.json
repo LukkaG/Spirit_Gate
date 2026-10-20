@@ -1,0 +1,23 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/StudioEventsTest.java",
+    "server/src/main/java/com/projetok/studio/EventTools.java",
+    "server/src/main/java/com/projetok/studio/StudioEvents.java",
+    "server/src/main/java/com/projetok/studio/StudioExport.java",
+    "server/src/main/java/com/projetok/studio/StudioPlaytest.java",
+    "server/src/main/java/com/projetok/studio/WorldStudio.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-110-RELATORIO-FINAL.md",
+    "docs/TASK-110-TESTES.md",
+    "docs/TASK-110.md",
+    "docs/TASK-studio-110-java-version.log",
+    "docs/TASK-studio-110-java.log",
+    "docs/TASK-studio-110-maven-version.log",
+    "docs/TASK-studio-110-python-version.log",
+    "docs/TASK-studio-110-python.log",
+    "docs/TASK-studio-110-qualidade.json",
+    "docs/TASK-studio-110-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

@@ -1,0 +1,200 @@
+--- before/server/src/test/java/com/projetok/studio/EditorOperationsTest.java
++++ after/server/src/test/java/com/projetok/studio/EditorOperationsTest.java
+@@ -0,0 +1,11 @@
++package com.projetok.studio;
++import org.junit.jupiter.api.Test;
++import java.awt.Point;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++class EditorOperationsTest {
++    static WorldDocument.Element brush(){return new WorldDocument.Element("brush",WorldDocument.Kind.OBJECT,"","",new WorldDocument.Crop(0,0,32,32),0,0,32,32,"ground",true,false,"","FRONT",Map.of());}
++    @Test void rectangleClipboardAndUndoRedoAreAtomic(){var d=WorldDocument.empty("mapa",128,128);var h=new EditorHistory(d);var painted=EditorOperations.rectangle(d,brush(),new Point(0,0),new Point(63,63));assertEquals(4,painted.elements().size());h.commit(painted);assertEquals(d,h.undo());assertEquals(painted,h.redo());var copy=EditorOperations.copy(painted,Set.of(painted.elements().get(0).id()));var pasted=EditorOperations.paste(painted,copy,96,96);assertEquals(5,pasted.elements().size());assertEquals(5,pasted.elements().stream().map(WorldDocument.Element::id).distinct().count());assertThrows(IllegalArgumentException.class,()->EditorOperations.paste(d,copy,128,128));}
++    @Test void floodIsConnectedAndRefusesOversizeWithoutMutation(){var d=WorldDocument.empty("mapa",128,128);assertEquals(16,EditorOperations.flood(d,brush(),0,0).elements().size());var huge=WorldDocument.empty("mapa",8192,8192);assertThrows(IllegalArgumentException.class,()->EditorOperations.flood(huge,brush(),0,0));assertTrue(huge.elements().isEmpty());}
++    @Test void historyIsBoundedAndLockedLayersRefusePaint(){var d=WorldDocument.empty("mapa",128,128);var h=new EditorHistory(d);for(int i=0;i<100;i++){d=EditorOperations.pencil(d,brush(),0,0,true);h.commit(d);}assertEquals(64,h.size());var locked=d.withLayers(d.layers().stream().map(l->new WorldDocument.Layer(l.id(),l.name(),l.role(),l.order(),l.visible(),true)).toList());assertThrows(IllegalArgumentException.class,()->EditorOperations.erase(locked,"ground",0,0));}
++}
+--- before/server/src/main/java/com/projetok/studio/EditorHistory.java
++++ after/server/src/main/java/com/projetok/studio/EditorHistory.java
+@@ -0,0 +1,23 @@
++package com.projetok.studio;
++import java.util.*;
++
++/** Historico limitado a 64 gestos e 250 mil referencias, compartilhando registros imutaveis. */
++public final class EditorHistory {
++    private record Change(WorldDocument before,WorldDocument after){int weight(){return before.elements().size()+after.elements().size()+before.hitboxes().size()+after.hitboxes().size()+1;}}
++    private final Deque<Change> undo=new ArrayDeque<>(),redo=new ArrayDeque<>();
++    private WorldDocument current;private int weight;
++    /** Inicia um documento sem criar uma operacao artificial no historico. */
++    public EditorHistory(WorldDocument document){current=document;}
++    /** Documento confirmado ao fim do ultimo gesto. */
++    public WorldDocument current(){return current;}
++    /** Confirma um gesto completo; repetir o mesmo documento nao duplica historico. */
++    public WorldDocument commit(WorldDocument next){if(current.equals(next))return current;redo.clear();undo.addLast(new Change(current,next));current=next;weight=undo.stream().mapToInt(Change::weight).sum();while((undo.size()>64||weight>250000)&&undo.size()>1)weight-=undo.removeFirst().weight();return current;}
++    /** Desfaz atomicamente, sem IO. */
++    public WorldDocument undo(){if(!undo.isEmpty()){var c=undo.removeLast();redo.addLast(c);weight-=c.weight();current=c.before();}return current;}
++    /** Refaz o ultimo gesto desfeito. */
++    public WorldDocument redo(){if(!redo.isEmpty()){var c=redo.removeLast();undo.addLast(c);weight+=c.weight();current=c.after();}return current;}
++    /** Abre outro documento com historico proprio. */
++    public WorldDocument reset(WorldDocument document){undo.clear();redo.clear();weight=0;return current=document;}
++    /** Numero de gestos retidos para diagnostico. */
++    public int size(){return undo.size();}
++}
+--- before/server/src/main/java/com/projetok/studio/EditorOperations.java
++++ after/server/src/main/java/com/projetok/studio/EditorOperations.java
+@@ -0,0 +1,35 @@
++package com.projetok.studio;
++import java.awt.*;
++import java.util.*;
++
++/** Operacoes puras e limitadas de pintura; nenhuma grava no disco. */
++public final class EditorOperations {
++    private EditorOperations(){}
++    static void editable(WorldDocument d,String layer){if(d.layers().stream().noneMatch(l->l.id().equals(layer)&&!l.locked()))throw new IllegalArgumentException("Camada bloqueada ou ausente");}
++    static String id(){return "e_"+UUID.randomUUID().toString().replace("-","");}
++    /** Posiciona preservando dimensoes reais ou tamanho de tile escolhido explicitamente. */
++    public static WorldDocument pencil(WorldDocument d,WorldDocument.Element brush,int x,int y,boolean tile) {
++        editable(d,brush.layer());int px=tile?Math.floorDiv(x,d.grid())*d.grid():x,py=tile?Math.floorDiv(y,d.grid())*d.grid():y;
++        int w=tile?d.grid():brush.width(),h=tile?d.grid():brush.height();if(px<0||py<0||px+w>d.width()||py+h>d.height())return d;
++        var placed=new WorldDocument.Element(id(),tile?WorldDocument.Kind.TILE:brush.kind(),brush.asset(),brush.sha(),brush.crop(),px,py,w,h,brush.layer(),true,false,brush.reference(),brush.direction(),brush.properties());
++        var next=new ArrayList<>(d.elements());next.removeIf(e->tile&&e.kind()==WorldDocument.Kind.TILE&&e.layer().equals(brush.layer())&&e.x()==px&&e.y()==py&&!e.locked());next.add(placed);return d.withElements(next);
++    }
++    /** Borracha respeita bloqueio da camada e dos objetos. */
++    public static WorldDocument erase(WorldDocument d,String layer,int x,int y){editable(d,layer);return d.withElements(d.elements().stream().filter(e->!e.layer().equals(layer)||e.locked()||!new Rectangle(e.x(),e.y(),e.width(),e.height()).contains(x,y)).toList());}
++    /** Preenchimento retangular atomico, limitado a 4096 celulas. */
++    public static WorldDocument rectangle(WorldDocument d,WorldDocument.Element brush,Point a,Point b){int grid=d.grid(),x0=Math.max(0,Math.min(a.x,b.x)/grid),y0=Math.max(0,Math.min(a.y,b.y)/grid),x1=Math.min(d.width()/grid-1,Math.max(a.x,b.x)/grid),y1=Math.min(d.height()/grid-1,Math.max(a.y,b.y)/grid);if((long)(x1-x0+1)*(y1-y0+1)>4096)throw new IllegalArgumentException("Retangulo excede 4096 celulas");for(int y=y0;y<=y1;y++)for(int x=x0;x<=x1;x++)d=pencil(d,brush,x*grid,y*grid,true);return d;}
++    private static String signature(WorldDocument.Element e){return e==null?"":e.asset()+":"+e.crop();}
++    /** Balde primeiro calcula a area, recusando o excesso antes de modificar qualquer celula. */
++    public static WorldDocument flood(WorldDocument d,WorldDocument.Element brush,int wx,int wy) {
++        editable(d,brush.layer());int cols=d.width()/d.grid(),rows=d.height()/d.grid(),sx=wx/d.grid(),sy=wy/d.grid();if(wx<0||wy<0||sx>=cols||sy>=rows)return d;
++        Map<Integer,WorldDocument.Element> cells=new HashMap<>();for(var e:d.elements())if(e.kind()==WorldDocument.Kind.TILE&&e.layer().equals(brush.layer()))cells.put(e.y()/d.grid()*cols+e.x()/d.grid(),e);
++        int start=sy*cols+sx;String target=signature(cells.get(start));if(target.equals(signature(brush)))return d;
++        Set<Integer> visited=new LinkedHashSet<>();ArrayDeque<Integer> queue=new ArrayDeque<>();queue.add(start);
++        while(!queue.isEmpty()){int cell=queue.removeFirst();if(visited.contains(cell)||!signature(cells.get(cell)).equals(target)||(cells.containsKey(cell)&&cells.get(cell).locked()))continue;visited.add(cell);if(visited.size()>4096)throw new IllegalArgumentException("Balde excede 4096 celulas; use selecao menor");int x=cell%cols,y=cell/cols;if(x>0)queue.add(cell-1);if(x+1<cols)queue.add(cell+1);if(y>0)queue.add(cell-cols);if(y+1<rows)queue.add(cell+cols);}
++        for(int cell:visited)d=pencil(d,brush,cell%cols*d.grid(),cell/cols*d.grid(),true);return d;
++    }
++    /** Copia elementos selecionados com posicoes relativas. */
++    public static java.util.List<WorldDocument.Element> copy(WorldDocument d,Set<String> selected){var elements=d.elements().stream().filter(e->selected.contains(e.id())).toList();int x=elements.stream().mapToInt(WorldDocument.Element::x).min().orElse(0),y=elements.stream().mapToInt(WorldDocument.Element::y).min().orElse(0);return elements.stream().map(e->e.at(e.id(),e.x()-x,e.y()-y)).toList();}
++    /** Cola com IDs novos e validacao atomica de limites. */
++    public static WorldDocument paste(WorldDocument d,java.util.List<WorldDocument.Element> clipboard,int x,int y){var next=new ArrayList<>(d.elements());for(var e:clipboard){editable(d,e.layer());next.add(e.at(id(),e.x()+x,e.y()+y));}return d.withElements(next);}
++}
+--- before/server/src/main/java/com/projetok/studio/PaintTools.java
++++ after/server/src/main/java/com/projetok/studio/PaintTools.java
+@@ -0,0 +1,27 @@
++package com.projetok.studio;
++import javax.swing.*;
++import java.awt.*;
++import java.awt.event.*;
++import java.util.*;
++
++/** Gestos agrupados em um comando Undo/Redo; instalados na janela principal. */
++final class PaintTools {
++    final WorldStudio ui;String tool="Selecionar";Point start;int changes;boolean tile;
++    java.util.List<WorldDocument.Element> clipboard=java.util.List.of();
++    PaintTools(WorldStudio ui) {
++        this.ui=ui;JComboBox<String> tools=new JComboBox<>(new String[]{"Selecionar","Lapis","Borracha","Retangulo","Balde","Conta-gotas"});tools.addActionListener(e->tool=(String)tools.getSelectedItem());ui.toolbar.add(tools);
++        JComboBox<String> mode=new JComboBox<>(new String[]{"Objeto real","Tile na grade"});mode.addActionListener(e->tile=mode.getSelectedIndex()==1);ui.toolbar.add(mode);
++        JButton crop=new JButton("Recortar tileset");crop.addActionListener(e->{if(ui.brush!=null)TilePicker.open(ui,ui.brush,ui.images.peek(ui.brush.id()),next->{ui.brushCrop=next;mode.setSelectedIndex(1);ui.details.setText("Recorte "+next);});});ui.toolbar.add(crop);
++        add("Desfazer","control Z",()->ui.change(ui.history.undo()));add("Refazer","control Y",()->ui.change(ui.history.redo()));add("Copiar","control C",()->clipboard=EditorOperations.copy(ui.document,ui.canvas.selected));add("Colar","control V",()->ui.change(EditorOperations.paste(ui.document,clipboard,ui.lastCursor.x,ui.lastCursor.y)));
++        ui.canvas.pressed=e->{start=ui.canvas.worldPoint(e);changes=0;try{apply(start);}catch(Exception error){ui.error(error);start=null;}};
++        ui.canvas.dragged=e->{if(start!=null&&(tool.equals("Lapis")||tool.equals("Borracha")))try{apply(ui.canvas.worldPoint(e));}catch(Exception error){ui.document=ui.history.current();ui.error(error);start=null;}};
++        ui.canvas.released=e->{if(start==null)return;Point end=ui.canvas.worldPoint(e);try{
++            if(tool.equals("Retangulo")){if(!tile)throw new IllegalArgumentException("Retangulo requer Tile na grade");ui.document=EditorOperations.rectangle(ui.document,brush(),start,end);}
++            if(tool.equals("Selecionar")){Rectangle box=new Rectangle(Math.min(start.x,end.x),Math.min(start.y,end.y),Math.max(1,Math.abs(end.x-start.x)),Math.max(1,Math.abs(end.y-start.y)));if(!e.isShiftDown())ui.canvas.selected.clear();ui.document.elements().stream().filter(a->a.layer().equals(ui.canvas.activeLayer)&&box.intersects(a.x(),a.y(),a.width(),a.height())).forEach(a->ui.canvas.selected.add(a.id()));ui.inspectSelection();}
++            ui.change(ui.document);
++        }catch(Exception error){ui.document=ui.history.current();ui.error(error);}finally{start=null;ui.canvas.repaint();}};
++    }
++    void add(String name,String key,Runnable action){JButton b=new JButton(name);b.addActionListener(e->{try{action.run();}catch(Exception error){ui.error(error);}});ui.toolbar.add(b);ui.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(key),name);ui.getRootPane().getActionMap().put(name,new AbstractAction(){public void actionPerformed(ActionEvent e){b.doClick();}});}
++    WorldDocument.Element brush(){if(ui.brush==null)throw new IllegalArgumentException("Selecione uma imagem na biblioteca");return new WorldDocument.Element("brush",WorldDocument.Kind.OBJECT,ui.brush.id(),ui.brush.sha(),ui.brushCrop,0,0,ui.brushCrop.width(),ui.brushCrop.height(),ui.canvas.activeLayer,true,false,"","FRONT",Map.of());}
++    void apply(Point p){if(++changes>4096)throw new IllegalArgumentException("Gesto excede 4096 pontos");switch(tool){case "Lapis"->ui.document=EditorOperations.pencil(ui.document,brush(),p.x,p.y,tile);case "Borracha"->ui.document=EditorOperations.erase(ui.document,ui.canvas.activeLayer,p.x,p.y);case "Balde"->{if(!tile)throw new IllegalArgumentException("Balde requer Tile na grade");ui.document=EditorOperations.flood(ui.document,brush(),p.x,p.y);}case "Conta-gotas"->ui.document.elements().stream().filter(e->e.layer().equals(ui.canvas.activeLayer)&&new Rectangle(e.x(),e.y(),e.width(),e.height()).contains(p)).reduce((a,b)->b).ifPresent(e->{ui.brush=ui.catalog.byId().get(e.asset());ui.brushCrop=e.crop();});default->{}}ui.canvas.repaint();}
++}
+--- before/server/src/main/java/com/projetok/studio/TilePicker.java
++++ after/server/src/main/java/com/projetok/studio/TilePicker.java
+@@ -0,0 +1,22 @@
++package com.projetok.studio;
++import javax.swing.*;
++import java.awt.*;
++import java.awt.event.*;
++import java.awt.image.BufferedImage;
++import java.util.*;
++import java.util.function.Consumer;
++
++/** Recorte visual do tileset; somente metadados sao alterados. */
++final class TilePicker {
++    static void open(JFrame owner,AssetCatalog.Asset asset,BufferedImage image,Consumer<WorldDocument.Crop> selected) {
++        if(image==null){JOptionPane.showMessageDialog(owner,"Aguarde o carregamento da imagem.");return;}
++        JDialog dialog=new JDialog(owner,"Tileset: clique em um recorte",true);JPanel options=new JPanel(new GridLayout(2,8));
++        String[] labels={"Tile W","Tile H","Margem","Espaco","Regiao X","Regiao Y","Regiao W","Regiao H"};int[] defaults={32,32,0,0,0,0,asset.width(),asset.height()};JSpinner[] values=new JSpinner[8];
++        for(String label:labels)options.add(new JLabel(label));for(int i=0;i<8;i++){values[i]=new JSpinner(new SpinnerNumberModel(defaults[i],0,8192,1));options.add(values[i]);}
++        final java.util.List<WorldDocument.Crop>[] crops=new java.util.List[]{java.util.List.of()};double scale=Math.min(1,Math.min(850d/image.getWidth(),600d/image.getHeight()));
++        JPanel preview=new JPanel(){protected void paintComponent(Graphics original){super.paintComponent(original);Graphics2D g=(Graphics2D)original.create();try{g.scale(scale,scale);g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);g.drawImage(image,0,0,null);g.setColor(new Color(255,220,80));for(var c:crops[0])g.drawRect(c.x(),c.y(),c.width(),c.height());}finally{g.dispose();}}};preview.setPreferredSize(new Dimension((int)(image.getWidth()*scale),(int)(image.getHeight()*scale)));
++        JButton update=new JButton("Atualizar grade");update.addActionListener(e->{try{int[] n=Arrays.stream(values).mapToInt(v->(Integer)v.getValue()).toArray();crops[0]=AssetCatalog.tiles(asset,n[0],n[1],n[2],n[3],new WorldDocument.Crop(n[4],n[5],n[6],n[7]));preview.repaint();}catch(Exception error){JOptionPane.showMessageDialog(dialog,error.getMessage());}});
++        preview.addMouseListener(new MouseAdapter(){public void mousePressed(MouseEvent e){int x=(int)(e.getX()/scale),y=(int)(e.getY()/scale);crops[0].stream().filter(c->new Rectangle(c.x(),c.y(),c.width(),c.height()).contains(x,y)).findFirst().ifPresent(c->{selected.accept(c);dialog.dispose();});}});
++        dialog.add(options,BorderLayout.NORTH);dialog.add(new JScrollPane(preview));dialog.add(update,BorderLayout.SOUTH);dialog.pack();dialog.setLocationRelativeTo(owner);update.doClick();dialog.setVisible(true);
++    }
++}
+--- before/server/src/main/java/com/projetok/studio/WorldStudio.java
++++ after/server/src/main/java/com/projetok/studio/WorldStudio.java
+@@ -9,6 +9,8 @@
+ public final class WorldStudio extends JFrame {
+     final Path project;
+     WorldDocument document=WorldDocument.empty("primeiro_mapa",960,640);
++    final EditorHistory history=new EditorHistory(document);
++    Point lastCursor=new Point(0,0);
+     AssetCatalog.Result catalog=new AssetCatalog.Result(java.util.List.of(),java.util.List.of(),java.util.List.of());
+     final AssetImages images=new AssetImages();
+     final WorldCanvas canvas=new WorldCanvas(()->document,images);
+@@ -35,9 +37,12 @@
+         details.setEditable(false);details.setLineWrap(true);details.setWrapStyleWord(true);inspector.add(new JScrollPane(details));inspector.setPreferredSize(new Dimension(260,400));
+         JSplitPane center=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,canvas,inspector);center.setResizeWeight(1);JSplitPane all=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,left,center);all.setDividerLocation(270);all.setResizeWeight(0);
+         setLayout(new BorderLayout(6,6));add(toolbar,BorderLayout.NORTH);add(all);add(status,BorderLayout.SOUTH);
+-        canvas.pointer=p->status.setText(document.name()+" | "+p.x+", "+p.y+" | Grade "+document.grid()+" | Zoom "+Math.round(canvas.viewport.zoom()*100)+"% | Camada "+canvas.activeLayer);
++        canvas.pointer=p->{lastCursor=p;status.setText(document.name()+" | "+p.x+", "+p.y+" | Grade "+document.grid()+" | Zoom "+Math.round(canvas.viewport.zoom()*100)+"% | Camada "+canvas.activeLayer);};
+         canvas.pressed=e->{Point p=canvas.worldPoint(e);canvas.selected.clear();document.elements().stream().filter(a->new Rectangle(a.x(),a.y(),a.width(),a.height()).contains(p)).reduce((a,b)->b).ifPresent(a->{canvas.selected.add(a.id());details.setText(a.toString());});canvas.repaint();};
++        new PaintTools(this);
+     }
++    void change(WorldDocument next){document=history.commit(next);canvas.repaint();}
++    void inspectSelection(){details.setText(document.elements().stream().filter(e->canvas.selected.contains(e.id())).map(Object::toString).collect(java.util.stream.Collectors.joining("\n")));}
+     void filter(){assets.clear();AssetCatalog.search(catalog,search.getText(),(String)categories.getSelectedItem()).forEach(assets::addElement);}
+     void rescan(){refresh.setEnabled(false);status.setText("Indexando somente assets e recursos autorizados...");new SwingWorker<AssetCatalog.Result,Void>(){
+         protected AssetCatalog.Result doInBackground()throws Exception{return AssetCatalog.scan(project,catalog);}
+--- before/docs/TASK-094-RELATORIO-FINAL.md
++++ after/docs/TASK-094-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-094 - Corujao II
++
++Estado: **VALIDADA**.
++
++Ferramentas de lapis, borracha, retangulo, balde conectado, conta-gotas, selecao, copiar/colar e Undo/Redo integradas ao canvas. Historico por gesto ate 64 estados/250 mil referencias. Limite de 4096 celulas por operacao em massa. Recortador visual de tilesets com grade/margens/espaco/regiao; dimensoes reais de objetos separadas de tiles. Testes atomicos, limites, IDs e bloqueio aprovados.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-094/corujao-ii/`. Logs da suite: `docs/TASK-studio-094-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-094-TESTES.md
++++ after/docs/TASK-094-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-094 - Corujao II
++
++Comando: `python tools/qualidade.py --offline --task studio-094`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 343,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-094.md
++++ after/docs/TASK-094.md
+@@ -0,0 +1,3 @@
++# TASK-094 - Corujao II
++
++Ferramentas de lapis, borracha, retangulo, balde conectado, conta-gotas, selecao, copiar/colar e Undo/Redo integradas ao canvas. Historico por gesto ate 64 estados/250 mil referencias. Limite de 4096 celulas por operacao em massa. Recortador visual de tilesets com grade/margens/espaco/regiao; dimensoes reais de objetos separadas de tiles. Testes atomicos, limites, IDs e bloqueio aprovados.

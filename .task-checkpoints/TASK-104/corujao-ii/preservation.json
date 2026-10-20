@@ -1,0 +1,22 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/PrefabsTest.java",
+    "server/src/main/java/com/projetok/studio/FileTools.java",
+    "server/src/main/java/com/projetok/studio/Prefabs.java",
+    "server/src/main/java/com/projetok/studio/PrefabTools.java",
+    "server/src/main/java/com/projetok/studio/WorldStudio.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-104-RELATORIO-FINAL.md",
+    "docs/TASK-104-TESTES.md",
+    "docs/TASK-104.md",
+    "docs/TASK-studio-104-java-version.log",
+    "docs/TASK-studio-104-java.log",
+    "docs/TASK-studio-104-maven-version.log",
+    "docs/TASK-studio-104-python-version.log",
+    "docs/TASK-studio-104-python.log",
+    "docs/TASK-studio-104-qualidade.json",
+    "docs/TASK-studio-104-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

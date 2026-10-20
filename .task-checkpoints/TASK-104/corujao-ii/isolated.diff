@@ -1,0 +1,274 @@
+--- before/server/src/test/java/com/projetok/studio/PrefabsTest.java
++++ after/server/src/test/java/com/projetok/studio/PrefabsTest.java
+@@ -0,0 +1,7 @@
++package com.projetok.studio;
++import org.junit.jupiter.api.Test;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++class PrefabsTest {
++    @Test void relativeCollisionsFreshIdsAndUndoSurvivePersistence()throws Exception{var d=WorldDocument.empty("mapa",256,256);d=EditorOperations.pencil(d,EditorOperationsTest.brush(),32,32,true).withHitboxes(List.of(new WorldDocument.Hitbox("box",32,48,32,16,true,"collision")));var p=Prefabs.capture(d,Set.of(d.elements().get(0).id()),"casa");assertEquals(0,p.elements().get(0).x());assertEquals(16,p.hitboxes().get(0).y());assertEquals(p,DocumentStore.decode(DocumentStore.encode(p)));var h=new EditorHistory(d);var inserted=Prefabs.insert(d,p,128,128);h.commit(inserted);assertEquals(2,inserted.elements().stream().map(WorldDocument.Element::id).distinct().count());assertEquals(2,inserted.hitboxes().size());assertEquals(d,h.undo());assertThrows(IllegalArgumentException.class,()->Prefabs.insert(h.current(),p,250,250));}
++}
+--- before/server/src/main/java/com/projetok/studio/FileTools.java
++++ after/server/src/main/java/com/projetok/studio/FileTools.java
+@@ -1,18 +1,19 @@
+-package com.projetok.studio;
+-import javax.swing.*;
+-import java.awt.*;
+-import java.awt.event.*;
+-import java.nio.file.*;
+-import java.util.*;
+-
+-/** Arquivos em worker, confirmacao de descarte e recuperacao explicita de backup. */
+-final class FileTools {
+-    final WorldStudio ui;Path file;WorldDocument saved;boolean busy;
+-    FileTools(WorldStudio ui){this.ui=ui;ui.action("Arquivo","Novo mapa",()->confirm(this::create));ui.action("Arquivo","Abrir",()->confirm(()->open(false)));ui.action("Arquivo","Salvar",()->save(false,()->{}));ui.action("Arquivo","Salvar como",()->save(true,()->{}));ui.action("Arquivo","Recuperar backup",()->confirm(()->open(true)));ui.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);ui.addWindowListener(new WindowAdapter(){public void windowClosing(WindowEvent e){if(!busy)confirm(ui::dispose);}});saved=ui.document;}
+-    void confirm(Runnable action){if(busy)return;if(ui.document.equals(saved)){action.run();return;}int result=JOptionPane.showConfirmDialog(ui,"Salvar alteracoes antes de continuar?","Alteracoes nao salvas",JOptionPane.YES_NO_CANCEL_OPTION);if(result==JOptionPane.YES_OPTION)save(false,action);else if(result==JOptionPane.NO_OPTION)action.run();}
+-    Path choose(boolean save){JFileChooser chooser=new JFileChooser(file==null?ui.project.resolve("studio-projects").toFile():file.getParent().toFile());chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Mapa World Studio (*.sgmap)","sgmap","bak"));if(file!=null)chooser.setSelectedFile(file.toFile());int choice=save?chooser.showSaveDialog(ui):chooser.showOpenDialog(ui);if(choice!=JFileChooser.APPROVE_OPTION)return null;Path path=chooser.getSelectedFile().toPath().toAbsolutePath();if(save&&!path.toString().endsWith(".sgmap"))path=Path.of(path+".sgmap");return path;}
+-    void save(boolean as,Runnable after){if(busy)return;Path target=as||file==null?choose(true):file;if(target==null)return;var snapshot=ui.document;busy=true;ui.setEnabled(false);new SwingWorker<Void,Void>(){protected Void doInBackground()throws Exception{DocumentStore.save(target,snapshot);return null;}protected void done(){busy=false;ui.setEnabled(true);try{get();file=target;saved=snapshot;ui.knownMaps.put(snapshot.id(),snapshot);ui.status.setText("Salvo: "+target+" | backup .bak quando houver versao anterior");saveCategories();after.run();}catch(Exception error){ui.error(error);}}}.execute();}
+-    void open(boolean backup){if(busy)return;Path selected=choose(false);if(selected==null)return;final Path target=backup&&!selected.toString().endsWith(".bak")?Path.of(selected+".bak"):selected;busy=true;ui.setEnabled(false);new SwingWorker<WorldDocument,Void>(){final Map<String,WorldDocument> known=new LinkedHashMap<>();final java.util.List<String> warnings=new ArrayList<>();protected WorldDocument doInBackground()throws Exception{var result=DocumentStore.load(target);try(var files=Files.list(target.getParent())){for(Path p:files.filter(f->f.toString().endsWith(".sgmap")).limit(64).toList())try{var d=DocumentStore.load(p);if(known.put(d.id(),d)!=null)warnings.add("ID de mapa duplicado: "+d.id());}catch(Exception error){warnings.add(p.getFileName()+": "+error.getMessage());}}return result;}protected void done(){busy=false;ui.setEnabled(true);try{var d=get();ui.document=ui.history.reset(d);ui.canvas.selected.clear();ui.knownMaps.clear();ui.knownMaps.putAll(known);saved=d;file=backup?null:target;ui.layerTools.refresh();ui.warmImages();ui.canvas.repaint();ui.details.setText(String.join("\n",warnings));ui.status.setText(backup?"Backup aberto; use Salvar como para preservar o arquivo original":"Mapa aberto: "+target);}catch(Exception error){ui.error(error);}}}.execute();}
+-    void create(){JPanel panel=new JPanel(new GridLayout(0,2));JTextField id=new JTextField("novo_mapa"),name=new JTextField("Novo mapa");JSpinner width=new JSpinner(new SpinnerNumberModel(960,32,8192,32)),height=new JSpinner(new SpinnerNumberModel(640,32,8192,32)),grid=new JSpinner(new SpinnerNumberModel(32,1,256,1));JComboBox<String> region=new JComboBox<>(new String[]{"village","forest","ruins"});for(var row:new Object[][]{{"ID",id},{"Nome",name},{"Largura",width},{"Altura",height},{"Grade",grid},{"Regiao de conteudo",region}}){panel.add(new JLabel((String)row[0]));panel.add((Component)row[1]);}if(JOptionPane.showConfirmDialog(ui,panel,"Novo mapa",JOptionPane.OK_CANCEL_OPTION)!=JOptionPane.OK_OPTION)return;var d=WorldDocument.empty(id.getText(),(Integer)width.getValue(),(Integer)height.getValue());d=new WorldDocument(1,d.id(),name.getText(),(String)region.getSelectedItem(),d.width(),d.height(),(Integer)grid.getValue(),d.layers(),d.elements(),d.hitboxes(),d.portals(),d.triggers(),d.metadata());ui.document=ui.history.reset(d);saved=d;file=null;ui.canvas.selected.clear();ui.layerTools.refresh();ui.canvas.repaint();}
+-    void saveCategories(){var catalog=ui.catalog;Path path=ui.project.resolve("studio-projects/catalog.properties");new SwingWorker<Void,Void>(){protected Void doInBackground()throws Exception{Files.createDirectories(path.getParent());Properties p=new Properties();for(var a:catalog.assets())p.setProperty(a.id(),a.category());try(var out=Files.newBufferedWriter(path)){p.store(out,"Categorias locais; PNGs originais preservados");}return null;}protected void done(){try{get();}catch(Exception error){ui.error(error);}}}.execute();}
+-}
++package com.projetok.studio;
++import javax.swing.*;
++import java.awt.*;
++import java.awt.event.*;
++import java.nio.file.*;
++import java.util.*;
++
++/** Arquivos em worker, confirmacao de descarte e recuperacao explicita de backup. */
++final class FileTools {
++    final WorldStudio ui;Path file;WorldDocument saved;boolean busy;
++    FileTools(WorldStudio ui){this.ui=ui;ui.action("Arquivo","Novo mapa",()->confirm(this::create));ui.action("Arquivo","Abrir",()->confirm(()->open(false)));ui.action("Arquivo","Salvar",()->save(false,()->{}));ui.action("Arquivo","Salvar como",()->save(true,()->{}));ui.action("Arquivo","Recuperar backup",()->confirm(()->open(true)));ui.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);ui.addWindowListener(new WindowAdapter(){public void windowClosing(WindowEvent e){if(!busy)confirm(ui::dispose);}});saved=ui.document;}
++    void confirm(Runnable action){if(busy)return;if(ui.document.equals(saved)){action.run();return;}int result=JOptionPane.showConfirmDialog(ui,"Salvar alteracoes antes de continuar?","Alteracoes nao salvas",JOptionPane.YES_NO_CANCEL_OPTION);if(result==JOptionPane.YES_OPTION)save(false,action);else if(result==JOptionPane.NO_OPTION)action.run();}
++    Path choose(boolean save){JFileChooser chooser=new JFileChooser(file==null?ui.project.resolve("studio-projects").toFile():file.getParent().toFile());chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Mapa World Studio (*.sgmap)","sgmap","bak"));if(file!=null)chooser.setSelectedFile(file.toFile());int choice=save?chooser.showSaveDialog(ui):chooser.showOpenDialog(ui);if(choice!=JFileChooser.APPROVE_OPTION)return null;Path path=chooser.getSelectedFile().toPath().toAbsolutePath();if(save&&!path.toString().endsWith(".sgmap"))path=Path.of(path+".sgmap");return path;}
++    void save(boolean as,Runnable after){if(busy)return;Path target=as||file==null?choose(true):file;if(target==null)return;var snapshot=ui.document;busy=true;ui.setEnabled(false);new SwingWorker<Void,Void>(){protected Void doInBackground()throws Exception{DocumentStore.save(target,snapshot);return null;}protected void done(){busy=false;ui.setEnabled(true);try{get();file=target;saved=snapshot;ui.knownMaps.put(snapshot.id(),snapshot);ui.status.setText("Salvo: "+target+" | backup .bak quando houver versao anterior");saveCategories();after.run();}catch(Exception error){ui.error(error);}}}.execute();}
++    void open(boolean backup){if(busy)return;Path selected=choose(false);if(selected==null)return;load(backup&&!selected.toString().endsWith(".bak")?Path.of(selected+".bak"):selected,backup);}
++    void load(Path target,boolean backup){if(busy)return;busy=true;ui.setEnabled(false);new SwingWorker<WorldDocument,Void>(){final Map<String,WorldDocument> known=new LinkedHashMap<>();final java.util.List<String> warnings=new ArrayList<>();protected WorldDocument doInBackground()throws Exception{var result=DocumentStore.load(target);try(var files=Files.list(target.getParent())){for(Path p:files.filter(f->f.toString().endsWith(".sgmap")).limit(64).toList())try{var d=DocumentStore.load(p);if(known.put(d.id(),d)!=null)warnings.add("ID de mapa duplicado: "+d.id());}catch(Exception error){warnings.add(p.getFileName()+": "+error.getMessage());}}return result;}protected void done(){busy=false;ui.setEnabled(true);try{var d=get();ui.document=ui.history.reset(d);ui.canvas.selected.clear();ui.knownMaps.clear();ui.knownMaps.putAll(known);saved=d;file=backup?null:target;ui.layerTools.refresh();ui.warmImages();ui.canvas.repaint();ui.details.setText(String.join("\n",warnings));ui.status.setText(backup?"Backup aberto; use Salvar como para preservar o arquivo original":"Mapa aberto: "+target);}catch(Exception error){ui.error(error);}}}.execute();}
++    void create(){JPanel panel=new JPanel(new GridLayout(0,2));JTextField id=new JTextField("novo_mapa"),name=new JTextField("Novo mapa");JSpinner width=new JSpinner(new SpinnerNumberModel(960,32,8192,32)),height=new JSpinner(new SpinnerNumberModel(640,32,8192,32)),grid=new JSpinner(new SpinnerNumberModel(32,1,256,1));JComboBox<String> region=new JComboBox<>(new String[]{"village","forest","ruins"});for(var row:new Object[][]{{"ID",id},{"Nome",name},{"Largura",width},{"Altura",height},{"Grade",grid},{"Regiao de conteudo",region}}){panel.add(new JLabel((String)row[0]));panel.add((Component)row[1]);}if(JOptionPane.showConfirmDialog(ui,panel,"Novo mapa",JOptionPane.OK_CANCEL_OPTION)!=JOptionPane.OK_OPTION)return;var d=WorldDocument.empty(id.getText(),(Integer)width.getValue(),(Integer)height.getValue());d=new WorldDocument(1,d.id(),name.getText(),(String)region.getSelectedItem(),d.width(),d.height(),(Integer)grid.getValue(),d.layers(),d.elements(),d.hitboxes(),d.portals(),d.triggers(),d.metadata());ui.document=ui.history.reset(d);saved=null;file=null;ui.canvas.selected.clear();ui.layerTools.refresh();ui.canvas.repaint();}
++    void saveCategories(){var catalog=ui.catalog;Path path=ui.project.resolve("studio-projects/catalog.properties");new SwingWorker<Void,Void>(){protected Void doInBackground()throws Exception{Files.createDirectories(path.getParent());Properties p=new Properties();for(var a:catalog.assets())p.setProperty(a.id(),a.category());try(var out=Files.newBufferedWriter(path)){p.store(out,"Categorias locais; PNGs originais preservados");}return null;}protected void done(){try{get();}catch(Exception error){ui.error(error);}}}.execute();}
++}
+--- before/server/src/main/java/com/projetok/studio/Prefabs.java
++++ after/server/src/main/java/com/projetok/studio/Prefabs.java
+@@ -0,0 +1,15 @@
++package com.projetok.studio;
++import java.awt.*;
++import java.awt.image.BufferedImage;
++import java.util.*;
++
++/** Prefabs relativos preservam referencias, propriedades, camadas e colisao. */
++public final class Prefabs {
++    private Prefabs(){}
++    /** Captura selecao e colisao associada por intersecao ou selecao explicita. */
++    public static WorldDocument capture(WorldDocument d,Set<String> selection,String id){var elements=d.elements().stream().filter(e->selection.contains(e.id())).toList();if(elements.isEmpty()||elements.size()>4096)throw new IllegalArgumentException("Selecione 1 a 4096 elementos");Rectangle bounds=new Rectangle(elements.get(0).x(),elements.get(0).y(),elements.get(0).width(),elements.get(0).height());for(var e:elements)bounds.add(new Rectangle(e.x(),e.y(),e.width(),e.height()));Rectangle visual=new Rectangle(bounds);var boxes=d.hitboxes().stream().filter(h->selection.contains(h.id())||visual.intersects(h.x(),h.y(),h.width(),h.height())).toList();for(var h:boxes)bounds.add(new Rectangle(h.x(),h.y(),h.width(),h.height()));final int x=bounds.x,y=bounds.y;return new WorldDocument(1,id,id,d.region(),Math.max(32,bounds.width),Math.max(32,bounds.height),d.grid(),d.layers(),elements.stream().map(e->e.at(e.id(),e.x()-x,e.y()-y)).toList(),boxes.stream().map(h->new WorldDocument.Hitbox(h.id(),h.x()-x,h.y()-y,h.width(),h.height(),h.solid(),h.layer())).toList(),java.util.List.of(),java.util.List.of(),Map.of("documentType","prefab"));}
++    /** Insere uma instancia independente com IDs novos e limites validados atomicamente. */
++    public static WorldDocument insert(WorldDocument d,WorldDocument prefab,int x,int y){if(prefab.elements().size()>4096)throw new IllegalArgumentException("Prefab excessivo");var layers=new ArrayList<>(d.layers());Set<String> used=new HashSet<>();prefab.elements().forEach(e->used.add(e.layer()));prefab.hitboxes().forEach(h->used.add(h.layer()));for(var l:prefab.layers())if(used.contains(l.id())){var same=layers.stream().filter(a->a.id().equals(l.id())).findFirst();if(same.isPresent()){if(same.get().role()!=l.role())throw new IllegalArgumentException("Papel de camada conflitante");EditorOperations.editable(d,l.id());}else layers.add(new WorldDocument.Layer(l.id(),l.name(),l.role(),layers.size(),true,false));}var elements=new ArrayList<>(d.elements());for(var e:prefab.elements())elements.add(new WorldDocument.Element(EditorOperations.id(),e.kind(),e.asset(),e.sha(),e.crop(),e.x()+x,e.y()+y,e.width(),e.height(),e.layer(),e.visible(),e.locked(),e.reference(),e.direction(),e.properties()));var boxes=new ArrayList<>(d.hitboxes());for(var h:prefab.hitboxes())boxes.add(new WorldDocument.Hitbox(EditorOperations.id(),h.x()+x,h.y()+y,h.width(),h.height(),h.solid(),h.layer()));return new WorldDocument(1,d.id(),d.name(),d.region(),d.width(),d.height(),d.grid(),layers,elements,boxes,d.portals(),d.triggers(),d.metadata());}
++    /** Miniatura tecnica em memoria; nenhuma imagem original e regravada. */
++    public static BufferedImage preview(WorldDocument d,AssetImages images){BufferedImage image=new BufferedImage(160,128,2);var g=image.createGraphics();try{g.setColor(new Color(30,45,40));g.fillRect(0,0,160,128);g.scale(Math.min(160d/d.width(),128d/d.height()),Math.min(160d/d.width(),128d/d.height()));g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);for(var l:d.orderedLayers())for(var e:d.elements())if(e.layer().equals(l.id())){var src=images.peek(e.asset());var c=e.crop();if(src!=null)g.drawImage(src,e.x(),e.y(),e.x()+e.width(),e.y()+e.height(),c.x(),c.y(),c.x()+c.width(),c.y()+c.height(),null);else{g.setColor(Color.CYAN);g.drawRect(e.x(),e.y(),e.width(),e.height());}}for(var h:d.hitboxes()){g.setColor(Color.RED);g.drawRect(h.x(),h.y(),h.width(),h.height());}}finally{g.dispose();}return image;}
++}
+--- before/server/src/main/java/com/projetok/studio/PrefabTools.java
++++ after/server/src/main/java/com/projetok/studio/PrefabTools.java
+@@ -0,0 +1,13 @@
++package com.projetok.studio;
++import javax.swing.*;
++import java.nio.file.*;
++import java.util.*;
++
++/** Biblioteca local de modelos independentes com miniatura, duplicacao e edicao. */
++final class PrefabTools {
++    final WorldStudio ui;final Path folder;
++    PrefabTools(WorldStudio ui){this.ui=ui;folder=ui.project.resolve("studio-projects/prefabs");ui.action("Prefabs","Criar da selecao",this::save);for(String name:new String[]{"Inserir","Editar","Duplicar"})ui.action("Prefabs",name+" prefab",()->browse(name));}
++    void save(){String id=JOptionPane.showInputDialog(ui,"ID do prefab");if(id==null)return;var d=Prefabs.capture(ui.document,ui.canvas.selected,id);Path target=folder.resolve(id+".sgmap");if(Files.exists(target))throw new IllegalArgumentException("Prefab existente; use Editar");write(target,d);}
++    void write(Path target,WorldDocument d){new SwingWorker<Void,Void>(){protected Void doInBackground()throws Exception{DocumentStore.save(target,d);return null;}protected void done(){try{get();ui.status.setText("Prefab salvo: "+target);}catch(Exception error){ui.error(error);}}}.execute();}
++    void browse(String action){new SwingWorker<Map<Path,WorldDocument>,Void>(){protected Map<Path,WorldDocument> doInBackground()throws Exception{Map<Path,WorldDocument> result=new LinkedHashMap<>();if(!Files.exists(folder))return result;try(var files=Files.list(folder)){for(Path p:files.filter(f->f.toString().endsWith(".sgmap")).limit(256).toList()){var d=DocumentStore.load(p);result.put(p,d);for(var e:d.elements()){var a=ui.catalog.byId().get(e.asset());if(a!=null)ui.images.load(a);}}}return result;}protected void done(){try{var docs=get();if(docs.isEmpty())throw new IllegalArgumentException("Biblioteca vazia");JList<Path> list=new JList<>(docs.keySet().toArray(Path[]::new));Map<Path,ImageIcon> thumbs=new HashMap<>();docs.forEach((p,d)->thumbs.put(p,new ImageIcon(Prefabs.preview(d,ui.images))));list.setCellRenderer((l,p,i,s,f)->{JLabel label=new JLabel(p.getFileName().toString(),thumbs.get(p),SwingConstants.LEFT);label.setOpaque(true);label.setBackground(s?new java.awt.Color(180,210,225):java.awt.Color.WHITE);return label;});list.setSelectedIndex(0);JScrollPane scroll=new JScrollPane(list);scroll.setPreferredSize(new java.awt.Dimension(420,420));if(JOptionPane.showConfirmDialog(ui,scroll,action+" prefab",JOptionPane.OK_CANCEL_OPTION)!=JOptionPane.OK_OPTION)return;Path path=list.getSelectedValue();var d=docs.get(path);switch(action){case "Inserir"->{ui.change(Prefabs.insert(ui.document,d,Math.max(0,ui.lastCursor.x),Math.max(0,ui.lastCursor.y)));ui.warmImages();}case "Editar"->ui.fileTools.confirm(()->ui.fileTools.load(path,false));case "Duplicar"->{String id=d.id()+"_"+UUID.randomUUID().toString().substring(0,6);write(folder.resolve(id+".sgmap"),new WorldDocument(1,id,id,d.region(),d.width(),d.height(),d.grid(),d.layers(),d.elements(),d.hitboxes(),d.portals(),d.triggers(),d.metadata()));}default->throw new IllegalArgumentException("Acao desconhecida");}}catch(Exception error){ui.error(error);}}}.execute();}
++}
+--- before/server/src/main/java/com/projetok/studio/WorldStudio.java
++++ after/server/src/main/java/com/projetok/studio/WorldStudio.java
+@@ -1,72 +1,73 @@
+-package com.projetok.studio;
+-import javax.swing.*;
+-import javax.swing.event.*;
+-import java.awt.*;
+-import java.nio.file.*;
+-import java.util.*;
+-
+-/** Entrada desktop independente do Spirit Gate World Studio. */
+-public final class WorldStudio extends JFrame {
+-    final Path project;
+-    WorldDocument document=WorldDocument.empty("primeiro_mapa",960,640);
+-    final EditorHistory history=new EditorHistory(document);
+-    Point lastCursor=new Point(0,0);
+-    AssetCatalog.Result catalog=new AssetCatalog.Result(java.util.List.of(),java.util.List.of(),java.util.List.of());
+-    final AssetImages images=new AssetImages();
+-    final WorldCanvas canvas=new WorldCanvas(()->document,images);
+-    final DefaultListModel<AssetCatalog.Asset> assets=new DefaultListModel<>();
+-    final JList<AssetCatalog.Asset> library=new JList<>(assets);
+-    final JTextField search=new JTextField();final JComboBox<String> categories=new JComboBox<>(new String[]{"Todas","Sem categoria","Terrenos","Arvores","Construcoes","Decoracao","Personagens","NPCs","Inimigos","Interativos","Efeitos","Tilesets"});
+-    final JTextArea details=new JTextArea();final JLabel status=new JLabel("Indexe os assets do projeto para comecar.");
+-    final JToolBar toolbar=new WrapToolbar();final JButton refresh=new JButton("Atualizar biblioteca");
+-    LayerTools layerTools;
+-    CollisionTools collisionTools;
+-    boolean snap=true;
+-    final Map<String,WorldDocument> knownMaps=new LinkedHashMap<>();
+-    final JPanel inspector=new JPanel(new BorderLayout());
+-    AssetCatalog.Asset brush;
+-    WorldDocument.Crop brushCrop;
+-    java.util.List<WorldDocument.Crop> tilesetCrops=java.util.List.of();String activeTerrain="";
+-    /** Abre projeto local; indexacao e carregamento ocorrem em workers. */
+-    public WorldStudio(Path project) {
+-        super("Spirit Gate | World Studio");this.project=project.toAbsolutePath();setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+-        setSize(1400,900);setMinimumSize(new Dimension(900,600));setLocationRelativeTo(null);
+-        toolbar.setFloatable(false);toolbar.add(refresh);refresh.addActionListener(e->rescan());
+-        JButton minus=new JButton("Zoom -"),plus=new JButton("Zoom +");toolbar.add(minus);toolbar.add(plus);minus.addActionListener(e->canvas.zoom(canvas.viewport.zoom()/1.2));plus.addActionListener(e->canvas.zoom(canvas.viewport.zoom()*1.2));
+-        JCheckBox grid=new JCheckBox("Grade",true);grid.addActionListener(e->{canvas.grid=grid.isSelected();canvas.repaint();});toolbar.add(grid);
+-        JPanel left=new JPanel(new BorderLayout(4,4)),filters=new JPanel(new GridLayout(0,1,4,4));filters.add(search);filters.add(categories);left.add(filters,BorderLayout.NORTH);left.add(new JScrollPane(library));
+-        library.setFixedCellHeight(70);library.setCellRenderer((list,value,index,selected,focus)->{JLabel label=new JLabel(Path.of(value.path()).getFileName().toString(),new ImageIcon(value.thumbnail()),SwingConstants.LEFT);label.setOpaque(true);label.setBackground(selected?new Color(180,210,225):Color.WHITE);label.setToolTipText(value.path());return label;});
+-        search.getDocument().addDocumentListener(new DocumentListener(){public void insertUpdate(DocumentEvent e){filter();}public void removeUpdate(DocumentEvent e){filter();}public void changedUpdate(DocumentEvent e){filter();}});categories.addActionListener(e->filter());
+-        library.addListSelectionListener(e->{if(!e.getValueIsAdjusting()){brush=library.getSelectedValue();if(brush!=null){brushCrop=new WorldDocument.Crop(0,0,brush.width(),brush.height());details.setText(brush.path()+"\n"+brush.width()+" x "+brush.height()+"\nCanal alfa: "+brush.alpha()+"\nCategoria: "+brush.category()+"\nSHA-256: "+brush.sha()+"\nIndexado: "+brush.indexedAt());warmImages();}}});
+-        JButton category=new JButton("Definir categoria");category.addActionListener(e->{if(brush==null)return;String next=(String)JOptionPane.showInputDialog(this,"Categoria manual","Biblioteca",JOptionPane.PLAIN_MESSAGE,null,new String[]{"Terrenos","Arvores","Construcoes","Decoracao","Personagens","NPCs","Inimigos","Interativos","Efeitos","Tilesets","Sem categoria"},brush.category());if(next!=null){String id=brush.id();catalog=new AssetCatalog.Result(catalog.assets().stream().map(a->a.id().equals(id)?a.category(next):a).toList(),catalog.warnings(),catalog.changes());filter();}});left.add(category,BorderLayout.SOUTH);
+-        details.setEditable(false);details.setLineWrap(true);details.setWrapStyleWord(true);inspector.add(new JScrollPane(details));inspector.setPreferredSize(new Dimension(260,400));
+-        JSplitPane center=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,canvas,inspector);center.setResizeWeight(1);JSplitPane all=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,left,center);all.setDividerLocation(270);all.setResizeWeight(0);
+-        setLayout(new BorderLayout(6,6));add(toolbar,BorderLayout.NORTH);add(all);add(status,BorderLayout.SOUTH);
+-        canvas.pointer=p->{lastCursor=p;status.setText(document.name()+" | "+p.x+", "+p.y+" | Grade "+document.grid()+" | Zoom "+Math.round(canvas.viewport.zoom()*100)+"% | Camada "+canvas.activeLayer);};
+-        canvas.pressed=e->{Point p=canvas.worldPoint(e);canvas.selected.clear();document.elements().stream().filter(a->new Rectangle(a.x(),a.y(),a.width(),a.height()).contains(p)).reduce((a,b)->b).ifPresent(a->{canvas.selected.add(a.id());details.setText(a.toString());});canvas.repaint();};
+-        new PaintTools(this);
+-        layerTools=new LayerTools(this);
+-        collisionTools=new CollisionTools(this);
+-        new InteractionTools(this);
+-        new PortalTools(this);
+-        new FileTools(this);
+-        new PlaytestTools(this);
+-        new TerrainTools(this);
+-    }
+-    void change(WorldDocument next){document=history.commit(Autotiling.refresh(next));if(layerTools!=null)layerTools.refresh();canvas.repaint();}
+-    void inspectSelection(){details.setText(document.elements().stream().filter(e->canvas.selected.contains(e.id())).map(Object::toString).collect(java.util.stream.Collectors.joining("\n")));}
+-    Map<String,WorldDocument> maps(){var maps=new LinkedHashMap<>(knownMaps);maps.put(document.id(),document);return Map.copyOf(maps);}
+-    void action(String group,String name,Runnable action){JMenuBar bar=getJMenuBar();if(bar==null){bar=new JMenuBar();setJMenuBar(bar);}JMenu menu=null;for(int i=0;i<bar.getMenuCount();i++)if(bar.getMenu(i).getText().equals(group))menu=bar.getMenu(i);if(menu==null){menu=new JMenu(group);bar.add(menu);}JMenuItem item=new JMenuItem(name);item.addActionListener(e->{try{action.run();}catch(Exception error){error(error);}});menu.add(item);}
+-    void filter(){assets.clear();AssetCatalog.search(catalog,search.getText(),(String)categories.getSelectedItem()).forEach(assets::addElement);}
+-    void rescan(){refresh.setEnabled(false);status.setText("Indexando somente assets e recursos autorizados...");new SwingWorker<AssetCatalog.Result,Void>(){
+-        protected AssetCatalog.Result doInBackground()throws Exception{var previous=catalog;var result=AssetCatalog.scan(project,previous);Path categories=project.resolve("studio-projects/catalog.properties");if(java.nio.file.Files.isRegularFile(categories)&&java.nio.file.Files.size(categories)<=1_000_000&&categories.toRealPath().startsWith(project.toRealPath())){Properties saved=new Properties();try(var in=java.nio.file.Files.newBufferedReader(categories)){saved.load(in);}var known=previous.byId();result=new AssetCatalog.Result(result.assets().stream().map(a->{String c=saved.getProperty(a.id());return c!=null&&c.length()<=80&&!known.containsKey(a.id())?a.category(c):a;}).toList(),result.warnings(),result.changes());}return result;}
+-        protected void done(){try{catalog=get();images.clear();filter();warmImages();status.setText(catalog.assets().size()+" imagens | "+catalog.changes().size()+" alteracoes | "+catalog.warnings().size()+" avisos");if(!catalog.warnings().isEmpty())details.setText(String.join("\n",catalog.warnings()));}catch(Exception error){error(error);}finally{refresh.setEnabled(true);}}
+-    }.execute();}
+-    void warmImages(){var ids=new HashSet<String>();document.elements().forEach(e->ids.add(e.asset()));if(brush!=null)ids.add(brush.id());var selected=catalog.byId();new SwingWorker<Void,Void>(){
+-        protected Void doInBackground()throws Exception{for(String id:ids)if(selected.containsKey(id))images.load(selected.get(id));return null;}
+-        protected void done(){try{get();canvas.repaint();}catch(Exception error){error(error);}}
+-    }.execute();}
+-    void error(Exception error){status.setText("Operacao recusada: "+(error.getCause()==null?error.getMessage():error.getCause().getMessage()));}
+-    /** Inicializa a ferramenta sem iniciar banco, servidor ou personagem. */
+-    public static void main(String[] args){String exe=System.getProperty("jpackage.app-path");Path root=args.length==2&&args[0].equals("--project")?Path.of(args[1]):exe==null?Path.of(""):Path.of(exe).toAbsolutePath().getParent();SwingUtilities.invokeLater(()->{var studio=new WorldStudio(root);studio.setVisible(true);studio.rescan();});}
+-}
++package com.projetok.studio;
++import javax.swing.*;
++import javax.swing.event.*;
++import java.awt.*;
++import java.nio.file.*;
++import java.util.*;
++
++/** Entrada desktop independente do Spirit Gate World Studio. */
++public final class WorldStudio extends JFrame {
++    final Path project;
++    WorldDocument document=WorldDocument.empty("primeiro_mapa",960,640);
++    final EditorHistory history=new EditorHistory(document);
++    Point lastCursor=new Point(0,0);
++    AssetCatalog.Result catalog=new AssetCatalog.Result(java.util.List.of(),java.util.List.of(),java.util.List.of());
++    final AssetImages images=new AssetImages();
++    final WorldCanvas canvas=new WorldCanvas(()->document,images);
++    final DefaultListModel<AssetCatalog.Asset> assets=new DefaultListModel<>();
++    final JList<AssetCatalog.Asset> library=new JList<>(assets);
++    final JTextField search=new JTextField();final JComboBox<String> categories=new JComboBox<>(new String[]{"Todas","Sem categoria","Terrenos","Arvores","Construcoes","Decoracao","Personagens","NPCs","Inimigos","Interativos","Efeitos","Tilesets"});
++    final JTextArea details=new JTextArea();final JLabel status=new JLabel("Indexe os assets do projeto para comecar.");
++    final JToolBar toolbar=new WrapToolbar();final JButton refresh=new JButton("Atualizar biblioteca");
++    LayerTools layerTools;FileTools fileTools;
++    CollisionTools collisionTools;
++    boolean snap=true;
++    final Map<String,WorldDocument> knownMaps=new LinkedHashMap<>();
++    final JPanel inspector=new JPanel(new BorderLayout());
++    AssetCatalog.Asset brush;
++    WorldDocument.Crop brushCrop;
++    java.util.List<WorldDocument.Crop> tilesetCrops=java.util.List.of();String activeTerrain="";
++    /** Abre projeto local; indexacao e carregamento ocorrem em workers. */
++    public WorldStudio(Path project) {
++        super("Spirit Gate | World Studio");this.project=project.toAbsolutePath();setDefaultCloseOperation(DISPOSE_ON_CLOSE);
++        setSize(1400,900);setMinimumSize(new Dimension(900,600));setLocationRelativeTo(null);
++        toolbar.setFloatable(false);toolbar.add(refresh);refresh.addActionListener(e->rescan());
++        JButton minus=new JButton("Zoom -"),plus=new JButton("Zoom +");toolbar.add(minus);toolbar.add(plus);minus.addActionListener(e->canvas.zoom(canvas.viewport.zoom()/1.2));plus.addActionListener(e->canvas.zoom(canvas.viewport.zoom()*1.2));
++        JCheckBox grid=new JCheckBox("Grade",true);grid.addActionListener(e->{canvas.grid=grid.isSelected();canvas.repaint();});toolbar.add(grid);
++        JPanel left=new JPanel(new BorderLayout(4,4)),filters=new JPanel(new GridLayout(0,1,4,4));filters.add(search);filters.add(categories);left.add(filters,BorderLayout.NORTH);left.add(new JScrollPane(library));
++        library.setFixedCellHeight(70);library.setCellRenderer((list,value,index,selected,focus)->{JLabel label=new JLabel(Path.of(value.path()).getFileName().toString(),new ImageIcon(value.thumbnail()),SwingConstants.LEFT);label.setOpaque(true);label.setBackground(selected?new Color(180,210,225):Color.WHITE);label.setToolTipText(value.path());return label;});
++        search.getDocument().addDocumentListener(new DocumentListener(){public void insertUpdate(DocumentEvent e){filter();}public void removeUpdate(DocumentEvent e){filter();}public void changedUpdate(DocumentEvent e){filter();}});categories.addActionListener(e->filter());
++        library.addListSelectionListener(e->{if(!e.getValueIsAdjusting()){brush=library.getSelectedValue();if(brush!=null){brushCrop=new WorldDocument.Crop(0,0,brush.width(),brush.height());details.setText(brush.path()+"\n"+brush.width()+" x "+brush.height()+"\nCanal alfa: "+brush.alpha()+"\nCategoria: "+brush.category()+"\nSHA-256: "+brush.sha()+"\nIndexado: "+brush.indexedAt());warmImages();}}});
++        JButton category=new JButton("Definir categoria");category.addActionListener(e->{if(brush==null)return;String next=(String)JOptionPane.showInputDialog(this,"Categoria manual","Biblioteca",JOptionPane.PLAIN_MESSAGE,null,new String[]{"Terrenos","Arvores","Construcoes","Decoracao","Personagens","NPCs","Inimigos","Interativos","Efeitos","Tilesets","Sem categoria"},brush.category());if(next!=null){String id=brush.id();catalog=new AssetCatalog.Result(catalog.assets().stream().map(a->a.id().equals(id)?a.category(next):a).toList(),catalog.warnings(),catalog.changes());filter();}});left.add(category,BorderLayout.SOUTH);
++        details.setEditable(false);details.setLineWrap(true);details.setWrapStyleWord(true);inspector.add(new JScrollPane(details));inspector.setPreferredSize(new Dimension(260,400));
++        JSplitPane center=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,canvas,inspector);center.setResizeWeight(1);JSplitPane all=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,left,center);all.setDividerLocation(270);all.setResizeWeight(0);
++        setLayout(new BorderLayout(6,6));add(toolbar,BorderLayout.NORTH);add(all);add(status,BorderLayout.SOUTH);
++        canvas.pointer=p->{lastCursor=p;status.setText(document.name()+" | "+p.x+", "+p.y+" | Grade "+document.grid()+" | Zoom "+Math.round(canvas.viewport.zoom()*100)+"% | Camada "+canvas.activeLayer);};
++        canvas.pressed=e->{Point p=canvas.worldPoint(e);canvas.selected.clear();document.elements().stream().filter(a->new Rectangle(a.x(),a.y(),a.width(),a.height()).contains(p)).reduce((a,b)->b).ifPresent(a->{canvas.selected.add(a.id());details.setText(a.toString());});canvas.repaint();};
++        new PaintTools(this);
++        layerTools=new LayerTools(this);
++        collisionTools=new CollisionTools(this);
++        new InteractionTools(this);
++        new PortalTools(this);
++        fileTools=new FileTools(this);
++        new PlaytestTools(this);
++        new TerrainTools(this);
++        new PrefabTools(this);
++    }
++    void change(WorldDocument next){document=history.commit(Autotiling.refresh(next));if(layerTools!=null)layerTools.refresh();canvas.repaint();}
++    void inspectSelection(){details.setText(document.elements().stream().filter(e->canvas.selected.contains(e.id())).map(Object::toString).collect(java.util.stream.Collectors.joining("\n")));}
++    Map<String,WorldDocument> maps(){var maps=new LinkedHashMap<>(knownMaps);maps.put(document.id(),document);return Map.copyOf(maps);}
++    void action(String group,String name,Runnable action){JMenuBar bar=getJMenuBar();if(bar==null){bar=new JMenuBar();setJMenuBar(bar);}JMenu menu=null;for(int i=0;i<bar.getMenuCount();i++)if(bar.getMenu(i).getText().equals(group))menu=bar.getMenu(i);if(menu==null){menu=new JMenu(group);bar.add(menu);}JMenuItem item=new JMenuItem(name);item.addActionListener(e->{try{action.run();}catch(Exception error){error(error);}});menu.add(item);}
++    void filter(){assets.clear();AssetCatalog.search(catalog,search.getText(),(String)categories.getSelectedItem()).forEach(assets::addElement);}
++    void rescan(){refresh.setEnabled(false);status.setText("Indexando somente assets e recursos autorizados...");new SwingWorker<AssetCatalog.Result,Void>(){
++        protected AssetCatalog.Result doInBackground()throws Exception{var previous=catalog;var result=AssetCatalog.scan(project,previous);Path categories=project.resolve("studio-projects/catalog.properties");if(java.nio.file.Files.isRegularFile(categories)&&java.nio.file.Files.size(categories)<=1_000_000&&categories.toRealPath().startsWith(project.toRealPath())){Properties saved=new Properties();try(var in=java.nio.file.Files.newBufferedReader(categories)){saved.load(in);}var known=previous.byId();result=new AssetCatalog.Result(result.assets().stream().map(a->{String c=saved.getProperty(a.id());return c!=null&&c.length()<=80&&!known.containsKey(a.id())?a.category(c):a;}).toList(),result.warnings(),result.changes());}return result;}
++        protected void done(){try{catalog=get();images.clear();filter();warmImages();status.setText(catalog.assets().size()+" imagens | "+catalog.changes().size()+" alteracoes | "+catalog.warnings().size()+" avisos");if(!catalog.warnings().isEmpty())details.setText(String.join("\n",catalog.warnings()));}catch(Exception error){error(error);}finally{refresh.setEnabled(true);}}
++    }.execute();}
++    void warmImages(){var ids=new HashSet<String>();document.elements().forEach(e->ids.add(e.asset()));if(brush!=null)ids.add(brush.id());var selected=catalog.byId();new SwingWorker<Void,Void>(){
++        protected Void doInBackground()throws Exception{for(String id:ids)if(selected.containsKey(id))images.load(selected.get(id));return null;}
++        protected void done(){try{get();canvas.repaint();}catch(Exception error){error(error);}}
++    }.execute();}
++    void error(Exception error){status.setText("Operacao recusada: "+(error.getCause()==null?error.getMessage():error.getCause().getMessage()));}
++    /** Inicializa a ferramenta sem iniciar banco, servidor ou personagem. */
++    public static void main(String[] args){String exe=System.getProperty("jpackage.app-path");Path root=args.length==2&&args[0].equals("--project")?Path.of(args[1]):exe==null?Path.of(""):Path.of(exe).toAbsolutePath().getParent();SwingUtilities.invokeLater(()->{var studio=new WorldStudio(root);studio.setVisible(true);studio.rescan();});}
++}
+--- before/docs/TASK-104-RELATORIO-FINAL.md
++++ after/docs/TASK-104-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-104 - Corujao II
++
++Estado: **validada**.
++
++Prefabs locais com miniaturas, referencias relativas, colisoes e IDs novos por insercao.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-104/corujao-ii/`. Logs da suite: `docs/TASK-studio-104-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-104-TESTES.md
++++ after/docs/TASK-104-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-104 - Corujao II
++
++Comando: `python tools/qualidade.py --offline --task studio-104`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 357,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-104.md
++++ after/docs/TASK-104.md
+@@ -0,0 +1,3 @@
++# TASK-104 - Corujao II
++
++Prefabs locais com miniaturas, referencias relativas, colisoes e IDs novos por insercao.

@@ -1,0 +1,161 @@
+--- before/server/src/test/java/com/projetok/studio/AutotilingTest.java
++++ after/server/src/test/java/com/projetok/studio/AutotilingTest.java
+@@ -0,0 +1,7 @@
++package com.projetok.studio;
++import org.junit.jupiter.api.Test;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++class AutotilingTest {
++    @Test void cornersNeighborsFallbackUndoAndRoundTrip()throws Exception{var base=WorldDocument.empty("mapa",128,128);var fallback=new WorldDocument.Crop(0,0,32,32);var edge=new WorldDocument.Crop(32,0,32,32);base=Autotiling.register(base,new Autotiling.Rule("agua","","",fallback,Map.of(2,edge)));var brush=Autotiling.brush(base,"agua","ground");var a=EditorOperations.pencil(base,brush,0,0,true);var both=Autotiling.refresh(EditorOperations.pencil(a,brush,32,0,true));assertEquals(edge,both.elements().get(0).crop());assertEquals(fallback,both.elements().get(1).crop());assertFalse(Autotiling.missing(both).isEmpty());var h=new EditorHistory(a);h.commit(both);assertEquals(a,h.undo());assertEquals(both,h.redo());assertEquals(both,DocumentStore.decode(DocumentStore.encode(both)));var removed=Autotiling.refresh(EditorOperations.erase(both,"ground",32,0));assertEquals(fallback,removed.elements().get(0).crop());}
++}
+--- before/server/src/main/java/com/projetok/studio/Autotiling.java
++++ after/server/src/main/java/com/projetok/studio/Autotiling.java
+@@ -0,0 +1,29 @@
++package com.projetok.studio;
++import java.util.*;
++
++/** Autotiling NESW de quatro vizinhos, apenas para combinacoes cadastradas. */
++public final class Autotiling {
++    /** Regra explicita: 1 norte, 2 leste, 4 sul, 8 oeste; fallback nunca inventa arte. */
++    public record Rule(String id,String asset,String sha,WorldDocument.Crop fallback,Map<Integer,WorldDocument.Crop> variants) {
++        public Rule {variants=Map.copyOf(variants);if(!WorldDocument.validId(id)||variants.keySet().stream().anyMatch(k->k<0||k>15))throw new IllegalArgumentException("Regra de terreno invalida");}
++    }
++    private Autotiling(){}
++    static String crop(WorldDocument.Crop c){return c.x()+","+c.y()+","+c.width()+","+c.height();}
++    static WorldDocument.Crop parse(String s){int[] n=Arrays.stream(s.split(",")).mapToInt(Integer::parseInt).toArray();if(n.length!=4)throw new IllegalArgumentException("Recorte de terreno invalido");return new WorldDocument.Crop(n[0],n[1],n[2],n[3]);}
++    /** Persiste apenas configuracao no documento, preservando tilesets originais. */
++    public static WorldDocument register(WorldDocument d,Rule rule){Map<String,String> m=new TreeMap<>(d.metadata());String p="terrain."+rule.id()+".";m.put(p+"asset",rule.asset());m.put(p+"sha",rule.sha());m.put(p+"fallback",crop(rule.fallback()));m.put(p+"rules",rule.variants().entrySet().stream().sorted(Map.Entry.comparingByKey()).map(e->e.getKey()+":"+crop(e.getValue())).collect(java.util.stream.Collectors.joining(";")));return d.withMetadata(m);}
++    /** Lista terrenos cadastrados sem deduzir layout do PNG. */
++    public static List<String> terrains(WorldDocument d){return d.metadata().keySet().stream().filter(k->k.startsWith("terrain.")&&k.endsWith(".asset")).map(k->k.substring(8,k.length()-6)).sorted().toList();}
++    /** Reconstroi a configuracao explicitamente salva. */
++    public static Rule rule(WorldDocument d,String id){String p="terrain."+id+".";var m=d.metadata();Map<Integer,WorldDocument.Crop> variants=new HashMap<>();String values=m.getOrDefault(p+"rules","");if(!values.isEmpty())for(String value:values.split(";")){var v=value.split(":");variants.put(Integer.parseInt(v[0]),parse(v[1]));}return new Rule(id,m.get(p+"asset"),m.get(p+"sha"),parse(m.get(p+"fallback")),variants);}
++    static String cell(String layer,int x,int y){return layer+":"+x+":"+y;}
++    /** Mascara documentada, incluindo fronteiras tratadas como ausencia de vizinho. */
++    public static int mask(WorldDocument.Element e,Map<String,WorldDocument.Element> cells,int grid){int mask=0;int[][] neighbors={{0,-grid,1},{grid,0,2},{0,grid,4},{-grid,0,8}};String terrain=e.properties().get("terrain");for(int[] n:neighbors){var other=cells.get(cell(e.layer(),e.x()+n[0],e.y()+n[1]));if(other!=null&&Objects.equals(terrain,other.properties().get("terrain")))mask|=n[2];}return mask;}
++    /** Atualiza celulas e vizinhos apos um gesto; retorna o mesmo documento se nao houver mudancas. */
++    public static WorldDocument refresh(WorldDocument d){if(terrains(d).isEmpty())return d;Map<String,WorldDocument.Element> cells=new HashMap<>();d.elements().stream().filter(e->e.kind()==WorldDocument.Kind.TILE).forEach(e->cells.put(cell(e.layer(),e.x(),e.y()),e));Map<String,Rule> rules=new HashMap<>();var next=new ArrayList<WorldDocument.Element>();boolean changed=false;
++        for(var e:d.elements()){String id=e.properties().get("terrain");if(id!=null&&e.kind()==WorldDocument.Kind.TILE&&!e.locked()){Rule r=rules.computeIfAbsent(id,key->rule(d,key));var crop=r.variants().getOrDefault(mask(e,cells,d.grid()),r.fallback());if(!crop.equals(e.crop())||!r.asset().equals(e.asset())){e=new WorldDocument.Element(e.id(),e.kind(),r.asset(),r.sha(),crop,e.x(),e.y(),e.width(),e.height(),e.layer(),e.visible(),e.locked(),e.reference(),e.direction(),e.properties());changed=true;}}next.add(e);}return changed?d.withElements(next):d;}
++    /** Combina regras cadastradas com o pincel escolhido, sem aprovar revisoes automaticamente. */
++    public static WorldDocument.Element brush(WorldDocument d,String id,String layer){var r=rule(d,id);return new WorldDocument.Element("brush",WorldDocument.Kind.TILE,r.asset(),r.sha(),r.fallback(),0,0,d.grid(),d.grid(),layer,true,false,"","FRONT",Map.of("terrain",id));}
++    /** Indica combinacoes observadas sem arte propria para diagnostico. */
++    public static List<String> missing(WorldDocument d){var result=new ArrayList<String>();Map<String,WorldDocument.Element> cells=new HashMap<>();d.elements().forEach(e->cells.put(cell(e.layer(),e.x(),e.y()),e));for(var e:d.elements())if(e.properties().containsKey("terrain")){var r=rule(d,e.properties().get("terrain"));int mask=mask(e,cells,d.grid());if(!r.variants().containsKey(mask))result.add(e.id()+": mascara "+mask+" usa fallback de "+r.id());}return List.copyOf(result);}
++}
+--- before/server/src/main/java/com/projetok/studio/PaintTools.java
++++ after/server/src/main/java/com/projetok/studio/PaintTools.java
+@@ -11,7 +11,7 @@
+     PaintTools(WorldStudio ui) {
+         this.ui=ui;JComboBox<String> tools=new JComboBox<>(new String[]{"Selecionar","Lapis","Borracha","Retangulo","Balde","Conta-gotas","Colisao"});tools.addActionListener(e->tool=(String)tools.getSelectedItem());ui.toolbar.add(tools);
+         JComboBox<String> mode=new JComboBox<>(new String[]{"Objeto real","Tile na grade"});mode.addActionListener(e->tile=mode.getSelectedIndex()==1);ui.toolbar.add(mode);
+-        JButton crop=new JButton("Recortar tileset");crop.addActionListener(e->{if(ui.brush!=null)TilePicker.open(ui,ui.brush,ui.images.peek(ui.brush.id()),next->{ui.brushCrop=next;mode.setSelectedIndex(1);ui.details.setText("Recorte "+next);});});ui.toolbar.add(crop);
++        JButton crop=new JButton("Recortar tileset");crop.addActionListener(e->{if(ui.brush!=null)TilePicker.open(ui,ui.brush,ui.images.peek(ui.brush.id()),(next,all)->{ui.brushCrop=next;ui.tilesetCrops=all;mode.setSelectedIndex(1);ui.details.setText("Recorte "+next);});});ui.toolbar.add(crop);
+         add("Desfazer","control Z",()->ui.change(ui.history.undo()));add("Refazer","control Y",()->ui.change(ui.history.redo()));add("Copiar","control C",()->clipboard=EditorOperations.copy(ui.document,ui.canvas.selected));add("Colar","control V",()->ui.change(EditorOperations.paste(ui.document,clipboard,ui.lastCursor.x,ui.lastCursor.y)));
+         ui.canvas.pressed=e->{start=ui.canvas.worldPoint(e);changes=0;try{apply(start);}catch(Exception error){ui.error(error);start=null;}};
+         ui.canvas.dragged=e->{if(start!=null&&(tool.equals("Lapis")||tool.equals("Borracha")))try{apply(ui.canvas.worldPoint(e));}catch(Exception error){ui.document=ui.history.current();ui.error(error);start=null;}};
+@@ -24,6 +24,6 @@
+         }catch(Exception error){ui.document=ui.history.current();ui.error(error);}finally{start=null;ui.canvas.repaint();}};
+     }
+     void add(String name,String key,Runnable action){JButton b=new JButton(name);b.addActionListener(e->{try{action.run();}catch(Exception error){ui.error(error);}});ui.toolbar.add(b);ui.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(key),name);ui.getRootPane().getActionMap().put(name,new AbstractAction(){public void actionPerformed(ActionEvent e){b.doClick();}});}
+-    WorldDocument.Element brush(){if(ui.brush==null)throw new IllegalArgumentException("Selecione uma imagem na biblioteca");return new WorldDocument.Element("brush",WorldDocument.Kind.OBJECT,ui.brush.id(),ui.brush.sha(),ui.brushCrop,0,0,ui.brushCrop.width(),ui.brushCrop.height(),ui.canvas.activeLayer,true,false,"","FRONT",Map.of());}
++    WorldDocument.Element brush(){if(tile&&!ui.activeTerrain.isEmpty())return Autotiling.brush(ui.document,ui.activeTerrain,ui.canvas.activeLayer);if(ui.brush==null)throw new IllegalArgumentException("Selecione uma imagem na biblioteca");return new WorldDocument.Element("brush",WorldDocument.Kind.OBJECT,ui.brush.id(),ui.brush.sha(),ui.brushCrop,0,0,ui.brushCrop.width(),ui.brushCrop.height(),ui.canvas.activeLayer,true,false,"","FRONT",Map.of());}
+     void apply(Point p){if(++changes>4096)throw new IllegalArgumentException("Gesto excede 4096 pontos");switch(tool){case "Lapis"->ui.document=EditorOperations.pencil(ui.document,brush(),p.x,p.y,tile);case "Borracha"->ui.document=EditorOperations.erase(ui.document,ui.canvas.activeLayer,p.x,p.y);case "Balde"->{if(!tile)throw new IllegalArgumentException("Balde requer Tile na grade");ui.document=EditorOperations.flood(ui.document,brush(),p.x,p.y);}case "Conta-gotas"->ui.document.elements().stream().filter(e->e.layer().equals(ui.canvas.activeLayer)&&new Rectangle(e.x(),e.y(),e.width(),e.height()).contains(p)).reduce((a,b)->b).ifPresent(e->{ui.brush=ui.catalog.byId().get(e.asset());ui.brushCrop=e.crop();});default->{}}ui.canvas.repaint();}
+ }
+--- before/server/src/main/java/com/projetok/studio/TerrainTools.java
++++ after/server/src/main/java/com/projetok/studio/TerrainTools.java
+@@ -0,0 +1,9 @@
++package com.projetok.studio;
++import javax.swing.*;
++import java.awt.*;
++import java.util.*;
++
++/** Cadastro visual de indices de recortes para as dezesseis mascaras NESW. */
++final class TerrainTools {
++    TerrainTools(WorldStudio ui){ui.action("Terrenos","Cadastrar regra autotile",()->{if(ui.brush==null||ui.tilesetCrops.isEmpty())throw new IllegalArgumentException("Selecione recortes em Recortar tileset primeiro");JPanel form=new JPanel(new BorderLayout());JTextField id=new JTextField("terreno");form.add(id,BorderLayout.NORTH);JTextArea mappings=new JTextArea("0=-1\n1=-1\n2=-1\n3=-1\n4=-1\n5=-1\n6=-1\n7=-1\n8=-1\n9=-1\n10=-1\n11=-1\n12=-1\n13=-1\n14=-1\n15=-1",16,30);form.add(new JScrollPane(mappings));form.add(new JLabel("Mascara=indice do recorte (ordem de leitura, inicia 0). -1: fallback explicito."),BorderLayout.SOUTH);if(JOptionPane.showConfirmDialog(ui,form,"NESW: 1=N, 2=E, 4=S, 8=W",JOptionPane.OK_CANCEL_OPTION)!=JOptionPane.OK_OPTION)return;Map<Integer,WorldDocument.Crop> rules=new HashMap<>();for(String line:mappings.getText().split("\n")){var parts=line.split("=");int mask=Integer.parseInt(parts[0]),index=Integer.parseInt(parts[1]);if(index>=0){if(index>=ui.tilesetCrops.size())throw new IllegalArgumentException("Indice inexistente");rules.put(mask,ui.tilesetCrops.get(index));}}ui.change(Autotiling.register(ui.document,new Autotiling.Rule(id.getText(),ui.brush.id(),ui.brush.sha(),ui.brushCrop,rules)));ui.activeTerrain=id.getText();});ui.action("Terrenos","Ativar terreno",()->{String id=(String)JOptionPane.showInputDialog(ui,"Terreno","Paleta",JOptionPane.PLAIN_MESSAGE,null,Autotiling.terrains(ui.document).toArray(String[]::new),null);if(id!=null)ui.activeTerrain=id;});ui.action("Terrenos","Desativar autotile",()->{ui.activeTerrain="";ui.status.setText("Pintura manual ativa");});}
++}
+--- before/server/src/main/java/com/projetok/studio/TilePicker.java
++++ after/server/src/main/java/com/projetok/studio/TilePicker.java
+@@ -4,11 +4,11 @@
+ import java.awt.event.*;
+ import java.awt.image.BufferedImage;
+ import java.util.*;
+-import java.util.function.Consumer;
++import java.util.function.BiConsumer;
+ 
+ /** Recorte visual do tileset; somente metadados sao alterados. */
+ final class TilePicker {
+-    static void open(JFrame owner,AssetCatalog.Asset asset,BufferedImage image,Consumer<WorldDocument.Crop> selected) {
++    static void open(JFrame owner,AssetCatalog.Asset asset,BufferedImage image,BiConsumer<WorldDocument.Crop,java.util.List<WorldDocument.Crop>> selected) {
+         if(image==null){JOptionPane.showMessageDialog(owner,"Aguarde o carregamento da imagem.");return;}
+         JDialog dialog=new JDialog(owner,"Tileset: clique em um recorte",true);JPanel options=new JPanel(new GridLayout(2,8));
+         String[] labels={"Tile W","Tile H","Margem","Espaco","Regiao X","Regiao Y","Regiao W","Regiao H"};int[] defaults={32,32,0,0,0,0,asset.width(),asset.height()};JSpinner[] values=new JSpinner[8];
+@@ -16,7 +16,7 @@
+         final java.util.List<WorldDocument.Crop>[] crops=new java.util.List[]{java.util.List.of()};double scale=Math.min(1,Math.min(850d/image.getWidth(),600d/image.getHeight()));
+         JPanel preview=new JPanel(){protected void paintComponent(Graphics original){super.paintComponent(original);Graphics2D g=(Graphics2D)original.create();try{g.scale(scale,scale);g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);g.drawImage(image,0,0,null);g.setColor(new Color(255,220,80));for(var c:crops[0])g.drawRect(c.x(),c.y(),c.width(),c.height());}finally{g.dispose();}}};preview.setPreferredSize(new Dimension((int)(image.getWidth()*scale),(int)(image.getHeight()*scale)));
+         JButton update=new JButton("Atualizar grade");update.addActionListener(e->{try{int[] n=Arrays.stream(values).mapToInt(v->(Integer)v.getValue()).toArray();crops[0]=AssetCatalog.tiles(asset,n[0],n[1],n[2],n[3],new WorldDocument.Crop(n[4],n[5],n[6],n[7]));preview.repaint();}catch(Exception error){JOptionPane.showMessageDialog(dialog,error.getMessage());}});
+-        preview.addMouseListener(new MouseAdapter(){public void mousePressed(MouseEvent e){int x=(int)(e.getX()/scale),y=(int)(e.getY()/scale);crops[0].stream().filter(c->new Rectangle(c.x(),c.y(),c.width(),c.height()).contains(x,y)).findFirst().ifPresent(c->{selected.accept(c);dialog.dispose();});}});
++        preview.addMouseListener(new MouseAdapter(){public void mousePressed(MouseEvent e){int x=(int)(e.getX()/scale),y=(int)(e.getY()/scale);crops[0].stream().filter(c->new Rectangle(c.x(),c.y(),c.width(),c.height()).contains(x,y)).findFirst().ifPresent(c->{selected.accept(c,crops[0]);dialog.dispose();});}});
+         dialog.add(options,BorderLayout.NORTH);dialog.add(new JScrollPane(preview));dialog.add(update,BorderLayout.SOUTH);dialog.pack();dialog.setLocationRelativeTo(owner);update.doClick();dialog.setVisible(true);
+     }
+ }
+--- before/server/src/main/java/com/projetok/studio/WorldStudio.java
++++ after/server/src/main/java/com/projetok/studio/WorldStudio.java
+@@ -26,6 +26,7 @@
+     final JPanel inspector=new JPanel(new BorderLayout());
+     AssetCatalog.Asset brush;
+     WorldDocument.Crop brushCrop;
++    java.util.List<WorldDocument.Crop> tilesetCrops=java.util.List.of();String activeTerrain="";
+     /** Abre projeto local; indexacao e carregamento ocorrem em workers. */
+     public WorldStudio(Path project) {
+         super("Spirit Gate | World Studio");this.project=project.toAbsolutePath();setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+@@ -50,8 +51,9 @@
+         new PortalTools(this);
+         new FileTools(this);
+         new PlaytestTools(this);
++        new TerrainTools(this);
+     }
+-    void change(WorldDocument next){document=history.commit(next);if(layerTools!=null)layerTools.refresh();canvas.repaint();}
++    void change(WorldDocument next){document=history.commit(Autotiling.refresh(next));if(layerTools!=null)layerTools.refresh();canvas.repaint();}
+     void inspectSelection(){details.setText(document.elements().stream().filter(e->canvas.selected.contains(e.id())).map(Object::toString).collect(java.util.stream.Collectors.joining("\n")));}
+     Map<String,WorldDocument> maps(){var maps=new LinkedHashMap<>(knownMaps);maps.put(document.id(),document);return Map.copyOf(maps);}
+     void action(String group,String name,Runnable action){JMenuBar bar=getJMenuBar();if(bar==null){bar=new JMenuBar();setJMenuBar(bar);}JMenu menu=null;for(int i=0;i<bar.getMenuCount();i++)if(bar.getMenu(i).getText().equals(group))menu=bar.getMenu(i);if(menu==null){menu=new JMenu(group);bar.add(menu);}JMenuItem item=new JMenuItem(name);item.addActionListener(e->{try{action.run();}catch(Exception error){error(error);}});menu.add(item);}
+--- before/docs/TASK-103-RELATORIO-FINAL.md
++++ after/docs/TASK-103-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-103 - Corujao II
++
++Estado: **VALIDADA COM RESSALVAS**.
++
++Autotiling NESW de quatro vizinhos com 16 mascaras, recortes cadastrados pelo usuario, terreno por paleta e modo manual. Celulas vizinhas recalculadas ao confirmar gesto, com Undo/Redo e persistencia; exportacao usa recortes ja resolvidos. Combinacao ausente usa fallback explicito e e diagnosticavel; nao ha inferencia universal ou regras diagonais/inner-corner de oito vizinhos. Teste de borda, vizinho, remocao, fallback e round-trip aprovado.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-103/corujao-ii/`. Logs da suite: `docs/TASK-studio-103-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-103-TESTES.md
++++ after/docs/TASK-103-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-103 - Corujao II
++
++Comando: `python tools/qualidade.py --offline --task studio-103`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 356,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-103.md
++++ after/docs/TASK-103.md
+@@ -0,0 +1,3 @@
++# TASK-103 - Corujao II
++
++Autotiling NESW de quatro vizinhos com 16 mascaras, recortes cadastrados pelo usuario, terreno por paleta e modo manual. Celulas vizinhas recalculadas ao confirmar gesto, com Undo/Redo e persistencia; exportacao usa recortes ja resolvidos. Combinacao ausente usa fallback explicito e e diagnosticavel; nao ha inferencia universal ou regras diagonais/inner-corner de oito vizinhos. Teste de borda, vizinho, remocao, fallback e round-trip aprovado.

@@ -1,0 +1,165 @@
+--- before/server/src/test/java/com/projetok/studio/StudioGeometryTest.java
++++ after/server/src/test/java/com/projetok/studio/StudioGeometryTest.java
+@@ -0,0 +1,8 @@
++package com.projetok.studio;
++import org.junit.jupiter.api.Test;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++class StudioGeometryTest {
++    @Test void realCollisionAllowsTangencyAndIgnoresWalkableAnnotations(){var d=WorldDocument.empty("mapa",128,128).withHitboxes(List.of(new WorldDocument.Hitbox("solid",64,64,32,32,true,"collision")));assertTrue(StudioGeometry.free(d,46,80,18));assertFalse(StudioGeometry.free(d,47,80,18));assertTrue(StudioGeometry.free(d.withHitboxes(List.of(new WorldDocument.Hitbox("walk",64,64,32,32,false,"collision"))),80,80,18));}
++    @Test void overlappingSolidsAreReportedNotModified(){var d=WorldDocument.empty("mapa",128,128).withHitboxes(List.of(new WorldDocument.Hitbox("a",32,32,32,32,true,"collision"),new WorldDocument.Hitbox("b",48,48,32,32,true,"collision")));assertEquals(1,StudioGeometry.overlaps(d).size());assertEquals(2,d.hitboxes().size());}
++}
+--- before/server/src/main/java/com/projetok/studio/CollisionTools.java
++++ after/server/src/main/java/com/projetok/studio/CollisionTools.java
+@@ -0,0 +1,16 @@
++package com.projetok.studio;
++import javax.swing.*;
++import java.awt.*;
++import java.util.*;
++
++/** Hitboxes editaveis em dados, com snap opcional e previa de raio 18. */
++final class CollisionTools {
++    final WorldStudio ui;
++    CollisionTools(WorldStudio ui){this.ui=ui;ui.action("Mapa","Nova colisao",()->edit(null));ui.action("Mapa","Editar colisao",()->{var selected=ui.document.hitboxes().stream().filter(h->ui.canvas.selected.contains(h.id())).findFirst().orElse(null);if(selected==null){String id=(String)JOptionPane.showInputDialog(ui,"Colisao","Editar",JOptionPane.PLAIN_MESSAGE,null,ui.document.hitboxes().stream().map(WorldDocument.Hitbox::id).toArray(String[]::new),null);if(id==null)return;selected=ui.document.hitboxes().stream().filter(h->h.id().equals(id)).findFirst().orElseThrow();}edit(selected);});
++        ui.action("Ver","Colisoes",()->{ui.canvas.collisions=!ui.canvas.collisions;ui.canvas.repaint();});ui.action("Ver","Raio do jogador",()->{ui.canvas.playerPreview=!ui.canvas.playerPreview;ui.canvas.repaint();});ui.action("Editar","Alternar snap",()->{ui.snap=!ui.snap;ui.status.setText("Snap: "+ui.snap);});
++    }
++    void drag(Point a,Point b){int x=Math.max(0,Math.min(a.x,b.x)),y=Math.max(0,Math.min(a.y,b.y));int w=Math.max(ui.document.grid(),Math.abs(a.x-b.x)),h=Math.max(ui.document.grid(),Math.abs(a.y-b.y));if(ui.snap){x=x/ui.document.grid()*ui.document.grid();y=y/ui.document.grid()*ui.document.grid();}add(new WorldDocument.Hitbox(EditorOperations.id(),x,y,w,h,true,layer()));}
++    String layer(){return ui.document.layers().stream().filter(l->l.role()==WorldDocument.Role.COLLISION).findFirst().orElseThrow(()->new IllegalArgumentException("Crie camada COLLISION")).id();}
++    void add(WorldDocument.Hitbox hitbox){EditorOperations.editable(ui.document,hitbox.layer());var list=new ArrayList<>(ui.document.hitboxes());list.removeIf(h->h.id().equals(hitbox.id()));list.add(hitbox);ui.change(ui.document.withHitboxes(list));ui.status.setText("Colisao atualizada | Sobreposicoes: "+StudioGeometry.overlaps(ui.document).size());}
++    void edit(WorldDocument.Hitbox old){int[] defaults=old==null?new int[]{Math.max(0,ui.lastCursor.x),Math.max(0,ui.lastCursor.y),32,32}:new int[]{old.x(),old.y(),old.width(),old.height()};JPanel panel=new JPanel(new GridLayout(0,2));JSpinner[] fields=new JSpinner[4];String[] names={"X","Y","Largura","Altura"};for(int i=0;i<4;i++){panel.add(new JLabel(names[i]));fields[i]=new JSpinner(new SpinnerNumberModel(defaults[i],0,8192,1));panel.add(fields[i]);}JCheckBox solid=new JCheckBox("Solido",old==null||old.solid());panel.add(solid);if(JOptionPane.showConfirmDialog(ui,panel,"Colisao explicita",JOptionPane.OK_CANCEL_OPTION)!=JOptionPane.OK_OPTION)return;int[] n=Arrays.stream(fields).mapToInt(f->(Integer)f.getValue()).toArray();if(ui.snap){n[0]=n[0]/ui.document.grid()*ui.document.grid();n[1]=n[1]/ui.document.grid()*ui.document.grid();}add(new WorldDocument.Hitbox(old==null?EditorOperations.id():old.id(),n[0],n[1],n[2],n[3],solid.isSelected(),old==null?layer():old.layer()));}
++}
+--- before/server/src/main/java/com/projetok/studio/PaintTools.java
++++ after/server/src/main/java/com/projetok/studio/PaintTools.java
+@@ -9,7 +9,7 @@
+     final WorldStudio ui;String tool="Selecionar";Point start;int changes;boolean tile;
+     java.util.List<WorldDocument.Element> clipboard=java.util.List.of();
+     PaintTools(WorldStudio ui) {
+-        this.ui=ui;JComboBox<String> tools=new JComboBox<>(new String[]{"Selecionar","Lapis","Borracha","Retangulo","Balde","Conta-gotas"});tools.addActionListener(e->tool=(String)tools.getSelectedItem());ui.toolbar.add(tools);
++        this.ui=ui;JComboBox<String> tools=new JComboBox<>(new String[]{"Selecionar","Lapis","Borracha","Retangulo","Balde","Conta-gotas","Colisao"});tools.addActionListener(e->tool=(String)tools.getSelectedItem());ui.toolbar.add(tools);
+         JComboBox<String> mode=new JComboBox<>(new String[]{"Objeto real","Tile na grade"});mode.addActionListener(e->tile=mode.getSelectedIndex()==1);ui.toolbar.add(mode);
+         JButton crop=new JButton("Recortar tileset");crop.addActionListener(e->{if(ui.brush!=null)TilePicker.open(ui,ui.brush,ui.images.peek(ui.brush.id()),next->{ui.brushCrop=next;mode.setSelectedIndex(1);ui.details.setText("Recorte "+next);});});ui.toolbar.add(crop);
+         add("Desfazer","control Z",()->ui.change(ui.history.undo()));add("Refazer","control Y",()->ui.change(ui.history.redo()));add("Copiar","control C",()->clipboard=EditorOperations.copy(ui.document,ui.canvas.selected));add("Colar","control V",()->ui.change(EditorOperations.paste(ui.document,clipboard,ui.lastCursor.x,ui.lastCursor.y)));
+@@ -17,7 +17,9 @@
+         ui.canvas.dragged=e->{if(start!=null&&(tool.equals("Lapis")||tool.equals("Borracha")))try{apply(ui.canvas.worldPoint(e));}catch(Exception error){ui.document=ui.history.current();ui.error(error);start=null;}};
+         ui.canvas.released=e->{if(start==null)return;Point end=ui.canvas.worldPoint(e);try{
+             if(tool.equals("Retangulo")){if(!tile)throw new IllegalArgumentException("Retangulo requer Tile na grade");ui.document=EditorOperations.rectangle(ui.document,brush(),start,end);}
++            if(tool.equals("Colisao"))ui.collisionTools.drag(start,end);
+             if(tool.equals("Selecionar")){Rectangle box=new Rectangle(Math.min(start.x,end.x),Math.min(start.y,end.y),Math.max(1,Math.abs(end.x-start.x)),Math.max(1,Math.abs(end.y-start.y)));if(!e.isShiftDown())ui.canvas.selected.clear();ui.document.elements().stream().filter(a->a.layer().equals(ui.canvas.activeLayer)&&box.intersects(a.x(),a.y(),a.width(),a.height())).forEach(a->ui.canvas.selected.add(a.id()));ui.inspectSelection();}
++            if(tool.equals("Selecionar"))ui.document.hitboxes().stream().filter(h->new Rectangle(h.x(),h.y(),h.width(),h.height()).contains(end)).findFirst().ifPresent(h->ui.canvas.selected.add(h.id()));
+             ui.change(ui.document);
+         }catch(Exception error){ui.document=ui.history.current();ui.error(error);}finally{start=null;ui.canvas.repaint();}};
+     }
+--- before/server/src/main/java/com/projetok/studio/StudioGeometry.java
++++ after/server/src/main/java/com/projetok/studio/StudioGeometry.java
+@@ -0,0 +1,16 @@
++package com.projetok.studio;
++import com.projetok.domain.entity.*;
++import com.projetok.domain.movement.*;
++import java.util.*;
++
++/** Adapta retangulos explicitos ao mesmo CollisionService do jogo. */
++public final class StudioGeometry {
++    private static final GameEntity PROBE=new GameEntity(1,"Previa",new Position(0,0)){};
++    private StudioGeometry(){}
++    /** Areas transitaveis sao anotacoes; visibilidade da camada nao desativa colisao. */
++    public static CollisionService.Space space(WorldDocument d){return new CollisionService.Space(d.width(),d.height(),d.hitboxes().stream().filter(WorldDocument.Hitbox::solid).map(h->new CollisionService.Obstacle(h.x(),h.y(),h.width(),h.height())).toList(),java.util.List.of());}
++    /** Previa fisica real do circulo do jogador, sem simulacao alternativa. */
++    public static boolean free(WorldDocument d,float x,float y,float radius){return new CollisionService().isFree(PROBE,x,y,radius,space(d));}
++    /** Sobreposicoes nao sao corrigidas silenciosamente. */
++    public static java.util.List<String> overlaps(WorldDocument d){var result=new ArrayList<String>();for(int i=0;i<d.hitboxes().size();i++)for(int j=i+1;j<d.hitboxes().size();j++){var a=d.hitboxes().get(i);var b=d.hitboxes().get(j);if(a.solid()&&b.solid()&&a.x()<b.x()+b.width()&&a.x()+a.width()>b.x()&&a.y()<b.y()+b.height()&&a.y()+a.height()>b.y())result.add(a.id()+" / "+b.id());}return java.util.List.copyOf(result);}
++}
+--- before/server/src/main/java/com/projetok/studio/WorldCanvas.java
++++ after/server/src/main/java/com/projetok/studio/WorldCanvas.java
+@@ -11,6 +11,8 @@
+     final AssetImages images;
+     StudioViewport viewport=new StudioViewport(.75,20,20);
+     boolean grid=true,collisions=true;
++    boolean playerPreview;
++    Point cursor=new Point();
+     String activeLayer="ground";
+     final Set<String> selected=new LinkedHashSet<>();
+     Consumer<Point> pointer=p->{};
+@@ -23,7 +25,7 @@
+             @Override public void mousePressed(MouseEvent e){requestFocusInWindow();if(SwingUtilities.isMiddleMouseButton(e)){panStart=e.getPoint();startX=viewport.panX();startY=viewport.panY();}else pressed.accept(e);}
+             @Override public void mouseDragged(MouseEvent e){if(panStart!=null){viewport=new StudioViewport(viewport.zoom(),startX+e.getX()-panStart.x,startY+e.getY()-panStart.y);repaint();}else dragged.accept(e);mouseMoved(e);}
+             @Override public void mouseReleased(MouseEvent e){if(panStart!=null)panStart=null;else released.accept(e);}
+-            @Override public void mouseMoved(MouseEvent e){pointer.accept(worldPoint(e));}
++            @Override public void mouseMoved(MouseEvent e){cursor=worldPoint(e);pointer.accept(cursor);if(playerPreview)repaint();}
+             @Override public void mouseWheelMoved(MouseWheelEvent e){viewport=viewport.zoomAt(viewport.zoom()*Math.pow(1.12,-e.getWheelRotation()),e.getX(),e.getY());repaint();}
+         };addMouseListener(mouse);addMouseMotionListener(mouse);addMouseWheelListener(mouse);
+     }
+@@ -44,7 +46,8 @@
+                 if(selected.contains(e.id())){g.setColor(Color.YELLOW);g.setStroke(new BasicStroke((float)(2/viewport.zoom())));g.drawRect(e.x(),e.y(),e.width(),e.height());}
+             }
+             if(grid&&d.grid()*viewport.zoom()>=8){g.setColor(new Color(255,255,255,30));g.setStroke(new BasicStroke((float)(1/viewport.zoom())));int cell=d.grid();for(int x=Math.max(0,visible.x/cell*cell);x<=Math.min(d.width(),visible.x+visible.width);x+=cell)g.drawLine(x,visible.y,x,visible.y+visible.height);for(int y=Math.max(0,visible.y/cell*cell);y<=Math.min(d.height(),visible.y+visible.height);y+=cell)g.drawLine(visible.x,y,visible.x+visible.width,y);}
+-            if(collisions)for(var h:d.hitboxes()) {g.setColor(h.solid()?new Color(255,85,70,80):new Color(65,220,160,60));g.fillRect(h.x(),h.y(),h.width(),h.height());g.setColor(h.solid()?Color.RED:Color.GREEN);g.drawRect(h.x(),h.y(),h.width(),h.height());}
++            if(collisions)for(var h:d.hitboxes()) {g.setColor(h.solid()?new Color(255,85,70,80):new Color(65,220,160,60));g.fillRect(h.x(),h.y(),h.width(),h.height());g.setColor(selected.contains(h.id())?Color.YELLOW:h.solid()?Color.RED:Color.GREEN);g.drawRect(h.x(),h.y(),h.width(),h.height());}
++            if(playerPreview){g.setColor(StudioGeometry.free(d,cursor.x,cursor.y,18)?Color.GREEN:Color.RED);g.drawOval(cursor.x-18,cursor.y-18,36,36);}
+             for(var p:d.portals()){g.setColor(Color.MAGENTA);g.drawOval(p.x()-12,p.y()-12,24,24);g.drawString(p.destination(),p.x()+14,p.y());}
+         }finally{g.dispose();}
+     }
+--- before/server/src/main/java/com/projetok/studio/WorldStudio.java
++++ after/server/src/main/java/com/projetok/studio/WorldStudio.java
+@@ -20,6 +20,8 @@
+     final JTextArea details=new JTextArea();final JLabel status=new JLabel("Indexe os assets do projeto para comecar.");
+     final JToolBar toolbar=new WrapToolbar();final JButton refresh=new JButton("Atualizar biblioteca");
+     LayerTools layerTools;
++    CollisionTools collisionTools;
++    boolean snap=true;
+     final JPanel inspector=new JPanel(new BorderLayout());
+     AssetCatalog.Asset brush;
+     WorldDocument.Crop brushCrop;
+@@ -42,9 +44,11 @@
+         canvas.pressed=e->{Point p=canvas.worldPoint(e);canvas.selected.clear();document.elements().stream().filter(a->new Rectangle(a.x(),a.y(),a.width(),a.height()).contains(p)).reduce((a,b)->b).ifPresent(a->{canvas.selected.add(a.id());details.setText(a.toString());});canvas.repaint();};
+         new PaintTools(this);
+         layerTools=new LayerTools(this);
++        collisionTools=new CollisionTools(this);
+     }
+     void change(WorldDocument next){document=history.commit(next);if(layerTools!=null)layerTools.refresh();canvas.repaint();}
+     void inspectSelection(){details.setText(document.elements().stream().filter(e->canvas.selected.contains(e.id())).map(Object::toString).collect(java.util.stream.Collectors.joining("\n")));}
++    void action(String group,String name,Runnable action){JMenuBar bar=getJMenuBar();if(bar==null){bar=new JMenuBar();setJMenuBar(bar);}JMenu menu=null;for(int i=0;i<bar.getMenuCount();i++)if(bar.getMenu(i).getText().equals(group))menu=bar.getMenu(i);if(menu==null){menu=new JMenu(group);bar.add(menu);}JMenuItem item=new JMenuItem(name);item.addActionListener(e->{try{action.run();}catch(Exception error){error(error);}});menu.add(item);}
+     void filter(){assets.clear();AssetCatalog.search(catalog,search.getText(),(String)categories.getSelectedItem()).forEach(assets::addElement);}
+     void rescan(){refresh.setEnabled(false);status.setText("Indexando somente assets e recursos autorizados...");new SwingWorker<AssetCatalog.Result,Void>(){
+         protected AssetCatalog.Result doInBackground()throws Exception{return AssetCatalog.scan(project,catalog);}
+--- before/docs/TASK-096-RELATORIO-FINAL.md
++++ after/docs/TASK-096-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-096 - Corujao II
++
++Estado: **VALIDADA**.
++
++Retangulos solidos/transitaveis, desenho pelo mouse, edicao numerica, selecao, snap opcional e visualizacao de sobreposicoes. Previa do jogador com raio 18 consulta CollisionService real, nunca alfa do PNG. Testes de tangencia, bloqueio, areas transitaveis e sobreposicoes sem correcao silenciosa aprovados.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-096/corujao-ii/`. Logs da suite: `docs/TASK-studio-096-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-096-TESTES.md
++++ after/docs/TASK-096-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-096 - Corujao II
++
++Comando: `python tools/qualidade.py --offline --task studio-096`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 346,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-096.md
++++ after/docs/TASK-096.md
+@@ -0,0 +1,3 @@
++# TASK-096 - Corujao II
++
++Retangulos solidos/transitaveis, desenho pelo mouse, edicao numerica, selecao, snap opcional e visualizacao de sobreposicoes. Previa do jogador com raio 18 consulta CollisionService real, nunca alfa do PNG. Testes de tangencia, bloqueio, areas transitaveis e sobreposicoes sem correcao silenciosa aprovados.

@@ -1,0 +1,25 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/NpcEditingTest.java",
+    "server/src/main/java/com/projetok/rpg/DialogueService.java",
+    "server/src/main/java/com/projetok/rpg/NpcService.java",
+    "server/src/main/java/com/projetok/rpg/RpgWorld.java",
+    "server/src/main/java/com/projetok/studio/NpcEditing.java",
+    "server/src/main/java/com/projetok/studio/NpcTools.java",
+    "server/src/main/java/com/projetok/studio/StudioExport.java",
+    "server/src/main/java/com/projetok/studio/WorldStudio.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-108-RELATORIO-FINAL.md",
+    "docs/TASK-108-TESTES.md",
+    "docs/TASK-108.md",
+    "docs/TASK-studio-108-java-version.log",
+    "docs/TASK-studio-108-java.log",
+    "docs/TASK-studio-108-maven-version.log",
+    "docs/TASK-studio-108-python-version.log",
+    "docs/TASK-studio-108-python.log",
+    "docs/TASK-studio-108-qualidade.json",
+    "docs/TASK-studio-108-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

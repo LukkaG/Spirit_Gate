@@ -1,0 +1,21 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/StudioDiagnosticTest.java",
+    "server/src/main/java/com/projetok/studio/DiagnosticTools.java",
+    "server/src/main/java/com/projetok/studio/StudioValidator.java",
+    "server/src/main/java/com/projetok/studio/WorldStudio.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-112-RELATORIO-FINAL.md",
+    "docs/TASK-112-TESTES.md",
+    "docs/TASK-112.md",
+    "docs/TASK-studio-112-java-version.log",
+    "docs/TASK-studio-112-java.log",
+    "docs/TASK-studio-112-maven-version.log",
+    "docs/TASK-studio-112-python-version.log",
+    "docs/TASK-studio-112-python.log",
+    "docs/TASK-studio-112-qualidade.json",
+    "docs/TASK-studio-112-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

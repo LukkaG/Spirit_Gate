@@ -1,0 +1,116 @@
+--- before/server/src/test/java/com/projetok/studio/GroupEditingTest.java
++++ after/server/src/test/java/com/projetok/studio/GroupEditingTest.java
+@@ -0,0 +1,7 @@
++package com.projetok.studio;
++import org.junit.jupiter.api.Test;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++class GroupEditingTest {
++    @Test void atomicBoundsLocksDistributionAndHistory(){var d=WorldDocument.empty("mapa",256,256);for(int x:new int[]{0,32,128})d=EditorOperations.pencil(d,EditorOperationsTest.brush(),x,32,true);var ids=new HashSet<>(d.elements().stream().map(WorldDocument.Element::id).toList());var original=d;assertThrows(IllegalArgumentException.class,()->GroupEditing.move(original,ids,250,0));var arranged=GroupEditing.arrange(d,ids,true,true);assertEquals(64,arranged.elements().get(1).x());var locked=GroupEditing.lock(d,ids,true);assertThrows(IllegalArgumentException.class,()->GroupEditing.delete(locked,ids));assertEquals(0,GroupEditing.delete(GroupEditing.lock(locked,ids,false),ids).elements().size());var h=new EditorHistory(d);h.commit(GroupEditing.move(d,ids,0,32));assertEquals(d,h.undo());}
++}
+--- before/server/src/main/java/com/projetok/studio/EditorOperations.java
++++ after/server/src/main/java/com/projetok/studio/EditorOperations.java
+@@ -19,7 +19,7 @@
+     public static WorldDocument erase(WorldDocument d,String layer,int x,int y){editable(d,layer);return d.withElements(d.elements().stream().filter(e->!e.layer().equals(layer)||e.locked()||!new Rectangle(e.x(),e.y(),e.width(),e.height()).contains(x,y)).toList());}
+     /** Preenchimento retangular atomico, limitado a 4096 celulas. */
+     public static WorldDocument rectangle(WorldDocument d,WorldDocument.Element brush,Point a,Point b){int grid=d.grid(),x0=Math.max(0,Math.min(a.x,b.x)/grid),y0=Math.max(0,Math.min(a.y,b.y)/grid),x1=Math.min(d.width()/grid-1,Math.max(a.x,b.x)/grid),y1=Math.min(d.height()/grid-1,Math.max(a.y,b.y)/grid);if((long)(x1-x0+1)*(y1-y0+1)>4096)throw new IllegalArgumentException("Retangulo excede 4096 celulas");for(int y=y0;y<=y1;y++)for(int x=x0;x<=x1;x++)d=pencil(d,brush,x*grid,y*grid,true);return d;}
+-    private static String signature(WorldDocument.Element e){return e==null?"":e.asset()+":"+e.crop();}
++    private static String signature(WorldDocument.Element e){return e==null?"":e.asset()+":"+e.crop()+":"+e.properties().getOrDefault("terrain","");}
+     /** Balde primeiro calcula a area, recusando o excesso antes de modificar qualquer celula. */
+     public static WorldDocument flood(WorldDocument d,WorldDocument.Element brush,int wx,int wy) {
+         editable(d,brush.layer());int cols=d.width()/d.grid(),rows=d.height()/d.grid(),sx=wx/d.grid(),sy=wy/d.grid();if(wx<0||wy<0||sx>=cols||sy>=rows)return d;
+--- before/server/src/main/java/com/projetok/studio/GroupEditing.java
++++ after/server/src/main/java/com/projetok/studio/GroupEditing.java
+@@ -0,0 +1,18 @@
++package com.projetok.studio;
++import java.util.*;
++
++/** Transformacoes atomicas de selecoes, com limites e bloqueios preservados. */
++public final class GroupEditing {
++    private GroupEditing(){}
++    private static void guard(WorldDocument d,Set<String> ids){for(var e:d.elements())if(ids.contains(e.id())){EditorOperations.editable(d,e.layer());if(e.locked())throw new IllegalArgumentException("Objeto bloqueado: "+e.id());}for(var b:d.hitboxes())if(ids.contains(b.id()))EditorOperations.editable(d,b.layer());}
++    /** Move elementos e colisoes selecionados; validacao ocorre antes do retorno. */
++    public static WorldDocument move(WorldDocument d,Set<String> ids,int dx,int dy){guard(d,ids);var elements=d.elements().stream().map(e->ids.contains(e.id())?e.at(e.id(),Math.addExact(e.x(),dx),Math.addExact(e.y(),dy)):e).toList();var boxes=d.hitboxes().stream().map(b->ids.contains(b.id())?new WorldDocument.Hitbox(b.id(),Math.addExact(b.x(),dx),Math.addExact(b.y(),dy),b.width(),b.height(),b.solid(),b.layer()):b).toList();return d.withElements(elements).withHitboxes(boxes);}
++    /** Alinha ou distribui centros; exige ao menos dois objetos editaveis. */
++    public static WorldDocument arrange(WorldDocument d,Set<String> ids,boolean horizontal,boolean distribute){guard(d,ids);var chosen=new ArrayList<>(d.elements().stream().filter(e->ids.contains(e.id())).toList());if(chosen.size()<2)throw new IllegalArgumentException("Selecione dois objetos");chosen.sort(Comparator.comparingInt(e->horizontal?e.x():e.y()));int min=horizontal?chosen.get(0).x():chosen.get(0).y(),max=horizontal?chosen.get(chosen.size()-1).x():chosen.get(chosen.size()-1).y();Map<String,WorldDocument.Element> replacements=new HashMap<>();for(int i=0;i<chosen.size();i++){var e=chosen.get(i);int at=distribute?min+(int)((long)(max-min)*i/(chosen.size()-1)):min;replacements.put(e.id(),e.at(e.id(),horizontal?at:e.x(),horizontal?e.y():at));}return d.withElements(d.elements().stream().map(e->replacements.getOrDefault(e.id(),e)).toList());}
++    /** Bloqueia ou desbloqueia explicitamente objetos, sem desbloquear camadas. */
++    public static WorldDocument lock(WorldDocument d,Set<String> ids,boolean locked){for(var e:d.elements())if(ids.contains(e.id()))EditorOperations.editable(d,e.layer());return d.withElements(d.elements().stream().map(e->ids.contains(e.id())?new WorldDocument.Element(e.id(),e.kind(),e.asset(),e.sha(),e.crop(),e.x(),e.y(),e.width(),e.height(),e.layer(),e.visible(),locked,e.reference(),e.direction(),e.properties()):e).toList());}
++    /** Remove selecao de objetos e colisoes, respeitando bloqueios. */
++    public static WorldDocument delete(WorldDocument d,Set<String> ids){guard(d,ids);return d.withElements(d.elements().stream().filter(e->!ids.contains(e.id())).toList()).withHitboxes(d.hitboxes().stream().filter(e->!ids.contains(e.id())).toList());}
++    /** Altera ordem dentro das camadas sem alterar suas prioridades. */
++    public static WorldDocument order(WorldDocument d,Set<String> ids,boolean front){guard(d,ids);var next=new ArrayList<WorldDocument.Element>();d.elements().stream().filter(e->ids.contains(e.id())!=front).forEach(next::add);d.elements().stream().filter(e->ids.contains(e.id())==front).forEach(next::add);return d.withElements(next);}
++}
+--- before/server/src/main/java/com/projetok/studio/GroupTools.java
++++ after/server/src/main/java/com/projetok/studio/GroupTools.java
+@@ -0,0 +1,19 @@
++package com.projetok.studio;
++import javax.swing.*;
++import java.awt.*;
++import java.util.*;
++
++/** Comandos de grupo e selecao explicita, inclusive de objetos bloqueados. */
++final class GroupTools {
++    GroupTools(WorldStudio ui){
++        ui.action("Selecao","Selecionar por ID",()->{var model=new DefaultListModel<String>();ui.document.elements().forEach(e->model.addElement(e.id()+" | "+e.kind()+" | "+e.layer()+(e.locked()?" [bloqueado]":"")));ui.document.hitboxes().forEach(b->model.addElement(b.id()+" | colisao"));JList<String> list=new JList<>(model);if(JOptionPane.showConfirmDialog(ui,new JScrollPane(list),"Selecao multipla",JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION){ui.canvas.selected.clear();list.getSelectedValuesList().forEach(s->ui.canvas.selected.add(s.split(" ")[0]));ui.canvas.repaint();}});
++        ui.action("Selecao","Mover grupo",()->{String value=JOptionPane.showInputDialog(ui,"Deslocamento dx,dy (pixels)","32,0");if(value==null)return;String[] xy=value.split(",");if(xy.length!=2)throw new IllegalArgumentException("Informe dx,dy");ui.change(GroupEditing.move(ui.document,ui.canvas.selected,Integer.parseInt(xy[0].trim()),Integer.parseInt(xy[1].trim())));});
++        ui.action("Selecao","Duplicar",()->ui.change(EditorOperations.paste(ui.document,EditorOperations.copy(ui.document,ui.canvas.selected),ui.lastCursor.x,ui.lastCursor.y)));
++        ui.action("Selecao","Excluir",()->ui.change(GroupEditing.delete(ui.document,ui.canvas.selected)));
++        ui.action("Selecao","Bloquear",()->ui.change(GroupEditing.lock(ui.document,ui.canvas.selected,true)));
++        ui.action("Selecao","Desbloquear",()->ui.change(GroupEditing.lock(ui.document,ui.canvas.selected,false)));
++        ui.action("Selecao","Trazer para frente",()->ui.change(GroupEditing.order(ui.document,ui.canvas.selected,true)));
++        ui.action("Selecao","Enviar para tras",()->ui.change(GroupEditing.order(ui.document,ui.canvas.selected,false)));
++        for(boolean horizontal:new boolean[]{true,false})for(boolean distribute:new boolean[]{false,true})ui.action("Selecao",(distribute?"Distribuir ":"Alinhar ")+(horizontal?"horizontal":"vertical"),()->ui.change(GroupEditing.arrange(ui.document,ui.canvas.selected,horizontal,distribute)));
++    }
++}
+--- before/server/src/main/java/com/projetok/studio/WorldStudio.java
++++ after/server/src/main/java/com/projetok/studio/WorldStudio.java
+@@ -53,6 +53,7 @@
+         new PlaytestTools(this);
+         new TerrainTools(this);
+         new PrefabTools(this);
++        new GroupTools(this);
+     }
+     void change(WorldDocument next){document=history.commit(Autotiling.refresh(next));if(layerTools!=null)layerTools.refresh();canvas.repaint();}
+     void inspectSelection(){details.setText(document.elements().stream().filter(e->canvas.selected.contains(e.id())).map(Object::toString).collect(java.util.stream.Collectors.joining("\n")));}
+--- before/docs/TASK-105-RELATORIO-FINAL.md
++++ after/docs/TASK-105-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-105 - Corujao II
++
++Estado: **validada**.
++
++Edicao atomica em grupo: mover, duplicar elementos, excluir elementos/colisoes, alinhar, distribuir, ordenar, bloquear e desbloquear por selecao explicita. Portais continuam no editor proprio.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-105/corujao-ii/`. Logs da suite: `docs/TASK-studio-105-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-105-TESTES.md
++++ after/docs/TASK-105-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-105 - Corujao II
++
++Comando: `python tools/qualidade.py --offline --task studio-105`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 358,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-105.md
++++ after/docs/TASK-105.md
+@@ -0,0 +1,3 @@
++# TASK-105 - Corujao II
++
++Edicao atomica em grupo: mover, duplicar elementos, excluir elementos/colisoes, alinhar, distribuir, ordenar, bloquear e desbloquear por selecao explicita. Portais continuam no editor proprio.

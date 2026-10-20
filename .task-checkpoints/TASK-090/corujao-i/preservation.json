@@ -1,0 +1,27 @@
+{
+  "changed": [
+    "server/src/main/java/com/projetok/prototype/rpg/RpgBossOverlay.java",
+    "server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java",
+    "tools/auditar_corujao.py",
+    "tools/build-rpg-sprites-portable.ps1",
+    "docs/CORUJAO-I-CONTINUIDADE.md",
+    "docs/CORUJAO-I-DEPLOY.json",
+    "docs/CORUJAO-I-HOMOLOGACAO.md",
+    "docs/CORUJAO-I-INVENTARIO.md",
+    "docs/CORUJAO-I-PENDENCIAS.md",
+    "docs/CORUJAO-I-PROGRESSO.json",
+    "docs/CORUJAO-I-RELATORIO-FINAL.md",
+    "docs/TASK-090-RELATORIO-FINAL.md",
+    "docs/TASK-090-TESTES.md",
+    "docs/TASK-090.md",
+    "docs/TASK-corujao-090-java-version.log",
+    "docs/TASK-corujao-090-java.log",
+    "docs/TASK-corujao-090-maven-version.log",
+    "docs/TASK-corujao-090-python-version.log",
+    "docs/TASK-corujao-090-python.log",
+    "docs/TASK-corujao-090-qualidade.json",
+    "docs/TASK-corujao-090-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

@@ -1,0 +1,24 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/SpawnAreasTest.java",
+    "server/src/main/java/com/projetok/studio/SpawnAreas.java",
+    "server/src/main/java/com/projetok/studio/SpawnTools.java",
+    "server/src/main/java/com/projetok/studio/StudioExport.java",
+    "server/src/main/java/com/projetok/studio/StudioMapRenderer.java",
+    "server/src/main/java/com/projetok/studio/WorldCanvas.java",
+    "server/src/main/java/com/projetok/studio/WorldStudio.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-109-RELATORIO-FINAL.md",
+    "docs/TASK-109-TESTES.md",
+    "docs/TASK-109.md",
+    "docs/TASK-studio-109-java-version.log",
+    "docs/TASK-studio-109-java.log",
+    "docs/TASK-studio-109-maven-version.log",
+    "docs/TASK-studio-109-python-version.log",
+    "docs/TASK-studio-109-python.log",
+    "docs/TASK-studio-109-qualidade.json",
+    "docs/TASK-studio-109-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

@@ -1,0 +1,120 @@
+--- before/server/src/test/java/com/projetok/studio/NavigationAnalysisTest.java
++++ after/server/src/test/java/com/projetok/studio/NavigationAnalysisTest.java
+@@ -0,0 +1,7 @@
++package com.projetok.studio;
++import org.junit.jupiter.api.Test;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++class NavigationAnalysisTest {
++    @Test void wallSeparatesSamplesAndLargeMapIsBounded(){var e=new WorldDocument.Element("player",WorldDocument.Kind.PLAYER,"","",new WorldDocument.Crop(0,0,32,32),48,48,32,32,"interaction",true,false,"","FRONT",Map.of());var d=WorldDocument.empty("mapa",256,256).withElements(List.of(e));assertEquals(0,NavigationAnalysis.analyze(d).isolated());var blocked=d.withHitboxes(List.of(new WorldDocument.Hitbox("wall",112,0,32,256,true,"collision")));assertTrue(NavigationAnalysis.analyze(blocked).isolated()>0);var large=NavigationAnalysis.analyze(WorldDocument.empty("grande",8192,8192));assertTrue(large.cols()*large.rows()<=65536);}
++}
+--- before/server/src/main/java/com/projetok/studio/MinimapPanel.java
++++ after/server/src/main/java/com/projetok/studio/MinimapPanel.java
+@@ -0,0 +1,12 @@
++package com.projetok.studio;
++import javax.swing.*;
++import java.awt.*;
++import java.awt.event.*;
++import java.util.function.*;
++
++/** Visao geral de dados reais, com navegacao pelo clique e analise opcional aproximada. */
++final class MinimapPanel extends JPanel {
++    final Supplier<WorldDocument> source;final Consumer<Point> center;boolean collisions=true;NavigationAnalysis.Result navigation;
++    MinimapPanel(Supplier<WorldDocument> source,Consumer<Point> center){this.source=source;this.center=center;setPreferredSize(new Dimension(640,420));addMouseListener(new MouseAdapter(){public void mousePressed(MouseEvent e){var d=source.get();double scale=Math.min(getWidth()/(double)d.width(),getHeight()/(double)d.height());int x=(int)(e.getX()/scale),y=(int)(e.getY()/scale);if(x<d.width()&&y<d.height())center.accept(new Point(x,y));}});}
++    @Override protected void paintComponent(Graphics original){super.paintComponent(original);var d=source.get();Graphics2D g=(Graphics2D)original.create();try{double scale=Math.min(getWidth()/(double)d.width(),getHeight()/(double)d.height());g.scale(scale,scale);g.setColor(new Color(43,70,59));g.fillRect(0,0,d.width(),d.height());if(navigation!=null){g.setColor(new Color(220,100,35,120));for(int y=0;y<navigation.rows();y++)for(int x=0;x<navigation.cols();x++)if(navigation.isolated(x,y))g.fillRect(x*navigation.cell(),y*navigation.cell(),navigation.cell(),navigation.cell());}if(collisions){g.setColor(Color.RED);for(var b:d.hitboxes())if(b.solid())g.fillRect(b.x(),b.y(),b.width(),b.height());}for(var e:d.elements()){g.setColor(switch(e.kind()){case PLAYER->Color.CYAN;case ENEMY->Color.ORANGE;case NPC->Color.YELLOW;default->Color.GRAY;});g.fillRect(e.x(),e.y(),Math.max(8,e.width()),Math.max(8,e.height()));}g.setColor(Color.MAGENTA);for(var p:d.portals())g.fillOval(p.x()-10,p.y()-10,20,20);}finally{g.dispose();}}
++}
+--- before/server/src/main/java/com/projetok/studio/NavigationAnalysis.java
++++ after/server/src/main/java/com/projetok/studio/NavigationAnalysis.java
+@@ -0,0 +1,29 @@
++package com.projetok.studio;
++import com.projetok.domain.entity.*;
++import com.projetok.domain.movement.*;
++import java.util.*;
++
++/** Aproximacao de navegacao amostrada; conectividade nao equivale a jogabilidade. */
++public final class NavigationAnalysis {
++    /** Grade de amostras com consultas protegidas, sem expor bitsets mutaveis. */
++    public static final class Result {
++        private final int cell,cols,rows;private final BitSet free,reached;
++        Result(int cell,int cols,int rows,BitSet free,BitSet reached){this.cell=cell;this.cols=cols;this.rows=rows;this.free=(BitSet)free.clone();this.reached=(BitSet)reached.clone();}
++        /** Tamanho de celula aproximada em pixels. */
++        public int cell(){return cell;}
++        /** Colunas amostradas. */
++        public int cols(){return cols;}
++        /** Linhas amostradas. */
++        public int rows(){return rows;}
++        /** Quantidade de amostras livres fora do componente do spawn. */
++        public int isolated(){return free.cardinality()-reached.cardinality();}
++        /** Consulta de amostra potencialmente isolada. */
++        public boolean isolated(int x,int y){int i=y*cols+x;return free.get(i)&&!reached.get(i);}
++        /** Quantidade de amostras fisicamente livres. */
++        public int freeCount(){return free.cardinality();}
++    }
++    private NavigationAnalysis(){}
++    /** BFS em quatro vizinhos, celulas >=32, ate 65536 amostras, raio real 18. */
++    public static Result analyze(WorldDocument d){int cell=Math.max(32,(Math.max(d.width(),d.height())+255)/256),cols=(d.width()+cell-1)/cell,rows=(d.height()+cell-1)/cell;BitSet free=new BitSet(cols*rows),reached=new BitSet(cols*rows);var physics=new CollisionService();var space=StudioGeometry.space(d);var body=new GameEntity(1,"Amostra",new Position(0,0)){};for(int y=0;y<rows;y++)for(int x=0;x<cols;x++)if(physics.isFree(body,x*cell+cell/2f,y*cell+cell/2f,18,space))free.set(y*cols+x);
++        var spawn=d.elements().stream().filter(e->e.kind()==WorldDocument.Kind.PLAYER).findFirst();if(spawn.isPresent()){int start=spawn.get().y()/cell*cols+spawn.get().x()/cell;ArrayDeque<Integer> queue=new ArrayDeque<>();if(free.get(start)){queue.add(start);reached.set(start);}while(!queue.isEmpty()){int i=queue.removeFirst(),x=i%cols,y=i/cols;int[][] offsets={{-1,0},{1,0},{0,-1},{0,1}};for(var offset:offsets){int nx=x+offset[0],ny=y+offset[1],next=ny*cols+nx;if(nx<0||nx>=cols||ny<0||ny>=rows||reached.get(next)||!free.get(next))continue;if(!physics.isFree(body,(x+nx)*cell/2f+cell/2f,(y+ny)*cell/2f+cell/2f,18,space))continue;reached.set(next);queue.add(next);}}}return new Result(cell,cols,rows,free,reached);}
++}
+--- before/server/src/main/java/com/projetok/studio/NavigationTools.java
++++ after/server/src/main/java/com/projetok/studio/NavigationTools.java
+@@ -0,0 +1,8 @@
++package com.projetok.studio;
++import javax.swing.*;
++import java.awt.*;
++final class NavigationTools {
++    NavigationTools(WorldStudio ui){ui.action("Ver","Minimapa e navegacao aproximada",()->{
++        var doc=ui.document;var map=new MinimapPanel(()->doc,p->{ui.canvas.viewport=new StudioViewport(ui.canvas.viewport.zoom(),ui.canvas.getWidth()/2d-p.x*ui.canvas.viewport.zoom(),ui.canvas.getHeight()/2d-p.y*ui.canvas.viewport.zoom());ui.canvas.repaint();});JDialog dialog=new JDialog(ui,"Minimapa | Analise nao garante jogabilidade",false);JPanel panel=new JPanel(new BorderLayout());panel.add(map);JPanel controls=new JPanel();JCheckBox collisions=new JCheckBox("Colisoes",true);collisions.addActionListener(e->{map.collisions=collisions.isSelected();map.repaint();});JButton analyze=new JButton("Analisar amostras");JLabel result=new JLabel("Clique no mapa para centralizar o canvas");controls.add(collisions);controls.add(analyze);panel.add(controls,BorderLayout.NORTH);panel.add(result,BorderLayout.SOUTH);analyze.addActionListener(e->{analyze.setEnabled(false);new SwingWorker<NavigationAnalysis.Result,Void>(){protected NavigationAnalysis.Result doInBackground(){return NavigationAnalysis.analyze(doc);}protected void done(){try{map.navigation=get();result.setText("Grade "+map.navigation.cell()+" px; "+map.navigation.isolated()+" amostras potencialmente isoladas. Revise no playtest.");map.repaint();}catch(Exception error){ui.error(error);}finally{analyze.setEnabled(true);}}}.execute();});dialog.setContentPane(panel);dialog.pack();dialog.setLocationRelativeTo(ui);dialog.setVisible(true);
++    });}
++}
+--- before/server/src/main/java/com/projetok/studio/WorldStudio.java
++++ after/server/src/main/java/com/projetok/studio/WorldStudio.java
+@@ -59,6 +59,7 @@
+         new NpcTools(this);
+         new SpawnTools(this);
+         new EventTools(this);
++        new NavigationTools(this);
+     }
+     void change(WorldDocument next){document=history.commit(Autotiling.refresh(next));if(layerTools!=null)layerTools.refresh();canvas.repaint();}
+     void inspectSelection(){details.setText(document.elements().stream().filter(e->canvas.selected.contains(e.id())).map(Object::toString).collect(java.util.stream.Collectors.joining("\n")));}
+--- before/docs/TASK-111-RELATORIO-FINAL.md
++++ after/docs/TASK-111-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-111 - Corujao II
++
++Estado: **validada-com-limitacoes**.
++
++Minimapa navegavel por clique com portais, spawns, entidades e colisoes opcionais; grafo regional preservado. BFS de quatro vizinhos amostra geometria real, raio 18, grade >=32 e ate 65536 pontos. Resultado indica isolamento potencial, nao certifica caminhos nem jogabilidade.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-111/corujao-ii/`. Logs da suite: `docs/TASK-studio-111-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-111-TESTES.md
++++ after/docs/TASK-111-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-111 - Corujao II
++
++Comando: `python tools/qualidade.py --offline --task studio-111`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 364,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-111.md
++++ after/docs/TASK-111.md
+@@ -0,0 +1,3 @@
++# TASK-111 - Corujao II
++
++Minimapa navegavel por clique com portais, spawns, entidades e colisoes opcionais; grafo regional preservado. BFS de quatro vizinhos amostra geometria real, raio 18, grade >=32 e ate 65536 pontos. Resultado indica isolamento potencial, nao certifica caminhos nem jogabilidade.

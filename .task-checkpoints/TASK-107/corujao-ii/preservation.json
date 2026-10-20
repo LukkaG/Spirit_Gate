@@ -1,0 +1,22 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/EnvironmentPreviewTest.java",
+    "server/src/main/java/com/projetok/studio/EnvironmentPreview.java",
+    "server/src/main/java/com/projetok/studio/EnvironmentTools.java",
+    "server/src/main/java/com/projetok/studio/WorldCanvas.java",
+    "server/src/main/java/com/projetok/studio/WorldStudio.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-107-RELATORIO-FINAL.md",
+    "docs/TASK-107-TESTES.md",
+    "docs/TASK-107.md",
+    "docs/TASK-studio-107-java-version.log",
+    "docs/TASK-studio-107-java.log",
+    "docs/TASK-studio-107-maven-version.log",
+    "docs/TASK-studio-107-python-version.log",
+    "docs/TASK-studio-107-python.log",
+    "docs/TASK-studio-107-qualidade.json",
+    "docs/TASK-studio-107-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

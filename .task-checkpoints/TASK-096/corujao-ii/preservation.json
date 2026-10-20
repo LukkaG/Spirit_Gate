@@ -1,0 +1,23 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/StudioGeometryTest.java",
+    "server/src/main/java/com/projetok/studio/CollisionTools.java",
+    "server/src/main/java/com/projetok/studio/PaintTools.java",
+    "server/src/main/java/com/projetok/studio/StudioGeometry.java",
+    "server/src/main/java/com/projetok/studio/WorldCanvas.java",
+    "server/src/main/java/com/projetok/studio/WorldStudio.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-096-RELATORIO-FINAL.md",
+    "docs/TASK-096-TESTES.md",
+    "docs/TASK-096.md",
+    "docs/TASK-studio-096-java-version.log",
+    "docs/TASK-studio-096-java.log",
+    "docs/TASK-studio-096-maven-version.log",
+    "docs/TASK-studio-096-python-version.log",
+    "docs/TASK-studio-096-python.log",
+    "docs/TASK-studio-096-qualidade.json",
+    "docs/TASK-studio-096-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

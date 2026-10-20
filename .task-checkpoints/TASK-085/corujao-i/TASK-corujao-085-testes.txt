@@ -1,0 +1,14 @@
+{
+  "exitCode": 4,
+  "checks": {
+    "java": {
+      "exitCode": 1,
+      "category": 4
+    },
+    "python": {
+      "exitCode": 0,
+      "category": 0,
+      "tests": 30
+    }
+  }
+}

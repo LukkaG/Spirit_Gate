@@ -1,0 +1,3 @@
+{
+"java":"17.0.20.1","processors":16,"assets":248,"indexMs":766.4634,"thumbnailPixelBytes":4063232,"residentPixelBytes":93636,"elements":12000,"paintSamplesPerZoom":40,"paint":[{"zoom":0.25,"p50Ms":12.1116,"p95Ms":20.0922},{"zoom":0.75,"p50Ms":3.2475,"p95Ms":5.6375},{"zoom":2.00,"p50Ms":1.8547,"p95Ms":3.5520},{"zoom":8.00,"p50Ms":1.4046,"p95Ms":1.6545}],"saveMs":8449.4071,"loadMs":52.1545,"undoRedo1000Ms":5.5877,"zoomPan100000Ms":8.0558,"windowOpenMs":267.1064,"mapBytes":2526225,"filesystemCache":"not-controlled","humanApproved":false
+}

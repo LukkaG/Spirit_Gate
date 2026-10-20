@@ -1,0 +1,499 @@
+--- before/server/src/test/java/com/projetok/rpg/CorujaoBossThreatTest.java
++++ after/server/src/test/java/com/projetok/rpg/CorujaoBossThreatTest.java
+@@ -0,0 +1,20 @@
++package com.projetok.rpg;
++import com.projetok.domain.movement.CollisionService;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++class CorujaoBossThreatTest {
++    @Test void preparationTimeAndExecutionMatchRealBoss() {
++        var w=BossEncounterTest.ruins();w.tick(0,0);
++        var boss=w.snapshot().enemies().stream().filter(EnemyService.View::boss).findFirst().orElseThrow();
++        assertNotNull(boss.threat());assertEquals(110,boss.threat().radius());assertEquals(30,boss.threat().remainingTicks());
++        assertEquals(boss.threat(),RpgWorld.restore(w.save()).snapshot().enemies().stream().filter(EnemyService.View::boss).findFirst().orElseThrow().threat());
++        int hp=w.save().hp();for(int i=0;i<29;i++)w.tick(0,0);assertEquals(hp,w.save().hp());
++        w.tick(0,0);assertEquals(hp-14,w.save().hp());
++        assertNull(w.snapshot().enemies().stream().filter(EnemyService.View::boss).findFirst().orElseThrow().threat());
++    }
++    @Test void warningRespectsRangeAndTheSameWallOcclusionAsCombat() {
++        var geometry=new CollisionService.Space(960,640,java.util.List.of(new CollisionService.Obstacle(380,180,120,120)),java.util.List.of());
++        var t=new RpgBossThreat(519,260,110,18,false,geometry);
++        assertFalse(t.contains(460,319));assertTrue(t.contains(550,320));assertFalse(t.contains(700,320));
++    }
++}
+--- before/server/src/main/java/com/projetok/rpg/EnemyService.java
++++ after/server/src/main/java/com/projetok/rpg/EnemyService.java
+@@ -1,109 +1,115 @@
+-package com.projetok.rpg;
+-import com.projetok.domain.entity.*;
+-import com.projetok.domain.movement.*;
+-import java.util.*;
+-import java.io.*;
+-
+-/** Populacao finita definida em conteudo; estado persistente de cada spawn. */
+-public final class EnemyService {
+-    public record Definition(String id,int hp,int attack,int speed,int aggro,int leash,int respawn) { }
+-    public static final class Enemy extends GameEntity {
+-        final String spawn,region; final Definition definition; final Position home;
+-        int hp; long generation=1,readyTick,attackTick; String behavior="PATROL";
+-        Enemy(int id,String spawn,String region,Definition definition,Position home,String name) {
+-            super(id,name,home);this.spawn=spawn;this.region=region;this.definition=definition;this.home=home;hp=definition.hp();
+-        }
+-    }
+-    public record View(int id,String spawn,String name,float x,float y,int hp,int maxHp,String state,boolean boss) { }
+-    private final List<Enemy> enemies=new ArrayList<>();
+-    public EnemyService(RpgContent content,CollisionService.Space space) {
+-        Properties definitions=read("enemies"),spawns=read("spawns"); Map<String,Definition> types=new TreeMap<>();
+-        for(String id:definitions.stringPropertyNames()) {
+-            String[] v=definitions.getProperty(id).split("\\|");if(v.length!=6)throw new IllegalArgumentException("Inimigo invalido");
+-            content.get("enemy",id); int[] n=Arrays.stream(v).mapToInt(Integer::parseInt).toArray();
+-            if(n[0]<1||n[0]>10000||n[1]<1||n[1]>100||n[2]<1||n[2]>200||n[3]<40||n[3]>800||n[4]<n[3]||n[4]>900||n[5]<0||n[5]>9000)throw new IllegalArgumentException("Parametros PvE invalidos");
+-            types.put(id,new Definition(id,n[0],n[1],n[2],n[3],n[4],n[5]));
+-        }
+-        if(spawns.size()>64)throw new IllegalArgumentException("Populacao excessiva"); int entityId=100;
+-        for(String spawn:new TreeSet<>(spawns.stringPropertyNames())) {
+-            if(!spawn.matches("[a-z][a-z0-9_]{0,30}"))throw new IllegalArgumentException("Spawn invalido");
+-            String[] v=spawns.getProperty(spawn).split("\\|");if(v.length!=4)throw new IllegalArgumentException("Spawn malformado");
+-            var base=content.get("enemy",v[0]);content.get("region",v[1]);Definition definition=types.get(v[0]);
+-            if(definition==null||!base.region().equals(v[1]))throw new IllegalArgumentException("Spawn em regiao proibida");
+-            var enemy=new Enemy(entityId++,spawn,v[1],definition,new Position(Float.parseFloat(v[2]),Float.parseFloat(v[3])),base.name());
+-            if(!new CollisionService().isFree(enemy,enemy.home.x(),enemy.home.y(),19,space))throw new IllegalArgumentException("Spawn obstruido");
+-            enemies.add(enemy);
+-        }
+-    }
+-    private static Properties read(String name) {
+-        try(InputStream in=EnemyService.class.getResourceAsStream("/rpg/"+name+".properties")) {
+-            if(in==null)throw new IOException("Conteudo ausente");Properties p=new Properties();p.load(in);return p;
+-        }catch(IOException e){throw new IllegalStateException(e);}
+-    }
+-    List<Enemy> current(String region) { return enemies.stream().filter(e->e.region.equals(region)).toList(); }
+-    public List<View> views(String region) { return current(region).stream().map(e->new View(e.getId(),e.spawn,e.getName(),e.getPosition().x(),e.getPosition().y(),e.hp,e.definition.hp(),e.hp==0?"DEAD":e.behavior,e.definition.id().equals("warden"))).toList(); }
+-    void respawn(long tick,String region) {
+-        for(Enemy e:current(region))if(e.hp==0&&e.definition.respawn()>0&&tick>=e.readyTick){e.hp=e.definition.hp();e.generation++;e.setPosition(e.home);e.behavior="PATROL";}
+-    }
+-    void update(String region,long tick,Position player,boolean alive,MovementService movement,CollisionService.Space space,java.util.function.IntConsumer damage,java.util.function.Predicate<Position> visible,boolean bossUnlocked) {
+-        for(Enemy e:current(region)) {
+-            if(e.hp==0)continue;
+-            if(e.definition.id().equals("warden")&&!bossUnlocked){e.behavior="DORMANT";continue;}
+-            if(e.behavior.equals("DORMANT"))e.behavior="PATROL";
+-            double d=distance(e.getPosition(),player),homeDistance=distance(e.getPosition(),e.home);
+-            if(e.definition.id().equals("warden") && alive) {
+-                boolean enraged=e.hp*2<=e.definition.hp();
+-                if(e.behavior.equals("PREPARE")) {
+-                    if(tick>=e.attackTick) {
+-                        if(d<=(enraged?135:110)&&visible.test(e.getPosition()))damage.accept(e.definition.attack()*(enraged?2:1));
+-                        e.behavior="RECOVER";e.attackTick=tick+45;
+-                    }
+-                    continue;
+-                }
+-                if(e.behavior.equals("RECOVER")) { if(tick<e.attackTick)continue;e.behavior="CHASE";e.attackTick=tick+45; }
+-                if(d<=150&&tick>=e.attackTick) { e.behavior="PREPARE";e.attackTick=tick+(enraged?18:30);continue; }
+-            }
+-            if(!alive || homeDistance>e.definition.leash() || d>e.definition.aggro()*1.4) e.behavior="RETURN";
+-            else if(d<=e.definition.aggro()&&visible.test(e.getPosition())&&!e.behavior.equals("RETURN"))e.behavior="CHASE";
+-            if(e.behavior.equals("RETURN")) {
+-                if(homeDistance<4){e.setPosition(e.home);e.behavior="PATROL";}
+-                else moveToward(e,e.home,e.definition.speed(),movement,space);
+-            } else if(e.behavior.equals("CHASE")||e.behavior.equals("ATTACK")) {
+-                if(d<=46 && visible.test(e.getPosition())) {
+-                    e.behavior="ATTACK";
+-                    if(tick>=e.attackTick){damage.accept(e.definition.attack());e.attackTick=tick+36;}
+-                } else {e.behavior="CHASE";moveToward(e,player,e.definition.speed(),movement,space);}
+-            } else {
+-                Position patrol=new Position(e.home.x()+(tick/90%2==0?24:-24),e.home.y());
+-                moveToward(e,patrol,e.definition.speed()*0.3f,movement,space);
+-            }
+-        }
+-    }
+-    private static double distance(Position a,Position b){return Math.hypot(a.x()-b.x(),a.y()-b.y());}
+-    private static void moveToward(Enemy e,Position target,float speed,MovementService movement,CollisionService.Space space) {
+-        Position p=e.getPosition(),direction=movement.direction(target.x()-p.x(),target.y()-p.y());
+-        // Limita o ultimo passo ao destino para evitar oscilacao em torno do ponto de patrulha.
+-        float step=(float)Math.min(speed/30,distance(p,target));
+-        movement.moveContinuous(e,direction.x()*step,direction.y()*step,19,space);
+-    }
+-    Set<String> saveFlags() {
+-        Set<String> result=new TreeSet<>();
+-        for(Enemy e:enemies)result.add("mob:"+e.spawn+":"+e.hp+":"+e.getPosition().x()+":"+e.getPosition().y()+":"+e.generation+":"+e.readyTick+":"+e.behavior+":"+e.attackTick);
+-        return result;
+-    }
+-    void restore(Set<String> flags,CollisionService.Space space) {
+-        Set<String> seen=new HashSet<>();
+-        for(String f:flags)if(f.startsWith("mob:")) {
+-            String[] v=f.split(":");if((v.length!=7&&v.length!=9)||!seen.add(v[1]))throw new IllegalArgumentException("Estado de mob invalido");
+-            Enemy e=enemies.stream().filter(m->m.spawn.equals(v[1])).findFirst().orElseThrow(()->new IllegalArgumentException("Spawn ausente"));
+-            e.hp=Integer.parseInt(v[2]);e.generation=Long.parseLong(v[5]);e.readyTick=Long.parseLong(v[6]);
+-            float x=Float.parseFloat(v[3]),y=Float.parseFloat(v[4]);
+-            if(e.hp<0||e.hp>e.definition.hp()||e.generation<1||e.readyTick<0||!new CollisionService().isFree(e,x,y,19,space))throw new IllegalArgumentException("Estado de inimigo invalido");
+-            e.setPosition(new Position(x,y));
+-            if(v.length==9) {
+-                if(!Set.of("PATROL","CHASE","ATTACK","RETURN","PREPARE","RECOVER","DORMANT").contains(v[7]))throw new IllegalArgumentException("IA invalida");
+-                e.behavior=v[7];e.attackTick=Long.parseLong(v[8]);if(e.attackTick<0)throw new IllegalArgumentException("Recarga invalida");
+-            }
+-        }
+-    }
+-}
++package com.projetok.rpg;
++import com.projetok.domain.entity.*;
++import com.projetok.domain.movement.*;
++import java.util.*;
++import java.io.*;
++
++/** Populacao finita definida em conteudo; estado persistente de cada spawn. */
++public final class EnemyService {
++    public record Definition(String id,int hp,int attack,int speed,int aggro,int leash,int respawn) { }
++    public static final class Enemy extends GameEntity {
++        final String spawn,region; final Definition definition; final Position home;
++        int hp; long generation=1,readyTick,attackTick; String behavior="PATROL";
++        Enemy(int id,String spawn,String region,Definition definition,Position home,String name) {
++            super(id,name,home);this.spawn=spawn;this.region=region;this.definition=definition;this.home=home;hp=definition.hp();
++        }
++    }
++    public record View(int id,String spawn,String name,float x,float y,int hp,int maxHp,String state,boolean boss,RpgBossThreat threat) { }
++    private final CollisionService.Space geometry;
++    private final List<Enemy> enemies=new ArrayList<>();
++    public EnemyService(RpgContent content,CollisionService.Space space) {
++        geometry=space;
++        Properties definitions=read("enemies"),spawns=read("spawns"); Map<String,Definition> types=new TreeMap<>();
++        for(String id:definitions.stringPropertyNames()) {
++            String[] v=definitions.getProperty(id).split("\\|");if(v.length!=6)throw new IllegalArgumentException("Inimigo invalido");
++            content.get("enemy",id); int[] n=Arrays.stream(v).mapToInt(Integer::parseInt).toArray();
++            if(n[0]<1||n[0]>10000||n[1]<1||n[1]>100||n[2]<1||n[2]>200||n[3]<40||n[3]>800||n[4]<n[3]||n[4]>900||n[5]<0||n[5]>9000)throw new IllegalArgumentException("Parametros PvE invalidos");
++            types.put(id,new Definition(id,n[0],n[1],n[2],n[3],n[4],n[5]));
++        }
++        if(spawns.size()>64)throw new IllegalArgumentException("Populacao excessiva"); int entityId=100;
++        for(String spawn:new TreeSet<>(spawns.stringPropertyNames())) {
++            if(!spawn.matches("[a-z][a-z0-9_]{0,30}"))throw new IllegalArgumentException("Spawn invalido");
++            String[] v=spawns.getProperty(spawn).split("\\|");if(v.length!=4)throw new IllegalArgumentException("Spawn malformado");
++            var base=content.get("enemy",v[0]);content.get("region",v[1]);Definition definition=types.get(v[0]);
++            if(definition==null||!base.region().equals(v[1]))throw new IllegalArgumentException("Spawn em regiao proibida");
++            var enemy=new Enemy(entityId++,spawn,v[1],definition,new Position(Float.parseFloat(v[2]),Float.parseFloat(v[3])),base.name());
++            if(!new CollisionService().isFree(enemy,enemy.home.x(),enemy.home.y(),19,space))throw new IllegalArgumentException("Spawn obstruido");
++            enemies.add(enemy);
++        }
++    }
++    private static Properties read(String name) {
++        try(InputStream in=EnemyService.class.getResourceAsStream("/rpg/"+name+".properties")) {
++            if(in==null)throw new IOException("Conteudo ausente");Properties p=new Properties();p.load(in);return p;
++        }catch(IOException e){throw new IllegalStateException(e);}
++    }
++    List<Enemy> current(String region) { return enemies.stream().filter(e->e.region.equals(region)).toList(); }
++    private long viewTick;
++    public List<View> views(String region) { return views(region,viewTick); }
++    /** Publica aviso com o tick do mundo, inclusive imediatamente apos retomar um save. */
++    public List<View> views(String region,long tick) { return current(region).stream().map(e->new View(e.getId(),e.spawn,e.getName(),e.getPosition().x(),e.getPosition().y(),e.hp,e.definition.hp(),e.hp==0?"DEAD":e.behavior,e.definition.id().equals("warden"),e.hp>0&&e.behavior.equals("PREPARE")?new RpgBossThreat(e.getPosition().x(),e.getPosition().y(),e.hp*2<=e.definition.hp()?135:110,Math.max(0,e.attackTick-tick),e.hp*2<=e.definition.hp(),geometry):null)).toList(); }
++    void respawn(long tick,String region) {
++        for(Enemy e:current(region))if(e.hp==0&&e.definition.respawn()>0&&tick>=e.readyTick){e.hp=e.definition.hp();e.generation++;e.setPosition(e.home);e.behavior="PATROL";}
++    }
++    void update(String region,long tick,Position player,boolean alive,MovementService movement,CollisionService.Space space,java.util.function.IntConsumer damage,java.util.function.Predicate<Position> visible,boolean bossUnlocked) {
++        viewTick=tick;
++        for(Enemy e:current(region)) {
++            if(e.hp==0)continue;
++            if(e.definition.id().equals("warden")&&!bossUnlocked){e.behavior="DORMANT";continue;}
++            if(e.behavior.equals("DORMANT"))e.behavior="PATROL";
++            double d=distance(e.getPosition(),player),homeDistance=distance(e.getPosition(),e.home);
++            if(e.definition.id().equals("warden") && alive) {
++                boolean enraged=e.hp*2<=e.definition.hp();
++                if(e.behavior.equals("PREPARE")) {
++                    if(tick>=e.attackTick) {
++                        if(d<=(enraged?135:110)&&visible.test(e.getPosition()))damage.accept(e.definition.attack()*(enraged?2:1));
++                        e.behavior="RECOVER";e.attackTick=tick+45;
++                    }
++                    continue;
++                }
++                if(e.behavior.equals("RECOVER")) { if(tick<e.attackTick)continue;e.behavior="CHASE";e.attackTick=tick+45; }
++                if(d<=150&&tick>=e.attackTick) { e.behavior="PREPARE";e.attackTick=tick+(enraged?18:30);continue; }
++            }
++            if(!alive || homeDistance>e.definition.leash() || d>e.definition.aggro()*1.4) e.behavior="RETURN";
++            else if(d<=e.definition.aggro()&&visible.test(e.getPosition())&&!e.behavior.equals("RETURN"))e.behavior="CHASE";
++            if(e.behavior.equals("RETURN")) {
++                if(homeDistance<4){e.setPosition(e.home);e.behavior="PATROL";}
++                else moveToward(e,e.home,e.definition.speed(),movement,space);
++            } else if(e.behavior.equals("CHASE")||e.behavior.equals("ATTACK")) {
++                if(d<=46 && visible.test(e.getPosition())) {
++                    e.behavior="ATTACK";
++                    if(tick>=e.attackTick){damage.accept(e.definition.attack());e.attackTick=tick+36;}
++                } else {e.behavior="CHASE";moveToward(e,player,e.definition.speed(),movement,space);}
++            } else {
++                Position patrol=new Position(e.home.x()+(tick/90%2==0?24:-24),e.home.y());
++                moveToward(e,patrol,e.definition.speed()*0.3f,movement,space);
++            }
++        }
++    }
++    private static double distance(Position a,Position b){return Math.hypot(a.x()-b.x(),a.y()-b.y());}
++    private static void moveToward(Enemy e,Position target,float speed,MovementService movement,CollisionService.Space space) {
++        Position p=e.getPosition(),direction=movement.direction(target.x()-p.x(),target.y()-p.y());
++        // Limita o ultimo passo ao destino para evitar oscilacao em torno do ponto de patrulha.
++        float step=(float)Math.min(speed/30,distance(p,target));
++        movement.moveContinuous(e,direction.x()*step,direction.y()*step,19,space);
++    }
++    Set<String> saveFlags() {
++        Set<String> result=new TreeSet<>();
++        for(Enemy e:enemies)result.add("mob:"+e.spawn+":"+e.hp+":"+e.getPosition().x()+":"+e.getPosition().y()+":"+e.generation+":"+e.readyTick+":"+e.behavior+":"+e.attackTick);
++        return result;
++    }
++    void restore(Set<String> flags,CollisionService.Space space) {
++        Set<String> seen=new HashSet<>();
++        for(String f:flags)if(f.startsWith("mob:")) {
++            String[] v=f.split(":");if((v.length!=7&&v.length!=9)||!seen.add(v[1]))throw new IllegalArgumentException("Estado de mob invalido");
++            Enemy e=enemies.stream().filter(m->m.spawn.equals(v[1])).findFirst().orElseThrow(()->new IllegalArgumentException("Spawn ausente"));
++            e.hp=Integer.parseInt(v[2]);e.generation=Long.parseLong(v[5]);e.readyTick=Long.parseLong(v[6]);
++            float x=Float.parseFloat(v[3]),y=Float.parseFloat(v[4]);
++            if(e.hp<0||e.hp>e.definition.hp()||e.generation<1||e.readyTick<0||!new CollisionService().isFree(e,x,y,19,space))throw new IllegalArgumentException("Estado de inimigo invalido");
++            e.setPosition(new Position(x,y));
++            if(v.length==9) {
++                if(!Set.of("PATROL","CHASE","ATTACK","RETURN","PREPARE","RECOVER","DORMANT").contains(v[7]))throw new IllegalArgumentException("IA invalida");
++                e.behavior=v[7];e.attackTick=Long.parseLong(v[8]);if(e.attackTick<0)throw new IllegalArgumentException("Recarga invalida");
++            }
++        }
++    }
++}
+--- before/server/src/main/java/com/projetok/rpg/RpgBossThreat.java
++++ after/server/src/main/java/com/projetok/rpg/RpgBossThreat.java
+@@ -0,0 +1,9 @@
++package com.projetok.rpg;
++import com.projetok.domain.entity.Position;
++import com.projetok.domain.movement.CollisionService;
++
++/** Aviso imutavel do ataque em preparacao; geometria e tempo vem do dominio. */
++public record RpgBossThreat(float x,float y,int radius,long remainingTicks,boolean enraged,CollisionService.Space geometry) {
++    /** Predicado de perigo coincide com alcance e linha de visao usados no golpe. */
++    public boolean contains(float px,float py){return Math.hypot(px-x,py-y)<=radius&&RpgSight.clear(new Position(px,py),new Position(x,y),geometry);}
++}
+--- before/server/src/main/java/com/projetok/rpg/RpgSight.java
++++ after/server/src/main/java/com/projetok/rpg/RpgSight.java
+@@ -0,0 +1,16 @@
++package com.projetok.rpg;
++import com.projetok.domain.entity.*;
++import com.projetok.domain.movement.*;
++
++/** Consulta compartilhada da linha de visao existente, com amostras de ate seis pixels. */
++public final class RpgSight {
++    private static final GameEntity PROBE=new GameEntity(1,"Visao",new Position(0,0)){};
++    private static final CollisionService COLLISION=new CollisionService();
++    private RpgSight(){}
++    /** Usa a mesma geometria e tolerancia de um pixel do combate offline. */
++    public static boolean clear(Position a,Position b,CollisionService.Space space) {
++        double distance=Math.hypot(a.x()-b.x(),a.y()-b.y());int samples=Math.max(1,(int)(distance/6));
++        for(int i=1;i<samples;i++)if(!COLLISION.isFree(PROBE,a.x()+(b.x()-a.x())*i/samples,a.y()+(b.y()-a.y())*i/samples,1,space))return false;
++        return true;
++    }
++}
+--- before/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ after/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -187,9 +187,7 @@
+     }
+     private static double distance(Position a,Position b) { return Math.hypot(a.x()-b.x(),a.y()-b.y()); }
+     private boolean lineClear(Position a,Position b) {
+-        int samples=Math.max(1,(int)(distance(a,b)/6));
+-        for(int i=1;i<samples;i++)if(!new CollisionService().isFree(body,a.x()+(b.x()-a.x())*i/samples,a.y()+(b.y()-a.y())*i/samples,1,space))return false;
+-        return true;
++        return RpgSight.clear(a,b,space);
+     }
+     public void collectLoot() { loot.collect(inventory,flags);message="Recompensas pendentes recolhidas quando houver espaco"; }
+     private long ticks;
+@@ -252,5 +250,5 @@
+         questService.refresh(quests,flags,inventory,region);
+         enemies.update(region,ticks,body.getPosition(),hp>0,movement,space,n->receiveDamage(Math.max(1,n-defense())),p->lineClear(body.getPosition(),p),bossUnlocked());
+     }
+-    public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message,maxHp(),level(),enemies.views(region),npcs.views(region),activeNpc,dialogue(),questService.views(quests,flags),portals.views(region),objects.views(region,ticks,flags),List.copyOf(events)); }
++    public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message,maxHp(),level(),enemies.views(region,ticks),npcs.views(region),activeNpc,dialogue(),questService.views(quests,flags),portals.views(region),objects.views(region,ticks,flags),List.copyOf(events)); }
+ }
+--- before/server/src/main/java/com/projetok/prototype/rpg/RpgBossOverlay.java
++++ after/server/src/main/java/com/projetok/prototype/rpg/RpgBossOverlay.java
+@@ -0,0 +1,28 @@
++package com.projetok.prototype.rpg;
++import com.projetok.rpg.*;
++import java.awt.*;
++import java.awt.geom.Path2D;
++import java.awt.geom.Rectangle2D;
++
++/** Aviso pontilhado provisorio com oclusao real; cache evita recalcular por repaint. */
++public final class RpgBossOverlay {
++    private RpgBossThreat threat;
++    private Path2D.Float dots=new Path2D.Float();
++    private String key="";
++    /** Atualiza o tempo a cada snapshot e a geometria apenas quando necessario. */
++    public void update(RpgWorld.View view) {
++        threat=view.enemies().stream().filter(e->e.boss()&&e.hp()>0).map(EnemyService.View::threat).filter(java.util.Objects::nonNull).findFirst().orElse(null);
++        if(threat==null){key="";dots=new Path2D.Float();return;}
++        String next=threat.x()+":"+threat.y()+":"+threat.radius();if(key.equals(next))return;key=next;dots=new Path2D.Float();
++        int radius=threat.radius(),cx=Math.round(threat.x()),cy=Math.round(threat.y());
++        for(int y=cy-radius;y<=cy+radius;y+=6)for(int x=cx-radius;x<=cx+radius;x+=6)
++            if(threat.contains(x,y)&&threat.contains(x+1,y)&&threat.contains(x,y+1)&&threat.contains(x+1,y+1))dots.append(new Rectangle2D.Float(x,y,2,2),false);
++    }
++    /** Mostra preparacao e alcance ocluido, sem conceder dano nem alterar IA. */
++    public void draw(Graphics2D original) {
++        if(threat==null)return;Graphics2D g=(Graphics2D)original.create();
++        try {g.setColor(new Color(255,180,65,180));g.fill(dots);g.setColor(new Color(255,210,100));
++            g.setFont(new Font("SansSerif",Font.BOLD,13));g.drawString("Preparando "+RpgCombatStatus.cooldown(threat.remainingTicks()),threat.x()-60,threat.y()-40);
++        } finally {g.dispose();}
++    }
++}
+--- before/server/src/main/java/com/projetok/prototype/rpg/RpgHud.java
++++ after/server/src/main/java/com/projetok/prototype/rpg/RpgHud.java
+@@ -1,45 +1,48 @@
+-package com.projetok.prototype.rpg;
+-import com.projetok.rpg.*;
+-import javax.swing.*;
+-import java.awt.*;
+-/** Widgets consomem snapshots; botoes apenas enfileiram intencoes. */
+-final class RpgHud extends JPanel {
+-    private final JLabel status=new JLabel();
+-    private final JTextArea journal=new JTextArea(3,80);
+-    private final JPanel dialogue=new JPanel(new BorderLayout(4,4));
+-    private DialogueService.Node last;
+-    private final RpgRuntime runtime;
+-    private final JProgressBar hp=new JProgressBar(),stamina=new JProgressBar(0,1000);
+-    private final JLabel combat=new JLabel();
+-    private long previousXp=-1,xpUntil;
+-    private String xpNotice="";
+-    RpgHud(RpgRuntime runtime) {
+-        super(new BorderLayout());this.runtime=runtime;
+-        JPanel bars=new JPanel(new GridLayout(0,1));hp.setStringPainted(true);stamina.setStringPainted(true);
+-        bars.add(hp);bars.add(stamina);bars.add(combat);bars.add(status);add(bars,BorderLayout.NORTH);
+-        add(dialogue,BorderLayout.CENTER);journal.setEditable(false);add(new JScrollPane(journal),BorderLayout.SOUTH);
+-    }
+-    void update(RpgWorld.View view) {
+-        var values=RpgCombatStatus.from(view);hp.setMaximum(values.maxHp());hp.setValue(values.hp());hp.setString("HP "+values.hp()+" / "+values.maxHp());
+-        hp.setForeground(values.lowHp()?new Color(210,85,55):new Color(65,165,100));
+-        stamina.setValue(values.stamina());stamina.setString("Vigor "+values.stamina()/10+" / 100");
+-        if(previousXp>=0&&view.state().xp()>previousXp){xpNotice=" | +"+(view.state().xp()-previousXp)+" XP";xpUntil=view.ticks()+90;}
+-        previousXp=view.state().xp();combat.setText(values.text()+(view.ticks()<xpUntil?xpNotice:"")+" | "+view.message());
+-        journal.setText(view.journal().stream().map(q->q.name()+" | "+q.state()+" | "+q.progress()+"/"+q.required()+" - "+q.objective()).collect(java.util.stream.Collectors.joining("\n")));
+-        status.setText("  "+view.identity().name()+" | Nivel "+view.level()+" | XP "+view.state().xp()+" | Moedas "+view.state().coins()+" | Ataque "+view.attack()+" | Defesa "+view.defense()+" | "+view.state().region()+" | Atalhos na barra superior");
+-        if(!java.util.Objects.equals(last,view.dialogue())) {
+-            last=view.dialogue();dialogue.removeAll();
+-            if(last!=null) {
+-                JTextArea words=new JTextArea(last.text(),2,40);words.setLineWrap(true);words.setWrapStyleWord(true);words.setEditable(false);dialogue.add(words,BorderLayout.NORTH);
+-                JPanel choices=new JPanel(new GridLayout(0,3,4,4));dialogue.add(choices,BorderLayout.CENTER);
+-                for(int i=0;i<last.choices().size();i++){int index=i;JButton button=new JButton(last.choices().get(i).text());button.addActionListener(e->runtime.command(w->w.choose(index)));choices.add(button);}
+-                JButton close=new JButton("Fechar");close.addActionListener(e->runtime.command(RpgWorld::closeDialogue));choices.add(close);
+-                if(view.activeNpc().equals("trader")) {
+-                    for(String id:new String[]{"potion","sword","robe"}){var item=new ItemCatalog(RpgContent.builtin()).get(id);JButton buy=new JButton("Comprar "+item.name()+" ("+item.price()+")");buy.addActionListener(e->runtime.command(w->w.trade(id,1,true)));choices.add(buy);}
+-                    JButton sell=new JButton("Vender cristal (1 moeda)");sell.addActionListener(e->runtime.command(w->w.trade("crystal",1,false)));choices.add(sell);
+-                }
+-            }
+-            revalidate();repaint();
+-        }
+-    }
+-}
++package com.projetok.prototype.rpg;
++import com.projetok.rpg.*;
++import javax.swing.*;
++import java.awt.*;
++/** Widgets consomem snapshots; botoes apenas enfileiram intencoes. */
++final class RpgHud extends JPanel {
++    private final JLabel status=new JLabel();
++    private final JTextArea journal=new JTextArea(3,80);
++    private final JPanel dialogue=new JPanel(new BorderLayout(4,4));
++    private DialogueService.Node last;
++    private final RpgRuntime runtime;
++    private final JProgressBar hp=new JProgressBar(),stamina=new JProgressBar(0,1000);
++    private final JProgressBar boss=new JProgressBar();
++    private final JLabel combat=new JLabel();
++    private long previousXp=-1,xpUntil;
++    private String xpNotice="";
++    RpgHud(RpgRuntime runtime) {
++        super(new BorderLayout());this.runtime=runtime;
++        JPanel bars=new JPanel(new GridLayout(0,1));hp.setStringPainted(true);stamina.setStringPainted(true);
++        bars.add(hp);bars.add(stamina);boss.setStringPainted(true);boss.setVisible(false);bars.add(boss);bars.add(combat);bars.add(status);add(bars,BorderLayout.NORTH);
++        add(dialogue,BorderLayout.CENTER);journal.setEditable(false);add(new JScrollPane(journal),BorderLayout.SOUTH);
++    }
++    void update(RpgWorld.View view) {
++        var enemy=view.enemies().stream().filter(e->e.boss()&&e.hp()>0).findFirst();boss.setVisible(enemy.isPresent());
++        enemy.ifPresent(e->{boss.setMaximum(e.maxHp());boss.setValue(e.hp());boss.setString(e.name()+" "+e.hp()+" / "+e.maxHp()+(e.hp()*2<=e.maxHp()?" | Enfurecido":"")+(e.state().equals("PREPARE")?" | Preparando":e.state().equals("RECOVER")?" | Recuperando":""));});
++        var values=RpgCombatStatus.from(view);hp.setMaximum(values.maxHp());hp.setValue(values.hp());hp.setString("HP "+values.hp()+" / "+values.maxHp());
++        hp.setForeground(values.lowHp()?new Color(210,85,55):new Color(65,165,100));
++        stamina.setValue(values.stamina());stamina.setString("Vigor "+values.stamina()/10+" / 100");
++        if(previousXp>=0&&view.state().xp()>previousXp){xpNotice=" | +"+(view.state().xp()-previousXp)+" XP";xpUntil=view.ticks()+90;}
++        previousXp=view.state().xp();combat.setText(values.text()+(view.ticks()<xpUntil?xpNotice:"")+" | "+view.message());
++        journal.setText(view.journal().stream().map(q->q.name()+" | "+q.state()+" | "+q.progress()+"/"+q.required()+" - "+q.objective()).collect(java.util.stream.Collectors.joining("\n")));
++        status.setText("  "+view.identity().name()+" | Nivel "+view.level()+" | XP "+view.state().xp()+" | Moedas "+view.state().coins()+" | Ataque "+view.attack()+" | Defesa "+view.defense()+" | "+view.state().region()+" | Atalhos na barra superior");
++        if(!java.util.Objects.equals(last,view.dialogue())) {
++            last=view.dialogue();dialogue.removeAll();
++            if(last!=null) {
++                JTextArea words=new JTextArea(last.text(),2,40);words.setLineWrap(true);words.setWrapStyleWord(true);words.setEditable(false);dialogue.add(words,BorderLayout.NORTH);
++                JPanel choices=new JPanel(new GridLayout(0,3,4,4));dialogue.add(choices,BorderLayout.CENTER);
++                for(int i=0;i<last.choices().size();i++){int index=i;JButton button=new JButton(last.choices().get(i).text());button.addActionListener(e->runtime.command(w->w.choose(index)));choices.add(button);}
++                JButton close=new JButton("Fechar");close.addActionListener(e->runtime.command(RpgWorld::closeDialogue));choices.add(close);
++                if(view.activeNpc().equals("trader")) {
++                    for(String id:new String[]{"potion","sword","robe"}){var item=new ItemCatalog(RpgContent.builtin()).get(id);JButton buy=new JButton("Comprar "+item.name()+" ("+item.price()+")");buy.addActionListener(e->runtime.command(w->w.trade(id,1,true)));choices.add(buy);}
++                    JButton sell=new JButton("Vender cristal (1 moeda)");sell.addActionListener(e->runtime.command(w->w.trade("crystal",1,false)));choices.add(sell);
++                }
++            }
++            revalidate();repaint();
++        }
++    }
++}
+--- before/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
++++ after/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
+@@ -35,7 +35,7 @@
+         DebugPanel panel = new DebugPanel(() -> adapt(runtime.snapshot(), template));
+         RpgPlayerSprites playerSprites=RpgPlayerSprites.configured();
+         if(playerSprites!=null) { playerSprites.update(runtime.snapshot());panel.setActorRenderer(playerSprites); }
+-        RpgCombatFeedback feedback=new RpgCombatFeedback();feedback.update(runtime.snapshot());panel.setWorldOverlay(feedback::draw);
++        RpgCombatFeedback feedback=new RpgCombatFeedback();feedback.update(runtime.snapshot());RpgBossOverlay bossOverlay=new RpgBossOverlay();bossOverlay.update(runtime.snapshot());panel.setWorldOverlay(g->{bossOverlay.draw(g);feedback.draw(g);});
+         panel.setLocalMap(RpgMaps.region("village"),false);
+         JFrame frame = new JFrame("Spirit Gate | RPG offline"+(playerSprites==null?"":" | SPRITES EXPERIMENTAIS"));
+         JPanel root=new JPanel(new java.awt.BorderLayout());RpgHud hud=new RpgHud(runtime);root.add(panel,java.awt.BorderLayout.CENTER);root.add(hud,java.awt.BorderLayout.SOUTH);
+@@ -80,7 +80,7 @@
+         com.projetok.rpg.RpgWorld.View[] previous={runtime.snapshot()};
+         Timer timer = new Timer(33, e -> {
+             var view=runtime.snapshot();var before=previous[0];
+-            feedback.update(view);
++            feedback.update(view);bossOverlay.update(view);
+             if(playerSprites!=null) playerSprites.update(view);
+             if(view.state().hp()<before.state().hp())audio.play(RpgAudio.Cue.HURT);
+             else if(view.state().hp()>before.state().hp())audio.play(RpgAudio.Cue.HEAL);
+@@ -110,7 +110,7 @@
+         int npcId=500;for(var npc:v.npcs())actors.add(new DebugSnapshot.ActorView(npcId++,npc.name(),npc.x(),npc.y(),16,1,1,false,true));
+         for(var portal:v.portals())actors.add(new DebugSnapshot.ActorView(npcId++,"Portal: "+portal.destination(),portal.x(),portal.y(),22,1,1,false,true));
+         for(var object:v.objects())if(object.available())actors.add(new DebugSnapshot.ActorView(npcId++,object.id().contains("chest")?"Bau do aprendiz":object.id().contains("herbs")?"Ervas curativas":"Reserva de pocoes",object.x(),object.y(),15,1,1,false,true));
+-        var warnings=v.enemies().stream().filter(e->e.state().equals("PREPARE")).map(e->new DebugSnapshot.IceZoneView(e.x(),e.y(),e.hp()*2<=e.maxHp()?135:110,0,1)).toList();
++        java.util.List<DebugSnapshot.IceZoneView> warnings=List.of(); // Aviso RPG ocluido pelo overlay do chefe.
+         return new DebugSnapshot(actors,
+             List.of(new DebugSnapshot.Obstacle(380,180,120,120)),List.of(),v.state().hp(),v.maxHp(),0,v.state().hp()==0,v.ticks(),v.message(),1,0,0,null,
+             100,100,0,warnings,List.of(),false,0,0,List.of(),false,List.of(),t.cryostasisHud(),t.lightningStepHud());
+--- before/docs/TASK-087-RELATORIO-FINAL.md
++++ after/docs/TASK-087-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-087 - Corujao I
++
++Estado: **VALIDADA COM RESSALVAS**.
++
++Chefe publica raio 110/135, ticks restantes e fase a partir do dominio. Overlay pontilhado em grade 6 px consulta a mesma linha de visao do golpe e usa cache de geometria; HUD exibe HP, preparacao, recuperacao e fase enfurecida. Sem mudanca nos padroes/tempos de ataque. Retomada durante preparacao testada. Ressalva herdada: visibilidade amostrada a cada ate 6 px pode tolerar trajetos rasantes a quinas; primeiro fixture presumiu raycast exato e foi corrigido para testar parede efetivamente bloqueante, log preservado. Sem promessa de raycast continuo.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-087/corujao-i/`. Logs da suite: `docs/TASK-corujao-087-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-087-TESTES.md
++++ after/docs/TASK-087-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-087 - Corujao I
++
++Comando: `python tools/qualidade.py --offline --task corujao-087`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 330,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-087.md
++++ after/docs/TASK-087.md
+@@ -0,0 +1,3 @@
++# TASK-087 - Corujao I
++
++Chefe publica raio 110/135, ticks restantes e fase a partir do dominio. Overlay pontilhado em grade 6 px consulta a mesma linha de visao do golpe e usa cache de geometria; HUD exibe HP, preparacao, recuperacao e fase enfurecida. Sem mudanca nos padroes/tempos de ataque. Retomada durante preparacao testada. Ressalva herdada: visibilidade amostrada a cada ate 6 px pode tolerar trajetos rasantes a quinas; primeiro fixture presumiu raycast exato e foi corrigido para testar parede efetivamente bloqueante, log preservado. Sem promessa de raycast continuo.

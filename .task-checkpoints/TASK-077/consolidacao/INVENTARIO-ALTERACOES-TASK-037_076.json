@@ -1,0 +1,1527 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-19",
+  "sourceChanges": [
+    {
+      "path": "jogar-rpg-offline.cmd",
+      "change": "added",
+      "sha256": "bae9743e0e00df7b59f72ca63282660c690a26f759ec4d75119a1bee332ec6bd"
+    },
+    {
+      "path": "README-RPG.md",
+      "change": "added",
+      "sha256": "44335f1b9b74799f927397e487126af91d620e4917e5d4481b3864791f58a8a9"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/multiplayer/CoopWorld.java",
+      "change": "added",
+      "sha256": "13b3ac686137809b575a8ffcc0370738903a70a15d44175790d2e07e37ce8900"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/multiplayer/LocalClient.java",
+      "change": "added",
+      "sha256": "aef842cc36321ebce0b588a624dea4b9c9302ef6c91effdd1527422e54b9f2fc"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/multiplayer/LocalSimulationServer.java",
+      "change": "added",
+      "sha256": "78643707787a8c652652028ebb0a2c81c6fc03e55896b0aff2f7c4a29a024be5"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/multiplayer/NetworkClientLauncher.java",
+      "change": "added",
+      "sha256": "f41c33b6f8f17c990972fa5b5d472da5fb1d1912bd1074f2a43cceb02914a2e0"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/multiplayer/Protocol.java",
+      "change": "added",
+      "sha256": "a878894f39a8c26cbfb34cd3738b527297eb9d24361bab82ce28296325661acf"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/multiplayer/RemotePresentation.java",
+      "change": "added",
+      "sha256": "052085723415968984eace7916b7b30df829096dff36380be9fc7df2e461935c"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/DebugPanel.java",
+      "change": "modified",
+      "sha256": "c7ea5e5488c40691041bf7c4fa10e9f28ec630ab450f02136ab34995e6a8d457"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/LocalArenaMap.java",
+      "change": "modified",
+      "sha256": "8f62fd4069e10c02a0be795be9557f9ea60b368fe49c8fd6b528b32587fbfbd7"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/ControlsDialog.java",
+      "change": "added",
+      "sha256": "895ef6420eb6ef675ec9c392d7bf9e8ca2a0b136f70e7a4e9fd78e3cb4304608"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/ExplorationWindow.java",
+      "change": "added",
+      "sha256": "2b04edbdc0cd0ed0fb73fddb75664693d87ce22fe2de140888f05397521a75dd"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/InventoryWindow.java",
+      "change": "added",
+      "sha256": "db9035c7ed6c53442dbc4aadd0bdf66028e2950f18b55d939a5ea83f77d7f165"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/PreferencesDialog.java",
+      "change": "added",
+      "sha256": "9e0121d7999462ce53d4ba6d805bcafe1bf26969275ced34d94cd74d6e8f0075"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/RpgAudio.java",
+      "change": "added",
+      "sha256": "55817b9e5a5207d2a37dd0822ff610f37a6ec9b2a524e3bf711cb3576a920508"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/RpgHud.java",
+      "change": "added",
+      "sha256": "f508669f070aff58e006afa555b9a715f3b95a8fb998280c655779844a942d1a"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java",
+      "change": "added",
+      "sha256": "aaf69f7b361d9ccd8be67766f737c7fa2f430020169cda61655593ce22b433b8"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/RpgMaps.java",
+      "change": "added",
+      "sha256": "57f78d4b0533824f74ae8de1a6b4bbf7dd94aac96871bbcb46cca0e05aa4afbb"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/RpgMenu.java",
+      "change": "added",
+      "sha256": "e7c31076375e380f22dd7b4ad10fbe6fad561b4999ca6b656ee1d0aa79fe32b4"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/RpgRuntime.java",
+      "change": "added",
+      "sha256": "b3b8b705d47896cfba102e5114db0edd8da5330581575a8a9a66bfb35e60a570"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/Archetypes.java",
+      "change": "added",
+      "sha256": "076f8891649a318b74e983fae3834d9df2534e0691f0cc8d8dd28ef54f19d52b"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/CharacterIdentity.java",
+      "change": "added",
+      "sha256": "4a8dc88a89f3a0a02fb87eddad664073e0fcab4cfb2afc9f593192e502ff8cd2"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/CharacterSaves.java",
+      "change": "added",
+      "sha256": "5e8ca347c9e44ae2670db3581904fd2188d5f266e2eeb9919e3e0792aa864682"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/DialogueService.java",
+      "change": "added",
+      "sha256": "3ee6075df69a3402fdd4ae7cecac5494e203426218c00de5d39e55190dbae927"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/EnemyService.java",
+      "change": "added",
+      "sha256": "2b4ec0e1bd04e32c31e8d27dbe450975269a16ce64d9fdc23dac3118f0fa5625"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/EnvironmentCycle.java",
+      "change": "added",
+      "sha256": "9a41ea4aa1f66e061dc99c5501d3e15e302523e48cb0201915d8288201e18f0a"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/InventoryService.java",
+      "change": "added",
+      "sha256": "bda5f9353a7fbdacea2c117169e94a9252517512a63ae1ccf1674ca84b8787f9"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/ItemCatalog.java",
+      "change": "added",
+      "sha256": "2f994c44e8ac8354724316d6790f87f96e5fc382f417eaa5b7f3a1529da7e281"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/LocalSaveStore.java",
+      "change": "added",
+      "sha256": "70c93858d8b5bf2fdf7bd8cda649a1d08a685e74524a27031daaf767fbd4dfbf"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/LootService.java",
+      "change": "added",
+      "sha256": "91e27629905baa6a41c9ad615aa5dd5d812475a90d04fc54c8149b2ef852ab77"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/NpcService.java",
+      "change": "added",
+      "sha256": "bfefc68910bde4997fb7f2143726447e074840bcbc826b76d7c1eb06b04fde31"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/PortalService.java",
+      "change": "added",
+      "sha256": "8e413d5c709d904a6811d5c1f43d82b2e02c8c73eee058944388c84589633984"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/QuestService.java",
+      "change": "added",
+      "sha256": "4622d14df814c445a8708f3df9191a7824994469afa7a220c0e85ee09242bd9a"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/RpgContent.java",
+      "change": "added",
+      "sha256": "252f885c333702f1320eac1a6366c60143f636d3682122a17fddfd8e02825834"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/RpgControls.java",
+      "change": "added",
+      "sha256": "b4022221c487647f1852f088f1a1e1bca304e2e2d94b2888d31b9b02b9bcb8f6"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/RpgPreferences.java",
+      "change": "added",
+      "sha256": "9405063cde96d67ad09f9323e359742e9912bd6f2abb4dc6c7ae8925a0878bf1"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/RpgProgression.java",
+      "change": "added",
+      "sha256": "7152be6ce9f1988cb15be80617d71e7a065d8803e5e7cfe80082ec3e22083b5f"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/RpgSave.java",
+      "change": "added",
+      "sha256": "72443ff07d0b5e2334d8f9ae579f2f52304c617604aeb39734e6e557cebf533d"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/RpgWorld.java",
+      "change": "added",
+      "sha256": "46a6b1c495c6436a967371e35c8887bf985fec65638574a43d93584d522a17f3"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/WorldObjects.java",
+      "change": "added",
+      "sha256": "56445f0688283f700b195a5fb8327e5939f1cf16287bbf54231580b10cf90bbc"
+    },
+    {
+      "path": "server/src/main/resources/rpg/archetypes.properties",
+      "change": "added",
+      "sha256": "c5883aef6649c77d62c1410947de947cbd1834d3f017c232a8b27ca007084bad"
+    },
+    {
+      "path": "server/src/main/resources/rpg/content.properties",
+      "change": "added",
+      "sha256": "dffca3ea10dfee0cf98749b660b54e9447549c561a03e2b2b175b31d28187db5"
+    },
+    {
+      "path": "server/src/main/resources/rpg/dialogues.properties",
+      "change": "added",
+      "sha256": "f001285b5098d1519848db12d0339e9d78779f4c777a6dc005c30d48d6ce21a4"
+    },
+    {
+      "path": "server/src/main/resources/rpg/enemies.properties",
+      "change": "added",
+      "sha256": "d087603986fc62e8fe524426dde246f5de7d569f85a885b418de0918364def14"
+    },
+    {
+      "path": "server/src/main/resources/rpg/items.properties",
+      "change": "added",
+      "sha256": "761da5cdca01cf8568fc7e05bccb91be974eab0fedfea4c49723b01d1d14abdd"
+    },
+    {
+      "path": "server/src/main/resources/rpg/loot.properties",
+      "change": "added",
+      "sha256": "3dda90627537aaf1a78fa2a57871b521b66907dcbf8a41bcf149b2ccd1c536d6"
+    },
+    {
+      "path": "server/src/main/resources/rpg/npcs.properties",
+      "change": "added",
+      "sha256": "6c6f3e8044511a836203940716c115b475ee5c0f10f4280ef55e58f36fb91809"
+    },
+    {
+      "path": "server/src/main/resources/rpg/objects.properties",
+      "change": "added",
+      "sha256": "10594be28f8f2f405334550654630703029921b4963bc02a7332a8c4cc262bce"
+    },
+    {
+      "path": "server/src/main/resources/rpg/portals.properties",
+      "change": "added",
+      "sha256": "02e6d1e9f5765cc5f497efd464b828b8e40034d408c6b1491f34e24aaa8d2253"
+    },
+    {
+      "path": "server/src/main/resources/rpg/progression.properties",
+      "change": "added",
+      "sha256": "e48c23b06b03d087e070923304d64a95b57088cb8197dc33bff805615168b255"
+    },
+    {
+      "path": "server/src/main/resources/rpg/quests.properties",
+      "change": "added",
+      "sha256": "c5ea71780c7ba24d2f831007554e7c86138eb876229457ad75760f402a84f3e2"
+    },
+    {
+      "path": "server/src/main/resources/rpg/spawns.properties",
+      "change": "added",
+      "sha256": "20a5c4ba840a7c5768859d991178e8c6d37e90fb9b6cff43fcbcada7fc40db13"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/multiplayer/AuthoritativeCombatTest.java",
+      "change": "added",
+      "sha256": "85633f9d5ed52b6996755012c10d6bba09d51fbe3017819797f07dc90787802f"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/multiplayer/CooperativeEncounterTest.java",
+      "change": "added",
+      "sha256": "d1becb580a0671ec9188d7ee3162191b58274263736adbb3d82684d1a5ac16a9"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/multiplayer/LocalServerTest.java",
+      "change": "added",
+      "sha256": "e8aee5712f439aa724b66b99aff20c68c5773052802a3da5a353183be6839ebf"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/multiplayer/NetworkFightIntegrationTest.java",
+      "change": "added",
+      "sha256": "378ed4fdb792d41dd9a997a8c7e16bb0e1f32dc556edc5e48014eeb929536814"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/multiplayer/NetworkRobustnessTest.java",
+      "change": "added",
+      "sha256": "86f24a838ccf89718deae1a83fec56eb281716205493c7a9415e445ef998f109"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/multiplayer/ProtocolTest.java",
+      "change": "added",
+      "sha256": "19a8a09a4bf4b10aaddf61b227db0a1a12cd3b6aa387c28c1d1d71000bbc75ff"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/multiplayer/RemotePresentationTest.java",
+      "change": "added",
+      "sha256": "90ee67af57e35e76aad5b070f1fb65282bfbe86d14b64f969e897c4184d59893"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/multiplayer/TwoClientsTest.java",
+      "change": "added",
+      "sha256": "0cb86e39391ef2e01823d99c7a976cc2a874f73c29bbafd8e8fc562f827376e1"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/multiplayer/TwoProcessProbe.java",
+      "change": "added",
+      "sha256": "6013789c30ec27d86ffb32b248887b6c1d373ba89dae4bd2301ec07ce8f55046"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/multiplayer/TwoProcessTest.java",
+      "change": "added",
+      "sha256": "a10ea557c38469ab5cdd7b1a02ed4318d950ebd5ca2e481ed1af5ac6c855d5f0"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/prototype/rpg/RpgAudioTest.java",
+      "change": "added",
+      "sha256": "a5baef380d256dc7142306bf1c9b8277900d54bfcdbfff1cd840cb871b1ac005"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/prototype/rpg/RpgBindingTest.java",
+      "change": "added",
+      "sha256": "bab96c8cb6c9e0c67676dab898b5598ea0edc049c9b64c6ca54933e5d312d25d"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/prototype/rpg/RpgMapsTest.java",
+      "change": "added",
+      "sha256": "a8a8fb6efcd36df470dffeadddbfb73dd137dd3b79e13849e8c62a80628f26e4"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/prototype/rpg/RpgRuntimeSaveTest.java",
+      "change": "added",
+      "sha256": "b347220c5d06a0141cf9e8db1078beb94bc4e9c48ded3c0f68dcc344ec92e695"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/ArchetypesTest.java",
+      "change": "added",
+      "sha256": "9801a9316d679958a9ae89825bbd1e2dd6afcd41fdfadd6457540670e74f3357"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/BossEncounterTest.java",
+      "change": "added",
+      "sha256": "d6959a659900182b6b3d6e46c715eeaa0a9fdd5af4eae8165c6064f12d5f9a83"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/CharacterIdentityTest.java",
+      "change": "added",
+      "sha256": "f8a2fcc89083ce9fc226a71a10ec339dcb902529cd22b93563442dde20efddb7"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/CharacterSavesTest.java",
+      "change": "added",
+      "sha256": "90028e5df8e1c051038bad83b8787ad1edbf9cf7a137ff81de186d2be99dee17"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/ConsumableTest.java",
+      "change": "added",
+      "sha256": "fe86f1db9d8b3f94f2721311ee95726db470510a0765a4a5f0785ae969e77745"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/CorruptBackupProtectionTest.java",
+      "change": "added",
+      "sha256": "6b5f659bf756d2faa2df9758ddb5ddf8f39e50c6e87153b6294e57ef74a60ddb"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/DialogueTest.java",
+      "change": "added",
+      "sha256": "bca0d34decd8a6a3cc4530a747df6d2b1a6ac6b9d831f402c6a7473b10424271"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/DungeonCycleTest.java",
+      "change": "added",
+      "sha256": "111aec60b0213fcaae996904603be0883fd03963f2bbd892b94967f61f5d4136"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/EnemyAiTest.java",
+      "change": "added",
+      "sha256": "dd7f18d3dabf631fa766c52e54b5e563bb98abad8398869ad11da9d58340595c"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/EnemyRpgTest.java",
+      "change": "added",
+      "sha256": "657159ea242b50b3d487e25dd0af02d87f85e6c5eb137da3dab86ca0edc464e8"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/EnvironmentCycleTest.java",
+      "change": "added",
+      "sha256": "5ac6f9d2d17c8b95b1da3f023f38df0d6c7f478f88019d972b66817baacf24e0"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/EquipmentRpgTest.java",
+      "change": "added",
+      "sha256": "b7866d15a95f9ee01d1f1592ad680d52834d4af286f4b32c295398004b6538f5"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/InventoryServiceTest.java",
+      "change": "added",
+      "sha256": "9b3e0423a5af4eecf7d02a0b1de7a66e600a26bf2167a31a15d1b038a908ef2a"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/ItemCatalogTest.java",
+      "change": "added",
+      "sha256": "b85428c3990c0b93f5fd0d14ff045a5a2eb5c8722c13ac01ba263412ff94ed53"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/LocalSaveStoreTest.java",
+      "change": "added",
+      "sha256": "ee57d5b1baa698c6b1dbabff9b55ee7b50b665ba98621a378a0eb85f6fd8eb16"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/LootServiceTest.java",
+      "change": "added",
+      "sha256": "cd1b20b658d7a86b14945ffd6e65c80656700497839aecc1c434cdcd7b612ddc"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/NpcInteractionTest.java",
+      "change": "added",
+      "sha256": "0e4abc47a8c75f1cc238732d8cfd2508af55784bf624233b3263c15e64c6054c"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/OfflineCycleTest.java",
+      "change": "added",
+      "sha256": "8146ffc5e7e088c797e7b9faf408b47c5fddfd2ccb3190cbb3b0592279e7202a"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/PortalTest.java",
+      "change": "added",
+      "sha256": "5ec423d8c5257e009a5bc17bd20a18c3fba5c93d7de78fb061d9074ac5d27bfd"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/QuestLifecycleTest.java",
+      "change": "added",
+      "sha256": "10c99eb8679742e3fc6240e0530ff86e34115b07676f6cd3ffafce62748776d2"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/QuestRewardsTest.java",
+      "change": "added",
+      "sha256": "50f7826e673ebfcb84ae90b2e96e9041d350d1f5a0d11d5db8c486bcef4e8a54"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/RpgContentTest.java",
+      "change": "added",
+      "sha256": "2ce2806ffeacd8ccf0c64b77e36f90bbca8f09a7561d6873b4bc577a9704ae55"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/RpgControlsTest.java",
+      "change": "added",
+      "sha256": "1e8011e77c061e0c2a3e3d6afc32b45439a84bbdea0eb8a0f927dcb32f7ba5f6"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/RpgFinalReliabilityTest.java",
+      "change": "added",
+      "sha256": "29a6fc9933c99d5ea97c3d3ba93b79c0e9e0409462da891bd2b1377d7569f309"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/RpgProgressionTest.java",
+      "change": "added",
+      "sha256": "6dff9a5023583e28901bfbf2e54602706eceecf6a437e720fd928e37d6fd65d2"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/RpgWorldTest.java",
+      "change": "added",
+      "sha256": "0f20824ed764b7cdf00e3cdb5c9e4c9df0e39f6dcd2c82280acab5df65040623"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/TradeTest.java",
+      "change": "added",
+      "sha256": "a486e76fde0fa50ab7812bb21fd0ed65a010c88d7d5740d0a6b72ed4cd9005a0"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/WorldObjectsTest.java",
+      "change": "added",
+      "sha256": "624a7b2a64b8dda0a324ea53c1f1844a215a1788e94fddf3f35254d7f37431b2"
+    },
+    {
+      "path": "tools/auditar_rc.py",
+      "change": "modified",
+      "sha256": "4097f94870f489d20cffc77160d429b948402dda90964fb60a4e980966c5c34e"
+    },
+    {
+      "path": "tools/auditar_rpg.py",
+      "change": "added",
+      "sha256": "f538b9e016f99e4e2348505290b443f40d577e4b5d2b9adf411d18031ec3f817"
+    },
+    {
+      "path": "tools/build-coop-portable.ps1",
+      "change": "added",
+      "sha256": "74230742e0db703d9df5828cf9b418d4d412bab5245ee015d273f3729424fb0f"
+    },
+    {
+      "path": "tools/build-rpg-portable.ps1",
+      "change": "added",
+      "sha256": "be8a48425ef86085f3f50ce61437d6f2d57c8235c11c63269ed59588f2e71f29"
+    },
+    {
+      "path": "tools/build-windows-portable.ps1",
+      "change": "modified",
+      "sha256": "55365e8eefc0c3f4c897ba1836f74219612dfb4f402986fe01acfee6a1c1395c"
+    },
+    {
+      "path": "tools/consolidar_expansao.py",
+      "change": "added",
+      "sha256": "ac158528505fd7fbda8f42d536fcdbef441c2732f899105793bd5aaf27f8e3aa"
+    },
+    {
+      "path": "tools/rpg_stage.py",
+      "change": "added",
+      "sha256": "0b54b9cf66be5761b20748c7fa4797396a2a48f648efe18317e7f59509007068"
+    },
+    {
+      "path": "tools/smoke-expansao.ps1",
+      "change": "added",
+      "sha256": "46527ca32a313767fbff0df66ea3cd4524e1549ff0783da39f90751dd2bf47df"
+    }
+  ],
+  "tasks": [
+    {
+      "task": "037",
+      "title": "Auditoria da base 0.36.0-rc1",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 241,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "038",
+      "title": "Entrada RPG separada",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 243,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "039",
+      "title": "Identidade e criacao local",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 244,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "040",
+      "title": "Registro de conteudo",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 246,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "041",
+      "title": "Save V1 e backup",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 248,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "042",
+      "title": "Itens e raridade",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 249,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "043",
+      "title": "Inventario transacional",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 251,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "044",
+      "title": "Equipamento e atributos",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 252,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "045",
+      "title": "Pocoes e recarga",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 253,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "046",
+      "title": "Loot e ledger de geracoes",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 254,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "047",
+      "title": "XP e niveis",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 255,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "048",
+      "title": "Guardian e Mystic",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 256,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "049",
+      "title": "Inimigos e respawn",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 257,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "050",
+      "title": "IA PvE",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 259,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "051",
+      "title": "Chefe com aviso e fases",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 260,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "052",
+      "title": "NPCs e interacao",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 261,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "053",
+      "title": "Dialogos com escolhas",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 262,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "054",
+      "title": "Diario e estados de quest",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 263,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "055",
+      "title": "Objetivos e recompensas",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 264,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "056",
+      "title": "Comerciante e moedas",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 265,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "057",
+      "title": "Portais seguros",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 266,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "058",
+      "title": "Tres regioes",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 268,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "059",
+      "title": "Baus e recursos",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 269,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "060",
+      "title": "Ciclo de iluminacao",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 270,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "061",
+      "title": "Masmorra e retorno",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 271,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "062",
+      "title": "Menu e selecao de personagem",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 272,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "063",
+      "title": "UI de inventario/equipamento",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 272,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "064",
+      "title": "Diario/mapa/objetivos",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 272,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "065",
+      "title": "Hotbar e atalhos",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 274,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "066",
+      "title": "Audio e preferencias; marco offline B",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 281,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "067",
+      "title": "Protocolo binario V1",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 283,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "068",
+      "title": "Servidor localhost headless",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 285,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "069",
+      "title": "Duas sessoes e reconexao",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 286,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "070",
+      "title": "Cliente visual e interpolacao",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 287,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "071",
+      "title": "LAN explicita; dois processos locais",
+      "status": "parcial: homologacao LAN entre maquinas pendente",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 289,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "072",
+      "title": "Combate e habilidades autoritativas",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 291,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "073",
+      "title": "Chefe cooperativo e recompensa",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 292,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "074",
+      "title": "Falhas de rede e desconexoes",
+      "status": "parcial: sem transicoes de regiao online",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 295,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "075",
+      "title": "Integracao e regressao de backup",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 297,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    },
+    {
+      "task": "076",
+      "title": "Candidatos privados e pacotes",
+      "status": "concluida: validacao automatizada",
+      "tests": {
+        "java": {
+          "exitCode": 0,
+          "category": 0,
+          "totals": {
+            "tests": 297,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "python": {
+          "exitCode": 0,
+          "category": 0,
+          "tests": 25
+        }
+      }
+    }
+  ],
+  "packages": [
+    {
+      "schemaVersion": 1,
+      "package": "SpiritGate-RPG-0.66.1-rc1-20261019T062500Z-310983cf.zip",
+      "sha256": "2e0f019955f66593ecd630ec1fa3e38004f241295385802a380feb7085b3f38b",
+      "automatedApproved": true,
+      "humanApproved": false,
+      "checks": {
+        "zipIntegrity": true,
+        "productionClasses": 218,
+        "contentIncluded": true,
+        "manifestHashes": true,
+        "javaIntegrated": true
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "package": "SpiritGate-Coop-Experimental-0.76.0-rc1-20261019T062500Z-9556a9e2.zip",
+      "sha256": "417eb711e03499ce0a4e3f93e800d60fed539ec109637fb18dca5fade51b0c27",
+      "automatedApproved": true,
+      "humanApproved": false,
+      "checks": {
+        "zipIntegrity": true,
+        "productionClasses": 169,
+        "contentIncluded": true,
+        "manifestHashes": true,
+        "javaIntegrated": true
+      }
+    }
+  ],
+  "baselineSha256": "511d59412598be73395391e21a6cfb2315f4855c714059086abc4d02e46cff31",
+  "legacyDomainUnchanged": true,
+  "legacyTestsUnchanged": true,
+  "finalChecks": {
+    "java": {
+      "exitCode": 0,
+      "category": 0,
+      "totals": {
+        "tests": 297,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "python": {
+      "exitCode": 0,
+      "category": 0,
+      "tests": 25
+    }
+  },
+  "smoke": {
+    "schemaVersion": 1,
+    "offlineExecutable": true,
+    "offline": {
+      "windowShowing": true,
+      "ticks": 62,
+      "region": "village",
+      "componentCapture": true,
+      "humanApproval": false
+    },
+    "serverBind": "127.0.0.1",
+    "serverPort": 63041,
+    "serverExitCode": 0,
+    "clients": [
+      {
+        "windowShowing": true,
+        "serverTick": 81,
+        "session": 1,
+        "players": 2,
+        "componentCapture": true,
+        "humanApproved": false
+      },
+      {
+        "windowShowing": true,
+        "serverTick": 81,
+        "session": 2,
+        "players": 2,
+        "componentCapture": true,
+        "humanApproved": false
+      }
+    ],
+    "integratedJava": true,
+    "captureKind": "componentes Swing de janelas em execucao",
+    "humanApproved": false,
+    "lanBetweenMachines": false,
+    "automatedApproved": true
+  },
+  "legacyArenaSmoke": {
+    "status": "EXECUCAO LOCAL CONFERIDA",
+    "startedAt": "2026-10-19T03:33:44.0901467-03:00",
+    "zip": "C:\\Users\\lucas\\OneDrive\\Desktop\\Spirit_Gate_Prototipo_Jogavel\\Projeto-K\\dist\\SpiritGate-0.36.1-compat-rc1-20261019T063213Z-a28bfe38-portable.zip",
+    "zipSha256": "8CB4396E40B39EBA0577F895ED30E51395A5BC3C7593EF764D2D3AC6FA9703C4",
+    "extractionDirectory": "C:\\Users\\lucas\\OneDrive\\Desktop\\Spirit_Gate_Prototipo_Jogavel\\Validacao Portatil\\20261019-033344-e550d116",
+    "environment": "Microsoft Windows NT 10.0.19045.0",
+    "cleanWindowsWithoutJava": "PENDENTE DE HOMOLOGACAO HUMANA",
+    "archiveEntries": 146,
+    "launcher": "C:\\Users\\lucas\\OneDrive\\Desktop\\Spirit_Gate_Prototipo_Jogavel\\Validacao Portatil\\20261019-033344-e550d116\\SpiritGate\\SpiritGate.exe",
+    "launcherArchitecture": "PE x64 (0x8664)",
+    "mainClass": "com.projetok.prototype.DebugLauncher",
+    "runtimeRelease": "JAVA_VERSION=\"17.0.20.1\"\r\nMODULES=\"java.base java.datatransfer java.xml java.prefs java.desktop jdk.random\"",
+    "configuration": "[Application]\r\napp.classpath=$APPDIR\\spirit-gate-arena.jar\r\napp.mainclass=com.projetok.prototype.DebugLauncher\r\n\n[JavaOptions]\r\njava-options=-Djpackage.app-version=0.36.1",
+    "manifestFilesVerified": 145,
+    "packageVersion": "0.36.1-compat-rc1",
+    "javaModules": [
+      "java.base",
+      "java.desktop",
+      "jdk.random"
+    ],
+    "manifestSha256": "29E807A2F60E3171C70E14866CA0B4018AC04BCFA1BC837870D4408A64072A16",
+    "zipSidecarVerified": true,
+    "launcherArguments": [],
+    "processId": 36148,
+    "windowTitle": "Spirit Gate | Arena de Debug 2D",
+    "windowProcessId": 36744,
+    "ownedProcessIds": [
+      36148,
+      36744
+    ],
+    "loadedJvmPath": "C:\\Users\\lucas\\OneDrive\\Desktop\\Spirit_Gate_Prototipo_Jogavel\\Validacao Portatil\\20261019-033344-e550d116\\SpiritGate\\runtime\\bin\\server\\jvm.dll",
+    "bundledJvmVerified": true,
+    "screenshot": "C:\\Users\\lucas\\OneDrive\\Desktop\\Spirit_Gate_Prototipo_Jogavel\\Validacao Portatil\\20261019-033344-e550d116\\SpiritGate-exe-smoke.png",
+    "windowSize": "1276x789",
+    "networkInspection": "INDISPONIVEL: Acesso a um recurso CIM não estava disponível para o cliente.",
+    "pathDuringLaunch": "C:\\Windows\\System32;C:\\Windows",
+    "windowExitCode": 0,
+    "exitCode": 0,
+    "processExited": true,
+    "finishedAt": "2026-10-19T03:33:49.1369209-03:00"
+  }
+}

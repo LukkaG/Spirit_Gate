@@ -1,0 +1,23 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/StudioViewportTest.java",
+    "server/src/main/java/com/projetok/studio/AssetImages.java",
+    "server/src/main/java/com/projetok/studio/StudioViewport.java",
+    "server/src/main/java/com/projetok/studio/WorldCanvas.java",
+    "server/src/main/java/com/projetok/studio/WorldStudio.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-093-RELATORIO-FINAL.md",
+    "docs/TASK-093-TESTES.md",
+    "docs/TASK-093.md",
+    "docs/TASK-studio-093-java-version.log",
+    "docs/TASK-studio-093-java.log",
+    "docs/TASK-studio-093-maven-version.log",
+    "docs/TASK-studio-093-python-version.log",
+    "docs/TASK-studio-093-python.log",
+    "docs/TASK-studio-093-qualidade.json",
+    "docs/TASK-studio-093-testes.txt",
+    "world-studio.cmd"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

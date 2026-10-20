@@ -1,0 +1,25 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/prototype/rpg/CorujaoSpritesTest.java",
+    "server/src/test/java/com/projetok/prototype/rpg/RpgPlayerRefinementTest.java",
+    "server/src/test/java/com/projetok/prototype/rpg/RpgPlayerSpritesTest.java",
+    "server/src/main/resources/rpg/experimental-player.properties",
+    "server/src/main/java/com/projetok/prototype/rpg/RpgPlayerAnimation.java",
+    "server/src/main/java/com/projetok/prototype/rpg/RpgPlayerSprites.java",
+    "tools/corujao_relatorio.py",
+    "docs/CORUJAO-I-PROGRESSO.json",
+    "docs/TASK-corujao-079-java-version.log",
+    "docs/TASK-corujao-079-java.log",
+    "docs/TASK-corujao-079-maven-version.log",
+    "docs/TASK-corujao-079-python-version.log",
+    "docs/TASK-corujao-079-python.log",
+    "docs/TASK-corujao-079-qualidade.json",
+    "docs/TASK-corujao-079-testes.txt",
+    "docs/corujao-i/TASK-079-RELATORIO-FINAL.md",
+    "docs/corujao-i/TASK-079-TESTES.md",
+    "docs/corujao-i/TASK-079.md",
+    "testar-rpg-sprites.cmd"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

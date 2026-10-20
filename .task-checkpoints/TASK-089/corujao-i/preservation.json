@@ -1,0 +1,18 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/rpg/CorujaoCombatRegressionTest.java",
+    "docs/CORUJAO-I-PROGRESSO.json",
+    "docs/TASK-089-RELATORIO-FINAL.md",
+    "docs/TASK-089-TESTES.md",
+    "docs/TASK-089.md",
+    "docs/TASK-corujao-089-java-version.log",
+    "docs/TASK-corujao-089-java.log",
+    "docs/TASK-corujao-089-maven-version.log",
+    "docs/TASK-corujao-089-python-version.log",
+    "docs/TASK-corujao-089-python.log",
+    "docs/TASK-corujao-089-qualidade.json",
+    "docs/TASK-corujao-089-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

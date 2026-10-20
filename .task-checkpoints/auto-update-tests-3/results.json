@@ -1,0 +1,29 @@
+﻿{
+    "checks":  [
+                   "Initial install and full verification",
+                   "Incremental update and previous version retained",
+                   "Saves unchanged outside versions",
+                   "Unchanged feed is a no-op",
+                   "Staging cleaned after successful and no-op updates",
+                   "Wrong download hash rejected",
+                   "Failed update does not activate partial version",
+                   "Staging cleaned after failed download",
+                   "Unsafe path rejected: ../outside",
+                   "Unsafe path rejected: /absolute",
+                   "Unsafe path rejected: data/saves/test",
+                   "Unsafe path rejected: saves/test",
+                   "Unsafe path rejected: CON.txt",
+                   "Unsafe path rejected: app/../evil",
+                   "Unsafe path rejected: app/space.",
+                   "Unsafe path rejected: app\\evil",
+                   "Unsafe path rejected: installed-manifest.json",
+                   "Invalid hash rejected",
+                   "Excessive download rejected",
+                   "Case-insensitive duplicate rejected",
+                   "Remote HTTP rejected without a network call",
+                   "Unavailable feed keeps installed game",
+                   "Concurrent updater rejected",
+                   "All failure scenarios preserve saves"
+               ],
+    "passed":  24
+}

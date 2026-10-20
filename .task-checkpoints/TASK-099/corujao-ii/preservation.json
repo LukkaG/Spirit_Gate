@@ -1,0 +1,23 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/DocumentStoreTest.java",
+    "server/src/main/java/com/projetok/studio/DocumentStore.java",
+    "server/src/main/java/com/projetok/studio/FileTools.java",
+    "server/src/main/java/com/projetok/studio/WorldDocument.java",
+    "server/src/main/java/com/projetok/studio/WorldStudio.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-099-RELATORIO-FINAL.md",
+    "docs/TASK-099-TESTES.md",
+    "docs/TASK-099.md",
+    "docs/TASK-studio-099-java-version.log",
+    "docs/TASK-studio-099-java.log",
+    "docs/TASK-studio-099-maven-version.log",
+    "docs/TASK-studio-099-python-version.log",
+    "docs/TASK-studio-099-python.log",
+    "docs/TASK-studio-099-qualidade.json",
+    "docs/TASK-studio-099-testes.txt",
+    "docs/WORLD-EDITOR-FORMATO-MAPA.md"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

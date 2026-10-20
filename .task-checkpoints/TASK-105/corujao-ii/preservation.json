@@ -1,0 +1,22 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/GroupEditingTest.java",
+    "server/src/main/java/com/projetok/studio/EditorOperations.java",
+    "server/src/main/java/com/projetok/studio/GroupEditing.java",
+    "server/src/main/java/com/projetok/studio/GroupTools.java",
+    "server/src/main/java/com/projetok/studio/WorldStudio.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-105-RELATORIO-FINAL.md",
+    "docs/TASK-105-TESTES.md",
+    "docs/TASK-105.md",
+    "docs/TASK-studio-105-java-version.log",
+    "docs/TASK-studio-105-java.log",
+    "docs/TASK-studio-105-maven-version.log",
+    "docs/TASK-studio-105-python-version.log",
+    "docs/TASK-studio-105-python.log",
+    "docs/TASK-studio-105-qualidade.json",
+    "docs/TASK-studio-105-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

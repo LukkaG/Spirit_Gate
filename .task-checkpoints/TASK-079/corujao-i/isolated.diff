@@ -1,0 +1,897 @@
+--- before/server/src/test/java/com/projetok/prototype/rpg/CorujaoSpritesTest.java
++++ after/server/src/test/java/com/projetok/prototype/rpg/CorujaoSpritesTest.java
+@@ -0,0 +1,36 @@
++package com.projetok.prototype.rpg;
++
++import com.projetok.rpg.RpgWorld;
++import com.projetok.prototype.*;
++import org.junit.jupiter.api.Test;
++import java.nio.file.Path;
++import java.awt.image.BufferedImage;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++
++class CorujaoSpritesTest {
++    @Test void fourFramesPerDirectionLoopAt250msAndIdleKeepsFeet() throws Exception {
++        for(var direction:DirectionalAnimation.Direction.values()) {
++            var world=new RpgWorld();var control=RpgWorld.restore(world.save());
++            var sprites=RpgPlayerSprites.load(Path.of("../assets/dev/player-base"),250);
++            sprites.update(world.snapshot());Set<Integer> frames=new HashSet<>();
++            int dx=direction==DirectionalAnimation.Direction.LEFT?-1:direction==DirectionalAnimation.Direction.RIGHT?1:0;
++            int dy=direction==DirectionalAnimation.Direction.BACK?-1:direction==DirectionalAnimation.Direction.FRONT?1:0;
++            // Reposition through movement, then observe a full cycle before reaching the boundary.
++            if(dx<0||dy<0) for(int i=0;i<20;i++){world.tick(-dx,-dy);control.tick(-dx,-dy);}
++            sprites.update(world.snapshot());
++            for(int i=0;i<32;i++) {
++                world.tick(dx,dy);control.tick(dx,dy);sprites.update(world.snapshot());
++                frames.add(sprites.pose().frame());
++                assertEquals(control.save(),world.save());
++                assertEquals(direction,sprites.pose().direction());
++                var image=new BufferedImage(256,256,BufferedImage.TYPE_INT_ARGB);var g=image.createGraphics();
++                assertTrue(sprites.draw(g,new DebugSnapshot.ActorView(1,"Test",128,220,18,10,10,true,true)));g.dispose();
++                int bottom=-1;for(int y=0;y<256;y++)for(int x=0;x<256;x++)if((image.getRGB(x,y)>>>24)!=0)bottom=Math.max(bottom,y);
++                assertTrue(bottom>=218&&bottom<=220);
++            }
++            assertEquals(Set.of(0,1,2,3),frames);
++            world.tick(0,0);sprites.update(world.snapshot());assertEquals(direction+".0",sprites.frameKey());
++        }
++    }
++}
+--- before/server/src/test/java/com/projetok/prototype/rpg/RpgPlayerRefinementTest.java
++++ after/server/src/test/java/com/projetok/prototype/rpg/RpgPlayerRefinementTest.java
+@@ -1,109 +1,109 @@
+-package com.projetok.prototype.rpg;
+-
+-import com.projetok.prototype.*;
+-import com.projetok.prototype.DirectionalAnimation.Direction;
+-import com.projetok.rpg.RpgWorld;
+-import org.junit.jupiter.api.Test;
+-import java.awt.image.BufferedImage;
+-import java.nio.file.Path;
+-import static org.junit.jupiter.api.Assertions.*;
+-
+-class RpgPlayerRefinementTest {
+-    private final Path assets=Path.of("../assets/dev/player-base");
+-    private BufferedImage draw(RpgPlayerSprites sprites) {
+-        var image=new BufferedImage(256,256,BufferedImage.TYPE_INT_ARGB);var g=image.createGraphics();
+-        assertTrue(sprites.draw(g,new DebugSnapshot.ActorView(1,"Test",128,220,18,10,10,true,true)));
+-        g.dispose();return image;
+-    }
+-    private int[] bounds(BufferedImage image) {
+-        int left=image.getWidth(),top=image.getHeight(),right=-1,bottom=-1;
+-        for(int y=0;y<image.getHeight();y++)for(int x=0;x<image.getWidth();x++)if((image.getRGB(x,y)>>>24)!=0){
+-            left=Math.min(left,x);top=Math.min(top,y);right=Math.max(right,x);bottom=Math.max(bottom,y);
+-            assertEquals(255,image.getRGB(x,y)>>>24,"nearest-neighbor preserves binary alpha");
+-        }
+-        return new int[]{left,top,right,bottom};
+-    }
+-    @Test void configuredDefaultsAreFiftyPercentAnd220Milliseconds() throws Exception {
+-        String enabled=System.getProperty(RpgPlayerSprites.ENABLED),scale=System.getProperty(RpgPlayerSprites.SCALE),
+-                duration=System.getProperty(RpgPlayerSprites.FRAME_MILLIS),exe=System.getProperty("jpackage.app-path");
+-        try {
+-            System.setProperty(RpgPlayerSprites.ENABLED,"true");System.clearProperty(RpgPlayerSprites.SCALE);
+-            System.clearProperty(RpgPlayerSprites.FRAME_MILLIS);
+-            System.setProperty("jpackage.app-path",Path.of("../isolated.exe").toAbsolutePath().toString());
+-            var sprites=RpgPlayerSprites.configured();assertNotNull(sprites);assertEquals(.5,sprites.scale());
+-            assertEquals(220,RpgPlayerSprites.DEFAULT_FRAME_MILLIS);
+-            System.setProperty(RpgPlayerSprites.SCALE,"0.4");System.setProperty(RpgPlayerSprites.FRAME_MILLIS,"150");
+-            assertEquals(.4,RpgPlayerSprites.configured().scale());
+-        } finally {
+-            restore(RpgPlayerSprites.ENABLED,enabled);restore(RpgPlayerSprites.SCALE,scale);
+-            restore(RpgPlayerSprites.FRAME_MILLIS,duration);restore("jpackage.app-path",exe);
+-        }
+-    }
+-    private void restore(String key,String value){if(value==null)System.clearProperty(key);else System.setProperty(key,value);}
+-    @Test void invalidScalesAndDurationsFallBackWithoutAffectingSimulation() {
+-        for(double value:new double[]{Double.NaN,Double.POSITIVE_INFINITY,Double.NEGATIVE_INFINITY,-.4,0,.09,1.01})
+-            assertNull(RpgPlayerSprites.loadOptional(assets,220,value));
+-        assertNull(RpgPlayerSprites.loadOptional(assets,0,.4));
+-        assertNull(RpgPlayerSprites.loadOptional(assets,2001,.4));
+-        String enabled=System.getProperty(RpgPlayerSprites.ENABLED),scale=System.getProperty(RpgPlayerSprites.SCALE),duration=System.getProperty(RpgPlayerSprites.FRAME_MILLIS);
+-        try {
+-            System.setProperty(RpgPlayerSprites.ENABLED,"true");System.setProperty(RpgPlayerSprites.SCALE,"invalid");
+-            assertNull(RpgPlayerSprites.configured());
+-            System.setProperty(RpgPlayerSprites.SCALE,"0.4");System.setProperty(RpgPlayerSprites.FRAME_MILLIS,"invalid");
+-            assertNull(RpgPlayerSprites.configured());
+-            System.setProperty(RpgPlayerSprites.ENABLED,"false");assertNull(RpgPlayerSprites.configured());
+-        } finally {restore(RpgPlayerSprites.ENABLED,enabled);restore(RpgPlayerSprites.SCALE,scale);restore(RpgPlayerSprites.FRAME_MILLIS,duration);}
+-    }
+-    @Test void allTwelveFramesKeepFootAnchorAndAvoidClippingAtAllComparisonScales() throws Exception {
+-        for(double scale:new double[]{.35,.4,.5})for(Direction direction:Direction.values()) {
+-            var sprites=RpgPlayerSprites.load(assets,220,scale);var world=new RpgWorld();sprites.update(world.snapshot());
+-            int x=direction==Direction.LEFT?-1:direction==Direction.RIGHT?1:0;
+-            int y=direction==Direction.BACK?-1:direction==Direction.FRONT?1:0;
+-            for(int state=0;state<3;state++) {
+-                world.tick(x,y);sprites.update(world.snapshot());
+-                if(state==1)for(int i=0;i<7;i++){world.tick(x,y);sprites.update(world.snapshot());}
+-                if(state==2){world.tick(0,0);sprites.update(world.snapshot());}
+-                assertEquals(direction+"."+(state==0?1:state==1?2:0),sprites.frameKey());
+-                var image=draw(sprites);int[] b=bounds(image);
+-                assertTrue(b[3]>=218&&b[3]<=220,"feet "+sprites.frameKey()+" at scale "+scale);
+-                assertTrue(Math.abs((b[0]+b[2])/2.0-128)<=1.5,"horizontal pivot");
+-                assertTrue(b[0]>0&&b[1]>0&&b[2]<255&&b[3]<255,"no clipping");
+-                assertEquals(0,image.getRGB(0,0));assertEquals(0,image.getRGB(128,224));
+-            }
+-        }
+-    }
+-    @Test void reducedScaleChangesBothAxesProportionally() throws Exception {
+-        var previous=bounds(draw(RpgPlayerSprites.load(assets,150,.5)));
+-        for(double scale:new double[]{.35,.4}) {
+-            int[] actual=bounds(draw(RpgPlayerSprites.load(assets,220,scale)));
+-            double ratio=scale/.5;
+-            assertEquals((previous[2]-previous[0]+1)*ratio,actual[2]-actual[0]+1,2);
+-            assertEquals((previous[3]-previous[1]+1)*ratio,actual[3]-actual[1]+1,2);
+-        }
+-    }
+-    @Test void slowerDurationsUseSimulationTicksAndKeepIdleStable() {
+-        for(int duration:new int[]{220,280}) {
+-            var animation=new RpgPlayerAnimation(duration);var world=new RpgWorld();animation.update(world.snapshot());
+-            int threshold=duration==220?8:10;
+-            for(int tick=1;tick<threshold;tick++){world.tick(1,0);assertEquals(0,animation.update(world.snapshot()).frame());}
+-            world.tick(1,0);assertEquals(1,animation.update(world.snapshot()).frame());
+-            var snapshot=world.snapshot();for(int paint=0;paint<100;paint++)assertEquals(1,animation.update(snapshot).frame());
+-            world.tick(0,-1);assertEquals(new RpgPlayerAnimation.Pose(Direction.BACK,true,0),animation.update(world.snapshot()));
+-            for(int tick=0;tick<20;tick++){world.tick(0,0);assertEquals(new RpgPlayerAnimation.Pose(Direction.BACK,false,0),animation.update(world.snapshot()));}
+-        }
+-        assertEquals(.4,DirectionalAnimation.duration(DirectionalAnimation.State.WALK));
+-    }
+-    @Test void allComparisonSettingsPreserveWorldStateAndGeometryFallback() throws Exception {
+-        for(double[] setting:new double[][]{{.5,150},{.4,220},{.35,220},{.4,280}}){
+-            var world=new RpgWorld();var control=RpgWorld.restore(world.save());
+-            var sprites=RpgPlayerSprites.load(assets,(int)setting[1],setting[0]);
+-            for(int tick=0;tick<60;tick++){
+-                world.tick(0,tick<30?1:-1);control.tick(0,tick<30?1:-1);
+-                sprites.update(world.snapshot());draw(sprites);assertEquals(control.save(),world.save());
+-            }
+-            var g=new BufferedImage(50,50,2).createGraphics();
+-            assertFalse(sprites.draw(g,new DebugSnapshot.ActorView(100,"NPC",25,25,18,10,10,false,true)));
+-            assertFalse(sprites.draw(g,new DebugSnapshot.ActorView(1,"Dead",25,25,18,0,10,true,false)));g.dispose();
+-        }
+-    }
+-}
++package com.projetok.prototype.rpg;
++
++import com.projetok.prototype.*;
++import com.projetok.prototype.DirectionalAnimation.Direction;
++import com.projetok.rpg.RpgWorld;
++import org.junit.jupiter.api.Test;
++import java.awt.image.BufferedImage;
++import java.nio.file.Path;
++import static org.junit.jupiter.api.Assertions.*;
++
++class RpgPlayerRefinementTest {
++    private final Path assets=Path.of("../assets/dev/player-base");
++    private BufferedImage draw(RpgPlayerSprites sprites) {
++        var image=new BufferedImage(256,256,BufferedImage.TYPE_INT_ARGB);var g=image.createGraphics();
++        assertTrue(sprites.draw(g,new DebugSnapshot.ActorView(1,"Test",128,220,18,10,10,true,true)));
++        g.dispose();return image;
++    }
++    private int[] bounds(BufferedImage image) {
++        int left=image.getWidth(),top=image.getHeight(),right=-1,bottom=-1;
++        for(int y=0;y<image.getHeight();y++)for(int x=0;x<image.getWidth();x++)if((image.getRGB(x,y)>>>24)!=0){
++            left=Math.min(left,x);top=Math.min(top,y);right=Math.max(right,x);bottom=Math.max(bottom,y);
++            assertEquals(255,image.getRGB(x,y)>>>24,"nearest-neighbor preserves binary alpha");
++        }
++        return new int[]{left,top,right,bottom};
++    }
++    @Test void configuredDefaultsAreFiftyPercentAnd250Milliseconds() throws Exception {
++        String enabled=System.getProperty(RpgPlayerSprites.ENABLED),scale=System.getProperty(RpgPlayerSprites.SCALE),
++                duration=System.getProperty(RpgPlayerSprites.FRAME_MILLIS),exe=System.getProperty("jpackage.app-path");
++        try {
++            System.setProperty(RpgPlayerSprites.ENABLED,"true");System.clearProperty(RpgPlayerSprites.SCALE);
++            System.clearProperty(RpgPlayerSprites.FRAME_MILLIS);
++            System.setProperty("jpackage.app-path",Path.of("../isolated.exe").toAbsolutePath().toString());
++            var sprites=RpgPlayerSprites.configured();assertNotNull(sprites);assertEquals(.5,sprites.scale());
++            assertEquals(250,RpgPlayerSprites.DEFAULT_FRAME_MILLIS);
++            System.setProperty(RpgPlayerSprites.SCALE,"0.4");System.setProperty(RpgPlayerSprites.FRAME_MILLIS,"150");
++            assertEquals(.4,RpgPlayerSprites.configured().scale());
++        } finally {
++            restore(RpgPlayerSprites.ENABLED,enabled);restore(RpgPlayerSprites.SCALE,scale);
++            restore(RpgPlayerSprites.FRAME_MILLIS,duration);restore("jpackage.app-path",exe);
++        }
++    }
++    private void restore(String key,String value){if(value==null)System.clearProperty(key);else System.setProperty(key,value);}
++    @Test void invalidScalesAndDurationsFallBackWithoutAffectingSimulation() {
++        for(double value:new double[]{Double.NaN,Double.POSITIVE_INFINITY,Double.NEGATIVE_INFINITY,-.4,0,.09,1.01})
++            assertNull(RpgPlayerSprites.loadOptional(assets,220,value));
++        assertNull(RpgPlayerSprites.loadOptional(assets,0,.4));
++        assertNull(RpgPlayerSprites.loadOptional(assets,2001,.4));
++        String enabled=System.getProperty(RpgPlayerSprites.ENABLED),scale=System.getProperty(RpgPlayerSprites.SCALE),duration=System.getProperty(RpgPlayerSprites.FRAME_MILLIS);
++        try {
++            System.setProperty(RpgPlayerSprites.ENABLED,"true");System.setProperty(RpgPlayerSprites.SCALE,"invalid");
++            assertNull(RpgPlayerSprites.configured());
++            System.setProperty(RpgPlayerSprites.SCALE,"0.4");System.setProperty(RpgPlayerSprites.FRAME_MILLIS,"invalid");
++            assertNull(RpgPlayerSprites.configured());
++            System.setProperty(RpgPlayerSprites.ENABLED,"false");assertNull(RpgPlayerSprites.configured());
++        } finally {restore(RpgPlayerSprites.ENABLED,enabled);restore(RpgPlayerSprites.SCALE,scale);restore(RpgPlayerSprites.FRAME_MILLIS,duration);}
++    }
++    @Test void allTwelveFramesKeepFootAnchorAndAvoidClippingAtAllComparisonScales() throws Exception {
++        for(double scale:new double[]{.35,.4,.5})for(Direction direction:Direction.values()) {
++            var sprites=RpgPlayerSprites.load(assets,220,scale);var world=new RpgWorld();sprites.update(world.snapshot());
++            int x=direction==Direction.LEFT?-1:direction==Direction.RIGHT?1:0;
++            int y=direction==Direction.BACK?-1:direction==Direction.FRONT?1:0;
++            for(int state=0;state<3;state++) {
++                world.tick(x,y);sprites.update(world.snapshot());
++                if(state==1)for(int i=0;i<7;i++){world.tick(x,y);sprites.update(world.snapshot());}
++                if(state==2){world.tick(0,0);sprites.update(world.snapshot());}
++                assertEquals(direction+"."+(state==0?1:state==1?2:0),sprites.frameKey());
++                var image=draw(sprites);int[] b=bounds(image);
++                assertTrue(b[3]>=218&&b[3]<=220,"feet "+sprites.frameKey()+" at scale "+scale);
++                assertTrue(Math.abs((b[0]+b[2])/2.0-128)<=1.5,"horizontal pivot");
++                assertTrue(b[0]>0&&b[1]>0&&b[2]<255&&b[3]<255,"no clipping");
++                assertEquals(0,image.getRGB(0,0));assertEquals(0,image.getRGB(128,224));
++            }
++        }
++    }
++    @Test void reducedScaleChangesBothAxesProportionally() throws Exception {
++        var previous=bounds(draw(RpgPlayerSprites.load(assets,150,.5)));
++        for(double scale:new double[]{.35,.4}) {
++            int[] actual=bounds(draw(RpgPlayerSprites.load(assets,220,scale)));
++            double ratio=scale/.5;
++            assertEquals((previous[2]-previous[0]+1)*ratio,actual[2]-actual[0]+1,2);
++            assertEquals((previous[3]-previous[1]+1)*ratio,actual[3]-actual[1]+1,2);
++        }
++    }
++    @Test void slowerDurationsUseSimulationTicksAndKeepIdleStable() {
++        for(int duration:new int[]{220,280}) {
++            var animation=new RpgPlayerAnimation(duration);var world=new RpgWorld();animation.update(world.snapshot());
++            int threshold=duration==220?8:10;
++            for(int tick=1;tick<threshold;tick++){world.tick(1,0);assertEquals(0,animation.update(world.snapshot()).frame());}
++            world.tick(1,0);assertEquals(1,animation.update(world.snapshot()).frame());
++            var snapshot=world.snapshot();for(int paint=0;paint<100;paint++)assertEquals(1,animation.update(snapshot).frame());
++            world.tick(0,-1);assertEquals(new RpgPlayerAnimation.Pose(Direction.BACK,true,0),animation.update(world.snapshot()));
++            for(int tick=0;tick<20;tick++){world.tick(0,0);assertEquals(new RpgPlayerAnimation.Pose(Direction.BACK,false,0),animation.update(world.snapshot()));}
++        }
++        assertEquals(.4,DirectionalAnimation.duration(DirectionalAnimation.State.WALK));
++    }
++    @Test void allComparisonSettingsPreserveWorldStateAndGeometryFallback() throws Exception {
++        for(double[] setting:new double[][]{{.5,150},{.4,220},{.35,220},{.4,280}}){
++            var world=new RpgWorld();var control=RpgWorld.restore(world.save());
++            var sprites=RpgPlayerSprites.load(assets,(int)setting[1],setting[0]);
++            for(int tick=0;tick<60;tick++){
++                world.tick(0,tick<30?1:-1);control.tick(0,tick<30?1:-1);
++                sprites.update(world.snapshot());draw(sprites);assertEquals(control.save(),world.save());
++            }
++            var g=new BufferedImage(50,50,2).createGraphics();
++            assertFalse(sprites.draw(g,new DebugSnapshot.ActorView(100,"NPC",25,25,18,10,10,false,true)));
++            assertFalse(sprites.draw(g,new DebugSnapshot.ActorView(1,"Dead",25,25,18,0,10,true,false)));g.dispose();
++        }
++    }
++}
+--- before/server/src/test/java/com/projetok/prototype/rpg/RpgPlayerSpritesTest.java
++++ after/server/src/test/java/com/projetok/prototype/rpg/RpgPlayerSpritesTest.java
+@@ -1,116 +1,116 @@
+-package com.projetok.prototype.rpg;
+-
+-import com.projetok.prototype.*;
+-import com.projetok.prototype.DirectionalAnimation.Direction;
+-import com.projetok.rpg.RpgWorld;
+-import org.junit.jupiter.api.Test;
+-import org.junit.jupiter.api.io.TempDir;
+-import java.awt.image.BufferedImage;
+-import java.nio.file.*;
+-import java.util.*;
+-import static org.junit.jupiter.api.Assertions.*;
+-
+-class RpgPlayerSpritesTest {
+-    @TempDir Path temp;
+-    private Path assets() { return Path.of("../assets/dev/player-base"); }
+-    private Path copy() throws Exception {
+-        try(var files=Files.list(assets())) { for(Path file:files.toList()) Files.copy(file,temp.resolve(file.getFileName())); }
+-        return temp;
+-    }
+-    @Test void allDirectionsAlternateAndStopAtTheirOwnIdle() throws Exception {
+-        var sprites=RpgPlayerSprites.load(assets(),150);
+-        for(var direction:Direction.values()) {
+-            var world=new RpgWorld();sprites.update(world.snapshot());
+-            int x=direction==Direction.LEFT?-1:direction==Direction.RIGHT?1:0;
+-            int y=direction==Direction.BACK?-1:direction==Direction.FRONT?1:0;
+-            world.tick(x,y);sprites.update(world.snapshot());
+-            assertEquals(direction+".1",sprites.frameKey());
+-            for(int i=0;i<5;i++) { world.tick(x,y);sprites.update(world.snapshot()); }
+-            assertEquals(direction+".2",sprites.frameKey());
+-            for(int i=0;i<4;i++) { world.tick(x,y);sprites.update(world.snapshot()); }
+-            assertEquals(direction+".1",sprites.frameKey());
+-            world.tick(0,0);sprites.update(world.snapshot());assertEquals(direction+".0",sprites.frameKey());
+-        }
+-    }
+-    @Test void transitionsResetFramesAndRepeatedPaintsDoNotAdvanceTime() {
+-        var animation=new RpgPlayerAnimation(150);var world=new RpgWorld();
+-        assertEquals(new RpgPlayerAnimation.Pose(Direction.FRONT,false,0),animation.update(world.snapshot()));
+-        for(int i=0;i<7;i++){world.tick(1,0);animation.update(world.snapshot());}
+-        assertEquals(1,animation.pose().frame());
+-        var snapshot=world.snapshot();for(int i=0;i<100;i++)assertEquals(1,animation.update(snapshot).frame());
+-        world.tick(0,-1);assertEquals(new RpgPlayerAnimation.Pose(Direction.BACK,true,0),animation.update(world.snapshot()));
+-        world.tick(0,0);assertFalse(animation.update(world.snapshot()).walking());
+-        world.tick(0,-1);assertEquals(0,animation.update(world.snapshot()).frame());
+-    }
+-    @Test void configurableDurationDoesNotChangeOfficialAtlasTiming() {
+-        var animation=new RpgPlayerAnimation(300);var world=new RpgWorld();animation.update(world.snapshot());
+-        for(int i=0;i<6;i++){world.tick(1,0);animation.update(world.snapshot());}
+-        assertEquals(0,animation.pose().frame());
+-        for(int i=0;i<4;i++){world.tick(1,0);animation.update(world.snapshot());}
+-        assertEquals(1,animation.pose().frame());
+-        assertEquals(.4,DirectionalAnimation.duration(DirectionalAnimation.State.WALK));
+-        assertThrows(IllegalArgumentException.class,()->new RpgPlayerAnimation(0));
+-    }
+-    @Test void onlyActualMovementAnimatesIncludingBlockedMovement() {
+-        var animation=new RpgPlayerAnimation(150);var world=new RpgWorld();animation.update(world.snapshot());
+-        for(int i=0;i<50;i++){world.tick(-1,0);animation.update(world.snapshot());}
+-        float blockedX=world.snapshot().x();world.tick(-1,0);animation.update(world.snapshot());
+-        assertEquals(blockedX,world.snapshot().x());assertTrue(blockedX>=18&&blockedX<19);
+-        assertFalse(animation.pose().walking());
+-        assertEquals(Direction.LEFT,animation.pose().direction());
+-    }
+-    @Test void absentCorruptAndReplacedImagesFallBackAsAWhole() throws Exception {
+-        assertNull(RpgPlayerSprites.loadOptional(temp.resolve("missing"),150));
+-        Path folder=copy();Path file=folder.resolve("Walk_character_Front1.png");byte[] good=Files.readAllBytes(file);
+-        Files.delete(file);assertNull(RpgPlayerSprites.loadOptional(folder,150));
+-        Files.write(file,new byte[]{1,2,3});assertNull(RpgPlayerSprites.loadOptional(folder,150));
+-        Files.write(file,Files.readAllBytes(folder.resolve("Walk_character_Front2.png")));assertNull(RpgPlayerSprites.loadOptional(folder,150));
+-        Files.write(file,good);assertNotNull(RpgPlayerSprites.loadOptional(folder,150));
+-    }
+-    @Test void exactCaseIsEnforcedOnWindowsToo() throws Exception {
+-        Path folder=copy();Path file=folder.resolve("Main_Character_Idle_Back.png");byte[] data=Files.readAllBytes(file);
+-        Files.delete(file);Files.write(folder.resolve("main_character_idle_back.png"),data);
+-        assertNull(RpgPlayerSprites.loadOptional(folder,150));
+-    }
+-    @Test void allTwelveFramesKeepFeetAtLogicalAnchorAndAlpha() throws Exception {
+-        var sprites=RpgPlayerSprites.load(assets(),150);
+-        for(var direction:Direction.values()) {
+-            var world=new RpgWorld();sprites.update(world.snapshot());
+-            int x=direction==Direction.LEFT?-1:direction==Direction.RIGHT?1:0;
+-            int y=direction==Direction.BACK?-1:direction==Direction.FRONT?1:0;
+-            for(int state=0;state<3;state++) {
+-                world.tick(x,y);sprites.update(world.snapshot());
+-                if(state==1)for(int i=0;i<5;i++){world.tick(x,y);sprites.update(world.snapshot());}
+-                if(state==2){world.tick(0,0);sprites.update(world.snapshot());}
+-                var image=new BufferedImage(150,150,BufferedImage.TYPE_INT_ARGB);var g=image.createGraphics();
+-                assertTrue(sprites.draw(g,new DebugSnapshot.ActorView(1,"Test",75,120,18,10,10,true,true)));g.dispose();
+-                int maxY=-1,minX=150,maxX=-1;
+-                for(int py=0;py<150;py++)for(int px=0;px<150;px++)if((image.getRGB(px,py)>>>24)!=0){maxY=Math.max(maxY,py);minX=Math.min(minX,px);maxX=Math.max(maxX,px);}
+-                assertTrue(maxY>=118&&maxY<=120,sprites.frameKey()+" feet="+maxY);
+-                assertTrue(Math.abs((minX+maxX)/2.0-75)<=1,sprites.frameKey());
+-                assertEquals(0,image.getRGB(0,0));assertEquals(0,image.getRGB(75,125));
+-            }
+-        }
+-    }
+-    @Test void drawingIsCachedAndDoesNotMutateWorldOrOtherActors() throws Exception {
+-        Path folder=copy();var sprites=RpgPlayerSprites.load(folder,150);var world=new RpgWorld();var before=world.save();sprites.update(world.snapshot());
+-        try(var files=Files.list(folder)){for(Path p:files.toList())Files.delete(p);}
+-        var image=new BufferedImage(200,200,2);var g=image.createGraphics();
+-        assertTrue(sprites.draw(g,new DebugSnapshot.ActorView(1,"Player",100,150,18,10,10,true,true)));
+-        assertFalse(sprites.draw(g,new DebugSnapshot.ActorView(100,"Enemy",100,150,19,10,10,false,true)));
+-        assertFalse(sprites.draw(g,new DebugSnapshot.ActorView(1,"Dead",100,150,18,0,10,true,false)));
+-        g.dispose();assertEquals(before,world.save());
+-    }
+-    @Test void disabledConfigurationDoesNotTryToLoadAssets() {
+-        String old=System.getProperty(RpgPlayerSprites.ENABLED);
+-        try{System.clearProperty(RpgPlayerSprites.ENABLED);assertNull(RpgPlayerSprites.configured());}
+-        finally{if(old!=null)System.setProperty(RpgPlayerSprites.ENABLED,old);}
+-    }
+-    @Test void rendererWithoutHookAndWithDecliningHookArePixelIdentical() {
+-        var world=DebugWorld.demo().snapshot();var panel=new DebugPanel(()->world);
+-        var a=new BufferedImage(1260,750,2);var b=new BufferedImage(1260,750,2);
+-        var ga=a.createGraphics();panel.render(ga,world);ga.dispose();panel.setActorRenderer((g,actor)->false);
+-        var gb=b.createGraphics();panel.render(gb,world);gb.dispose();
+-        assertArrayEquals(a.getRGB(0,0,1260,750,null,0,1260),b.getRGB(0,0,1260,750,null,0,1260));
+-    }
+-}
++package com.projetok.prototype.rpg;
++
++import com.projetok.prototype.*;
++import com.projetok.prototype.DirectionalAnimation.Direction;
++import com.projetok.rpg.RpgWorld;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import java.awt.image.BufferedImage;
++import java.nio.file.*;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++
++class RpgPlayerSpritesTest {
++    @TempDir Path temp;
++    private Path assets() { return Path.of("../assets/dev/player-base"); }
++    private Path copy() throws Exception {
++        try(var files=Files.list(assets())) { for(Path file:files.toList()) Files.copy(file,temp.resolve(file.getFileName())); }
++        return temp;
++    }
++    @Test void allDirectionsAlternateAndStopAtTheirOwnIdle() throws Exception {
++        var sprites=RpgPlayerSprites.load(assets(),150);
++        for(var direction:Direction.values()) {
++            var world=new RpgWorld();sprites.update(world.snapshot());
++            int x=direction==Direction.LEFT?-1:direction==Direction.RIGHT?1:0;
++            int y=direction==Direction.BACK?-1:direction==Direction.FRONT?1:0;
++            world.tick(x,y);sprites.update(world.snapshot());
++            assertEquals(direction+".1",sprites.frameKey());
++            for(int i=0;i<5;i++) { world.tick(x,y);sprites.update(world.snapshot()); }
++            assertEquals(direction+".2",sprites.frameKey());
++            for(int i=0;i<4;i++) { world.tick(x,y);sprites.update(world.snapshot()); }
++            assertEquals(direction+".3",sprites.frameKey());
++            world.tick(0,0);sprites.update(world.snapshot());assertEquals(direction+".0",sprites.frameKey());
++        }
++    }
++    @Test void transitionsResetFramesAndRepeatedPaintsDoNotAdvanceTime() {
++        var animation=new RpgPlayerAnimation(150);var world=new RpgWorld();
++        assertEquals(new RpgPlayerAnimation.Pose(Direction.FRONT,false,0),animation.update(world.snapshot()));
++        for(int i=0;i<7;i++){world.tick(1,0);animation.update(world.snapshot());}
++        assertEquals(1,animation.pose().frame());
++        var snapshot=world.snapshot();for(int i=0;i<100;i++)assertEquals(1,animation.update(snapshot).frame());
++        world.tick(0,-1);assertEquals(new RpgPlayerAnimation.Pose(Direction.BACK,true,0),animation.update(world.snapshot()));
++        world.tick(0,0);assertFalse(animation.update(world.snapshot()).walking());
++        world.tick(0,-1);assertEquals(0,animation.update(world.snapshot()).frame());
++    }
++    @Test void configurableDurationDoesNotChangeOfficialAtlasTiming() {
++        var animation=new RpgPlayerAnimation(300);var world=new RpgWorld();animation.update(world.snapshot());
++        for(int i=0;i<6;i++){world.tick(1,0);animation.update(world.snapshot());}
++        assertEquals(0,animation.pose().frame());
++        for(int i=0;i<4;i++){world.tick(1,0);animation.update(world.snapshot());}
++        assertEquals(1,animation.pose().frame());
++        assertEquals(.4,DirectionalAnimation.duration(DirectionalAnimation.State.WALK));
++        assertThrows(IllegalArgumentException.class,()->new RpgPlayerAnimation(0));
++    }
++    @Test void onlyActualMovementAnimatesIncludingBlockedMovement() {
++        var animation=new RpgPlayerAnimation(150);var world=new RpgWorld();animation.update(world.snapshot());
++        for(int i=0;i<50;i++){world.tick(-1,0);animation.update(world.snapshot());}
++        float blockedX=world.snapshot().x();world.tick(-1,0);animation.update(world.snapshot());
++        assertEquals(blockedX,world.snapshot().x());assertTrue(blockedX>=18&&blockedX<19);
++        assertFalse(animation.pose().walking());
++        assertEquals(Direction.LEFT,animation.pose().direction());
++    }
++    @Test void absentCorruptAndReplacedImagesFallBackAsAWhole() throws Exception {
++        assertNull(RpgPlayerSprites.loadOptional(temp.resolve("missing"),150));
++        Path folder=copy();Path file=folder.resolve("Walk_character_Front1.png");byte[] good=Files.readAllBytes(file);
++        Files.delete(file);assertNull(RpgPlayerSprites.loadOptional(folder,150));
++        Files.write(file,new byte[]{1,2,3});assertNull(RpgPlayerSprites.loadOptional(folder,150));
++        Files.write(file,Files.readAllBytes(folder.resolve("Walk_character_Front2.png")));assertNull(RpgPlayerSprites.loadOptional(folder,150));
++        Files.write(file,good);assertNotNull(RpgPlayerSprites.loadOptional(folder,150));
++    }
++    @Test void exactCaseIsEnforcedOnWindowsToo() throws Exception {
++        Path folder=copy();Path file=folder.resolve("Main_Character_Idle_Back.png");byte[] data=Files.readAllBytes(file);
++        Files.delete(file);Files.write(folder.resolve("main_character_idle_back.png"),data);
++        assertNull(RpgPlayerSprites.loadOptional(folder,150));
++    }
++    @Test void allTwelveFramesKeepFeetAtLogicalAnchorAndAlpha() throws Exception {
++        var sprites=RpgPlayerSprites.load(assets(),150);
++        for(var direction:Direction.values()) {
++            var world=new RpgWorld();sprites.update(world.snapshot());
++            int x=direction==Direction.LEFT?-1:direction==Direction.RIGHT?1:0;
++            int y=direction==Direction.BACK?-1:direction==Direction.FRONT?1:0;
++            for(int state=0;state<3;state++) {
++                world.tick(x,y);sprites.update(world.snapshot());
++                if(state==1)for(int i=0;i<5;i++){world.tick(x,y);sprites.update(world.snapshot());}
++                if(state==2){world.tick(0,0);sprites.update(world.snapshot());}
++                var image=new BufferedImage(150,150,BufferedImage.TYPE_INT_ARGB);var g=image.createGraphics();
++                assertTrue(sprites.draw(g,new DebugSnapshot.ActorView(1,"Test",75,120,18,10,10,true,true)));g.dispose();
++                int maxY=-1,minX=150,maxX=-1;
++                for(int py=0;py<150;py++)for(int px=0;px<150;px++)if((image.getRGB(px,py)>>>24)!=0){maxY=Math.max(maxY,py);minX=Math.min(minX,px);maxX=Math.max(maxX,px);}
++                assertTrue(maxY>=118&&maxY<=120,sprites.frameKey()+" feet="+maxY);
++                assertTrue(Math.abs((minX+maxX)/2.0-75)<=1,sprites.frameKey());
++                assertEquals(0,image.getRGB(0,0));assertEquals(0,image.getRGB(75,125));
++            }
++        }
++    }
++    @Test void drawingIsCachedAndDoesNotMutateWorldOrOtherActors() throws Exception {
++        Path folder=copy();var sprites=RpgPlayerSprites.load(folder,150);var world=new RpgWorld();var before=world.save();sprites.update(world.snapshot());
++        try(var files=Files.list(folder)){for(Path p:files.toList())Files.delete(p);}
++        var image=new BufferedImage(200,200,2);var g=image.createGraphics();
++        assertTrue(sprites.draw(g,new DebugSnapshot.ActorView(1,"Player",100,150,18,10,10,true,true)));
++        assertFalse(sprites.draw(g,new DebugSnapshot.ActorView(100,"Enemy",100,150,19,10,10,false,true)));
++        assertFalse(sprites.draw(g,new DebugSnapshot.ActorView(1,"Dead",100,150,18,0,10,true,false)));
++        g.dispose();assertEquals(before,world.save());
++    }
++    @Test void disabledConfigurationDoesNotTryToLoadAssets() {
++        String old=System.getProperty(RpgPlayerSprites.ENABLED);
++        try{System.clearProperty(RpgPlayerSprites.ENABLED);assertNull(RpgPlayerSprites.configured());}
++        finally{if(old!=null)System.setProperty(RpgPlayerSprites.ENABLED,old);}
++    }
++    @Test void rendererWithoutHookAndWithDecliningHookArePixelIdentical() {
++        var world=DebugWorld.demo().snapshot();var panel=new DebugPanel(()->world);
++        var a=new BufferedImage(1260,750,2);var b=new BufferedImage(1260,750,2);
++        var ga=a.createGraphics();panel.render(ga,world);ga.dispose();panel.setActorRenderer((g,actor)->false);
++        var gb=b.createGraphics();panel.render(gb,world);gb.dispose();
++        assertArrayEquals(a.getRGB(0,0,1260,750,null,0,1260),b.getRGB(0,0,1260,750,null,0,1260));
++    }
++}
+--- before/server/src/main/resources/rpg/experimental-player.properties
++++ after/server/src/main/resources/rpg/experimental-player.properties
+@@ -1,13 +1,21 @@
+-# TASK-078 experimental originals: key=name,sha256,width,height,pivotX,pivotY
++# Experimental: Idle 0; Walk 1..4. Original PNGs, unmodified.
++FRONT.0=Main_Character_Idle_Front.png,2daf77863ea6b0c6b7840c6a83e682e16e79564b160eced24858b1526b38297c,153,153,78,145
++FRONT.1=Walk_character_Front1.png,8bb5c12853fa084db51624a99ee3b350f342531a21a0dbd8b1deb5d37ee3168b,132,148,68,145
++FRONT.2=Walk_character_Front2.png,e80cd02c38cbf5a2d2cdc103de4a72a36e00c34a21969a1fee05d801fb686598,132,148,73,145
++FRONT.3=Walk_character_Front3.png,8dfb422cf689a2a59e6953c20f5fae1732a23384e8bb65fa2a84733ed89a0d51,132,148,69,145
++FRONT.4=Walk_character_Front4.png,1a3c4ccb7c059f20a33dbf0ac1d63e295aaac44e3c49a8bca8526e37a57a31ee,132,148,65,145
+ BACK.0=Main_Character_Idle_Back.png,81d93e06334d60b36b553eb6ff6e086c1d6c92658e6a70012a6a2b2a65464d6e,153,153,77,146
+-FRONT.0=Main_Character_Idle_Front.png,2daf77863ea6b0c6b7840c6a83e682e16e79564b160eced24858b1526b38297c,153,153,78,145
++BACK.1=Walk_Character_Back1.png,ff83b04e6d2f95dbbaa4017b39af6a4d9c61d421fd0585d0f27bd119981a1408,142,153,65,148
++BACK.2=Walk_Character_Back2.png,ea170c973d37c6af41b763af147d24dc99fb044d8630a0a4ee290d8478271d43,142,153,69,149
++BACK.3=Walk_Character_Back3.png,659c0d7ab4d47a9c18ace87c18b284e1c779625b3339a0b3b7f413b7ad90d220,142,153,68,152
++BACK.4=Walk_Character_Back4.png,4f32888da7c830b3146089db730c4d436050c42cea207d6d02ed9388c10727fb,142,153,73,149
+ LEFT.0=Main_Character_Idle_Left.png,0795c957fb19c81c64d4881308fa2e3c29fffaf2a43601f6134efd32034fe192,153,153,77,144
++LEFT.1=Walk_Character_Left1.png,a1bcbf3de8714a1ff9785a6ede1d07805f31f65fd042ea26477efbded77a4c93,163,154,79,144
++LEFT.2=Walk_Character_Left2.png,83d152e65e116e9ad0a4639fe0e786a04a357d6112ec30673862845a48690d1c,163,154,101,149
++LEFT.3=Walk_Character_Left3.png,ca7f870541659c268d160ecadc03f475d6529571feaccd19ad2026a507d1f8c7,163,154,90,149
++LEFT.4=Walk_Character_Left4.png,6df54479d04f596e0d7f4b6574d95bd992e5756c320928a76b4e45c0f51c875e,163,154,81,144
+ RIGHT.0=Main_Character_Idle_Right.png,eb0c0a64d4e7009d7415e5f0c54dc99aec1c6e140b50b2d7990da10cafaa7ec2,153,153,76,146
+-BACK.1=Walk_Character_Back1.png,ff83b04e6d2f95dbbaa4017b39af6a4d9c61d421fd0585d0f27bd119981a1408,142,153,65,148
+-BACK.2=Walk_Character_Back2.png,2932e4aa72430fdf72e243eef3136d315014de3f02741de3d7a6f0d5e4f132c3,142,153,69,152
+-FRONT.1=Walk_character_Front1.png,8bb5c12853fa084db51624a99ee3b350f342531a21a0dbd8b1deb5d37ee3168b,132,148,68,145
+-FRONT.2=Walk_character_Front2.png,8dfb422cf689a2a59e6953c20f5fae1732a23384e8bb65fa2a84733ed89a0d51,132,148,69,145
+-LEFT.1=Walk_Character_Left1.png,a1bcbf3de8714a1ff9785a6ede1d07805f31f65fd042ea26477efbded77a4c93,163,154,79,144
+-LEFT.2=Walk_Character_Left2.png,68369a5834cd08c9a0dd0920857b977d6bea52441b8f1b1613b2f3d15891f560,163,154,79,144
+-RIGHT.1=Walk_character_Right1.png,74e7382a3287a83eee87fc6fc2bda6b195956793865f6223b4ad0ba37ad55176,155,159,74,149
+-RIGHT.2=Walk_character_Right2.png,1e742253e9b75db53e37f2fbc08ad2dbf4ae934b83f78ae15b9952438c823ce9,155,159,75,144
++RIGHT.1=Walk_character_Right1.png,382db872046aa56fa7b745cbfc21d5fb109f817f4fc1830b9b5177a179fa2cdc,155,159,62,138
++RIGHT.2=Walk_character_Right2.png,794b7377f57d53540a68d5dc8dce024c0e4cd60dd343fff93750e3dfd0a7e855,155,159,62,149
++RIGHT.3=Walk_character_Right3.png,672954482868c7c5da817f8cdc55eda0ecd1026e7eef4c6afe895f2ae96ff04e,155,159,63,149
++RIGHT.4=Walk_character_Right4.png,8b776595c5737b55db78172e9dc69c5335ffb0e89b5f6d1d660ccb6688ae9c98,155,159,73,144
+--- before/server/src/main/java/com/projetok/prototype/rpg/RpgPlayerAnimation.java
++++ after/server/src/main/java/com/projetok/prototype/rpg/RpgPlayerAnimation.java
+@@ -1,31 +1,31 @@
+-package com.projetok.prototype.rpg;
+-
+-import com.projetok.prototype.DirectionalAnimation.Direction;
+-import com.projetok.prototype.DirectionalAnimation;
+-import com.projetok.rpg.RpgWorld;
+-
+-/** Presentation only: consumes published positions, never input or mutable world state. */
+-public final class RpgPlayerAnimation {
+-    public record Pose(Direction direction, boolean walking, int frame) { }
+-    private final int frameMillis;
+-    private RpgWorld.View previous;
+-    private Pose pose=new Pose(Direction.FRONT,false,0);
+-    private long stateTick;
+-
+-    public RpgPlayerAnimation(int frameMillis) {
+-        if(frameMillis<30 || frameMillis>2000) throw new IllegalArgumentException("frameMillis: 30..2000");
+-        this.frameMillis=frameMillis;
+-    }
+-    public Pose pose() { return pose; }
+-    public Pose update(RpgWorld.View next) {
+-        if(previous!=null && next.ticks()==previous.ticks() && next.state().equals(previous.state())) return pose;
+-        boolean reset=previous==null || next.ticks()<=previous.ticks()
+-                || !next.state().region().equals(previous.state().region());
+-        float dx=reset?0:next.x()-previous.x(),dy=reset?0:next.y()-previous.y();
+-        boolean walking=next.state().hp()>0 && dx*dx+dy*dy>0.000001;
+-        Direction direction=walking?DirectionalAnimation.facing(dx,dy,pose.direction()):pose.direction();
+-        if(reset || walking!=pose.walking() || direction!=pose.direction()) stateTick=next.ticks();
+-        int frame=walking?(int)(((next.ticks()-stateTick)*1000L/(30L*frameMillis))%2):0;
+-        pose=new Pose(direction,walking,frame);previous=next;return pose;
+-    }
+-}
++package com.projetok.prototype.rpg;
++
++import com.projetok.prototype.DirectionalAnimation.Direction;
++import com.projetok.prototype.DirectionalAnimation;
++import com.projetok.rpg.RpgWorld;
++
++/** Presentation only: consumes published positions, never input or mutable world state. */
++public final class RpgPlayerAnimation {
++    public record Pose(Direction direction, boolean walking, int frame) { }
++    private final int frameMillis;
++    private RpgWorld.View previous;
++    private Pose pose=new Pose(Direction.FRONT,false,0);
++    private long stateTick;
++
++    public RpgPlayerAnimation(int frameMillis) {
++        if(frameMillis<30 || frameMillis>2000) throw new IllegalArgumentException("frameMillis: 30..2000");
++        this.frameMillis=frameMillis;
++    }
++    public Pose pose() { return pose; }
++    public Pose update(RpgWorld.View next) {
++        if(previous!=null && next.ticks()==previous.ticks() && next.state().equals(previous.state())) return pose;
++        boolean reset=previous==null || next.ticks()<=previous.ticks()
++                || !next.state().region().equals(previous.state().region());
++        float dx=reset?0:next.x()-previous.x(),dy=reset?0:next.y()-previous.y();
++        boolean walking=next.state().hp()>0 && dx*dx+dy*dy>0.000001;
++        Direction direction=walking?DirectionalAnimation.facing(dx,dy,pose.direction()):pose.direction();
++        if(reset || walking!=pose.walking() || direction!=pose.direction()) stateTick=next.ticks();
++        int frame=walking?(int)(((next.ticks()-stateTick)*1000L/(30L*frameMillis))%4):0;
++        pose=new Pose(direction,walking,frame);previous=next;return pose;
++    }
++}
+--- before/server/src/main/java/com/projetok/prototype/rpg/RpgPlayerSprites.java
++++ after/server/src/main/java/com/projetok/prototype/rpg/RpgPlayerSprites.java
+@@ -1,99 +1,99 @@
+-package com.projetok.prototype.rpg;
+-
+-import com.projetok.prototype.DebugPanel;
+-import com.projetok.prototype.DebugSnapshot;
+-import java.awt.*;
+-import java.awt.image.BufferedImage;
+-import java.io.*;
+-import java.nio.file.*;
+-import java.security.*;
+-import java.util.*;
+-import javax.imageio.ImageIO;
+-
+-/** Separate experimental contract; does not relax or use the official 59-frame atlas. */
+-public final class RpgPlayerSprites implements DebugPanel.ActorRenderer {
+-    public static final String ENABLED="spiritgate.rpg.experimentalSprites";
+-    public static final String FRAME_MILLIS="spiritgate.rpg.spriteFrameMillis";
+-    public static final String SCALE="spiritgate.rpg.spriteScale";
+-    public static final int DEFAULT_FRAME_MILLIS=220;
+-    public static final double DEFAULT_SCALE=0.5;
+-    private record Frame(BufferedImage image,int pivotX,int pivotY) { }
+-    private final Map<String,Frame> frames;
+-    private final RpgPlayerAnimation animation;
+-    private final double scale;
+-    private RpgPlayerSprites(Map<String,Frame> frames,int frameMillis,double scale) {
+-        this.frames=Map.copyOf(frames);animation=new RpgPlayerAnimation(frameMillis);this.scale=scale;
+-    }
+-    public static Path defaultFolder() { return RpgMenu.home().resolve("assets/dev/player-base"); }
+-    public static RpgPlayerSprites loadOptional(Path folder,int frameMillis) {
+-        return loadOptional(folder,frameMillis,DEFAULT_SCALE);
+-    }
+-    public static RpgPlayerSprites loadOptional(Path folder,int frameMillis,double scale) {
+-        try { return load(folder,frameMillis,scale); }
+-        catch(IOException|IllegalArgumentException error) {
+-            System.err.println("[Spirit Gate] Sprites RPG experimentais recusadas; fallback geometrico: "+error.getMessage());
+-            return null;
+-        }
+-    }
+-    public static RpgPlayerSprites configured() {
+-        if(!Boolean.getBoolean(ENABLED)) return null;
+-        try { return loadOptional(defaultFolder(),Integer.parseInt(System.getProperty(FRAME_MILLIS,""+DEFAULT_FRAME_MILLIS)),
+-                Double.parseDouble(System.getProperty(SCALE,""+DEFAULT_SCALE))); }
+-        catch(IllegalArgumentException error) {
+-            System.err.println("[Spirit Gate] Configuracao experimental invalida; fallback geometrico: "+error.getMessage());return null;
+-        }
+-    }
+-    public static RpgPlayerSprites load(Path folder,int frameMillis) throws IOException {
+-        return load(folder,frameMillis,DEFAULT_SCALE);
+-    }
+-    public static RpgPlayerSprites load(Path folder,int frameMillis,double scale) throws IOException {
+-        if(!Double.isFinite(scale)||scale<0.1||scale>1.0) throw new IllegalArgumentException("spriteScale: 0.1..1.0");
+-        Properties metadata=new Properties();
+-        try(var input=RpgPlayerSprites.class.getResourceAsStream("/rpg/experimental-player.properties")) {
+-            if(input==null) throw new IOException("Metadados experimentais ausentes");metadata.load(input);
+-        }
+-        Set<String> actual=new HashSet<>();
+-        try(var files=Files.list(folder)) { files.forEach(p->actual.add(p.getFileName().toString())); }
+-        Map<String,Frame> frames=new HashMap<>();
+-        for(var direction:com.projetok.prototype.DirectionalAnimation.Direction.values()) for(int index=0;index<3;index++) {
+-            String key=direction+"."+index;
+-            String[] fields=metadata.getProperty(key,"").split(",");
+-            if(fields.length!=6) throw new IOException("Metadados incompletos: "+key);
+-            String name=fields[0];
+-            if(!actual.contains(name)) throw new IOException("Arquivo ausente (nome exato): "+name);
+-            Path file=folder.resolve(name);
+-            if(Files.isSymbolicLink(file)||!Files.isRegularFile(file)||Files.size(file)>1_000_000) throw new IOException("Arquivo invalido: "+name);
+-            byte[] bytes=Files.readAllBytes(file);
+-            try {
+-                if(!HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(bytes)).equals(fields[1]))
+-                    throw new IOException("SHA-256 divergente: "+name);
+-            } catch(NoSuchAlgorithmException impossible) { throw new IllegalStateException(impossible); }
+-            // Exact known PNG bytes are checked before ImageIO decodes or allocates pixels.
+-            BufferedImage image=ImageIO.read(new ByteArrayInputStream(bytes));
+-            int width=Integer.parseInt(fields[2]),height=Integer.parseInt(fields[3]);
+-            if(image==null || image.getWidth()!=width || image.getHeight()!=height || !image.getColorModel().hasAlpha())
+-                throw new IOException("Dimensoes/alfa invalidos: "+name);
+-            frames.put(key,new Frame(image,Integer.parseInt(fields[4]),Integer.parseInt(fields[5])));
+-        }
+-        return new RpgPlayerSprites(frames,frameMillis,scale);
+-    }
+-    public double scale() { return scale; }
+-    public RpgPlayerAnimation.Pose update(com.projetok.rpg.RpgWorld.View view) { return animation.update(view); }
+-    public RpgPlayerAnimation.Pose pose() { return animation.pose(); }
+-    public String frameKey() {
+-        var pose=animation.pose();return pose.direction()+"."+(pose.walking()?pose.frame()+1:0);
+-    }
+-    @Override public boolean draw(Graphics2D original,DebugSnapshot.ActorView actor) {
+-        if(!actor.player() || actor.id()!=1 || !actor.alive()) return false;
+-        Frame frame=frames.get(frameKey());
+-        if(frame==null) return false;
+-        Graphics2D g=(Graphics2D)original.create();
+-        try {
+-            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+-            // Keep complete originals and align their recorded foot pivots at any configured scale.
+-            g.translate(Math.round(actor.x()-frame.pivotX()*scale),Math.round(actor.y()-frame.pivotY()*scale));
+-            g.scale(scale,scale);g.drawImage(frame.image(),0,0,null);
+-        } finally { g.dispose(); }
+-        return true;
+-    }
+-}
++package com.projetok.prototype.rpg;
++
++import com.projetok.prototype.DebugPanel;
++import com.projetok.prototype.DebugSnapshot;
++import java.awt.*;
++import java.awt.image.BufferedImage;
++import java.io.*;
++import java.nio.file.*;
++import java.security.*;
++import java.util.*;
++import javax.imageio.ImageIO;
++
++/** Separate experimental contract; does not relax or use the official 59-frame atlas. */
++public final class RpgPlayerSprites implements DebugPanel.ActorRenderer {
++    public static final String ENABLED="spiritgate.rpg.experimentalSprites";
++    public static final String FRAME_MILLIS="spiritgate.rpg.spriteFrameMillis";
++    public static final String SCALE="spiritgate.rpg.spriteScale";
++    public static final int DEFAULT_FRAME_MILLIS=250;
++    public static final double DEFAULT_SCALE=0.5;
++    private record Frame(BufferedImage image,int pivotX,int pivotY) { }
++    private final Map<String,Frame> frames;
++    private final RpgPlayerAnimation animation;
++    private final double scale;
++    private RpgPlayerSprites(Map<String,Frame> frames,int frameMillis,double scale) {
++        this.frames=Map.copyOf(frames);animation=new RpgPlayerAnimation(frameMillis);this.scale=scale;
++    }
++    public static Path defaultFolder() { return RpgMenu.home().resolve("assets/dev/player-base"); }
++    public static RpgPlayerSprites loadOptional(Path folder,int frameMillis) {
++        return loadOptional(folder,frameMillis,DEFAULT_SCALE);
++    }
++    public static RpgPlayerSprites loadOptional(Path folder,int frameMillis,double scale) {
++        try { return load(folder,frameMillis,scale); }
++        catch(IOException|IllegalArgumentException error) {
++            System.err.println("[Spirit Gate] Sprites RPG experimentais recusadas; fallback geometrico: "+error.getMessage());
++            return null;
++        }
++    }
++    public static RpgPlayerSprites configured() {
++        if(!Boolean.getBoolean(ENABLED)) return null;
++        try { return loadOptional(defaultFolder(),Integer.parseInt(System.getProperty(FRAME_MILLIS,""+DEFAULT_FRAME_MILLIS)),
++                Double.parseDouble(System.getProperty(SCALE,""+DEFAULT_SCALE))); }
++        catch(IllegalArgumentException error) {
++            System.err.println("[Spirit Gate] Configuracao experimental invalida; fallback geometrico: "+error.getMessage());return null;
++        }
++    }
++    public static RpgPlayerSprites load(Path folder,int frameMillis) throws IOException {
++        return load(folder,frameMillis,DEFAULT_SCALE);
++    }
++    public static RpgPlayerSprites load(Path folder,int frameMillis,double scale) throws IOException {
++        if(!Double.isFinite(scale)||scale<0.1||scale>1.0) throw new IllegalArgumentException("spriteScale: 0.1..1.0");
++        Properties metadata=new Properties();
++        try(var input=RpgPlayerSprites.class.getResourceAsStream("/rpg/experimental-player.properties")) {
++            if(input==null) throw new IOException("Metadados experimentais ausentes");metadata.load(input);
++        }
++        Set<String> actual=new HashSet<>();
++        try(var files=Files.list(folder)) { files.forEach(p->actual.add(p.getFileName().toString())); }
++        Map<String,Frame> frames=new HashMap<>();
++        for(var direction:com.projetok.prototype.DirectionalAnimation.Direction.values()) for(int index=0;index<5;index++) {
++            String key=direction+"."+index;
++            String[] fields=metadata.getProperty(key,"").split(",");
++            if(fields.length!=6) throw new IOException("Metadados incompletos: "+key);
++            String name=fields[0];
++            if(!actual.contains(name)) throw new IOException("Arquivo ausente (nome exato): "+name);
++            Path file=folder.resolve(name);
++            if(Files.isSymbolicLink(file)||!Files.isRegularFile(file)||Files.size(file)>1_000_000) throw new IOException("Arquivo invalido: "+name);
++            byte[] bytes=Files.readAllBytes(file);
++            try {
++                if(!HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(bytes)).equals(fields[1]))
++                    throw new IOException("SHA-256 divergente: "+name);
++            } catch(NoSuchAlgorithmException impossible) { throw new IllegalStateException(impossible); }
++            // Exact known PNG bytes are checked before ImageIO decodes or allocates pixels.
++            BufferedImage image=ImageIO.read(new ByteArrayInputStream(bytes));
++            int width=Integer.parseInt(fields[2]),height=Integer.parseInt(fields[3]);
++            if(image==null || image.getWidth()!=width || image.getHeight()!=height || !image.getColorModel().hasAlpha())
++                throw new IOException("Dimensoes/alfa invalidos: "+name);
++            frames.put(key,new Frame(image,Integer.parseInt(fields[4]),Integer.parseInt(fields[5])));
++        }
++        return new RpgPlayerSprites(frames,frameMillis,scale);
++    }
++    public double scale() { return scale; }
++    public RpgPlayerAnimation.Pose update(com.projetok.rpg.RpgWorld.View view) { return animation.update(view); }
++    public RpgPlayerAnimation.Pose pose() { return animation.pose(); }
++    public String frameKey() {
++        var pose=animation.pose();return pose.direction()+"."+(pose.walking()?pose.frame()+1:0);
++    }
++    @Override public boolean draw(Graphics2D original,DebugSnapshot.ActorView actor) {
++        if(!actor.player() || actor.id()!=1 || !actor.alive()) return false;
++        Frame frame=frames.get(frameKey());
++        if(frame==null) return false;
++        Graphics2D g=(Graphics2D)original.create();
++        try {
++            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
++            // Keep complete originals and align their recorded foot pivots at any configured scale.
++            g.translate(Math.round(actor.x()-frame.pivotX()*scale),Math.round(actor.y()-frame.pivotY()*scale));
++            g.scale(scale,scale);g.drawImage(frame.image(),0,0,null);
++        } finally { g.dispose(); }
++        return true;
++    }
++}
+--- before/tools/corujao_relatorio.py
++++ after/tools/corujao_relatorio.py
+@@ -0,0 +1,20 @@
++"""Registra uma etapa somente apos resultado automatizado real e aprovado."""
++from pathlib import Path
++import sys,json
++from corujao_checkpoint import run,ROOT
++
++task,status,description=sys.argv[1:]
++report=json.loads((ROOT/'docs'/('TASK-corujao-'+task+'-qualidade.json')).read_text(encoding='utf-8'))
++assert report['exitCode']==0,report
++folder=ROOT/'docs'/('corujao-i' if task=='079' else '')
++folder.mkdir(exist_ok=True)
++prefix=folder/('TASK-'+task)
++for suffix,body in [('.md',description),('-TESTES.md','Comando: `python tools/qualidade.py --offline --task corujao-'+task+'`\n\n```json\n'+json.dumps(report['checks'],indent=2)+'\n```'),('-RELATORIO-FINAL.md','Estado: **'+status+'**.\n\n'+description+'\n\nCheckpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-'+task+'/corujao-i/`. Logs da suite: `docs/TASK-corujao-'+task+'-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.')]:
++ p=Path(str(prefix)+suffix)
++ if p.exists():raise ValueError('Relatorio historico existente: '+str(p))
++ p.write_text('# TASK-'+task+' - Corujao I\n\n'+body+'\n',encoding='utf-8')
++progress=ROOT/'docs/CORUJAO-I-PROGRESSO.json'
++data=json.loads(progress.read_text()) if progress.exists() else []
++data.append({'task':task,'status':status,'description':description,'checks':report['checks']})
++progress.write_text(json.dumps(data,indent=2),encoding='utf-8')
++run(task,'after')
+--- before/docs/corujao-i/TASK-079-RELATORIO-FINAL.md
++++ after/docs/corujao-i/TASK-079-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-079 - Corujao I
++
++Estado: **VALIDADA COM RESSALVAS**.
++
++20 PNGs integrados: quatro Idle e quatro Walk por direcao, escala 50%, 250 ms por frame. Hashes, alfa, bounds e pivos em assets.json; PNGs anteriores recuperaveis em historical-pngs.zip e checkpoint TASK-078. Suite inicial 314 Java: duas falhas/seis erros por hashes antigos; corrigidos pela integracao autorizada, nao pela desativacao da validacao. Cliente real: 17 capturas e GIF em visual; frames 1-3 capturados, quatro frames cobertos em teste. Ordem nominal 1-4 inspecionada, homologacao artistica pendente. Relatorios TASK-079 anteriores preservados; documentos desta rodada em docs/corujao-i.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-079/corujao-i/`. Logs da suite: `docs/TASK-corujao-079-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/corujao-i/TASK-079-TESTES.md
++++ after/docs/corujao-i/TASK-079-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-079 - Corujao I
++
++Comando: `python tools/qualidade.py --offline --task corujao-079`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 315,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/corujao-i/TASK-079.md
++++ after/docs/corujao-i/TASK-079.md
+@@ -0,0 +1,3 @@
++# TASK-079 - Corujao I
++
++20 PNGs integrados: quatro Idle e quatro Walk por direcao, escala 50%, 250 ms por frame. Hashes, alfa, bounds e pivos em assets.json; PNGs anteriores recuperaveis em historical-pngs.zip e checkpoint TASK-078. Suite inicial 314 Java: duas falhas/seis erros por hashes antigos; corrigidos pela integracao autorizada, nao pela desativacao da validacao. Cliente real: 17 capturas e GIF em visual; frames 1-3 capturados, quatro frames cobertos em teste. Ordem nominal 1-4 inspecionada, homologacao artistica pendente. Relatorios TASK-079 anteriores preservados; documentos desta rodada em docs/corujao-i.
+--- before/testar-rpg-sprites.cmd
++++ after/testar-rpg-sprites.cmd
+@@ -1,17 +1,17 @@
+-@echo off
+-setlocal
+-cd /d "%~dp0"
+-if not defined SPIRIT_GATE_SPRITE_SCALE set "SPIRIT_GATE_SPRITE_SCALE=0.5"
+-if not defined SPIRIT_GATE_FRAME_MS set "SPIRIT_GATE_FRAME_MS=220"
+-if not exist "server\target\classes\com\projetok\prototype\rpg\RpgPlayerSprites.class" (
+-  echo Compile primeiro: python tools/qualidade.py --offline --task 079-local
+-  exit /b 1
+-)
+-if "%~1"=="--geometrico" (
+-  java -cp "server\target\classes" com.projetok.prototype.rpg.RpgLauncher
+-) else if "%~1"=="" (
+-  java "-Dspiritgate.rpg.spriteScale=%SPIRIT_GATE_SPRITE_SCALE%" "-Dspiritgate.rpg.spriteFrameMillis=%SPIRIT_GATE_FRAME_MS%" -cp "server\target\classes" com.projetok.prototype.rpg.RpgLauncher --experimental-player-sprites
+-) else (
+-  echo Uso: testar-rpg-sprites.cmd [--geometrico]
+-  exit /b 2
+-)
++@echo off
++setlocal
++cd /d "%~dp0"
++if not defined SPIRIT_GATE_SPRITE_SCALE set "SPIRIT_GATE_SPRITE_SCALE=0.5"
++if not defined SPIRIT_GATE_FRAME_MS set "SPIRIT_GATE_FRAME_MS=250"
++if not exist "server\target\classes\com\projetok\prototype\rpg\RpgPlayerSprites.class" (
++  echo Compile primeiro: python tools/qualidade.py --offline --task 079-local
++  exit /b 1
++)
++if "%~1"=="--geometrico" (
++  java -cp "server\target\classes" com.projetok.prototype.rpg.RpgLauncher
++) else if "%~1"=="" (
++  java "-Dspiritgate.rpg.spriteScale=%SPIRIT_GATE_SPRITE_SCALE%" "-Dspiritgate.rpg.spriteFrameMillis=%SPIRIT_GATE_FRAME_MS%" -cp "server\target\classes" com.projetok.prototype.rpg.RpgLauncher --experimental-player-sprites
++) else (
++  echo Uso: testar-rpg-sprites.cmd [--geometrico]
++  exit /b 2
++)

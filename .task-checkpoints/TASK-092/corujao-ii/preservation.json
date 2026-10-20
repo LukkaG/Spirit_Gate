@@ -1,0 +1,20 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/AssetCatalogTest.java",
+    "server/src/main/java/com/projetok/studio/AssetCatalog.java",
+    "server/src/main/java/com/projetok/studio/AssetImages.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-092-RELATORIO-FINAL.md",
+    "docs/TASK-092-TESTES.md",
+    "docs/TASK-092.md",
+    "docs/TASK-studio-092-java-version.log",
+    "docs/TASK-studio-092-java.log",
+    "docs/TASK-studio-092-maven-version.log",
+    "docs/TASK-studio-092-python-version.log",
+    "docs/TASK-studio-092-python.log",
+    "docs/TASK-studio-092-qualidade.json",
+    "docs/TASK-studio-092-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

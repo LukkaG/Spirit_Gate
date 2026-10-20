@@ -1,0 +1,21 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/StudioContentTest.java",
+    "server/src/main/java/com/projetok/studio/InteractionTools.java",
+    "server/src/main/java/com/projetok/studio/StudioContent.java",
+    "server/src/main/java/com/projetok/studio/WorldStudio.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-097-RELATORIO-FINAL.md",
+    "docs/TASK-097-TESTES.md",
+    "docs/TASK-097.md",
+    "docs/TASK-studio-097-java-version.log",
+    "docs/TASK-studio-097-java.log",
+    "docs/TASK-studio-097-maven-version.log",
+    "docs/TASK-studio-097-python-version.log",
+    "docs/TASK-studio-097-python.log",
+    "docs/TASK-studio-097-qualidade.json",
+    "docs/TASK-studio-097-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

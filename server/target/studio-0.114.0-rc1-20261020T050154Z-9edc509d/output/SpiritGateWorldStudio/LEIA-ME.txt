@@ -1,0 +1,3 @@
+﻿Spirit Gate World Studio 0.114.0-rc1
+Extraia todo o ZIP e abra SpiritGateWorldStudio.exe. Java integrado, sem PostgreSQL ou multiplayer.
+Assets de trabalho experimentais; nenhuma aprovacao artistica presumida. Projetos novos em studio-projects. Manual em MANUAL.md. Exemplo em assets/maps/studio_tutorial.sgmap.

@@ -1,0 +1,249 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R 10 0 R] /Count 4 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3335 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# Relatorio final - Spirit Gate TASK-037 a TASK-076) Tj T*
+() Tj T*
+(Data local: 19/10/2026, America/Sao_Paulo. Base real: TASK-036 / 0.36.0-rc1, sem Git. O) Tj T*
+(checkpoint 21 citado inicialmente ja tinha sido sucedido pelas TASK-022 a 036 neste) Tj T*
+(checkout; elas nao foram refeitas.) Tj T*
+() Tj T*
+(## Resultado principal: campanha RPG offline jogavel) Tj T*
+() Tj T*
+(RPG 0.66.1-rc1 com Java integrado. Iniciar por jogar-rpg-offline.cmd ou dist/RPG-) Tj T*
+(Offline-0.66.1-rc1/SpiritGateRPG/SpiritGateRPG.exe. Menu, personagens por UUID,) Tj T*
+(Guardian/Mystic, aparencia, vila, bosque, santuario, duas missoes, inimigos, XP/niveis,) Tj T*
+(moedas, inventario de 20 slots, equipamento, pocoes, loot, comercio, baus/recursos, dois) Tj T*
+(sentinelas e chefe final. Save/backup/retomada, diario, mapa, hotbar, atalhos e) Tj T*
+(audio/preferencias integrados.) Tj T*
+() Tj T*
+(O personagem percorre vila, conversa com a Ancia, aceita Ecos no bosque, derrota) Tj T*
+(inimigos, recebe loot/recompensa, compra/equipa itens, aceita Santuario, enfrenta) Tj T*
+(guardas/chefe, salva, reabre e entrega a reliquia. A campanha inicial inteira foi) Tj T*
+(automatizada no dominio para os dois arquetipos, sem injecao de XP/moeda/item/posicao. A) Tj T*
+(interface real foi aberta no executavel; isso nao representa homologacao humana de todo) Tj T*
+(o percurso.) Tj T*
+() Tj T*
+(## Validacao e preservacao) Tj T*
+() Tj T*
+(- Baseline reproduzida: 241 Java + 25 Python, zero falhas.) Tj T*
+(- Final: 297 Java + 25 Python, zero falhas/erros/skips Java. Sao 56 testes Java) Tj T*
+(adicionais.) Tj T*
+(- Suite completa executada em cada etapa; resultados individuais em TASK-NNN-testes.txt) Tj T*
+(e logs Java/Python. Falhas intermediarias foram preservadas em logs separados.) Tj T*
+(- Stress offline: 20000 ticks com recargas periodicas e comparacao de estado. Rede: 2500) Tj T*
+(ticks com perda/atraso/repeticao/reordenacao e seed fixa.) Tj T*
+(- Dois processos Java de clientes locais validados; combate por TCP real derrotou chefe) Tj T*
+(e concedeu exatamente 20 moedas a cada participante uma vez.) Tj T*
+(- Smokes finais usam os executaveis/runtime dos pacotes: RPG com janela visivel e 62) Tj T*
+(ticks; dois clientes graficos com IDs distintos, dois jogadores e servidor encerrado com) Tj T*
+(codigo 0.) Tj T*
+(- Capturas de componentes Swing de janelas em execucao foram inspecionadas. Desktop) Tj T*
+(gerou imagem preta neste ambiente; essa imagem nao foi aceita como homologacao visual.) Tj T*
+(Nenhuma captura falsa foi criada.) Tj T*
+(- Dominio legado e TODOS os testes existentes antes da rodada permanecem textualmente) Tj T*
+(iguais. Renderer compartilhado ganhou opcoes desativadas por padrao; testes historicos) Tj T*
+(continuam verdes. Arena continua no menu e em distribuicoes anteriores.) Tj T*
+(- ZIP original 0.36.0-rc1 preservado, SHA-256) Tj T*
+(511d59412598be73395391e21a6cfb2315f4855c714059086abc4d02e46cff31.) Tj T*
+(- Nova arena de compatibilidade 0.36.1-compat-rc1 compilada/empacotada e auditada; EXE) Tj T*
+(aberto com PATH sem Java externo, JVM integrada comprovada e encerramento 0. Evidencia) Tj T*
+(TASK-076-arena-smoke.json.) Tj T*
+() Tj T*
+(## Ajustes relevantes encontrados na integracao) Tj T*
+() Tj T*
+(Spirit Gate - Expansao TASK-037 a TASK-076 - p·gina 1/4) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 3396 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+() Tj T*
+(1. Inventario/equipamento/comercio/recompensas usam validacao antes do commit, sem) Tj T*
+(perda/duplicacao em operacoes recusadas. Loot cheio fica pendente; limite atingido) Tj T*
+(impede derrota sem recompensa.) Tj T*
+(2. Recargas, direcao, estados de inimigos/respawn, quests/objetos/regioes e vigor) Tj T*
+(persistem. Loot padrao usa seed por spawn/geracao, mantendo continuidade apos reload.) Tj T*
+(3. IO e audio ficam fora da simulacao. Save captura comandos pendentes na thread) Tj T*
+(proprietaria e pausa ao voltar ao menu; erro preserva sessao.) Tj T*
+(4. Regressao de backup reproduzida ANTES da correcao: Properties sintaticamente valido) Tj T*
+(com flag corrompida podia substituir backup bom. Leitura agora valida restauracao) Tj T*
+(semantica antes de copiar. Teste CorruptBackupProtectionTest e log TASK-075-regressao-) Tj T*
+(backup-antes.log documentam a correcao.) Tj T*
+(5. HUD passou a mostrar nomes reais, atalhos efetivos e aparencias, retirando rotulos de) Tj T*
+(debug do RPG. Dialogos usam grade para manter escolhas acessiveis.) Tj T*
+(6. Builders/auditor da arena excluem explicitamente prototype/rpg; pacotes separados nao) Tj T*
+(carregam classes de banco/Kryonet, testes ou arte reprovada.) Tj T*
+(7. Rede fecha handshakes pendentes, rejeita sequencias antigas, expira movimento ausente) Tj T*
+(e limita conexoes/filas/payloads. Servidor nao reinicia apos close; bind malsucedido e) Tj T*
+(limpo.) Tj T*
+(8. Primeiro smoke PowerShell confundiu codigo de saida indisponivel com falha; handles) Tj T*
+(foram preservados antes da espera e a nova execucao comprovou codigo 0. Logs anteriores) Tj T*
+(mantidos. Primeiro bot TCP foi ajustado para flanquear e esperar os dois participantes,) Tj T*
+(respeitando colisao e regra de contribuicao.) Tj T*
+() Tj T*
+(## Coop experimental separado) Tj T*
+() Tj T*
+(0.76.0-rc1: servidor TCP headless, localhost por padrao, duas sessoes, snapshots 10 Hz,) Tj T*
+(cliente visual e interpolacao apenas de apresentacao.) Tj T*
+(Movimento/dano/vigor/cooldown/colisao resolvidos pelo servidor. Passo Relampago e) Tj T*
+(Criostase usam os servicos reais existentes. Chefe compartilhado, Freeze e recompensa) Tj T*
+(por participacao, sem importar saves offline.) Tj T*
+() Tj T*
+(Limites: um mapa online; sem portais online ou persistencia de contas. LAN privada) Tj T*
+(existe somente com opcao explicita; NAO houve teste entre computadores. Sem) Tj T*
+(autenticacao/TLS de producao. O rodape generico do renderer coop ainda contem uma dica) Tj T*
+(da campanha offline; controles/servidor corretos aparecem no painel lateral. Esse) Tj T*
+(experimento nao e MMORPG completo e nao deve substituir o pacote offline.) Tj T*
+() Tj T*
+(Nao houve acesso a banco real, migracao, alteracao de credenciais, push, upload,) Tj T*
+(publicacao, porta publica, firewall global ou servico do sistema. Sprites) Tj T*
+(pendentes/reprovados continuam fora das distribuicoes de jogo. Tons foram sintetizados) Tj T*
+(localmente, sem assets de licenca desconhecida.) Tj T*
+() Tj T*
+(## Situacao por tarefa) Tj T*
+() Tj T*
+(Validada significa implementacao e automacao local aprovadas, sem alegar homologacao) Tj T*
+(humana. 38 etapas validadas; 071 e 074 parciais nos pontos explicitados.) Tj T*
+() Tj T*
+(| Tarefa | Entrega | Situacao |) Tj T*
+() Tj T*
+(Spirit Gate - Expansao TASK-037 a TASK-076 - p·gina 2/4) Tj T*
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 2837 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(| --- | --- | --- |) Tj T*
+(| TASK-037 | Auditoria da base 0.36.0-rc1 | Validada |) Tj T*
+(| TASK-038 | Entrada RPG separada | Validada |) Tj T*
+(| TASK-039 | Identidade e criacao local | Validada |) Tj T*
+(| TASK-040 | Registro de conteudo | Validada |) Tj T*
+(| TASK-041 | Save V1 e backup | Validada |) Tj T*
+(| TASK-042 | Itens e raridade | Validada |) Tj T*
+(| TASK-043 | Inventario transacional | Validada |) Tj T*
+(| TASK-044 | Equipamento e atributos | Validada |) Tj T*
+(| TASK-045 | Pocoes e recarga | Validada |) Tj T*
+(| TASK-046 | Loot e ledger de geracoes | Validada |) Tj T*
+(| TASK-047 | XP e niveis | Validada |) Tj T*
+(| TASK-048 | Guardian e Mystic | Validada |) Tj T*
+(| TASK-049 | Inimigos e respawn | Validada |) Tj T*
+(| TASK-050 | IA PvE | Validada |) Tj T*
+(| TASK-051 | Chefe com aviso e fases | Validada |) Tj T*
+(| TASK-052 | NPCs e interacao | Validada |) Tj T*
+(| TASK-053 | Dialogos com escolhas | Validada |) Tj T*
+(| TASK-054 | Diario e estados de quest | Validada |) Tj T*
+(| TASK-055 | Objetivos e recompensas | Validada |) Tj T*
+(| TASK-056 | Comerciante e moedas | Validada |) Tj T*
+(| TASK-057 | Portais seguros | Validada |) Tj T*
+(| TASK-058 | Tres regioes | Validada |) Tj T*
+(| TASK-059 | Baus e recursos | Validada |) Tj T*
+(| TASK-060 | Ciclo de iluminacao | Validada |) Tj T*
+(| TASK-061 | Masmorra e retorno | Validada |) Tj T*
+(| TASK-062 | Menu e selecao de personagem | Validada |) Tj T*
+(| TASK-063 | UI de inventario/equipamento | Validada |) Tj T*
+(| TASK-064 | Diario/mapa/objetivos | Validada |) Tj T*
+(| TASK-065 | Hotbar e atalhos | Validada |) Tj T*
+(| TASK-066 | Audio e preferencias; marco offline B | Validada |) Tj T*
+(| TASK-067 | Protocolo binario V1 | Validada |) Tj T*
+(| TASK-068 | Servidor localhost headless | Validada |) Tj T*
+(| TASK-069 | Duas sessoes e reconexao | Validada |) Tj T*
+(| TASK-070 | Cliente visual e interpolacao | Validada |) Tj T*
+(| TASK-071 | LAN explicita; dois processos locais | Parcial |) Tj T*
+(| TASK-072 | Combate e habilidades autoritativas | Validada |) Tj T*
+(| TASK-073 | Chefe cooperativo e recompensa | Validada |) Tj T*
+(| TASK-074 | Falhas de rede e desconexoes | Parcial |) Tj T*
+(| TASK-075 | Integracao e regressao de backup | Validada |) Tj T*
+(| TASK-076 | Candidatos privados e pacotes | Validada |) Tj T*
+() Tj T*
+(O marco A foi exercitado em OfflineCycleTest na TASK-058: portais da TASK-057 eram) Tj T*
+(necessarios ao ciclo entre regioes. O pacote integrado foi criado apos essa dependencia,) Tj T*
+(em vez de declarar fluxo completo prematuramente na TASK-056. O marco B foi exercitado) Tj T*
+(na TASK-066; a revisao final de backup gerou o patch 0.66.1-rc1.) Tj T*
+() Tj T*
+(## Pacotes e documentos) Tj T*
+() Tj T*
+() Tj T*
+(Spirit Gate - Expansao TASK-037 a TASK-076 - p·gina 3/4) Tj T*
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 11 0 R >>
+endobj
+11 0 obj
+<< /Length 1834 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(- Offline: dist/SpiritGate-RPG-0.66.1-rc1-20261019T062500Z-310983cf.zip) Tj T*
+(- SHA-256 offline: 2e0f019955f66593ecd630ec1fa3e38004f241295385802a380feb7085b3f38b) Tj T*
+(- Coop: dist/SpiritGate-Coop-Experimental-0.76.0-rc1-20261019T062500Z-9556a9e2.zip) Tj T*
+(- SHA-256 coop: 417eb711e03499ce0a4e3f93e800d60fed539ec109637fb18dca5fade51b0c27) Tj T*
+(- Manifestes e arquivos .sha256 acompanham cada ZIP; auditorias TASK-076-auditoria-) Tj T*
+(rpg/coop.json conferem todos os arquivos internos.) Tj T*
+(- Relatorios por tarefa: TASK-NNN.md, Spirit_Gate_TASK-NNN.pdf, TASK-NNN-testes.txt,) Tj T*
+(TASK-NNN.diff e logs.) Tj T*
+(- Inventario: INVENTARIO-ALTERACOES-TASK-037_076.json, 102 arquivos de) Tj T*
+(codigo/scripts/recursos adicionados ou ajustados, com hashes.) Tj T*
+(- Roteiros: ROTEIRO-RPG-OFFLINE.md e ROTEIRO-COOP-EXPERIMENTAL.md; incluidos nos) Tj T*
+(respectivos pacotes.) Tj T*
+(- ZIP documental final: dist/SpiritGate-Documentos-TASK-037_076-r2.zip. Versoes) Tj T*
+(anteriores dos checkpoints/documentos foram preservadas.) Tj T*
+(- Checkpoints JSON antes/depois em .task-checkpoints; arquivos recuperaveis da base e da) Tj T*
+(entrega final consolidados sem caches/target gerados. Assets pendentes entram somente no) Tj T*
+(checkpoint de desenvolvimento, nunca no jogo.) Tj T*
+() Tj T*
+(## Avaliacao humana ainda necessaria) Tj T*
+() Tj T*
+(Jogar o roteiro completo na interface, testar redimensionamento/atalhos/audio em outro) Tj T*
+(Windows e experimentar duas maquinas numa LAN privada configurada. A campanha tem arte) Tj T*
+(geometrica, tres regioes compactas, duas missoes e um chefe; e uma base offline) Tj T*
+(funcional para testes privados. Nao foram aprovados novos sprites nem release publica.) Tj T*
+() Tj T*
+(Spirit Gate - Expansao TASK-037 a TASK-076 - p·gina 4/4) Tj T*
+ET
+endstream
+endobj
+xref
+0 12
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000140 00000 n 
+0000000237 00000 n 
+0000000363 00000 n 
+0000003750 00000 n 
+0000003876 00000 n 
+0000007324 00000 n 
+0000007450 00000 n 
+0000010339 00000 n 
+0000010467 00000 n 
+trailer
+<< /Size 12 /Root 1 0 R >>
+startxref
+12354
+%%EOF

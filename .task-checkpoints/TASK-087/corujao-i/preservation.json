@@ -1,0 +1,25 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/rpg/CorujaoBossThreatTest.java",
+    "server/src/main/java/com/projetok/rpg/EnemyService.java",
+    "server/src/main/java/com/projetok/rpg/RpgBossThreat.java",
+    "server/src/main/java/com/projetok/rpg/RpgSight.java",
+    "server/src/main/java/com/projetok/rpg/RpgWorld.java",
+    "server/src/main/java/com/projetok/prototype/rpg/RpgBossOverlay.java",
+    "server/src/main/java/com/projetok/prototype/rpg/RpgHud.java",
+    "server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java",
+    "docs/CORUJAO-I-PROGRESSO.json",
+    "docs/TASK-087-RELATORIO-FINAL.md",
+    "docs/TASK-087-TESTES.md",
+    "docs/TASK-087.md",
+    "docs/TASK-corujao-087-java-version.log",
+    "docs/TASK-corujao-087-java.log",
+    "docs/TASK-corujao-087-maven-version.log",
+    "docs/TASK-corujao-087-python-version.log",
+    "docs/TASK-corujao-087-python.log",
+    "docs/TASK-corujao-087-qualidade.json",
+    "docs/TASK-corujao-087-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

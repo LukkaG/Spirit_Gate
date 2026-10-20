@@ -1,0 +1,10 @@
+SPIRIT GATE COOP EXPERIMENTAL 0.76.0-rc1
+Pacote separado do RPG offline. Java integrado. Sem contas, banco ou saves compartilhados.
+1. Inicie SpiritGateCoopServer.exe (somente localhost:54557). Ctrl+C encerra.
+2. Abra iniciar-cliente.cmd duas vezes, com nomes distintos.
+3. WASD mover, SPACE golpear, SHIFT Passo Relampago, Q Criostase, mouse mirar.
+Chefe compartilhado; participantes conectados recebem 20 moedas temporarias uma vez.
+LAN somente explicita: SpiritGateCoopServer.exe --bind IP-PRIVADO --allow-lan
+Marque LAN no cliente. Sem bind publico, firewall, port forwarding ou servico automatico.
+Homologacao entre computadores pendente. Um mapa online; sem transicoes online. Nao e MMORPG completo.
+O RPG offline e seus saves permanecem no outro pacote.

@@ -1,0 +1,513 @@
+{
+  "schemaVersion": 1,
+  "finalRelease": "dist/SpiritGate-0.21.0-rc1-20261019T001737Z-546ce1c5-portable.zip",
+  "releaseSha256": "303f469b87aa0752d6dcd44e21ae5efef78295cf971884976939b1d8ae6cc534",
+  "inventoryExcludesSelf": true,
+  "files": [
+    {
+      "path": ".task-checkpoints/TASK-017-after.json",
+      "sizeBytes": 26865,
+      "sha256": "f18c10218dc9bffca051c5c5ce87bf3e05b7de5f3fce2f19d47d157c140e60ab"
+    },
+    {
+      "path": ".task-checkpoints/TASK-018-after.json",
+      "sizeBytes": 27333,
+      "sha256": "06b8e194b613baa9aec9c4361db5ed0e6854b1ee094367a4d5a5bbfeb2ca516f"
+    },
+    {
+      "path": ".task-checkpoints/TASK-019-after.json",
+      "sizeBytes": 28166,
+      "sha256": "56eed96e5e425527f51437815c58edd421eff63b40ddaed1ca048bc4b98d334d"
+    },
+    {
+      "path": ".task-checkpoints/TASK-020-after.json",
+      "sizeBytes": 28616,
+      "sha256": "d442696282acfcb6c90de3a1c95e961bdbd0045d526debc4785485e96b1199f0"
+    },
+    {
+      "path": ".task-checkpoints/TASK-021-after.json",
+      "sizeBytes": 29716,
+      "sha256": "31e37f280e99571f7ef7588927a62b0e95731b26143f2273c065155dee20fa66"
+    },
+    {
+      "path": "CHANGELOG-PROTOTIPO.md",
+      "sizeBytes": 3575,
+      "sha256": "9e41d8f8c07717aa69e662a17e9c26e0443967a02d275ea1ed92d39a7fa4f437"
+    },
+    {
+      "path": "dist/SpiritGate-0.21.0-rc1-20261019T001737Z-546ce1c5-portable.zip",
+      "sizeBytes": 29391539,
+      "sha256": "303f469b87aa0752d6dcd44e21ae5efef78295cf971884976939b1d8ae6cc534"
+    },
+    {
+      "path": "dist/SpiritGate-0.21.0-rc1-20261019T001737Z-546ce1c5-portable.zip.audit.json",
+      "sizeBytes": 3013,
+      "sha256": "865a6401d5b3905cb65ae29db9fe8623a7a8e1c53aa85e9a2605c20ba4da2e68"
+    },
+    {
+      "path": "dist/SpiritGate-0.21.0-rc1-20261019T001737Z-546ce1c5-portable.zip.manifest.json",
+      "sizeBytes": 40021,
+      "sha256": "8eafe4ffe78e107a0c462e6c0e4d72ab06f177ba3b917088d491c80b499df902"
+    },
+    {
+      "path": "dist/SpiritGate-0.21.0-rc1-20261019T001737Z-546ce1c5-portable.zip.sha256",
+      "sizeBytes": 128,
+      "sha256": "081871c8bd24112bce79402b15b86fabd954eb82fa66e44af9a97d7d4bbba88a"
+    },
+    {
+      "path": "docs/autoria-018/manifest.json",
+      "sizeBytes": 17751,
+      "sha256": "67339d50074534c087072abeb25366e157c10733282f28548c37114dfe08fca3"
+    },
+    {
+      "path": "docs/autoria-018/revisao/preview.html",
+      "sizeBytes": 24435,
+      "sha256": "24b5a20529fda275a46eab80a462b5216157cc6784e896f970f4c9ec19d2317f"
+    },
+    {
+      "path": "docs/autoria-018/revisao/relatorio.json",
+      "sizeBytes": 18198,
+      "sha256": "59042b5dba0714fbd97144b92f6e4f810b0ce7e1088fdfb5c22fcc326f74ecc6"
+    },
+    {
+      "path": "docs/autoria-018/revisao-final/preview.html",
+      "sizeBytes": 30653,
+      "sha256": "7e5c9ba53d894fb00d2efde38becfd79a05217fdc76f8412bcfc824dc0ef8574"
+    },
+    {
+      "path": "docs/autoria-018/revisao-final/relatorio.json",
+      "sizeBytes": 18198,
+      "sha256": "59042b5dba0714fbd97144b92f6e4f810b0ce7e1088fdfb5c22fcc326f74ecc6"
+    },
+    {
+      "path": "docs/autoria-018/template-vazio.png",
+      "sizeBytes": 1097,
+      "sha256": "b262bd68d44f93637b9949caf7ff7ce0b6b6ed839c3a2468681952b215ec4d95"
+    },
+    {
+      "path": "docs/kit-homologacao-017-021/CHANGELOG-RESUMIDO.md",
+      "sizeBytes": 771,
+      "sha256": "ba9f2b50034edeb9d946d2dbada721ce02859e628036833591256a6c48acc73f"
+    },
+    {
+      "path": "docs/kit-homologacao-017-021/mapa-demo.properties",
+      "sizeBytes": 1597,
+      "sha256": "9d57d64c1e48bd82b8b77678944f0b9140be497d2326e00686a0f424a948c192"
+    },
+    {
+      "path": "docs/kit-homologacao-017-021/MODELO-RELATO-BUG.md",
+      "sizeBytes": 481,
+      "sha256": "b80a2ab9b07b71a95ae6548fa436ec040c7ecdd4f483a5f695991cf5f4dc07b8"
+    },
+    {
+      "path": "docs/kit-homologacao-017-021/ROTEIRO-HOMOLOGACAO.md",
+      "sizeBytes": 1853,
+      "sha256": "47ee4d37135bdb39f5a77a5ef4cd12869c20a366fd03127daeeaa8b7746aca5d"
+    },
+    {
+      "path": "docs/pacote-TASK-017_021/AGENTE-PROMPT-UNICO.md",
+      "sizeBytes": 2503,
+      "sha256": "503bb13a82674cd6d8d8c69be2d5a895c3a517cca752b28eb97262b77924bf02"
+    },
+    {
+      "path": "docs/pacote-TASK-017_021/CONTRATO-COMUM.md",
+      "sizeBytes": 2510,
+      "sha256": "d42815716bb338c1259056c9c50dc9dd0432aee98fdb9b9305e5db3df001528e"
+    },
+    {
+      "path": "docs/pacote-TASK-017_021/REVISAO-TASK-012_016.md",
+      "sizeBytes": 2198,
+      "sha256": "5ad69518faa333020d77cc3c1b4526556081872e7a46a21fa4e7722a56a6af5e"
+    },
+    {
+      "path": "docs/pacote-TASK-017_021/SpiritGate_Prompt_Agente_TASK-017_021.md",
+      "sizeBytes": 13692,
+      "sha256": "770b9f892ff91451914d4847a8bfb986c73d7409a68774a81a753297db539d28"
+    },
+    {
+      "path": "docs/pacote-TASK-017_021/SpiritGate_Roadmap_TASK-017_021.pdf",
+      "sizeBytes": 46870,
+      "sha256": "3c7caabe96d2db978c6fbba22a927d70a5a05581892fc88e1a3df3e25830d14b"
+    },
+    {
+      "path": "docs/pacote-TASK-017_021/TASK-017.md",
+      "sizeBytes": 1648,
+      "sha256": "ed9a8f52545d044d19609c5c800cbfcf7740ee259006ca24c96a5cc328c6ced1"
+    },
+    {
+      "path": "docs/pacote-TASK-017_021/TASK-018.md",
+      "sizeBytes": 1857,
+      "sha256": "78d8bacaad3a10f531b3c01250065c8fb71b63d854bb4f4682dfae737edda8a5"
+    },
+    {
+      "path": "docs/pacote-TASK-017_021/TASK-019.md",
+      "sizeBytes": 1600,
+      "sha256": "3676c030803ebf754a8f7a464224521edbb103018a64c9b9dc5b241738548c32"
+    },
+    {
+      "path": "docs/pacote-TASK-017_021/TASK-020.md",
+      "sizeBytes": 1663,
+      "sha256": "89c4a7b1521cd87946c656f4d7a37b7036753da2c6c1f39315dd4f944f2fc06d"
+    },
+    {
+      "path": "docs/pacote-TASK-017_021/TASK-021.md",
+      "sizeBytes": 1618,
+      "sha256": "ffee46f58122d695cb1924acd604dfdd01e450468ccdda5ad63b79bb80a20263"
+    },
+    {
+      "path": "docs/RELATORIO-TASK-017_021.md",
+      "sizeBytes": 5890,
+      "sha256": "93902ff1960e4e45c7d8547897fcea475b2376708a0a2dd4a522f55d3bec041b"
+    },
+    {
+      "path": "docs/revisao-fontes-018/preview.html",
+      "sizeBytes": 306405,
+      "sha256": "8c9bce3ac5fcc23c3c93f12318c5710cd50c13e5fd3bd675468e061699e07951"
+    },
+    {
+      "path": "docs/revisao-fontes-018/relatorio.json",
+      "sizeBytes": 194159,
+      "sha256": "1a06fad76dbbabb139056227464b5411d56336d7e20eeeeb4c7630bf3298ae08"
+    },
+    {
+      "path": "docs/revisao-fontes-021/preview.html",
+      "sizeBytes": 322050,
+      "sha256": "96fc0f42eb583144a735e9191c05c927a6978618101e3d9fc2d9df982fcc7229"
+    },
+    {
+      "path": "docs/revisao-fontes-021/relatorio.json",
+      "sizeBytes": 194159,
+      "sha256": "1a06fad76dbbabb139056227464b5411d56336d7e20eeeeb4c7630bf3298ae08"
+    },
+    {
+      "path": "docs/Spirit_Gate_Relatorio_TASK-017_021.pdf",
+      "sizeBytes": 7943,
+      "sha256": "1ec43ef45cd53a131dfa2d9e246951040c1b81acba75c1e0d4d5e76ec430bf9b"
+    },
+    {
+      "path": "docs/Spirit_Gate_TASK-017.pdf",
+      "sizeBytes": 2440,
+      "sha256": "7d9527f120085214436c786edbeff9bdf1b92bf031f86c24da1f013d27b4d78b"
+    },
+    {
+      "path": "docs/Spirit_Gate_TASK-018.pdf",
+      "sizeBytes": 2570,
+      "sha256": "b5ca56640c61fdfa1568126bf87dbffc6c80bf751f6bad6dacc8dcc3f28dab41"
+    },
+    {
+      "path": "docs/Spirit_Gate_TASK-019.pdf",
+      "sizeBytes": 2680,
+      "sha256": "316441a2ede41ecbf5159c2d49e40af400a6e94fc125df3caf6f5b97ba929cf8"
+    },
+    {
+      "path": "docs/Spirit_Gate_TASK-020.pdf",
+      "sizeBytes": 2968,
+      "sha256": "77fccc6c25170c4ff85bb6bc2c2aefba473635ad2ddb319380412d0b69032011"
+    },
+    {
+      "path": "docs/Spirit_Gate_TASK-021.pdf",
+      "sizeBytes": 3367,
+      "sha256": "a19a0f74ec9728b45794057b424c55131bd6fffe2fc801e757334d6684507b86"
+    },
+    {
+      "path": "docs/TASK-017-auditoria.json",
+      "sizeBytes": 3013,
+      "sha256": "653d2eb03773887d92b1cfaa4575ed507149b169ed270ee81864b3a0ea1a99f3"
+    },
+    {
+      "path": "docs/TASK-017-java.log",
+      "sizeBytes": 17672,
+      "sha256": "acef5bd68a64ce5fe7051eef4be1e65d50f36ff934d899c5febc563882513f5e"
+    },
+    {
+      "path": "docs/TASK-017-map-smoke.json",
+      "sizeBytes": 2757,
+      "sha256": "c8ab8d8ca44f16f252dd17b8160d0ec814d63fc325506566dc755cf09b22fdbe"
+    },
+    {
+      "path": "docs/TASK-017-map-smoke.log",
+      "sizeBytes": 258,
+      "sha256": "80d0ed1132ad0c24646eec4745e2352d4ef1cc766ead74e33186084cdc546ee4"
+    },
+    {
+      "path": "docs/TASK-017-negativo.json",
+      "sizeBytes": 593,
+      "sha256": "bfecf1948d345cc57e21969e68ad24e42bd415fee500560210aa1a31934ca77a"
+    },
+    {
+      "path": "docs/TASK-017-python.log",
+      "sizeBytes": 1084,
+      "sha256": "a6b69ab37e9ab596c35adfbc1da824a2d099c916e64bd1888f92af791a93e5d9"
+    },
+    {
+      "path": "docs/TASK-017-smoke.json",
+      "sizeBytes": 2654,
+      "sha256": "6715f4b2ef4b6cfdaec489fa70f667d8ed4d4404b1b04eab74b0feda0f33f461"
+    },
+    {
+      "path": "docs/TASK-017-smoke.log",
+      "sizeBytes": 250,
+      "sha256": "e41c2211f2467d7582e7fd4ea446820b37e4d5bcfd98a6d0479641d61a450b8c"
+    },
+    {
+      "path": "docs/TASK-017-testes.txt",
+      "sizeBytes": 3098,
+      "sha256": "15b4ebad89505d941615661654a905c864817a5c0aeb31dae3cdcd05a257d551"
+    },
+    {
+      "path": "docs/TASK-017.diff",
+      "sizeBytes": 4869,
+      "sha256": "5c3b4b0c069d93abc53926f42f78721a54984e94d9fd6c1fac1e580fe7cf4347"
+    },
+    {
+      "path": "docs/TASK-017.md",
+      "sizeBytes": 1600,
+      "sha256": "7a98e0c57b51adb84959cd2ab1be171e87746be6bf964aaebe2875ac0ef2665a"
+    },
+    {
+      "path": "docs/TASK-017_021-consolidado.diff",
+      "sizeBytes": 83977,
+      "sha256": "637c1873e34e29d20c9b62434258509211da333ef002e74d468549c468219ac7"
+    },
+    {
+      "path": "docs/TASK-018-java.log",
+      "sizeBytes": 17688,
+      "sha256": "a53f6dee5f2b2d17d44202825646ecaa229a9bfe3a1831237adb2cbf149272ab"
+    },
+    {
+      "path": "docs/TASK-018-python.log",
+      "sizeBytes": 1120,
+      "sha256": "8997f221159571467e667e5367f49b49fe6bb4007ad2c15c1bf5fe57d188c244"
+    },
+    {
+      "path": "docs/TASK-018-testes.txt",
+      "sizeBytes": 3098,
+      "sha256": "3426a3d4009cc148abf29269e59ec900f5a698836ea9d5c0f6ae6d7d5df8ef2b"
+    },
+    {
+      "path": "docs/TASK-018.diff",
+      "sizeBytes": 16069,
+      "sha256": "d3f07eac3905db7bf87ab0be63f2dfc902c86923e515502e99f8cfed72b6f2e2"
+    },
+    {
+      "path": "docs/TASK-018.md",
+      "sizeBytes": 1728,
+      "sha256": "c0ae70a881b674a398993e12a89701716bc41ac2388a6cbb452fb8e1c12fab60"
+    },
+    {
+      "path": "docs/TASK-019-java.log",
+      "sizeBytes": 19866,
+      "sha256": "9782289f066110182b0dfff6d662ed276c488769f5e33e2f5f9e89ba4407055e"
+    },
+    {
+      "path": "docs/TASK-019-python.log",
+      "sizeBytes": 1108,
+      "sha256": "7d3e8b0882042f9370bb2435f254cb86933d6613c0d8f8790eecfdfe8e58645b"
+    },
+    {
+      "path": "docs/TASK-019-testes.txt",
+      "sizeBytes": 3182,
+      "sha256": "81a80975e132656756caf49e04714c0cd0e882905bb42e5845323df08d984544"
+    },
+    {
+      "path": "docs/TASK-019.diff",
+      "sizeBytes": 21837,
+      "sha256": "4a0380903c842f61aff6946b47affcbc52c0ebedb836fa6eae073c92bbd27275"
+    },
+    {
+      "path": "docs/TASK-019.md",
+      "sizeBytes": 1823,
+      "sha256": "1956545de0047d22ec12497f8a7870098795b164c559d2daaccd5f6c0fa758bb"
+    },
+    {
+      "path": "docs/TASK-020-camera-sintetica.png",
+      "sizeBytes": 52170,
+      "sha256": "44275bba28fb938de30140155813f7bc8c244346b42e3b3cb00d402f923d998b"
+    },
+    {
+      "path": "docs/TASK-020-java-primeira-tentativa.log",
+      "sizeBytes": 38850,
+      "sha256": "91b8e635d1e10605daf7053943f2c3f8112f429ccba0d42b47cedafe8cf19424"
+    },
+    {
+      "path": "docs/TASK-020-java.log",
+      "sizeBytes": 20240,
+      "sha256": "cc2e26c50e88947bd479e03b52e89265fb7b4e776574431fd0a8dac25f81d625"
+    },
+    {
+      "path": "docs/TASK-020-python.log",
+      "sizeBytes": 1126,
+      "sha256": "5ce189855edfa970f70f2f9e27afbde1930bb1cf64e0f50786e8f9c665d54804"
+    },
+    {
+      "path": "docs/TASK-020-testes.txt",
+      "sizeBytes": 3266,
+      "sha256": "f00fef1af1ba17ad2dece3c8db4643c9fae8b5522d38c3311d0796f451ca64aa"
+    },
+    {
+      "path": "docs/TASK-020.diff",
+      "sizeBytes": 25676,
+      "sha256": "6b743ea7657bf2c17864d82e23b22323fdbf350afe7864a06e525bffe2d9347b"
+    },
+    {
+      "path": "docs/TASK-020.md",
+      "sizeBytes": 2074,
+      "sha256": "b008ffebefa088583b942e30b405477680cf615df48f13fd157ee13cb2a393ce"
+    },
+    {
+      "path": "docs/TASK-021-auditoria.json",
+      "sizeBytes": 3013,
+      "sha256": "33b6634e69a1b41c01ffa95e9236ea65c48402d1f23c7f480947998fe1248f82"
+    },
+    {
+      "path": "docs/TASK-021-build-final.log",
+      "sizeBytes": 22788,
+      "sha256": "58d9d58c3da62c0bffea175ebc3407480d67860f765506a80a201da730cadfda"
+    },
+    {
+      "path": "docs/TASK-021-build.log",
+      "sizeBytes": 22774,
+      "sha256": "d315e9294ff250f291d0f4ecfdeed1081cc0993c7587683abf047369efc204c3"
+    },
+    {
+      "path": "docs/TASK-021-exe.png",
+      "sizeBytes": 133858,
+      "sha256": "fc7bde198c50a36719679df4d8cf12e34818ec50992ca24bf5c2c7b4b7351abf"
+    },
+    {
+      "path": "docs/TASK-021-map-smoke.json",
+      "sizeBytes": 2757,
+      "sha256": "9522f83bab45e3596a80970fccf9a7684340435950be6c9b65fa5b932879b42e"
+    },
+    {
+      "path": "docs/TASK-021-map-smoke.log",
+      "sizeBytes": 258,
+      "sha256": "3cc1033b3e27127ac0ba1c684f71f445b48d4100db3cebe64d0701a8d502c9f3"
+    },
+    {
+      "path": "docs/TASK-021-mapa-exe.png",
+      "sizeBytes": 133112,
+      "sha256": "1e8f4c40aa557d97a8b72193954d3903ca707a15b30ea7a2fd1ee93f0d66b3ea"
+    },
+    {
+      "path": "docs/TASK-021-negativo.json",
+      "sizeBytes": 593,
+      "sha256": "a67dfc217b1f9c814e4cdb828ab61147fa760efb97d6699564d5839020b1bc15"
+    },
+    {
+      "path": "docs/TASK-021-offline.log",
+      "sizeBytes": 20248,
+      "sha256": "46930655d9a68ee019d58778f0d6422aa4c82a78827fe8565c04e7885e5ebd2e"
+    },
+    {
+      "path": "docs/TASK-021-preservacao.json",
+      "sizeBytes": 159,
+      "sha256": "4e98c70730d36b9ecb3cd493d18c444a60237d7b18c0df15ee951b226727e5c5"
+    },
+    {
+      "path": "docs/TASK-021-python.log",
+      "sizeBytes": 1108,
+      "sha256": "69fbc2a34e345b7fc095e5d5ddea7339e08ee4c4afbf0832b0b989f4f99e2873"
+    },
+    {
+      "path": "docs/TASK-021-smoke.json",
+      "sizeBytes": 2652,
+      "sha256": "c8e57bc505b507de69fa4e865d8071146455d85366d5d8eb76164c996b98af4f"
+    },
+    {
+      "path": "docs/TASK-021-smoke.log",
+      "sizeBytes": 250,
+      "sha256": "669157a039b75b9ec5b8ce4b68ba4ee68a40f6ed4e0f5be4d694a8a9601fc5d0"
+    },
+    {
+      "path": "docs/TASK-021-testes.txt",
+      "sizeBytes": 3266,
+      "sha256": "9ef4a872ef62402f90647075ce8fd69435073ab7b7124d4cc988105a02647154"
+    },
+    {
+      "path": "docs/TASK-021-visual-distribuicao.json",
+      "sizeBytes": 2220,
+      "sha256": "8903e92f43e312bc0bf8b9425ebdbb446eebdf018f0c37ccb7e49a087d4b8b0b"
+    },
+    {
+      "path": "docs/TASK-021.diff",
+      "sizeBytes": 28070,
+      "sha256": "9878bf113e52e31dd71508fa13a20da23f8fd4b73d2e2983aa3eb417e93cacca"
+    },
+    {
+      "path": "docs/TASK-021.md",
+      "sizeBytes": 2433,
+      "sha256": "56f158bf0120edd0978c7b43e01297095f7b13bf6982a8f5c95077d350fc71d3"
+    },
+    {
+      "path": "README-PROTOTIPO.md",
+      "sizeBytes": 18894,
+      "sha256": "5f151c0222c9a79d3c380b2ae761e2e3a6806f1760b0871665dbd9aa3925feb6"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/ArenaViewport.java",
+      "sizeBytes": 2112,
+      "sha256": "36fac6bb9e201f0afe3854d8ad23273fc11851e48d48ed602ea2fc46b33ee230"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/DebugLauncher.java",
+      "sizeBytes": 7545,
+      "sha256": "f92997d941a2d72036cfa66e6db71e5e944c4a98240def8d1ea997b75aae1ceb"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/DebugPanel.java",
+      "sizeBytes": 26809,
+      "sha256": "250c5012ae7aadd4be700dd9a7218654a6891886b195a68627c059cd03ab95a1"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/ValidatedSpriteAtlas.java",
+      "sizeBytes": 6240,
+      "sha256": "88ffb6db60c74ba2630241e5d24d5fac7e4b8037212c6facfacc5f78742aef3f"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/prototype/ArenaViewportTest.java",
+      "sizeBytes": 4789,
+      "sha256": "63f4a418f7a4f5124486737930b6560ad7c2b681d50e6515cbd78a9f29452ccb"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/prototype/VisualPackageTest.java",
+      "sizeBytes": 3792,
+      "sha256": "1ac26f3de91ddd3fc3f9aa940515395163a0c9b2aeae7fb38b74ff82f07a69ee"
+    },
+    {
+      "path": "tools/auditar_rc.py",
+      "sizeBytes": 22340,
+      "sha256": "ef4d04e8bac86cd6f9f085c505d3ade157d19e0325941445e12d0e04f19b8c74"
+    },
+    {
+      "path": "tools/build-windows-portable.ps1",
+      "sizeBytes": 17402,
+      "sha256": "4277b1378725108bcbea994ee068fd557d8bbeb0b54641262389af6e1acb0e46"
+    },
+    {
+      "path": "tools/pacote_visual.py",
+      "sizeBytes": 2666,
+      "sha256": "56cae22f8907b7d14dd2b4db0002c606606eb557dbd1fc99cae5a09bd7e81581"
+    },
+    {
+      "path": "tools/revisar_sprites.py",
+      "sizeBytes": 7012,
+      "sha256": "6ca8a3175faf154bbd46f36a495fee3fc21d373c7ef275126239db19058eb49e"
+    },
+    {
+      "path": "tools/test_sprite_review.py",
+      "sizeBytes": 3673,
+      "sha256": "20c5b233feaa6aa0c937fff7e5e917583e40526690b3941f2935de41cdae7b40"
+    },
+    {
+      "path": "tools/test_visual_distribution.py",
+      "sizeBytes": 2875,
+      "sha256": "dcb8446a41d76e2c00b9a628f30fb701864fa8dd564f161154b459c485ccaf07"
+    },
+    {
+      "path": "tools/test_visual_package.py",
+      "sizeBytes": 2504,
+      "sha256": "015e216048a8b1e96968f72ebaec52751862b55b4de728b9dad293f02c2ff14a"
+    }
+  ]
+}

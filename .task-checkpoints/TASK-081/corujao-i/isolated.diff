@@ -1,0 +1,182 @@
+--- before/server/src/test/java/com/projetok/prototype/rpg/CorujaoFeedbackTest.java
++++ after/server/src/test/java/com/projetok/prototype/rpg/CorujaoFeedbackTest.java
+@@ -0,0 +1,23 @@
++package com.projetok.prototype.rpg;
++import com.projetok.rpg.*;
++import org.junit.jupiter.api.Test;
++import static org.junit.jupiter.api.Assertions.*;
++
++class CorujaoFeedbackTest {
++    @Test void numbersMatchActualDamageAndHealingAndDoNotRepeat() {
++        var w=CorujaoVisualStateTest.forest();var f=new RpgCombatFeedback();f.update(w.snapshot());
++        int before=w.snapshot().enemies().get(0).hp();assertTrue(w.attack());f.update(w.snapshot());
++        int delta=before-w.snapshot().enemies().get(0).hp();
++        assertEquals(delta,f.active().stream().filter(e->e.kind()==RpgCombatEvent.Kind.HIT).mapToInt(RpgCombatEvent::amount).sum());
++        int count=f.active().size();for(int i=0;i<100;i++)f.update(w.snapshot());assertEquals(count,f.active().size());
++        w.receiveDamage(3);assertTrue(w.use("potion"));f.update(w.snapshot());
++        assertEquals(3,f.active().stream().filter(e->e.kind()==RpgCombatEvent.Kind.HEAL).mapToInt(RpgCombatEvent::amount).sum());
++        for(int i=0;i<30;i++)w.tick(-1,0);f.update(w.snapshot());assertTrue(f.active().isEmpty());
++    }
++    @Test void rejectedAttackHasNoFalseDamageAndDrawingIsPure() {
++        var w=new RpgWorld();assertFalse(w.activate("rpg.attack"));var f=new RpgCombatFeedback();f.update(w.snapshot());
++        assertEquals(1,f.active().size());assertEquals(RpgCombatEvent.Kind.REJECT,f.active().get(0).kind());
++        var state=w.save();var image=new java.awt.image.BufferedImage(400,400,2);var g=image.createGraphics();
++        for(int i=0;i<100;i++)f.draw(g);g.dispose();assertEquals(state,w.save());assertEquals(1,f.active().size());
++    }
++}
+--- before/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ after/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -58,6 +58,9 @@
+         boolean draw(Graphics2D graphics, DebugSnapshot.ActorView actor);
+     }
+     private ActorRenderer actorRenderer;
++    private java.util.function.Consumer<Graphics2D> worldOverlay;
++    /** Overlay opcional do RPG; nulo preserva a arena e o Coop. */
++    public void setWorldOverlay(java.util.function.Consumer<Graphics2D> overlay){worldOverlay=overlay;}
+     public void setActorRenderer(ActorRenderer renderer) { actorRenderer=renderer; }
+     private LocalArenaMap.Renderer mapRenderer;
+     private int cameraZoom=1;
+@@ -192,6 +195,7 @@
+         if (mapRenderer != null) mapRenderer.drawLayers(g,5,10);
+         drawAttack(g, s.attack());
+         drawEffects(g, s);
++        if(worldOverlay!=null)worldOverlay.accept(g);
+     }
+ 
+     // --- Cenário ---
+--- before/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ after/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -31,12 +31,14 @@
+     private long abilityReadyTick;
+     private float facingX=1,facingY;
+     public boolean castAbility() {
++        int beforeHp=hp;
+         var ability=Archetypes.get(identity.archetype());
+         if(hp==0||transitioning||ticks<abilityReadyTick||stamina<ability.cost()*10||ability.ability().equals("mend")&&hp==maxHp())return false;
+         if(ability.ability().equals("dash")) movement.moveContinuous(body,facingX*ability.effect(),facingY*ability.effect(),18,space);
+         else hp=Math.min(maxHp(),hp+ability.effect());
+         stamina-=ability.cost()*10;abilityReadyTick=ticks+ability.cooldown();
+         flags.removeIf(f->f.startsWith("ability-until:"));flags.add("ability-until:"+abilityReadyTick);
++        if(hp>beforeHp)event(RpgCombatEvent.Kind.HEAL,1,body.getPosition().x(),body.getPosition().y(),hp-beforeHp);
+         message=ability.ability().equals("dash")?"Investida!":"Restauracao!";return true;
+     }
+     private String message="Bem-vindo a Aurora";
+@@ -52,12 +54,13 @@
+     public boolean use(String id) {
+         ItemCatalog.Item item=items.get(id);
+         if(item.category()!=ItemCatalog.Category.CONSUMABLE || hp==0 || hp==maxHp() || transitioning || ticks<potionReadyTick || inventory.count(id)==0) return false;
+-        inventory.remove(id,1); hp=Math.min(maxHp(),hp+item.healing()); potionReadyTick=ticks+60;
++        int beforeHp=hp;inventory.remove(id,1); hp=Math.min(maxHp(),hp+item.healing()); potionReadyTick=ticks+60;
+         flags.removeIf(f->f.startsWith("potion-until:")); flags.add("potion-until:"+potionReadyTick);
++        event(RpgCombatEvent.Kind.HEAL,1,body.getPosition().x(),body.getPosition().y(),hp-beforeHp);
+         message=item.name()+": vida recuperada"; return true;
+     }
+     public InventoryService inventory() { return inventory; }
+-    public boolean activate(String action){return switch(action){case "rpg.attack"->attack();case "rpg.ability"->castAbility();case "item.potion"->use("potion");default->throw new IllegalArgumentException("Acao de hotbar desconhecida");};}
++    public boolean activate(String action){boolean accepted=switch(action){case "rpg.attack"->attack();case "rpg.ability"->castAbility();case "item.potion"->use("potion");default->throw new IllegalArgumentException("Acao de hotbar desconhecida");};if(!accepted)event(RpgCombatEvent.Kind.REJECT,1,body.getPosition().x(),body.getPosition().y(),0);return accepted;}
+     public int attackPower() { return identity.baseAttack()+(level()-1)*progression.attackPerLevel()+equipmentPower("weapon"); }
+     public int defense() { return equipmentPower("torso")+equipmentPower("legs")+equipmentPower("accessory"); }
+     private int equipmentPower(String slot) { return equipment.containsKey(slot)?items.get(equipment.get(slot)).power():0; }
+--- before/server/src/main/java/com/projetok/prototype/rpg/RpgCombatFeedback.java
++++ after/server/src/main/java/com/projetok/prototype/rpg/RpgCombatFeedback.java
+@@ -0,0 +1,40 @@
++package com.projetok.prototype.rpg;
++
++import com.projetok.rpg.*;
++import java.awt.*;
++import java.util.*;
++
++/** Efeitos provisórios limitados, derivados de eventos reais e independentes do repaint. */
++public final class RpgCombatFeedback {
++    private final java.util.List<RpgCombatEvent> active=new ArrayList<>();
++    private long sequence,tick=-1;
++    private String region="";
++    /** Consome cada sequencia uma vez; ignora eventos antigos e limpa transicoes. */
++    public void update(RpgWorld.View view) {
++        if(tick>=0&&(view.ticks()<tick||!region.equals(view.state().region()))) {
++            active.clear();sequence=view.events().stream().mapToLong(RpgCombatEvent::sequence).max().orElse(0);
++        }
++        tick=view.ticks();region=view.state().region();
++        for(var event:view.events())if(event.sequence()>sequence) {
++            sequence=event.sequence();if(tick-event.tick()<30)active.add(event);
++        }
++        active.removeIf(e->tick-e.tick()>=30);
++        while(active.size()>64)active.remove(0);
++    }
++    /** Copia imutavel para validacao e apresentacao. */
++    public java.util.List<RpgCombatEvent> active(){return java.util.List.copyOf(active);}
++    /** Desenha somente feedback; nao acessa nem altera o mundo. */
++    public void draw(Graphics2D original) {
++        Graphics2D g=(Graphics2D)original.create();
++        try {
++            g.setFont(new Font("SansSerif",Font.BOLD,14));
++            for(var e:active) {
++                int age=(int)(tick-e.tick()),x=Math.round(e.x()),y=Math.round(e.y());
++                g.setColor(e.kind()==RpgCombatEvent.Kind.HEAL?new Color(90,240,150):e.kind()==RpgCombatEvent.Kind.REJECT?new Color(230,210,150):new Color(255,120,105));
++                String text=switch(e.kind()){case HIT->"-"+e.amount();case HEAL->"+"+e.amount();case KO->"Derrotado";case REJECT->"Indisponivel";case ATTACK->"";};
++                if(!text.isEmpty())g.drawString(text,x-12,y-50-age);
++                if(age<6&&e.kind()==RpgCombatEvent.Kind.HIT){g.setStroke(new BasicStroke(2));g.drawOval(x-24,y-24,48,48);}
++            }
++        } finally {g.dispose();}
++    }
++}
+--- before/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
++++ after/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
+@@ -35,6 +35,7 @@
+         DebugPanel panel = new DebugPanel(() -> adapt(runtime.snapshot(), template));
+         RpgPlayerSprites playerSprites=RpgPlayerSprites.configured();
+         if(playerSprites!=null) { playerSprites.update(runtime.snapshot());panel.setActorRenderer(playerSprites); }
++        RpgCombatFeedback feedback=new RpgCombatFeedback();feedback.update(runtime.snapshot());panel.setWorldOverlay(feedback::draw);
+         panel.setLocalMap(RpgMaps.region("village"),false);
+         JFrame frame = new JFrame("Spirit Gate | RPG offline"+(playerSprites==null?"":" | SPRITES EXPERIMENTAIS"));
+         JPanel root=new JPanel(new java.awt.BorderLayout());RpgHud hud=new RpgHud(runtime);root.add(panel,java.awt.BorderLayout.CENTER);root.add(hud,java.awt.BorderLayout.SOUTH);
+@@ -75,6 +76,7 @@
+         com.projetok.rpg.RpgWorld.View[] previous={runtime.snapshot()};
+         Timer timer = new Timer(33, e -> {
+             var view=runtime.snapshot();var before=previous[0];
++            feedback.update(view);
+             if(playerSprites!=null) playerSprites.update(view);
+             if(view.state().hp()<before.state().hp())audio.play(RpgAudio.Cue.HURT);
+             else if(view.state().hp()>before.state().hp())audio.play(RpgAudio.Cue.HEAL);
+--- before/docs/TASK-081-RELATORIO-FINAL.md
++++ after/docs/TASK-081-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-081 - Corujao I
++
++Estado: **VALIDADA COM RESSALVAS**.
++
++Numeros refletem deltas reais de HP, inclusive cura limitada ao maximo e golpes com recompensa recusada. Efeitos limitados a 64 e 30 ticks, deduplicados por sequencia; recusas de hotbar geram aviso sem dano. Overlay opcional nulo por padrao preserva arena/Coop. Testes de valores, repeticao, expiracao e pureza. Efeitos geometricos provisorios; arte nao criada.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-081/corujao-i/`. Logs da suite: `docs/TASK-corujao-081-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-081-TESTES.md
++++ after/docs/TASK-081-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-081 - Corujao I
++
++Comando: `python tools/qualidade.py --offline --task corujao-081`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 319,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-081.md
++++ after/docs/TASK-081.md
+@@ -0,0 +1,3 @@
++# TASK-081 - Corujao I
++
++Numeros refletem deltas reais de HP, inclusive cura limitada ao maximo e golpes com recompensa recusada. Efeitos limitados a 64 e 30 ticks, deduplicados por sequencia; recusas de hotbar geram aviso sem dano. Overlay opcional nulo por padrao preserva arena/Coop. Testes de valores, repeticao, expiracao e pureza. Efeitos geometricos provisorios; arte nao criada.

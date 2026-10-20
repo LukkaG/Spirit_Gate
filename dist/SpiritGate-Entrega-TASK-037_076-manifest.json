@@ -1,0 +1,17 @@
+[
+  {
+    "path": "dist/SpiritGate-Documentos-TASK-037_076-r2.zip",
+    "bytes": 5083893,
+    "sha256": "30a1945b444515aa7d4aad08c52032b2ac351a9b3f82e71b688cb9c0bb428c57"
+  },
+  {
+    "path": ".task-checkpoints/SpiritGate-TASK-037-base-recuperavel.zip",
+    "bytes": 107138337,
+    "sha256": "ac010a4b53561ea1e4e69426944c65df51d176687eb234239eb99443241da4cf"
+  },
+  {
+    "path": ".task-checkpoints/SpiritGate-TASK-076-checkpoint-recuperavel-r2.zip",
+    "bytes": 123842823,
+    "sha256": "368f9b8c21f712e67e51d818ba6a5fa7ea6727d824a6285f01c219ad5bc7687d"
+  }
+]

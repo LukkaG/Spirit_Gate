@@ -1,0 +1,145 @@
+--- before/server/src/test/java/com/projetok/studio/EnvironmentAnimationTest.java
++++ after/server/src/test/java/com/projetok/studio/EnvironmentAnimationTest.java
+@@ -0,0 +1,7 @@
++package com.projetok.studio;
++import org.junit.jupiter.api.Test;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++class EnvironmentAnimationTest {
++    @Test void monotonicTimingRoundTripAndExplicitStaticExport()throws Exception{String a="a".repeat(64),b="b".repeat(64);var s=new EnvironmentAnimation.Sequence(List.of(a,b),List.of(a,b),250,true);assertEquals(0,s.index(249_999_999));assertEquals(1,s.index(250_000_000));assertEquals(0,s.index(500_000_000));assertEquals(1,new EnvironmentAnimation.Sequence(s.frames(),s.hashes(),250,false).index(Long.MAX_VALUE));assertThrows(IllegalArgumentException.class,()->new EnvironmentAnimation.Sequence(s.frames(),s.hashes(),0,true));var e=EnvironmentAnimation.configure(EditorOperationsTest.brush(),s);var d=WorldDocument.empty("mapa",128,128).withElements(List.of(e));assertEquals(d,DocumentStore.decode(DocumentStore.encode(d)));assertTrue(EnvironmentAnimation.sequence(EnvironmentAnimation.staticExport(d).elements().get(0)).isEmpty());assertTrue(EnvironmentAnimation.sequence(d.elements().get(0)).isPresent());}
++}
+--- before/server/src/main/java/com/projetok/studio/AnimationTools.java
++++ after/server/src/main/java/com/projetok/studio/AnimationTools.java
+@@ -0,0 +1,15 @@
++package com.projetok.studio;
++import javax.swing.*;
++import java.awt.*;
++import java.util.*;
++
++/** Montagem ordenada de quadros existentes, sem recortar ou regravar PNGs. */
++final class AnimationTools {
++    AnimationTools(WorldStudio ui){ui.action("Ambiente","Animar selecao (previa)",()->{
++        var chosen=ui.document.elements().stream().filter(e->ui.canvas.selected.contains(e.id())).toList();if(chosen.size()!=1)throw new IllegalArgumentException("Selecione um objeto ambiental");var element=chosen.get(0);EditorOperations.editable(ui.document,element.layer());if(element.locked())throw new IllegalArgumentException("Objeto bloqueado");
++        var options=ui.catalog.assets().toArray(AssetCatalog.Asset[]::new);JComboBox<AssetCatalog.Asset> picker=new JComboBox<>(options);picker.setRenderer((l,v,i,s,f)->new JLabel(v==null?"":v.path()));DefaultListModel<AssetCatalog.Asset> frames=new DefaultListModel<>();EnvironmentAnimation.sequence(element).ifPresent(seq->seq.frames().forEach(id->{var a=ui.catalog.byId().get(id);if(a!=null)frames.addElement(a);}));JList<AssetCatalog.Asset> list=new JList<>(frames);list.setCellRenderer((l,v,i,s,f)->{JLabel label=new JLabel(v.path(),new ImageIcon(v.thumbnail()),JLabel.LEFT);label.setOpaque(true);label.setBackground(s?Color.LIGHT_GRAY:Color.WHITE);return label;});
++        JPanel buttons=new JPanel();for(String command:new String[]{"Adicionar","Remover","Subir","Descer"}){JButton b=new JButton(command);buttons.add(b);b.addActionListener(ev->{int i=list.getSelectedIndex();switch(command){case "Adicionar"->{if(frames.size()<32&&picker.getSelectedItem()!=null)frames.addElement((AssetCatalog.Asset)picker.getSelectedItem());}case "Remover"->{if(i>=0)frames.remove(i);}default->{int j=i+(command.equals("Subir")?-1:1);if(i>=0&&j>=0&&j<frames.size()){var a=frames.remove(i);frames.add(j,a);list.setSelectedIndex(j);}}}});}
++        JSpinner ms=new JSpinner(new SpinnerNumberModel(250,30,5000,10));JCheckBox loop=new JCheckBox("Repetir",true);EnvironmentAnimation.sequence(element).ifPresent(s->{ms.setValue(s.duration());loop.setSelected(s.loop());});JPanel panel=new JPanel(new BorderLayout());panel.add(picker,BorderLayout.NORTH);panel.add(new JScrollPane(list));JPanel south=new JPanel(new BorderLayout());south.add(buttons,BorderLayout.NORTH);JPanel timing=new JPanel();timing.add(new JLabel("ms/quadro"));timing.add(ms);timing.add(loop);south.add(timing);panel.add(south,BorderLayout.SOUTH);panel.setPreferredSize(new Dimension(700,420));if(JOptionPane.showConfirmDialog(ui,panel,"Animacao apenas na previa; exportacao usa asset base",JOptionPane.OK_CANCEL_OPTION)!=JOptionPane.OK_OPTION)return;
++        var ordered=Collections.list(frames.elements());var sequence=new EnvironmentAnimation.Sequence(ordered.stream().map(AssetCatalog.Asset::id).toList(),ordered.stream().map(AssetCatalog.Asset::sha).toList(),(int)ms.getValue(),loop.isSelected());var replacement=EnvironmentAnimation.configure(element,sequence);ui.change(ui.document.withElements(ui.document.elements().stream().map(e->e.id().equals(element.id())?replacement:e).toList()));ui.warmImages();
++    });}
++}
+--- before/server/src/main/java/com/projetok/studio/EnvironmentAnimation.java
++++ after/server/src/main/java/com/projetok/studio/EnvironmentAnimation.java
+@@ -0,0 +1,20 @@
++package com.projetok.studio;
++import java.util.*;
++
++/** Animacao ambiental de autoria; o runtime recebe explicitamente o quadro base. */
++public final class EnvironmentAnimation {
++    /** Sequencia limitada de imagens existentes, com revisoes explicitas. */
++    public record Sequence(List<String> frames,List<String> hashes,int duration,boolean loop){
++        public Sequence {frames=List.copyOf(frames);hashes=List.copyOf(hashes);if(frames.isEmpty()||frames.size()>32||frames.size()!=hashes.size()||duration<30||duration>5000||frames.stream().anyMatch(s->!s.matches("[a-f0-9]{64}"))||hashes.stream().anyMatch(s->!s.matches("[a-f0-9]{64}")))throw new IllegalArgumentException("Sequencia invalida: 1..32 quadros, 30..5000 ms");}
++        /** Relogio monotono externo, independente da quantidade de repaints. */
++        public int index(long elapsedNanos){long tick=Math.max(0,elapsedNanos)/(duration*1_000_000L);return loop?(int)(tick%frames.size()):(int)Math.min(frames.size()-1,tick);}
++    }
++    private EnvironmentAnimation(){}
++    /** Le propriedades declarativas, sem carregar ou executar arquivos. */
++    public static Optional<Sequence> sequence(WorldDocument.Element e){var p=e.properties();if(!p.containsKey("animation.frames"))return Optional.empty();String loop=p.get("animation.loop");if(!Set.of("true","false").contains(loop==null?"":loop))throw new IllegalArgumentException("Loop invalido");return Optional.of(new Sequence(List.of(p.get("animation.frames").split(",")),List.of(p.getOrDefault("animation.hashes","").split(",")),Integer.parseInt(p.getOrDefault("animation.ms","0")),Boolean.parseBoolean(loop)));}
++    /** Configura a sequencia conservando o asset base para exportacao estatica. */
++    public static WorldDocument.Element configure(WorldDocument.Element e,Sequence s){if(e.kind()!=WorldDocument.Kind.OBJECT&&e.kind()!=WorldDocument.Kind.TILE)throw new IllegalArgumentException("Use objeto ou tile ambiental");var p=new HashMap<>(e.properties());p.put("animation.frames",String.join(",",s.frames()));p.put("animation.hashes",String.join(",",s.hashes()));p.put("animation.ms",""+s.duration());p.put("animation.loop",""+s.loop());return replace(e,p);}
++    private static WorldDocument.Element replace(WorldDocument.Element e,Map<String,String> p){return new WorldDocument.Element(e.id(),e.kind(),e.asset(),e.sha(),e.crop(),e.x(),e.y(),e.width(),e.height(),e.layer(),e.visible(),e.locked(),e.reference(),e.direction(),p);}
++    /** Remove somente propriedades de previa da copia exportada; projeto permanece intacto. */
++    public static WorldDocument staticExport(WorldDocument d){return d.withElements(d.elements().stream().map(e->{var p=new HashMap<>(e.properties());p.keySet().removeIf(k->k.startsWith("animation."));return replace(e,p);}).toList());}
++}
+--- before/server/src/main/java/com/projetok/studio/StudioExport.java
++++ after/server/src/main/java/com/projetok/studio/StudioExport.java
+@@ -41,7 +41,7 @@
+         try {
+             var maps=closure(start,all);var issues=StudioValidator.validate(maps,catalog,true);if(issues.stream().anyMatch(p->p.severity()==StudioProblem.Severity.ERROR))throw new IOException(issues.toString());scenes(start,maps);
+             Path root=output.toAbsolutePath();Files.createDirectories(root.getParent());Files.createDirectory(root);Files.createDirectory(root.resolve("images"));Properties manifest=new Properties();manifest.setProperty("schema","1");manifest.setProperty("start",start);manifest.setProperty("map.count",""+maps.size());int n=0;
+-            for(var d:maps.values()){Path file=root.resolve(d.id()+".sgmap");DocumentStore.save(file,d);manifest.setProperty("map."+n+".id",d.id());manifest.setProperty("map."+n+".sha",AssetCatalog.hash(file));n++;}
++            for(var d:maps.values()){Path file=root.resolve(d.id()+".sgmap");DocumentStore.save(file,EnvironmentAnimation.staticExport(d));manifest.setProperty("map."+n+".id",d.id());manifest.setProperty("map."+n+".sha",AssetCatalog.hash(file));n++;}
+             Set<String> used=new LinkedHashSet<>();maps.values().forEach(d->d.elements().forEach(e->{if(!e.asset().isEmpty())used.add(e.asset());}));manifest.setProperty("asset.count",""+used.size());n=0;var assets=catalog.byId();
+             for(String id:used){var a=assets.get(id);Path dest=root.resolve("images/"+a.sha()+".png");if(!Files.exists(dest))Files.copy(a.file(),dest);if(!AssetCatalog.hash(dest).equals(a.sha()))throw new IOException("Imagem mudou durante exportacao");manifest.setProperty("asset."+n+".id",id);manifest.setProperty("asset."+n+".sha",a.sha());n++;}
+             try(var out=Files.newBufferedWriter(root.resolve("world.properties"))){manifest.store(out,"Spirit Gate Studio export V1 - sessao sem saves");}load(root);return root;
+--- before/server/src/main/java/com/projetok/studio/WorldCanvas.java
++++ after/server/src/main/java/com/projetok/studio/WorldCanvas.java
+@@ -18,6 +18,10 @@
+     Consumer<Point> pointer=p->{};
+     Consumer<MouseEvent> pressed=e->{},dragged=e->{},released=e->{};
+     Point panStart;double startX,startY;
++    final long animationStart=System.nanoTime();
++    final javax.swing.Timer animationTimer=new javax.swing.Timer(50,e->repaint());
++    @Override public void addNotify(){super.addNotify();animationTimer.start();}
++    @Override public void removeNotify(){animationTimer.stop();super.removeNotify();}
+     /** Canvas independente de arquivo e de regras de combate. */
+     public WorldCanvas(Supplier<WorldDocument> source,AssetImages images) {
+         this.source=source;this.images=images;setBackground(new Color(27,31,40));setFocusable(true);
+@@ -40,7 +44,7 @@
+             var d=source.get();g.translate(viewport.panX(),viewport.panY());g.scale(viewport.zoom(),viewport.zoom());g.clipRect(0,0,d.width(),d.height());
+             g.setColor(new Color(43,70,59));g.fillRect(0,0,d.width(),d.height());Rectangle visible=g.getClipBounds();
+             for(var layer:d.orderedLayers())if(layer.visible())for(var e:d.elements())if(e.visible()&&e.layer().equals(layer.id())&&visible.intersects(e.x(),e.y(),e.width(),e.height())) {
+-                var image=images.peek(e.asset());var c=e.crop();
++                var sequence=EnvironmentAnimation.sequence(e);var image=images.peek(sequence.map(s->s.frames().get(s.index(System.nanoTime()-animationStart))).orElse(e.asset()));var c=sequence.isPresent()&&image!=null?new WorldDocument.Crop(0,0,image.getWidth(),image.getHeight()):e.crop();
+                 if(image!=null&&c.x()+c.width()<=image.getWidth()&&c.y()+c.height()<=image.getHeight())g.drawImage(image,e.x(),e.y(),e.x()+e.width(),e.y()+e.height(),c.x(),c.y(),c.x()+c.width(),c.y()+c.height(),null);
+                 else {g.setColor(e.kind()==WorldDocument.Kind.PLAYER?Color.CYAN:new Color(130,170,175));g.drawRect(e.x(),e.y(),e.width(),e.height());g.setFont(new Font("SansSerif",0,11));g.drawString(e.reference().isEmpty()?e.kind().name():e.reference(),e.x(),e.y()+12);}
+                 if(selected.contains(e.id())){g.setColor(Color.YELLOW);g.setStroke(new BasicStroke((float)(2/viewport.zoom())));g.drawRect(e.x(),e.y(),e.width(),e.height());}
+--- before/server/src/main/java/com/projetok/studio/WorldStudio.java
++++ after/server/src/main/java/com/projetok/studio/WorldStudio.java
+@@ -54,6 +54,7 @@
+         new TerrainTools(this);
+         new PrefabTools(this);
+         new GroupTools(this);
++        new AnimationTools(this);
+     }
+     void change(WorldDocument next){document=history.commit(Autotiling.refresh(next));if(layerTools!=null)layerTools.refresh();canvas.repaint();}
+     void inspectSelection(){details.setText(document.elements().stream().filter(e->canvas.selected.contains(e.id())).map(Object::toString).collect(java.util.stream.Collectors.joining("\n")));}
+@@ -64,7 +65,7 @@
+         protected AssetCatalog.Result doInBackground()throws Exception{var previous=catalog;var result=AssetCatalog.scan(project,previous);Path categories=project.resolve("studio-projects/catalog.properties");if(java.nio.file.Files.isRegularFile(categories)&&java.nio.file.Files.size(categories)<=1_000_000&&categories.toRealPath().startsWith(project.toRealPath())){Properties saved=new Properties();try(var in=java.nio.file.Files.newBufferedReader(categories)){saved.load(in);}var known=previous.byId();result=new AssetCatalog.Result(result.assets().stream().map(a->{String c=saved.getProperty(a.id());return c!=null&&c.length()<=80&&!known.containsKey(a.id())?a.category(c):a;}).toList(),result.warnings(),result.changes());}return result;}
+         protected void done(){try{catalog=get();images.clear();filter();warmImages();status.setText(catalog.assets().size()+" imagens | "+catalog.changes().size()+" alteracoes | "+catalog.warnings().size()+" avisos");if(!catalog.warnings().isEmpty())details.setText(String.join("\n",catalog.warnings()));}catch(Exception error){error(error);}finally{refresh.setEnabled(true);}}
+     }.execute();}
+-    void warmImages(){var ids=new HashSet<String>();document.elements().forEach(e->ids.add(e.asset()));if(brush!=null)ids.add(brush.id());var selected=catalog.byId();new SwingWorker<Void,Void>(){
++    void warmImages(){var ids=new HashSet<String>();document.elements().forEach(e->{ids.add(e.asset());EnvironmentAnimation.sequence(e).ifPresent(s->ids.addAll(s.frames()));});if(brush!=null)ids.add(brush.id());var selected=catalog.byId();new SwingWorker<Void,Void>(){
+         protected Void doInBackground()throws Exception{for(String id:ids)if(selected.containsKey(id))images.load(selected.get(id));return null;}
+         protected void done(){try{get();canvas.repaint();}catch(Exception error){error(error);}}
+     }.execute();}
+--- before/docs/TASK-106-RELATORIO-FINAL.md
++++ after/docs/TASK-106-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-106 - Corujao II
++
++Estado: **validada-com-limitacoes**.
++
++Sequencias ambientais de 1..32 imagens existentes, ordem editavel, 30..5000 ms e repeticao configuravel. Previa monotona no editor; exportacao explicitamente estatica, sem contrato novo no runtime.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-106/corujao-ii/`. Logs da suite: `docs/TASK-studio-106-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-106-TESTES.md
++++ after/docs/TASK-106-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-106 - Corujao II
++
++Comando: `python tools/qualidade.py --offline --task studio-106`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 359,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-106.md
++++ after/docs/TASK-106.md
+@@ -0,0 +1,3 @@
++# TASK-106 - Corujao II
++
++Sequencias ambientais de 1..32 imagens existentes, ordem editavel, 30..5000 ms e repeticao configuravel. Previa monotona no editor; exportacao explicitamente estatica, sem contrato novo no runtime.

@@ -1,0 +1,26 @@
+{
+  "changed": [
+    "server/src/main/java/com/projetok/prototype/rpg/RpgPlayerSprites.java",
+    "testar-rpg-sprites.cmd"
+  ],
+  "added": [
+    "docs/TASK-079-COMPARACAO-VISUAL.md",
+    "docs/TASK-079-RELATORIO-FINAL.md",
+    "docs/TASK-079-TESTES.md",
+    "docs/TASK-079-java-version.log",
+    "docs/TASK-079-java.log",
+    "docs/TASK-079-maven-version.log",
+    "docs/TASK-079-python-version.log",
+    "docs/TASK-079-python.log",
+    "docs/TASK-079-qualidade.json",
+    "docs/TASK-079-testes.txt",
+    "docs/TASK-079.md",
+    "server/src/test/java/com/projetok/prototype/rpg/RpgPlayerRefinementTest.java"
+  ],
+  "removed": [],
+  "onlyExpectedExistingFilesChanged": true,
+  "originalAssetsUnchanged": true,
+  "existingSavesUnchanged": true,
+  "previousTestsUnchanged": true,
+  "previousFilesVerified": 1684
+}

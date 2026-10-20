@@ -1,0 +1,248 @@
+--- before/server/src/test/java/com/projetok/studio/StudioRuntimePlaytestTest.java
++++ after/server/src/test/java/com/projetok/studio/StudioRuntimePlaytestTest.java
+@@ -0,0 +1,10 @@
++package com.projetok.studio;
++import com.projetok.rpg.*;
++import com.projetok.prototype.rpg.RpgRuntime;
++import org.junit.jupiter.api.Test;
++import java.util.*;
++import java.util.concurrent.TimeUnit;
++import static org.junit.jupiter.api.Assertions.*;
++class StudioRuntimePlaytestTest {
++    @Test void playtestAdvancesRealRuntimeAndClosesPendingActions()throws Exception{var d=StudioIntegrationTest.map("novo","village");var scenes=StudioExport.scenes(d.id(),Map.of(d.id(),d));try(var runtime=new RpgRuntime(new RpgWorld(CharacterIdentity.create("Teste","guardian","azure"),scenes))){runtime.input(1,0);runtime.start();long deadline=System.nanoTime()+TimeUnit.SECONDS.toNanos(3);while(runtime.snapshot().ticks()<4&&System.nanoTime()<deadline)Thread.sleep(5);assertTrue(runtime.snapshot().x()>140);assertNull(runtime.failure());var action=runtime.action(w->w.attack());runtime.close();assertNotNull(action.get(1,TimeUnit.SECONDS));}}
++}
+--- before/server/src/main/java/com/projetok/prototype/DebugPanel.java
++++ after/server/src/main/java/com/projetok/prototype/DebugPanel.java
+@@ -59,6 +59,12 @@
+     }
+     private ActorRenderer actorRenderer;
+     private java.util.function.Consumer<Graphics2D> worldOverlay;
++    private java.util.function.Consumer<Graphics2D> worldUnderlay;
++    private boolean physicalGeometry=true;
++    /** Camada opcional de autoria, desativada nas entradas historicas. */
++    public void setWorldUnderlay(java.util.function.Consumer<Graphics2D> underlay){worldUnderlay=underlay;}
++    /** Oculta apenas o desenho diagnostico, nunca a colisao da simulacao. */
++    public void setPhysicalGeometryVisible(boolean value){physicalGeometry=value;}
+     /** Overlay opcional do RPG; nulo preserva a arena e o Coop. */
+     public void setWorldOverlay(java.util.function.Consumer<Graphics2D> overlay){worldOverlay=overlay;}
+     public void setActorRenderer(ActorRenderer renderer) { actorRenderer=renderer; }
+@@ -180,8 +186,8 @@
+     private void renderWorld(Graphics2D g,DebugSnapshot s,java.util.List<DirectionalAnimation.View> animations) {
+         drawWorld(g);
+         if (mapRenderer != null) mapRenderer.drawLayers(g,0,4);
+-        drawObstacles(g, s);
+-        drawSoftObstacles(g, s);
++        if(worldUnderlay!=null)worldUnderlay.accept(g);
++        if(physicalGeometry){drawObstacles(g, s);drawSoftObstacles(g, s);}
+         drawIceZones(g, s);
+         drawLightningTrails(g, s);
+         for (DebugSnapshot.ActorView actor : s.actors()) {
+--- before/server/src/main/java/com/projetok/studio/PlaytestTools.java
++++ after/server/src/main/java/com/projetok/studio/PlaytestTools.java
+@@ -0,0 +1,11 @@
++package com.projetok.studio;
++import javax.swing.*;
++import java.nio.file.*;
++import java.util.*;
++
++/** Exportacao e playtest como operacoes reais em worker. */
++final class PlaytestTools {
++    final WorldStudio ui;
++    PlaytestTools(WorldStudio ui){this.ui=ui;ui.action("Arquivo","Exportar para RPG",()->export(false));ui.action("Mapa","Testar mapa no RPG",()->export(true));}
++    void export(boolean play){JFileChooser chooser=new JFileChooser(ui.project.resolve("studio-projects").toFile());chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);if(!play&&chooser.showSaveDialog(ui)!=JFileChooser.APPROVE_OPTION)return;Path base=play?ui.project.resolve("studio-projects/playtests"):chooser.getSelectedFile().toPath();var maps=ui.maps();var doc=ui.document;var catalog=ui.catalog;ui.status.setText("Validando e exportando... (fora da interface)");new SwingWorker<Path,Void>(){protected Path doInBackground()throws Exception{Files.createDirectories(base);Path path=StudioExport.write(base.resolve(doc.id()+"-"+UUID.randomUUID()),doc.id(),maps,catalog);if(play)StudioPlaytest.launch(path,ui.project);return path;}protected void done(){try{ui.status.setText((play?"Playtest isolado: ":"Exportado: ")+get());}catch(Exception error){ui.error(error);}}}.execute();}
++}
+--- before/server/src/main/java/com/projetok/studio/StudioMapRenderer.java
++++ after/server/src/main/java/com/projetok/studio/StudioMapRenderer.java
+@@ -0,0 +1,23 @@
++package com.projetok.studio;
++import com.projetok.rpg.*;
++import com.projetok.prototype.*;
++import com.projetok.prototype.rpg.RpgPlayerSprites;
++import java.awt.*;
++import java.util.*;
++import java.util.function.Supplier;
++
++/** Camadas do bundle sobre o cliente real; imagens ja carregadas, sem I/O no desenho. */
++final class StudioMapRenderer implements DebugPanel.ActorRenderer {
++    final StudioExport.Bundle bundle;final AssetImages images;final Supplier<RpgWorld.View> source;final RpgPlayerSprites player;
++    StudioMapRenderer(StudioExport.Bundle bundle,AssetImages images,Supplier<RpgWorld.View> source,RpgPlayerSprites player){this.bundle=bundle;this.images=images;this.source=source;this.player=player;}
++    WorldDocument document(){String region=source.get().state().region();return bundle.maps().values().stream().filter(d->d.region().equals(region)).findFirst().orElseThrow();}
++    void layers(Graphics2D original,boolean above){Graphics2D g=(Graphics2D)original.create();try{var d=document();g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);if(!above){g.setColor(new Color(43,70,59));g.fillRect(0,0,960,640);}for(var l:d.orderedLayers())if(l.visible()&&(l.role()==WorldDocument.Role.ABOVE||l.role()==WorldDocument.Role.ROOF)==above)for(var e:d.elements())if(e.visible()&&e.layer().equals(l.id())&&(e.kind()==WorldDocument.Kind.TILE||e.kind()==WorldDocument.Kind.OBJECT))drawImage(g,e,e.x(),e.y());}finally{g.dispose();}}
++    boolean drawImage(Graphics2D g,WorldDocument.Element e,int x,int y){var image=images.peek(e.asset());if(image==null)return false;var c=e.crop();g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);g.drawImage(image,x,y,x+e.width(),y+e.height(),c.x(),c.y(),c.x()+c.width(),c.y()+c.height(),null);return true;}
++    @Override public boolean draw(Graphics2D original,DebugSnapshot.ActorView actor){if(actor.id()==1)return player!=null&&player.draw(original,actor);if(!actor.alive())return false;var view=source.get();WorldDocument.Element found=null;
++        for(var e:document().elements())if(!e.asset().isEmpty()) {
++            if(e.kind()==WorldDocument.Kind.NPC){int i=actor.id()-500;if(i>=0&&i<view.npcs().size()&&view.npcs().get(i).id().equals(e.reference()))found=e;}
++            if(e.kind()==WorldDocument.Kind.ENEMY&&view.enemies().stream().anyMatch(n->n.id()==actor.id()&&n.spawn().equals(StudioExport.key("spawn_",document().id()+"/"+e.id()))))found=e;
++        }
++        if(found==null)return false;Graphics2D g=(Graphics2D)original.create();try{if(!drawImage(g,found,Math.round(actor.x()-found.width()/2f),Math.round(actor.y()-found.height())))return false;g.setColor(Color.WHITE);g.drawString(actor.name(),actor.x()-found.width()/2f,actor.y()-found.height()-4);if(!actor.player()&&actor.maxHp()>1){g.setColor(Color.RED);g.fillRect(Math.round(actor.x()-16),Math.round(actor.y()+3),32*actor.hp()/actor.maxHp(),3);}return true;}finally{g.dispose();}
++    }
++}
+--- before/server/src/main/java/com/projetok/studio/StudioPlaytest.java
++++ after/server/src/main/java/com/projetok/studio/StudioPlaytest.java
+@@ -0,0 +1,38 @@
++package com.projetok.studio;
++import com.projetok.rpg.*;
++import com.projetok.prototype.*;
++import com.projetok.prototype.rpg.*;
++import javax.swing.*;
++import java.awt.*;
++import java.awt.event.*;
++import java.nio.file.*;
++import java.util.*;
++
++/** Cliente de playtest usa RpgRuntime/RpgWorld reais e nao possui operacao de salvar personagem. */
++public final class StudioPlaytest {
++    private StudioPlaytest(){}
++    /** Carrega exportacao e imagens fora da EDT, depois abre uma sessao sintetica. */
++    public static void launch(Path bundlePath,Path project)throws Exception {
++        var bundle=StudioExport.load(bundlePath);AssetImages images=new AssetImages();for(var a:bundle.assets().assets())images.load(a);
++        var player=RpgPlayerSprites.loadOptional(project.resolve("assets/dev/player-base"),250,.5);
++        SwingUtilities.invokeLater(()->open(bundle,images,player,bundlePath));
++    }
++    static void open(StudioExport.Bundle bundle,AssetImages images,RpgPlayerSprites player,Path output) {
++        RpgRuntime runtime=new RpgRuntime(new RpgWorld(CharacterIdentity.create("Playtest","guardian","azure"),bundle.scenes()));
++        var template=DebugWorld.demo(new java.util.Random(91)).snapshot();
++        DebugPanel panel=new DebugPanel(()->{var v=runtime.snapshot();var space=bundle.scenes().maps().get(v.state().region()).space();return RpgLauncher.adapt(v,template,space.obstacles().stream().map(o->new DebugSnapshot.Obstacle(o.x(),o.y(),o.width(),o.height())).toList());});panel.setPhysicalGeometryVisible(false);
++        var render=new StudioMapRenderer(bundle,images,runtime::snapshot,player);var feedback=new RpgCombatFeedback();var boss=new RpgBossOverlay();panel.setActorRenderer(render);panel.setWorldUnderlay(g->render.layers(g,false));panel.setWorldOverlay(g->{render.layers(g,true);boss.draw(g);feedback.draw(g);});
++        JFrame frame=new JFrame("Spirit Gate | PLAYTEST ISOLADO | "+bundle.start());frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);JPanel root=new JPanel(new BorderLayout());JLabel banner=new JLabel("Sessao sintetica sem saves pessoais | WASD mover | SPACE golpe | Q habilidade | F interagir | R recuperar");root.add(banner,BorderLayout.NORTH);root.add(panel);RpgHud hud=new RpgHud(runtime);root.add(hud,BorderLayout.SOUTH);frame.setContentPane(root);frame.setSize(1260,900);frame.setLocationRelativeTo(null);
++        var logs=new ArrayList<String>();logs.add("Inicio: "+bundle.start()+" | runtime real, sem LocalSaveStore");boolean[] held=new boolean[4];String[] keys={"W","S","A","D"};
++        for(int i=0;i<4;i++)for(boolean down:new boolean[]{true,false}){final int at=i;String key=keys[i]+down;panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke((down?"pressed ":"released ")+keys[i]),key);panel.getActionMap().put(key,new AbstractAction(){public void actionPerformed(ActionEvent e){held[at]=down;runtime.input((held[3]?1:0)-(held[2]?1:0),(held[1]?1:0)-(held[0]?1:0));}});}
++        RpgLauncher.bind(panel,"SPACE",()->runtime.command(RpgWorld::attack));RpgLauncher.bind(panel,"Q",()->runtime.command(RpgWorld::castAbility));RpgLauncher.bind(panel,"R",()->runtime.command(RpgWorld::returnHome));RpgLauncher.bind(panel,"1",()->runtime.command(w->w.use("potion")));RpgLauncher.bind(panel,"F",()->runtime.action(RpgWorld::interact).thenAccept(ok->{if(!ok)synchronized(logs){if(logs.size()<1000)logs.add("Interacao recusada pela simulacao");}}));
++        long[] lastBlocked={-30};RpgWorld.View[] previous={runtime.snapshot()};
++        javax.swing.Timer timer=new javax.swing.Timer(33,e->{var v=runtime.snapshot();if(runtime.failure()!=null){((javax.swing.Timer)e.getSource()).stop();logs.add("Falha: "+runtime.failure());JOptionPane.showMessageDialog(frame,"Simulacao interrompida: "+runtime.failure().getMessage());frame.dispose();return;}if(player!=null)player.update(v);feedback.update(v);boss.update(v);hud.update(v);panel.setCustomHud(java.util.List.of("PLAYTEST WORLD STUDIO",render.document().name(),"Regiao: "+v.state().region(),"Sem gravacao de personagem","Assets residentes: "+images.bytes()/1024+" KiB","[F] NPC/objeto/portal","[R] Recuperar apos KO"));
++            if((held[0]||held[1]||held[2]||held[3])&&v.ticks()!=previous[0].ticks()&&v.x()==previous[0].x()&&v.y()==previous[0].y()&&v.ticks()-lastBlocked[0]>=30){lastBlocked[0]=v.ticks();if(logs.size()<1000)logs.add("Movimento bloqueado em "+v.x()+","+v.y());}previous[0]=v;panel.repaint();});
++        frame.addWindowFocusListener(new WindowAdapter(){public void windowLostFocus(WindowEvent e){Arrays.fill(held,false);runtime.input(0,0);RpgLauncher.resetHeld(panel);}});
++        frame.addWindowListener(new WindowAdapter(){public void windowClosed(WindowEvent e){timer.stop();runtime.close();new Thread(()->{try{synchronized(logs){Files.write(output.resolve("playtest-diagnostics.log"),logs);}}catch(Exception error){error.printStackTrace();}},"studio-diagnostics").start();}});
++        runtime.start();timer.start();frame.setVisible(true);
++    }
++    /** Execucao externa verificavel de um bundle exportado, sem fisica alternativa. */
++    public static void main(String[] args)throws Exception{if(args.length<1||args.length>2)throw new IllegalArgumentException("Uso: StudioPlaytest pasta-exportada [raiz-projeto]");launch(Path.of(args[0]),args.length==2?Path.of(args[1]):Path.of("").toAbsolutePath());}
++}
+--- before/server/src/main/java/com/projetok/studio/WorldStudio.java
++++ after/server/src/main/java/com/projetok/studio/WorldStudio.java
+@@ -49,6 +49,7 @@
+         new InteractionTools(this);
+         new PortalTools(this);
+         new FileTools(this);
++        new PlaytestTools(this);
+     }
+     void change(WorldDocument next){document=history.commit(next);if(layerTools!=null)layerTools.refresh();canvas.repaint();}
+     void inspectSelection(){details.setText(document.elements().stream().filter(e->canvas.selected.contains(e.id())).map(Object::toString).collect(java.util.stream.Collectors.joining("\n")));}
+--- before/server/src/main/java/com/projetok/prototype/rpg/RpgHud.java
++++ after/server/src/main/java/com/projetok/prototype/rpg/RpgHud.java
+@@ -3,7 +3,7 @@
+ import javax.swing.*;
+ import java.awt.*;
+ /** Widgets consomem snapshots; botoes apenas enfileiram intencoes. */
+-final class RpgHud extends JPanel {
++public final class RpgHud extends JPanel {
+     private final JLabel status=new JLabel();
+     private final JTextArea journal=new JTextArea(3,80);
+     private final JPanel dialogue=new JPanel(new BorderLayout(4,4));
+@@ -14,13 +14,15 @@
+     private final JLabel combat=new JLabel();
+     private long previousXp=-1,xpUntil;
+     private String xpNotice="";
+-    RpgHud(RpgRuntime runtime) {
++    /** HUD compartilhado com a sessao isolada de autoria. */
++    public RpgHud(RpgRuntime runtime) {
+         super(new BorderLayout());this.runtime=runtime;
+         JPanel bars=new JPanel(new GridLayout(0,1));hp.setStringPainted(true);stamina.setStringPainted(true);
+         bars.add(hp);bars.add(stamina);boss.setStringPainted(true);boss.setVisible(false);bars.add(boss);bars.add(combat);bars.add(status);add(bars,BorderLayout.NORTH);
+         add(dialogue,BorderLayout.CENTER);journal.setEditable(false);add(new JScrollPane(journal),BorderLayout.SOUTH);
+     }
+-    void update(RpgWorld.View view) {
++    /** Consome somente valores publicados pelo mundo real. */
++    public void update(RpgWorld.View view) {
+         var enemy=view.enemies().stream().filter(e->e.boss()&&e.hp()>0).findFirst();boss.setVisible(enemy.isPresent());
+         enemy.ifPresent(e->{boss.setMaximum(e.maxHp());boss.setValue(e.hp());boss.setString(e.name()+" "+e.hp()+" / "+e.maxHp()+(e.hp()*2<=e.maxHp()?" | Enfurecido":"")+(e.state().equals("PREPARE")?" | Preparando":e.state().equals("RECOVER")?" | Recuperando":""));});
+         var values=RpgCombatStatus.from(view);hp.setMaximum(values.maxHp());hp.setValue(values.hp());hp.setString("HP "+values.hp()+" / "+values.maxHp());
+--- before/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
++++ after/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
+@@ -109,6 +109,10 @@
+         });capture.setRepeats(false);capture.start();}
+     }
+     static DebugSnapshot adapt(com.projetok.rpg.RpgWorld.View v, DebugSnapshot t) {
++        return adapt(v,t,List.of(new DebugSnapshot.Obstacle(380,180,120,120)));
++    }
++    /** Adapta a mesma simulacao com geometria explicita de sessao de autoria. */
++    public static DebugSnapshot adapt(com.projetok.rpg.RpgWorld.View v,DebugSnapshot t,List<DebugSnapshot.Obstacle> obstacles) {
+         var actors=new java.util.ArrayList<DebugSnapshot.ActorView>();
+         actors.add(new DebugSnapshot.ActorView(1,v.identity().name(),v.x(),v.y(),18,v.state().hp(),v.maxHp(),true,v.state().hp()>0));
+         for(var enemy:v.enemies())actors.add(new DebugSnapshot.ActorView(enemy.id(),enemy.name(),enemy.x(),enemy.y(),19,enemy.hp(),enemy.maxHp(),false,enemy.hp()>0));
+@@ -117,10 +121,11 @@
+         for(var object:v.objects())if(object.available())actors.add(new DebugSnapshot.ActorView(npcId++,object.id().contains("chest")?"Bau do aprendiz":object.id().contains("herbs")?"Ervas curativas":"Reserva de pocoes",object.x(),object.y(),15,1,1,false,true));
+         java.util.List<DebugSnapshot.IceZoneView> warnings=List.of(); // Aviso RPG ocluido pelo overlay do chefe.
+         return new DebugSnapshot(actors,
+-            List.of(new DebugSnapshot.Obstacle(380,180,120,120)),List.of(),v.state().hp(),v.maxHp(),0,v.state().hp()==0,v.ticks(),v.message(),1,0,0,null,
++            obstacles,List.of(),v.state().hp(),v.maxHp(),0,v.state().hp()==0,v.ticks(),v.message(),1,0,0,null,
+             100,100,0,warnings,List.of(),false,0,0,List.of(),false,List.of(),t.cryostasisHud(),t.lightningStepHud());
+     }
+-    static void bind(JComponent component,String key,Runnable action) {
++    /** Binding compartilhado que evita repeticao automatica de comandos. */
++    public static void bind(JComponent component,String key,Runnable action) {
+         @SuppressWarnings("unchecked") java.util.Set<String> existing=(java.util.Set<String>)component.getClientProperty("rpg.held");
+         if(existing==null){existing=new java.util.HashSet<>();component.putClientProperty("rpg.held",existing);}final java.util.Set<String> held=existing;
+         for(boolean down:new boolean[]{true,false}) {
+@@ -129,6 +134,7 @@
+             component.getActionMap().put(id,new AbstractAction(){public void actionPerformed(ActionEvent e){if(down){if(held.add(key))action.run();}else held.remove(key);}});
+         }
+     }
+-    static void resetHeld(JComponent component){Object held=component.getClientProperty("rpg.held");if(held instanceof java.util.Set<?> keys)keys.clear();}
++    /** Limpa teclas mantidas ao perder foco. */
++    public static void resetHeld(JComponent component){Object held=component.getClientProperty("rpg.held");if(held instanceof java.util.Set<?> keys)keys.clear();}
+     static String actionLabel(String action){return switch(action){case "attack"->"Golpe";case "ability"->"Habilidade";case "potion"->"Pocao";case "inventory"->"Inventario";case "journal"->"Diario";case "map"->"Mapa";case "interact"->"Interagir";case "save"->"Salvar";case "revive"->"Recuperar";default->action;};}
+ }
+--- before/docs/TASK-101-RELATORIO-FINAL.md
++++ after/docs/TASK-101-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-101 - Corujao II
++
++Estado: **VALIDADA**.
++
++Menu Testar mapa valida/exporta em worker e abre cliente isolado com RpgRuntime, RpgWorld, HUD, renderer e sprites reais. WASD, combate, interacao, foco e fechamento usam o ciclo existente; nenhuma operacao de salvar personagem. Diagnosticos limitados de bloqueio/recusa/falha gravados ao encerrar a sessao. Janelas reais capturadas em visual: 248 assets indexados, personagem moveu de x140 e parou na parede personalizada em x240.3334. Teste automatizado do runtime aprovado.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-101/corujao-ii/`. Logs da suite: `docs/TASK-studio-101-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-101-TESTES.md
++++ after/docs/TASK-101-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-101 - Corujao II
++
++Comando: `python tools/qualidade.py --offline --task studio-101`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 354,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-101.md
++++ after/docs/TASK-101.md
+@@ -0,0 +1,3 @@
++# TASK-101 - Corujao II
++
++Menu Testar mapa valida/exporta em worker e abre cliente isolado com RpgRuntime, RpgWorld, HUD, renderer e sprites reais. WASD, combate, interacao, foco e fechamento usam o ciclo existente; nenhuma operacao de salvar personagem. Diagnosticos limitados de bloqueio/recusa/falha gravados ao encerrar a sessao. Janelas reais capturadas em visual: 248 assets indexados, personagem moveu de x140 e parou na parede personalizada em x240.3334. Teste automatizado do runtime aprovado.
+--- before/testar-mapa-rpg.cmd
++++ after/testar-mapa-rpg.cmd
+@@ -0,0 +1,8 @@
++@echo off
++setlocal
++cd /d "%~dp0"
++if "%~1"=="" (
++  echo Uso: testar-mapa-rpg.cmd "pasta-exportada"
++  exit /b 1
++)
++java -cp "server\target\classes" com.projetok.studio.StudioPlaytest "%~1" "%~dp0."

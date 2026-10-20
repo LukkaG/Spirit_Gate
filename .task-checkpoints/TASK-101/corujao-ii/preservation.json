@@ -1,0 +1,26 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/StudioRuntimePlaytestTest.java",
+    "server/src/main/java/com/projetok/prototype/DebugPanel.java",
+    "server/src/main/java/com/projetok/studio/PlaytestTools.java",
+    "server/src/main/java/com/projetok/studio/StudioMapRenderer.java",
+    "server/src/main/java/com/projetok/studio/StudioPlaytest.java",
+    "server/src/main/java/com/projetok/studio/WorldStudio.java",
+    "server/src/main/java/com/projetok/prototype/rpg/RpgHud.java",
+    "server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-101-RELATORIO-FINAL.md",
+    "docs/TASK-101-TESTES.md",
+    "docs/TASK-101.md",
+    "docs/TASK-studio-101-java-version.log",
+    "docs/TASK-studio-101-java.log",
+    "docs/TASK-studio-101-maven-version.log",
+    "docs/TASK-studio-101-python-version.log",
+    "docs/TASK-studio-101-python.log",
+    "docs/TASK-studio-101-qualidade.json",
+    "docs/TASK-studio-101-testes.txt",
+    "testar-mapa-rpg.cmd"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

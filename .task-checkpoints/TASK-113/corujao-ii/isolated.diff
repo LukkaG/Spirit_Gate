@@ -1,0 +1,264 @@
+--- before/server/src/test/java/com/projetok/studio/CanvasIndexTest.java
++++ after/server/src/test/java/com/projetok/studio/CanvasIndexTest.java
+@@ -0,0 +1,8 @@
++package com.projetok.studio;
++import org.junit.jupiter.api.Test;
++import java.awt.Rectangle;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++class CanvasIndexTest {
++    @Test void viewportMatchesBruteForceIncludingHugeOverlapsAndOrder(){var empty=WorldDocument.empty("mapa",8192,8192);var elements=new ArrayList<WorldDocument.Element>();var r=new Random(113);for(int i=0;i<1500;i++){int x=r.nextInt(7800),y=r.nextInt(7800);elements.add(new WorldDocument.Element("object_"+i,WorldDocument.Kind.OBJECT,"","",new WorldDocument.Crop(0,0,32,32),x,y,32,32,"ground",true,false,"","FRONT",Map.of()));}elements.add(new WorldDocument.Element("huge",WorldDocument.Kind.OBJECT,"","",new WorldDocument.Crop(0,0,32,32),0,0,8192,8192,"ground",true,false,"","FRONT",Map.of()));var d=empty.withElements(elements);var index=new CanvasIndex(d);for(int i=0;i<100;i++){var area=new Rectangle(r.nextInt(8192),r.nextInt(8192),1000,700);assertEquals(elements.stream().filter(e->area.intersects(e.x(),e.y(),e.width(),e.height())).toList(),index.query(area).getOrDefault("ground",List.of()));}}
++}
+--- before/server/src/main/java/com/projetok/studio/AssetCatalog.java
++++ after/server/src/main/java/com/projetok/studio/AssetCatalog.java
+@@ -30,13 +30,13 @@
+     public static Result scan(Path project,Result previous)throws IOException {
+         Path base=project.toRealPath();Map<String,Asset> old=previous==null?Map.of():previous.byId();
+         java.util.List<Asset> found=new ArrayList<>();java.util.List<String> warnings=new ArrayList<>(),changes=new ArrayList<>();
+-        for(String name:java.util.List.of("assets","server/src/main/resources")) {
++        int attempted=0;for(String name:java.util.List.of("assets","server/src/main/resources")) {
+             Path root=base.resolve(name);if(!Files.isDirectory(root,LinkOption.NOFOLLOW_LINKS))continue;
+             Path realRoot=root.toRealPath();if(!realRoot.startsWith(base)){warnings.add("Raiz fora do projeto: "+name);continue;}
+             try(var paths=Files.walk(root,32)) {
+                 var iterator=paths.filter(p->p.getFileName().toString().toLowerCase(Locale.ROOT).endsWith(".png")).iterator();
+                 while(iterator.hasNext()) {
+-                    Path file=iterator.next();if(found.size()>=4096){warnings.add("Limite de 4096 imagens atingido");break;}
++                    Path file=iterator.next();if(attempted++>=4096){warnings.add("Limite de 4096 candidatos atingido, incluindo invalidos");break;}
+                     try {
+                         if(Files.isSymbolicLink(file)||!Files.isRegularFile(file,LinkOption.NOFOLLOW_LINKS)||!file.toRealPath().startsWith(realRoot))throw new IOException("Link/caminho recusado");
+                         String relative=base.relativize(file).toString().replace('\\','/');String id=hash(relative.getBytes(StandardCharsets.UTF_8));
+@@ -69,7 +69,7 @@
+     /** SHA-256 limitado por tamanho; nenhum conteudo e executado. */
+     public static String hash(Path file)throws IOException {
+         if(Files.size(file)>32_000_000)throw new IOException("Arquivo excessivo");
+-        try(var in=Files.newInputStream(file)){MessageDigest digest=MessageDigest.getInstance("SHA-256");byte[] buffer=new byte[8192];int n;while((n=in.read(buffer))!=-1)digest.update(buffer,0,n);return HexFormat.of().formatHex(digest.digest());}
++        try(var in=Files.newInputStream(file)){MessageDigest digest=MessageDigest.getInstance("SHA-256");byte[] buffer=new byte[8192];int n;long total=0;while((n=in.read(buffer))!=-1){total+=n;if(total>32_000_000)throw new IOException("Arquivo cresceu acima do limite");digest.update(buffer,0,n);}return HexFormat.of().formatHex(digest.digest());}
+         catch(NoSuchAlgorithmException impossible){throw new IllegalStateException(impossible);}
+     }
+     private static String hash(byte[] bytes){try{return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(bytes));}catch(NoSuchAlgorithmException impossible){throw new IllegalStateException(impossible);}}
+--- before/server/src/main/java/com/projetok/studio/AssetImages.java
++++ after/server/src/main/java/com/projetok/studio/AssetImages.java
+@@ -14,8 +14,9 @@
+     public BufferedImage load(AssetCatalog.Asset asset)throws IOException {
+         long epoch;
+         synchronized(this){BufferedImage cached=images.get(asset.id());if(cached!=null&&asset.sha().equals(revisions.get(asset.id())))return cached;epoch=generation;}
+-        if(!AssetCatalog.hash(asset.file()).equals(asset.sha()))throw new IOException("Asset alterado: reindexe e revise "+asset.path());
+-        BufferedImage image=ImageIO.read(asset.file().toFile());if(image==null||(long)image.getWidth()*image.getHeight()>8_000_000)throw new IOException("Imagem recusada");
++        byte[] data;try(var in=java.nio.file.Files.newInputStream(asset.file())){data=in.readNBytes(32_000_001);}if(data.length>32_000_000)throw new IOException("Imagem excessiva");
++        try{if(!HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256").digest(data)).equals(asset.sha()))throw new IOException("Asset alterado: reindexe e revise "+asset.path());}catch(java.security.NoSuchAlgorithmException impossible){throw new IllegalStateException(impossible);}
++        BufferedImage image;try(var input=new javax.imageio.stream.MemoryCacheImageInputStream(new java.io.ByteArrayInputStream(data))){var readers=ImageIO.getImageReaders(input);if(!readers.hasNext())throw new IOException("Imagem ilegivel");var reader=readers.next();try{reader.setInput(input,true,true);int w=reader.getWidth(0),h=reader.getHeight(0);if(!reader.getFormatName().equalsIgnoreCase("png")||w<1||h<1||w>8192||h>8192||(long)w*h>8_000_000||w!=asset.width()||h!=asset.height())throw new IOException("Dimensoes/revisao recusadas antes da decodificacao");image=reader.read(0);}finally{reader.dispose();}}if(image==null)throw new IOException("Imagem recusada");
+         long size=(long)image.getWidth()*image.getHeight()*4;
+         synchronized(this) {
+         if(epoch!=generation)return image;
+--- before/server/src/main/java/com/projetok/studio/Autotiling.java
++++ after/server/src/main/java/com/projetok/studio/Autotiling.java
+@@ -1,29 +1,29 @@
+-package com.projetok.studio;
+-import java.util.*;
+-
+-/** Autotiling NESW de quatro vizinhos, apenas para combinacoes cadastradas. */
+-public final class Autotiling {
+-    /** Regra explicita: 1 norte, 2 leste, 4 sul, 8 oeste; fallback nunca inventa arte. */
+-    public record Rule(String id,String asset,String sha,WorldDocument.Crop fallback,Map<Integer,WorldDocument.Crop> variants) {
+-        public Rule {variants=Map.copyOf(variants);if(!WorldDocument.validId(id)||variants.keySet().stream().anyMatch(k->k<0||k>15))throw new IllegalArgumentException("Regra de terreno invalida");}
+-    }
+-    private Autotiling(){}
+-    static String crop(WorldDocument.Crop c){return c.x()+","+c.y()+","+c.width()+","+c.height();}
+-    static WorldDocument.Crop parse(String s){int[] n=Arrays.stream(s.split(",")).mapToInt(Integer::parseInt).toArray();if(n.length!=4)throw new IllegalArgumentException("Recorte de terreno invalido");return new WorldDocument.Crop(n[0],n[1],n[2],n[3]);}
+-    /** Persiste apenas configuracao no documento, preservando tilesets originais. */
+-    public static WorldDocument register(WorldDocument d,Rule rule){Map<String,String> m=new TreeMap<>(d.metadata());String p="terrain."+rule.id()+".";m.put(p+"asset",rule.asset());m.put(p+"sha",rule.sha());m.put(p+"fallback",crop(rule.fallback()));m.put(p+"rules",rule.variants().entrySet().stream().sorted(Map.Entry.comparingByKey()).map(e->e.getKey()+":"+crop(e.getValue())).collect(java.util.stream.Collectors.joining(";")));return d.withMetadata(m);}
+-    /** Lista terrenos cadastrados sem deduzir layout do PNG. */
+-    public static List<String> terrains(WorldDocument d){return d.metadata().keySet().stream().filter(k->k.startsWith("terrain.")&&k.endsWith(".asset")).map(k->k.substring(8,k.length()-6)).sorted().toList();}
+-    /** Reconstroi a configuracao explicitamente salva. */
+-    public static Rule rule(WorldDocument d,String id){String p="terrain."+id+".";var m=d.metadata();Map<Integer,WorldDocument.Crop> variants=new HashMap<>();String values=m.getOrDefault(p+"rules","");if(!values.isEmpty())for(String value:values.split(";")){var v=value.split(":");variants.put(Integer.parseInt(v[0]),parse(v[1]));}return new Rule(id,m.get(p+"asset"),m.get(p+"sha"),parse(m.get(p+"fallback")),variants);}
+-    static String cell(String layer,int x,int y){return layer+":"+x+":"+y;}
+-    /** Mascara documentada, incluindo fronteiras tratadas como ausencia de vizinho. */
+-    public static int mask(WorldDocument.Element e,Map<String,WorldDocument.Element> cells,int grid){int mask=0;int[][] neighbors={{0,-grid,1},{grid,0,2},{0,grid,4},{-grid,0,8}};String terrain=e.properties().get("terrain");for(int[] n:neighbors){var other=cells.get(cell(e.layer(),e.x()+n[0],e.y()+n[1]));if(other!=null&&Objects.equals(terrain,other.properties().get("terrain")))mask|=n[2];}return mask;}
+-    /** Atualiza celulas e vizinhos apos um gesto; retorna o mesmo documento se nao houver mudancas. */
+-    public static WorldDocument refresh(WorldDocument d){if(terrains(d).isEmpty())return d;Map<String,WorldDocument.Element> cells=new HashMap<>();d.elements().stream().filter(e->e.kind()==WorldDocument.Kind.TILE).forEach(e->cells.put(cell(e.layer(),e.x(),e.y()),e));Map<String,Rule> rules=new HashMap<>();var next=new ArrayList<WorldDocument.Element>();boolean changed=false;
+-        for(var e:d.elements()){String id=e.properties().get("terrain");if(id!=null&&e.kind()==WorldDocument.Kind.TILE&&!e.locked()){Rule r=rules.computeIfAbsent(id,key->rule(d,key));var crop=r.variants().getOrDefault(mask(e,cells,d.grid()),r.fallback());if(!crop.equals(e.crop())||!r.asset().equals(e.asset())){e=new WorldDocument.Element(e.id(),e.kind(),r.asset(),r.sha(),crop,e.x(),e.y(),e.width(),e.height(),e.layer(),e.visible(),e.locked(),e.reference(),e.direction(),e.properties());changed=true;}}next.add(e);}return changed?d.withElements(next):d;}
+-    /** Combina regras cadastradas com o pincel escolhido, sem aprovar revisoes automaticamente. */
+-    public static WorldDocument.Element brush(WorldDocument d,String id,String layer){var r=rule(d,id);return new WorldDocument.Element("brush",WorldDocument.Kind.TILE,r.asset(),r.sha(),r.fallback(),0,0,d.grid(),d.grid(),layer,true,false,"","FRONT",Map.of("terrain",id));}
+-    /** Indica combinacoes observadas sem arte propria para diagnostico. */
+-    public static List<String> missing(WorldDocument d){var result=new ArrayList<String>();Map<String,WorldDocument.Element> cells=new HashMap<>();d.elements().forEach(e->cells.put(cell(e.layer(),e.x(),e.y()),e));for(var e:d.elements())if(e.properties().containsKey("terrain")){var r=rule(d,e.properties().get("terrain"));int mask=mask(e,cells,d.grid());if(!r.variants().containsKey(mask))result.add(e.id()+": mascara "+mask+" usa fallback de "+r.id());}return List.copyOf(result);}
+-}
++package com.projetok.studio;
++import java.util.*;
++
++/** Autotiling NESW de quatro vizinhos, apenas para combinacoes cadastradas. */
++public final class Autotiling {
++    /** Regra explicita: 1 norte, 2 leste, 4 sul, 8 oeste; fallback nunca inventa arte. */
++    public record Rule(String id,String asset,String sha,WorldDocument.Crop fallback,Map<Integer,WorldDocument.Crop> variants) {
++        public Rule {variants=Map.copyOf(variants);if(!WorldDocument.validId(id)||variants.keySet().stream().anyMatch(k->k<0||k>15))throw new IllegalArgumentException("Regra de terreno invalida");}
++    }
++    private Autotiling(){}
++    static String crop(WorldDocument.Crop c){return c.x()+","+c.y()+","+c.width()+","+c.height();}
++    static WorldDocument.Crop parse(String s){int[] n=Arrays.stream(s.split(",")).mapToInt(Integer::parseInt).toArray();if(n.length!=4)throw new IllegalArgumentException("Recorte de terreno invalido");return new WorldDocument.Crop(n[0],n[1],n[2],n[3]);}
++    /** Persiste apenas configuracao no documento, preservando tilesets originais. */
++    public static WorldDocument register(WorldDocument d,Rule rule){Map<String,String> m=new TreeMap<>(d.metadata());String p="terrain."+rule.id()+".";m.put(p+"asset",rule.asset());m.put(p+"sha",rule.sha());m.put(p+"fallback",crop(rule.fallback()));m.put(p+"rules",rule.variants().entrySet().stream().sorted(Map.Entry.comparingByKey()).map(e->e.getKey()+":"+crop(e.getValue())).collect(java.util.stream.Collectors.joining(";")));return d.withMetadata(m);}
++    /** Lista terrenos cadastrados sem deduzir layout do PNG. */
++    public static List<String> terrains(WorldDocument d){return d.metadata().keySet().stream().filter(k->k.startsWith("terrain.")&&k.endsWith(".asset")).map(k->k.substring(8,k.length()-6)).sorted().toList();}
++    /** Reconstroi a configuracao explicitamente salva. */
++    public static Rule rule(WorldDocument d,String id){String p="terrain."+id+".";var m=d.metadata();Map<Integer,WorldDocument.Crop> variants=new HashMap<>();String values=m.getOrDefault(p+"rules","");if(!values.isEmpty())for(String value:values.split(";")){var v=value.split(":");variants.put(Integer.parseInt(v[0]),parse(v[1]));}return new Rule(id,m.get(p+"asset"),m.get(p+"sha"),parse(m.get(p+"fallback")),variants);}
++    static String cell(String layer,int x,int y){return layer+":"+x+":"+y;}
++    /** Mascara documentada, incluindo fronteiras tratadas como ausencia de vizinho. */
++    public static int mask(WorldDocument.Element e,Map<String,WorldDocument.Element> cells,int grid){int mask=0;int[][] neighbors={{0,-grid,1},{grid,0,2},{0,grid,4},{-grid,0,8}};String terrain=e.properties().get("terrain");for(int[] n:neighbors){var other=cells.get(cell(e.layer(),e.x()+n[0],e.y()+n[1]));if(other!=null&&Objects.equals(terrain,other.properties().get("terrain")))mask|=n[2];}return mask;}
++    /** Atualiza celulas e vizinhos apos um gesto; retorna o mesmo documento se nao houver mudancas. */
++    public static WorldDocument refresh(WorldDocument d){if(terrains(d).isEmpty())return d;Map<String,WorldDocument.Element> cells=new HashMap<>();d.elements().stream().filter(e->e.kind()==WorldDocument.Kind.TILE).forEach(e->cells.put(cell(e.layer(),e.x(),e.y()),e));Set<String> lockedLayers=new HashSet<>();d.layers().stream().filter(WorldDocument.Layer::locked).forEach(l->lockedLayers.add(l.id()));Map<String,Rule> rules=new HashMap<>();var next=new ArrayList<WorldDocument.Element>();boolean changed=false;
++        for(var e:d.elements()){String id=e.properties().get("terrain");if(id!=null&&e.kind()==WorldDocument.Kind.TILE&&!e.locked()&&!lockedLayers.contains(e.layer())){Rule r=rules.computeIfAbsent(id,key->rule(d,key));var crop=r.variants().getOrDefault(mask(e,cells,d.grid()),r.fallback());if(!crop.equals(e.crop())||!r.asset().equals(e.asset())){e=new WorldDocument.Element(e.id(),e.kind(),r.asset(),r.sha(),crop,e.x(),e.y(),e.width(),e.height(),e.layer(),e.visible(),e.locked(),e.reference(),e.direction(),e.properties());changed=true;}}next.add(e);}return changed?d.withElements(next):d;}
++    /** Combina regras cadastradas com o pincel escolhido, sem aprovar revisoes automaticamente. */
++    public static WorldDocument.Element brush(WorldDocument d,String id,String layer){var r=rule(d,id);return new WorldDocument.Element("brush",WorldDocument.Kind.TILE,r.asset(),r.sha(),r.fallback(),0,0,d.grid(),d.grid(),layer,true,false,"","FRONT",Map.of("terrain",id));}
++    /** Indica combinacoes observadas sem arte propria para diagnostico. */
++    public static List<String> missing(WorldDocument d){var result=new ArrayList<String>();Map<String,WorldDocument.Element> cells=new HashMap<>();d.elements().forEach(e->cells.put(cell(e.layer(),e.x(),e.y()),e));for(var e:d.elements())if(e.properties().containsKey("terrain")){var r=rule(d,e.properties().get("terrain"));int mask=mask(e,cells,d.grid());if(!r.variants().containsKey(mask))result.add(e.id()+": mascara "+mask+" usa fallback de "+r.id());}return List.copyOf(result);}
++}
+--- before/server/src/main/java/com/projetok/studio/CanvasIndex.java
++++ after/server/src/main/java/com/projetok/studio/CanvasIndex.java
+@@ -0,0 +1,12 @@
++package com.projetok.studio;
++import java.awt.Rectangle;
++import java.util.*;
++
++/** Indice imutavel de viewport com ordem original e memoria de referencias limitada. */
++final class CanvasIndex {
++    record Entry(int order,WorldDocument.Element element){}
++    final Map<Integer,java.util.List<Entry>> cells=new HashMap<>();final java.util.List<Entry> large=new ArrayList<>();
++    CanvasIndex(WorldDocument d){int count=0;for(int i=0;i<d.elements().size();i++){var e=d.elements().get(i);var entry=new Entry(i,e);int x0=e.x()/256,y0=e.y()/256,x1=(e.x()+e.width()-1)/256,y1=(e.y()+e.height()-1)/256,refs=(x1-x0+1)*(y1-y0+1);if(refs>64||count+refs>500000){large.add(entry);continue;}count+=refs;for(int y=y0;y<=y1;y++)for(int x=x0;x<=x1;x++)cells.computeIfAbsent(y*32+x,k->new ArrayList<>()).add(entry);}}
++    Map<String,java.util.List<WorldDocument.Element>> query(Rectangle visible){Set<Integer> seen=new HashSet<>();var found=new ArrayList<Entry>();for(int y=Math.max(0,visible.y/256);y<=Math.min(31,(visible.y+visible.height)/256);y++)for(int x=Math.max(0,visible.x/256);x<=Math.min(31,(visible.x+visible.width)/256);x++)for(var entry:cells.getOrDefault(y*32+x,java.util.List.of()))include(entry,visible,seen,found);for(var entry:large)include(entry,visible,seen,found);found.sort(Comparator.comparingInt(Entry::order));Map<String,java.util.List<WorldDocument.Element>> result=new HashMap<>();for(var entry:found)result.computeIfAbsent(entry.element().layer(),k->new ArrayList<>()).add(entry.element());return result;}
++    private void include(Entry entry,Rectangle r,Set<Integer> seen,java.util.List<Entry> found){var e=entry.element();if(e.visible()&&r.intersects(e.x(),e.y(),e.width(),e.height())&&seen.add(entry.order()))found.add(entry);}
++}
+--- before/server/src/main/java/com/projetok/studio/StudioGeometry.java
++++ after/server/src/main/java/com/projetok/studio/StudioGeometry.java
+@@ -11,6 +11,8 @@
+     public static CollisionService.Space space(WorldDocument d){return new CollisionService.Space(d.width(),d.height(),d.hitboxes().stream().filter(WorldDocument.Hitbox::solid).map(h->new CollisionService.Obstacle(h.x(),h.y(),h.width(),h.height())).toList(),java.util.List.of());}
+     /** Previa fisica real do circulo do jogador, sem simulacao alternativa. */
+     public static boolean free(WorldDocument d,float x,float y,float radius){return new CollisionService().isFree(PROBE,x,y,radius,space(d));}
++    /** Consulta espaco imutavel residente para evitar reconstrucao em cada repaint. */
++    public static boolean free(CollisionService.Space space,float x,float y,float radius){return new CollisionService().isFree(PROBE,x,y,radius,space);}
+     /** Sobreposicoes nao sao corrigidas silenciosamente. */
+-    public static java.util.List<String> overlaps(WorldDocument d){var result=new ArrayList<String>();for(int i=0;i<d.hitboxes().size();i++)for(int j=i+1;j<d.hitboxes().size();j++){var a=d.hitboxes().get(i);var b=d.hitboxes().get(j);if(a.solid()&&b.solid()&&a.x()<b.x()+b.width()&&a.x()+a.width()>b.x()&&a.y()<b.y()+b.height()&&a.y()+a.height()>b.y())result.add(a.id()+" / "+b.id());}return java.util.List.copyOf(result);}
++    public static java.util.List<String> overlaps(WorldDocument d){var result=new ArrayList<String>();for(int i=0;i<d.hitboxes().size();i++)for(int j=i+1;j<d.hitboxes().size();j++){var a=d.hitboxes().get(i);var b=d.hitboxes().get(j);if(a.solid()&&b.solid()&&a.x()<b.x()+b.width()&&a.x()+a.width()>b.x()&&a.y()<b.y()+b.height()&&a.y()+a.height()>b.y()){result.add(a.id()+" / "+b.id());if(result.size()==1000){result.add("Diagnostico truncado em 1000 sobreposicoes; refine os solidos");return java.util.List.copyOf(result);}}}return java.util.List.copyOf(result);}
+ }
+--- before/server/src/main/java/com/projetok/studio/WorldCanvas.java
++++ after/server/src/main/java/com/projetok/studio/WorldCanvas.java
+@@ -19,7 +19,9 @@
+     Consumer<MouseEvent> pressed=e->{},dragged=e->{},released=e->{};
+     Point panStart;double startX,startY;
+     final long animationStart=System.nanoTime();
+-    final javax.swing.Timer animationTimer=new javax.swing.Timer(50,e->repaint());
++    WorldDocument indexedDocument;CanvasIndex index;com.projetok.domain.movement.CollisionService.Space physics;
++    final javax.swing.Timer animationTimer=new javax.swing.Timer(50,e->animate());
++    private void animate(){var d=source.get();if(d.elements().stream().anyMatch(a->a.properties().containsKey("animation.frames"))||EnvironmentPreview.mode(d)==EnvironmentPreview.Mode.RAIN||EnvironmentPreview.mode(d)==EnvironmentPreview.Mode.CYCLE)repaint();}
+     @Override public void addNotify(){super.addNotify();animationTimer.start();}
+     @Override public void removeNotify(){animationTimer.stop();super.removeNotify();}
+     /** Canvas independente de arquivo e de regras de combate. */
+@@ -43,8 +45,9 @@
+             g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+             var d=source.get();g.translate(viewport.panX(),viewport.panY());g.scale(viewport.zoom(),viewport.zoom());g.clipRect(0,0,d.width(),d.height());
+             g.setColor(new Color(43,70,59));g.fillRect(0,0,d.width(),d.height());Rectangle visible=g.getClipBounds();
+-            for(var layer:d.orderedLayers())if(layer.visible())for(var e:d.elements())if(e.visible()&&e.layer().equals(layer.id())&&visible.intersects(e.x(),e.y(),e.width(),e.height())) {
+-                var sequence=EnvironmentAnimation.sequence(e);var image=images.peek(sequence.map(s->s.frames().get(s.index(System.nanoTime()-animationStart))).orElse(e.asset()));var c=sequence.isPresent()&&image!=null?new WorldDocument.Crop(0,0,image.getWidth(),image.getHeight()):e.crop();
++            if(indexedDocument!=d){index=new CanvasIndex(d);physics=StudioGeometry.space(d);indexedDocument=d;}var visibleElements=index.query(visible);
++            for(var layer:d.orderedLayers())if(layer.visible())for(var e:visibleElements.getOrDefault(layer.id(),java.util.List.of())) {
++                Optional<EnvironmentAnimation.Sequence> sequence;try{sequence=EnvironmentAnimation.sequence(e);}catch(RuntimeException invalid){sequence=Optional.empty();}var image=images.peek(sequence.map(s->s.frames().get(s.index(System.nanoTime()-animationStart))).orElse(e.asset()));var c=sequence.isPresent()&&image!=null?new WorldDocument.Crop(0,0,image.getWidth(),image.getHeight()):e.crop();
+                 if(image!=null&&c.x()+c.width()<=image.getWidth()&&c.y()+c.height()<=image.getHeight())g.drawImage(image,e.x(),e.y(),e.x()+e.width(),e.y()+e.height(),c.x(),c.y(),c.x()+c.width(),c.y()+c.height(),null);
+                 else {g.setColor(e.kind()==WorldDocument.Kind.PLAYER?Color.CYAN:new Color(130,170,175));g.drawRect(e.x(),e.y(),e.width(),e.height());g.setFont(new Font("SansSerif",0,11));g.drawString(e.reference().isEmpty()?e.kind().name():e.reference(),e.x(),e.y()+12);}
+                 if(selected.contains(e.id())){g.setColor(Color.YELLOW);g.setStroke(new BasicStroke((float)(2/viewport.zoom())));g.drawRect(e.x(),e.y(),e.width(),e.height());}
+@@ -52,7 +55,7 @@
+             }
+             if(grid&&d.grid()*viewport.zoom()>=8){g.setColor(new Color(255,255,255,30));g.setStroke(new BasicStroke((float)(1/viewport.zoom())));int cell=d.grid();for(int x=Math.max(0,visible.x/cell*cell);x<=Math.min(d.width(),visible.x+visible.width);x+=cell)g.drawLine(x,visible.y,x,visible.y+visible.height);for(int y=Math.max(0,visible.y/cell*cell);y<=Math.min(d.height(),visible.y+visible.height);y+=cell)g.drawLine(visible.x,y,visible.x+visible.width,y);}
+             if(collisions)for(var h:d.hitboxes()) {g.setColor(h.solid()?new Color(255,85,70,80):new Color(65,220,160,60));g.fillRect(h.x(),h.y(),h.width(),h.height());g.setColor(selected.contains(h.id())?Color.YELLOW:h.solid()?Color.RED:Color.GREEN);g.drawRect(h.x(),h.y(),h.width(),h.height());}
+-            if(playerPreview){g.setColor(StudioGeometry.free(d,cursor.x,cursor.y,18)?Color.GREEN:Color.RED);g.drawOval(cursor.x-18,cursor.y-18,36,36);}
++            if(playerPreview){g.setColor(StudioGeometry.free(physics,cursor.x,cursor.y,18)?Color.GREEN:Color.RED);g.drawOval(cursor.x-18,cursor.y-18,36,36);}
+             for(var p:d.portals()){g.setColor(Color.MAGENTA);g.drawOval(p.x()-12,p.y()-12,24,24);g.drawString(p.destination(),p.x()+14,p.y());}
+             EnvironmentPreview.draw(g,visible,EnvironmentPreview.mode(d),System.nanoTime()-animationStart);
+         }finally{g.dispose();}
+--- before/tools/WorldStudioBenchmark.java
++++ after/tools/WorldStudioBenchmark.java
+@@ -0,0 +1,20 @@
++package com.projetok.studio;
++import java.awt.*;
++import java.awt.image.*;
++import java.nio.file.*;
++import java.util.*;
++import javax.swing.*;
++
++/** Benchmark local reproduzivel; valores medidos nesta maquina, sem metas inventadas. */
++public final class WorldStudioBenchmark {
++    private static double ms(long start){return (System.nanoTime()-start)/1_000_000d;}
++    /** Argumentos: diretorio novo de evidencias e raiz do projeto. */
++    public static void main(String[] args)throws Exception{
++        Path out=Path.of(args[0]),root=Path.of(args[1]);Files.createDirectory(out);long t=System.nanoTime();var catalog=AssetCatalog.scan(root,null);double index=ms(t);long thumbnails=catalog.assets().stream().mapToLong(a->a.thumbnail().getWidth()*a.thumbnail().getHeight()*4L).sum();AssetImages images=new AssetImages();var chosen=catalog.assets().stream().filter(a->a.width()>=32&&a.height()>=32).findFirst().orElseThrow();images.load(chosen);
++        var empty=WorldDocument.empty("benchmark",4096,4096);var elements=new ArrayList<WorldDocument.Element>();for(int i=0;i<12000;i++)elements.add(new WorldDocument.Element("tile_"+i,WorldDocument.Kind.TILE,chosen.id(),chosen.sha(),new WorldDocument.Crop(0,0,32,32),i%128*32,i/128*32,32,32,empty.layers().get(i%4).id(),true,false,"","FRONT",Map.of()));var document=empty.withElements(elements);var canvas=new WorldCanvas(()->document,images);canvas.setSize(1000,700);canvas.grid=false;var surface=new BufferedImage(1000,700,BufferedImage.TYPE_INT_RGB);var g=surface.createGraphics();StringBuilder paints=new StringBuilder();for(double zoom:new double[]{.25,.75,2,8}){canvas.viewport=new StudioViewport(zoom,0,0);for(int i=0;i<12;i++)canvas.paint(g);double[] values=new double[40];for(int i=0;i<values.length;i++){canvas.viewport=new StudioViewport(zoom,-i*11,-i*7);t=System.nanoTime();canvas.paint(g);values[i]=ms(t);}Arrays.sort(values);if(paints.length()>0)paints.append(',');paints.append(String.format(Locale.ROOT,"{\"zoom\":%.2f,\"p50Ms\":%.4f,\"p95Ms\":%.4f}",zoom,values[20],values[38]));}g.dispose();
++        t=System.nanoTime();byte[] encoded=DocumentStore.encode(document);double encode=ms(t);t=System.nanoTime();DocumentStore.decode(encoded);double decode=ms(t);t=System.nanoTime();Files.write(out.resolve("raw.sgmap"),encoded);double write=ms(t);Files.writeString(out.resolve("profile.json"),String.format(Locale.ROOT,"{\"encodeMs\":%.4f,\"decodeMs\":%.4f,\"rawWriteMs\":%.4f}",encode,decode,write));
++        t=System.nanoTime();DocumentStore.save(out.resolve("benchmark.sgmap"),document);double save=ms(t);t=System.nanoTime();var loaded=DocumentStore.load(out.resolve("benchmark.sgmap"));double load=ms(t);if(!loaded.equals(document))throw new IllegalStateException("Roundtrip divergente");var h=new EditorHistory(document);var next=GroupEditing.move(document,Set.of("tile_0"),32,0);t=System.nanoTime();for(int i=0;i<1000;i++){h.commit(next);h.undo();h.redo();h.undo();}double history=ms(t);t=System.nanoTime();var view=new StudioViewport(.75,0,0);for(int i=0;i<100000;i++){view=view.zoomAt(i%2==0?1:.75,400,300);view.world(400,300);}double transforms=ms(t);
++        final double[] opening={0};SwingUtilities.invokeAndWait(()->{long start=System.nanoTime();var studio=new WorldStudio(root);studio.setVisible(true);Toolkit.getDefaultToolkit().sync();opening[0]=ms(start);studio.dispose();});
++        String json=String.format(Locale.ROOT,"{\n\"java\":\"%s\",\"processors\":%d,\"assets\":%d,\"indexMs\":%.4f,\"thumbnailPixelBytes\":%d,\"residentPixelBytes\":%d,\"elements\":12000,\"paintSamplesPerZoom\":40,\"paint\":[%s],\"saveMs\":%.4f,\"loadMs\":%.4f,\"undoRedo1000Ms\":%.4f,\"zoomPan100000Ms\":%.4f,\"windowOpenMs\":%.4f,\"mapBytes\":%d,\"filesystemCache\":\"not-controlled\",\"humanApproved\":false\n}",System.getProperty("java.version"),Runtime.getRuntime().availableProcessors(),catalog.assets().size(),index,thumbnails,images.bytes(),paints,save,load,history,transforms,opening[0],Files.size(out.resolve("benchmark.sgmap")));Files.writeString(out.resolve("metrics.json"),json);System.out.println(json);System.exit(0);
++    }
++}
+--- before/docs/TASK-113-RELATORIO-FINAL.md
++++ after/docs/TASK-113-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-113 - Corujao II
++
++Estado: **validada-com-limitacoes**.
++
++Benchmark real antes/depois com 12000 elementos e 248 assets; indice de viewport, cache geometrico e decodificacao limitada. 367 Java e 30 Python aprovados. Pintura melhorou em zoom alto; primeiro salvamento continua cerca de 8,4 s e fica registrado para investigacao, sem promessa de ganho universal.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-113/corujao-ii/`. Logs da suite: `docs/TASK-studio-113-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-113-TESTES.md
++++ after/docs/TASK-113-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-113 - Corujao II
++
++Comando: `python tools/qualidade.py --offline --task studio-113`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 367,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-113.md
++++ after/docs/TASK-113.md
+@@ -0,0 +1,3 @@
++# TASK-113 - Corujao II
++
++Benchmark real antes/depois com 12000 elementos e 248 assets; indice de viewport, cache geometrico e decodificacao limitada. 367 Java e 30 Python aprovados. Pintura melhorou em zoom alto; primeiro salvamento continua cerca de 8,4 s e fica registrado para investigacao, sem promessa de ganho universal.
+--- before/docs/WORLD-STUDIO-PERFORMANCE.md
++++ after/docs/WORLD-STUDIO-PERFORMANCE.md
+@@ -0,0 +1,22 @@
++# Desempenho medido ? TASK-113
++
++Java 17.0.20.1, Windows, 16 processadores logicos. Catalogo real: 248 PNGs; 4.063.232 bytes de pixels de miniaturas (nao inclui overhead JVM). Cache LRU limitado a 64 MiB. Mapa sintetico de 12.000 tiles, 4096x4096, oito camadas; 40 amostras por zoom apos 12 aquecimentos. Cache do sistema de arquivos nao controlado. Medicoes locais, sem garantia em outra maquina.
++
++| Zoom | p95 antes (ms) | p95 depois (ms) |
++|---|---:|---:|
++| 0,25 |21,4581|21,2604|
++| 0,75 |3,6528|3,7288|
++| 2 |2,2980|2,1521|
++| 8 |1,9804|1,6702|
++
++O indice de viewport preserva ordem e limita referencias; evita examinar todas as camadas a cada objeto. O ganho e mais claro em zoom alto; o zoom 0,75 piorou ligeiramente nesta rodada. Cenario com muitos tiles visiveis continua dominado pelo desenho. Nao afirmamos ganho universal.
++
++Indexacao: 789/793 ms. Abertura da janela sem indexacao: 283/267 ms. Carregamento do mapa de 2.526.225 bytes: 52/50 ms. Mil ciclos de commit/undo/redo/undo: 8,0/7,6 ms. Cem mil transformacoes zoom/pan: 13,8/8,6 ms; microbenchmark sujeito a JIT.
++
++Salvamento atomico validado: 8.392/8.395 ms, ainda alto no primeiro uso. Uma rodada adicional isolou codificacao 163,8 ms, decodificacao 145,8 ms e escrita simples 3,94 ms; esses numeros nao explicam todo o custo de salvar. Nao removemos validacoes ou backup para melhorar uma metrica. Investigar operacoes temporarias/renomeacao e aquecimento do sistema. Todas as operacoes de arquivo ficam fora da EDT.
++
++Imagens completas agora sao lidas em buffer limitado e o cabecalho e conferido antes da decodificacao; o mesmo buffer e usado para hash e pixels. Pintura nao faz I/O. Geometria do canvas e reutilizada por documento. Sobreposicoes fisicas sao truncadas em 1.000 evidencias para limitar memoria.
++
++Reproduzir apos compilar: `javac -encoding UTF-8 -cp server/target/classes -d server/target/bench tools/WorldStudioBenchmark.java`, depois `java -cp "server/target/classes;server/target/bench" com.projetok.studio.WorldStudioBenchmark pasta-nova .`. JSONs medidos em `world-studio/performance/`. Teste do indice compara 100 viewports com busca exaustiva, incluindo elemento 8192x8192.
++
++Uma falha de compilacao de inicializacao do timer foi corrigida antes da suite aprovada; tentativas preservadas no checkpoint local. Resultado final: 367 testes Java e 30 Python, zero falhas.

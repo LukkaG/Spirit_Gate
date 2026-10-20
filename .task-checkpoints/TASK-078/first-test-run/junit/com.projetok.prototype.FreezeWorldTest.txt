@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.projetok.prototype.FreezeWorldTest
+-------------------------------------------------------------------------------
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.054 s -- in com.projetok.prototype.FreezeWorldTest

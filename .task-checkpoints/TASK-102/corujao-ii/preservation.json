@@ -1,0 +1,26 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/StudioMilestoneTest.java",
+    "server/src/main/java/com/projetok/studio/StudioExample.java",
+    "server/src/main/java/com/projetok/studio/StudioPlaytest.java",
+    "server/src/main/java/com/projetok/studio/WorldStudio.java",
+    "assets/maps/studio_tutorial.sgmap",
+    "tools/auditar_world_studio.py",
+    "tools/build-world-studio.ps1",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-102-RELATORIO-FINAL.md",
+    "docs/TASK-102-TESTES.md",
+    "docs/TASK-102.md",
+    "docs/TASK-studio-102-java-version.log",
+    "docs/TASK-studio-102-java.log",
+    "docs/TASK-studio-102-maven-version.log",
+    "docs/TASK-studio-102-python-version.log",
+    "docs/TASK-studio-102-python.log",
+    "docs/TASK-studio-102-qualidade.json",
+    "docs/TASK-studio-102-testes.txt",
+    "docs/WORLD-EDITOR-CATALOGO-ASSETS.md",
+    "docs/WORLD-EDITOR-MANUAL.md"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

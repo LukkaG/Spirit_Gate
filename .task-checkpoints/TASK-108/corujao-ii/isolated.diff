@@ -1,0 +1,158 @@
+--- before/server/src/test/java/com/projetok/studio/NpcEditingTest.java
++++ after/server/src/test/java/com/projetok/studio/NpcEditingTest.java
+@@ -0,0 +1,8 @@
++package com.projetok.studio;
++import com.projetok.rpg.*;
++import org.junit.jupiter.api.Test;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++class NpcEditingTest {
++    @Test void realNpcNameDialogueAndInvalidReferences(){var e=new WorldDocument.Element("ancia",WorldDocument.Kind.NPC,"","",new WorldDocument.Crop(0,0,32,32),200,320,32,32,"interaction",true,false,"elder","FRONT",Map.of("npc.name","Aurora | Guia","npc.dialogue","elder.help","npc.quest","first_steps"));var service=new NpcService(RpgContent.builtin(),Map.of("elder",NpcEditing.definition(e,"village")));assertEquals("Aurora | Guia",service.views("village").get(0).name());assertEquals("elder.help",service.views("village").get(0).dialogue());assertThrows(IllegalArgumentException.class,()->new NpcService(RpgContent.builtin(),Map.of("elder","village|200|320|trader.start|QQ")));assertTrue(new DialogueService().ids().contains("elder.start"));}
++}
+--- before/server/src/main/java/com/projetok/rpg/DialogueService.java
++++ after/server/src/main/java/com/projetok/rpg/DialogueService.java
+@@ -23,6 +23,8 @@
+             nodes=Map.copyOf(map);
+         }catch(IOException e){throw new IllegalStateException(e);}
+     }
++    /** IDs de dialogos reais disponiveis para ferramentas de autoria. */
++    public Set<String> ids(){return nodes.keySet();}
+     public Node node(String id,java.util.function.Predicate<String> condition) {
+         Node n=nodes.get(id);if(n==null)throw new IllegalArgumentException("No ausente: "+id);
+         return new Node(n.id(),n.text(),n.choices().stream().filter(c->condition.test(c.condition())).toList());
+--- before/server/src/main/java/com/projetok/rpg/NpcService.java
++++ after/server/src/main/java/com/projetok/rpg/NpcService.java
+@@ -3,7 +3,11 @@
+ import java.util.*;
+ import java.io.*;
+ public final class NpcService {
+-    public record View(String id,String name,String region,float x,float y) { }
++    /** NPC existente com entrada de dialogo validada; assinatura anterior preservada. */
++    public record View(String id,String name,String region,float x,float y,String dialogue) {
++        /** Entrada padrao dos NPCs historicos. */
++        public View(String id,String name,String region,float x,float y){this(id,name,region,x,y,id+".start");}
++    }
+     private final List<View> npcs=new ArrayList<>();
+     public NpcService(RpgContent content) {this(content,RpgSceneSet.entries("npcs"));}
+     /** Configuracao de posicoes para sessao isolada, validada pelos catalogos reais. */
+@@ -11,10 +15,12 @@
+         if(definitions.size()>16)throw new IllegalArgumentException("NPCs excessivos");
+         for(String id:new TreeSet<>(definitions.keySet())) {
+             String[] v=definitions.get(id).split("\\|",-1);var base=content.get("npc",id);
+-            if(v.length!=3||!base.region().equals(v[0]))throw new IllegalArgumentException("NPC invalido");
++            if((v.length!=3&&v.length!=5)||!base.region().equals(v[0]))throw new IllegalArgumentException("NPC invalido");
+             float x=Float.parseFloat(v[1]),y=Float.parseFloat(v[2]);
+             if(!Float.isFinite(x)||!Float.isFinite(y)||x<18||x>942||y<18||y>622)throw new IllegalArgumentException("Posicao de NPC invalida");
+-            npcs.add(new View(id,base.name(),v[0],x,y));
++            String dialogue=v.length==5?v[3]:id+".start",name=v.length==5?new String(Base64.getUrlDecoder().decode(v[4]),java.nio.charset.StandardCharsets.UTF_8):base.name();
++            if(name.isBlank()||name.length()>80||name.chars().anyMatch(Character::isISOControl)||!dialogue.startsWith(id+".")||!new DialogueService().ids().contains(dialogue))throw new IllegalArgumentException("Nome ou dialogo de NPC invalido");
++            npcs.add(new View(id,name,v[0],x,y,dialogue));
+         }
+     }
+     public List<View> views(String region){return npcs.stream().filter(n->n.region().equals(region)).toList();}
+--- before/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ after/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -160,7 +160,7 @@
+         var portal=portals.nearest(region,body.getPosition());if(portal.isPresent())return travel(portal.get().id());
+         var npc=npcs.nearest(region,body.getPosition());
+         if(npc.isEmpty()||!lineClear(body.getPosition(),new Position(npc.get().x(),npc.get().y()))){closeDialogue();var object=objects.views(region,ticks,flags).stream().filter(o->o.available()&&distance(body.getPosition(),new Position(o.x(),o.y()))<=65).findFirst();if(object.isPresent())return harvest(object.get().id());message="Aproxime-se de NPC, portal ou objeto e pressione F";return false;}
+-        activeNpc=npc.get().id();questService.event("talk",activeNpc,activeNpc,ticks+1,quests,flags);questService.refresh(quests,flags,inventory,region);dialogueNode=activeNpc+".start";message=npc.get().name()+": seja bem-vindo!";return true;
++        activeNpc=npc.get().id();questService.event("talk",activeNpc,activeNpc,ticks+1,quests,flags);questService.refresh(quests,flags,inventory,region);dialogueNode=npc.get().dialogue();message=npc.get().name()+": seja bem-vindo!";return true;
+     }
+     public RpgWorld(CharacterIdentity identity,java.util.random.RandomGenerator random) { this(identity);this.random=java.util.Objects.requireNonNull(random); }
+     /** Ataque basico conserva alcance, dano e recarga anteriores. */
+--- before/server/src/main/java/com/projetok/studio/NpcEditing.java
++++ after/server/src/main/java/com/projetok/studio/NpcEditing.java
+@@ -0,0 +1,12 @@
++package com.projetok.studio;
++import com.projetok.rpg.*;
++import java.util.*;
++
++/** Configuracao de NPCs reais; missoes associadas sao referencias, sem concessao automatica. */
++public final class NpcEditing {
++    private NpcEditing(){}
++    /** Valida nome, entrada de dialogo e missao existente. */
++    public static void validate(WorldDocument.Element e){if(e.kind()!=WorldDocument.Kind.NPC)throw new IllegalArgumentException("Selecione um NPC");var p=e.properties();String name=p.getOrDefault("npc.name",RpgContent.builtin().get("npc",e.reference()).name());String dialogue=p.getOrDefault("npc.dialogue",e.reference()+".start");if(name.isBlank()||name.length()>80||name.chars().anyMatch(Character::isISOControl)||!dialogue.startsWith(e.reference()+".")||!new DialogueService().ids().contains(dialogue))throw new IllegalArgumentException("Nome ou dialogo invalido");String quest=p.getOrDefault("npc.quest","");if(!quest.isEmpty())RpgContent.builtin().get("quest",quest);String interaction=p.getOrDefault("npc.interaction","dialogue");if(!interaction.equals("dialogue"))throw new IllegalArgumentException("Interacao suportada: dialogue");}
++    /** Configuracao textual limitada consumida pelo servico de NPCs real. */
++    public static String definition(WorldDocument.Element e,String region){validate(e);var p=e.properties();String name=p.getOrDefault("npc.name",RpgContent.builtin().get("npc",e.reference()).name());return region+"|"+e.x()+"|"+e.y()+"|"+p.getOrDefault("npc.dialogue",e.reference()+".start")+"|"+Base64.getUrlEncoder().withoutPadding().encodeToString(name.getBytes(java.nio.charset.StandardCharsets.UTF_8));}
++}
+--- before/server/src/main/java/com/projetok/studio/NpcTools.java
++++ after/server/src/main/java/com/projetok/studio/NpcTools.java
+@@ -0,0 +1,14 @@
++package com.projetok.studio;
++import com.projetok.rpg.*;
++import javax.swing.*;
++import java.awt.*;
++import java.util.*;
++final class NpcTools {
++    NpcTools(WorldStudio ui){ui.action("Entidades","Editar NPC selecionado",()->{
++        var e=ui.document.elements().stream().filter(v->ui.canvas.selected.contains(v.id())&&v.kind()==WorldDocument.Kind.NPC).findFirst().orElseThrow(()->new IllegalArgumentException("Selecione um NPC"));EditorOperations.editable(ui.document,e.layer());if(e.locked())throw new IllegalArgumentException("NPC bloqueado");
++        JTextField query=new JTextField(e.reference()),name=new JTextField(e.properties().getOrDefault("npc.name",RpgContent.builtin().get("npc",e.reference()).name()));JComboBox<String> ids=new JComboBox<>(StudioContent.references(WorldDocument.Kind.NPC).toArray(String[]::new));ids.setSelectedItem(e.reference());query.addActionListener(ev->{ids.removeAllItems();StudioContent.references(WorldDocument.Kind.NPC).stream().filter(id->id.contains(query.getText().trim())||RpgContent.builtin().get("npc",id).name().toLowerCase(Locale.ROOT).contains(query.getText().toLowerCase(Locale.ROOT))).forEach(ids::addItem);});
++        JComboBox<String> dialogue=new JComboBox<>(new DialogueService().ids().stream().sorted().toArray(String[]::new));dialogue.setSelectedItem(e.properties().getOrDefault("npc.dialogue",e.reference()+".start"));JComboBox<String> quest=new JComboBox<>();quest.addItem("");RpgContent.builtin().all("quest").forEach(q->quest.addItem(q.id()));quest.setSelectedItem(e.properties().getOrDefault("npc.quest",""));JComboBox<String> dir=new JComboBox<>(new String[]{"FRONT","BACK","LEFT","RIGHT"});dir.setSelectedItem(e.direction());JSpinner x=new JSpinner(new SpinnerNumberModel(e.x(),0,8192,1)),y=new JSpinner(new SpinnerNumberModel(e.y(),0,8192,1));JCheckBox sprite=new JCheckBox("Aplicar sprite selecionada na biblioteca");
++        JPanel f=new JPanel(new GridLayout(0,2,4,4));Object[][] fields={{"Buscar ID/nome (Enter)",query},{"NPC real",ids},{"Nome exibido",name},{"X",x},{"Y",y},{"Orientacao (sem espelhar)",dir},{"Dialogo do proprio NPC",dialogue},{"Missao associada (referencia)",quest},{"Interacao cadastrada",new JLabel("dialogue")},{"Aparencia",sprite}};for(var row:fields){f.add(new JLabel((String)row[0]));f.add((Component)row[1]);}if(JOptionPane.showConfirmDialog(ui,f,"NPC existente",JOptionPane.OK_CANCEL_OPTION)!=JOptionPane.OK_OPTION)return;
++        var p=new HashMap<>(e.properties());p.put("npc.name",name.getText());p.put("npc.dialogue",(String)dialogue.getSelectedItem());p.put("npc.quest",(String)quest.getSelectedItem());p.put("npc.interaction","dialogue");boolean image=sprite.isSelected()&&ui.brush!=null;var n=new WorldDocument.Element(e.id(),e.kind(),image?ui.brush.id():e.asset(),image?ui.brush.sha():e.sha(),image?ui.brushCrop:e.crop(),(int)x.getValue(),(int)y.getValue(),e.width(),e.height(),e.layer(),e.visible(),e.locked(),(String)ids.getSelectedItem(),(String)dir.getSelectedItem(),p);StudioContent.validate(n,ui.document.region());NpcEditing.validate(n);ui.change(ui.document.withElements(ui.document.elements().stream().map(v->v.id().equals(e.id())?n:v).toList()));ui.warmImages();
++    });}
++}
+--- before/server/src/main/java/com/projetok/studio/StudioExport.java
++++ after/server/src/main/java/com/projetok/studio/StudioExport.java
+@@ -26,7 +26,7 @@
+             if(geometry.put(d.region(),new RpgSceneSet.Geometry(StudioGeometry.space(d),new Position(spawn.x(),spawn.y())))!=null)throw new IllegalArgumentException("Regiao repetida");
+             for(var e:d.elements())switch(e.kind()) {
+                 case ENEMY->{String id=key("spawn_",d.id()+"/"+e.id());if(enemies.put(id,e.reference()+"|"+d.region()+"|"+e.x()+"|"+e.y())!=null)throw new IllegalArgumentException("Spawn duplicado");}
+-                case NPC->{if(npcs.put(e.reference(),d.region()+"|"+e.x()+"|"+e.y())!=null)throw new IllegalArgumentException("NPC repetido: "+e.reference());}
++                case NPC->{if(npcs.put(e.reference(),NpcEditing.definition(e,d.region()))!=null)throw new IllegalArgumentException("NPC repetido: "+e.reference());}
+                 case CHEST,RESOURCE->{var prototype=prototypes.stream().filter(o->o.id().equals(e.reference())).findFirst().orElseThrow();String id=key("obj_",d.id()+"/"+e.id());for(char c='0';c<='9';c++)id=id.replace(c,(char)('g'+c-'0'));if(objects.put(id,d.region()+"|"+e.x()+"|"+e.y()+"|"+prototype.item()+"|"+prototype.amount()+"|"+prototype.respawn())!=null)throw new IllegalArgumentException("Objeto duplicado");}
+                 default->{}
+             }
+--- before/server/src/main/java/com/projetok/studio/WorldStudio.java
++++ after/server/src/main/java/com/projetok/studio/WorldStudio.java
+@@ -56,6 +56,7 @@
+         new GroupTools(this);
+         new AnimationTools(this);
+         new EnvironmentTools(this);
++        new NpcTools(this);
+     }
+     void change(WorldDocument next){document=history.commit(Autotiling.refresh(next));if(layerTools!=null)layerTools.refresh();canvas.repaint();}
+     void inspectSelection(){details.setText(document.elements().stream().filter(e->canvas.selected.contains(e.id())).map(Object::toString).collect(java.util.stream.Collectors.joining("\n")));}
+--- before/docs/TASK-108-RELATORIO-FINAL.md
++++ after/docs/TASK-108-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-108 - Corujao II
++
++Estado: **validada-com-limitacoes**.
++
++Editor de NPC real com busca, nome, sprite, posicao, orientacao, dialogo validado do proprio NPC e referencia de missao. Nome/dialogo integrados ao servico real; orientacao nao gera arte ausente, missao associada nao e concedida automaticamente.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-108/corujao-ii/`. Logs da suite: `docs/TASK-studio-108-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-108-TESTES.md
++++ after/docs/TASK-108-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-108 - Corujao II
++
++Comando: `python tools/qualidade.py --offline --task studio-108`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 361,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-108.md
++++ after/docs/TASK-108.md
+@@ -0,0 +1,3 @@
++# TASK-108 - Corujao II
++
++Editor de NPC real com busca, nome, sprite, posicao, orientacao, dialogo validado do proprio NPC e referencia de missao. Nome/dialogo integrados ao servico real; orientacao nao gera arte ausente, missao associada nao e concedida automaticamente.

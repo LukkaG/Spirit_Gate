@@ -1,0 +1,720 @@
+--- before/server/src/main/java/com/projetok/prototype/rpg/RpgPlayerSprites.java
++++ after/server/src/main/java/com/projetok/prototype/rpg/RpgPlayerSprites.java
+@@ -14,15 +14,22 @@
+ public final class RpgPlayerSprites implements DebugPanel.ActorRenderer {
+     public static final String ENABLED="spiritgate.rpg.experimentalSprites";
+     public static final String FRAME_MILLIS="spiritgate.rpg.spriteFrameMillis";
++    public static final String SCALE="spiritgate.rpg.spriteScale";
++    public static final int DEFAULT_FRAME_MILLIS=220;
++    public static final double DEFAULT_SCALE=0.4;
+     private record Frame(BufferedImage image,int pivotX,int pivotY) { }
+     private final Map<String,Frame> frames;
+     private final RpgPlayerAnimation animation;
+-    private RpgPlayerSprites(Map<String,Frame> frames,int frameMillis) {
+-        this.frames=Map.copyOf(frames);animation=new RpgPlayerAnimation(frameMillis);
++    private final double scale;
++    private RpgPlayerSprites(Map<String,Frame> frames,int frameMillis,double scale) {
++        this.frames=Map.copyOf(frames);animation=new RpgPlayerAnimation(frameMillis);this.scale=scale;
+     }
+     public static Path defaultFolder() { return RpgMenu.home().resolve("assets/dev/player-base"); }
+     public static RpgPlayerSprites loadOptional(Path folder,int frameMillis) {
+-        try { return load(folder,frameMillis); }
++        return loadOptional(folder,frameMillis,DEFAULT_SCALE);
++    }
++    public static RpgPlayerSprites loadOptional(Path folder,int frameMillis,double scale) {
++        try { return load(folder,frameMillis,scale); }
+         catch(IOException|IllegalArgumentException error) {
+             System.err.println("[Spirit Gate] Sprites RPG experimentais recusadas; fallback geometrico: "+error.getMessage());
+             return null;
+@@ -30,12 +37,17 @@
+     }
+     public static RpgPlayerSprites configured() {
+         if(!Boolean.getBoolean(ENABLED)) return null;
+-        try { return loadOptional(defaultFolder(),Integer.parseInt(System.getProperty(FRAME_MILLIS,"150"))); }
++        try { return loadOptional(defaultFolder(),Integer.parseInt(System.getProperty(FRAME_MILLIS,""+DEFAULT_FRAME_MILLIS)),
++                Double.parseDouble(System.getProperty(SCALE,""+DEFAULT_SCALE))); }
+         catch(IllegalArgumentException error) {
+-            System.err.println("[Spirit Gate] Duracao experimental invalida; fallback geometrico: "+error.getMessage());return null;
++            System.err.println("[Spirit Gate] Configuracao experimental invalida; fallback geometrico: "+error.getMessage());return null;
+         }
+     }
+     public static RpgPlayerSprites load(Path folder,int frameMillis) throws IOException {
++        return load(folder,frameMillis,DEFAULT_SCALE);
++    }
++    public static RpgPlayerSprites load(Path folder,int frameMillis,double scale) throws IOException {
++        if(!Double.isFinite(scale)||scale<0.1||scale>1.0) throw new IllegalArgumentException("spriteScale: 0.1..1.0");
+         Properties metadata=new Properties();
+         try(var input=RpgPlayerSprites.class.getResourceAsStream("/rpg/experimental-player.properties")) {
+             if(input==null) throw new IOException("Metadados experimentais ausentes");metadata.load(input);
+@@ -63,8 +75,9 @@
+                 throw new IOException("Dimensoes/alfa invalidos: "+name);
+             frames.put(key,new Frame(image,Integer.parseInt(fields[4]),Integer.parseInt(fields[5])));
+         }
+-        return new RpgPlayerSprites(frames,frameMillis);
++        return new RpgPlayerSprites(frames,frameMillis,scale);
+     }
++    public double scale() { return scale; }
+     public RpgPlayerAnimation.Pose update(com.projetok.rpg.RpgWorld.View view) { return animation.update(view); }
+     public RpgPlayerAnimation.Pose pose() { return animation.pose(); }
+     public String frameKey() {
+@@ -77,9 +90,9 @@
+         Graphics2D g=(Graphics2D)original.create();
+         try {
+             g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+-            // Full originals, uniform 1/2 scale. Per-frame anchors remove differing transparent margins.
+-            g.translate(Math.round(actor.x()-frame.pivotX()*0.5),Math.round(actor.y()-frame.pivotY()*0.5));
+-            g.scale(0.5,0.5);g.drawImage(frame.image(),0,0,null);
++            // Keep complete originals and align their recorded foot pivots at any configured scale.
++            g.translate(Math.round(actor.x()-frame.pivotX()*scale),Math.round(actor.y()-frame.pivotY()*scale));
++            g.scale(scale,scale);g.drawImage(frame.image(),0,0,null);
+         } finally { g.dispose(); }
+         return true;
+     }
+--- before/testar-rpg-sprites.cmd
++++ after/testar-rpg-sprites.cmd
+@@ -1,14 +1,16 @@
+ @echo off
+ setlocal
+ cd /d "%~dp0"
++if not defined SPIRIT_GATE_SPRITE_SCALE set "SPIRIT_GATE_SPRITE_SCALE=0.4"
++if not defined SPIRIT_GATE_FRAME_MS set "SPIRIT_GATE_FRAME_MS=220"
+ if not exist "server\target\classes\com\projetok\prototype\rpg\RpgPlayerSprites.class" (
+-  echo Compile primeiro: python tools/qualidade.py --offline --task 078-local
++  echo Compile primeiro: python tools/qualidade.py --offline --task 079-local
+   exit /b 1
+ )
+ if "%~1"=="--geometrico" (
+   java -cp "server\target\classes" com.projetok.prototype.rpg.RpgLauncher
+ ) else if "%~1"=="" (
+-  java -Dspiritgate.rpg.spriteFrameMillis=150 -cp "server\target\classes" com.projetok.prototype.rpg.RpgLauncher --experimental-player-sprites
++  java "-Dspiritgate.rpg.spriteScale=%SPIRIT_GATE_SPRITE_SCALE%" "-Dspiritgate.rpg.spriteFrameMillis=%SPIRIT_GATE_FRAME_MS%" -cp "server\target\classes" com.projetok.prototype.rpg.RpgLauncher --experimental-player-sprites
+ ) else (
+   echo Uso: testar-rpg-sprites.cmd [--geometrico]
+   exit /b 2
+--- before/docs/TASK-079-COMPARACAO-VISUAL.md
++++ after/docs/TASK-079-COMPARACAO-VISUAL.md
+@@ -0,0 +1,50 @@
++# TASK-079 — Comparação visual
++
++Comparação feita com o cliente Swing real do RPG offline. Os parâmetros abaixo são aplicados por propriedades da JVM, sem recompilar entre os ensaios. Capturas de componentes de janelas abertas não representam aprovação artística do responsável nem teste do compositor de desktop em outra máquina.
++
++| Configuração | Escala | Walk por frame | Evidências |
++| --- | ---: | ---: | --- |
++| Anterior | 0,50 | 150 ms | `.task-checkpoints/TASK-079/anterior/` |
++| Recomendada | 0,40 | 220 ms | `.task-checkpoints/TASK-079/recomendada/` |
++| Alternativa menor | 0,35 | 220 ms | `.task-checkpoints/TASK-079/menor/` |
++| Alternativa mais lenta | 0,40 | 280 ms | `.task-checkpoints/TASK-079/mais-lenta/` |
++
++Em cada pasta: `initial-idle-FRONT.png` (mesmo ponto lógico inicial para comparar tamanho), os oito `walk-DIRECTION.1/.2.png`, quatro `idle-DIRECTION.png`, `walk-FRONT-real.gif`, `visual-evidence.json`, `sequence-timing.json` e `run.log`. O GIF registra uma sequência curta de capturas do cliente durante a caminhada frontal; os atrasos são derivados dos intervalos observados da captura. Não foram inventados frames, interpoladas poses ou criados assets de jogo. A sequência não é benchmark de frame pacing: captura/serialização introduzem custo e a simulação tem resolução de 30 Hz. Reabra o GIF para repetir a reprodução se o visualizador não fizer loop.
++
++`comparacao-escalas.png` apresenta recortes em mesma escala de pixels das quatro capturas iniciais, rotulados; os PNGs completos originais da evidência permanecem disponíveis. `comparacao.html` reúne capturas e GIFs para inspeção local. O harness reproduzível está em `.task-checkpoints/TASK-079/RefinementVisualProbe.java`.
++
++A redução de 50% para 40% corresponde a 20% menos largura/altura em relação à apresentação anterior. Para 35%, a redução relativa é de 30%. A escala 40% é mantida no ensaio de 280 ms, isolando o ritmo. Alterar Walk não altera o deslocamento de 215 unidades/s nem qualquer raio físico. Não se inferiu aprovação estética a partir desses valores.
++
++## Testar manualmente
++
++Na raiz, com as classes já compiladas pela suíte desta tarefa:
++
++```powershell
++# Recomendada: 40%, 220 ms; usa os defaults novos
++.\testar-rpg-sprites.cmd
++
++# Anterior: 50%, 150 ms
++java '-Dspiritgate.rpg.spriteScale=0.5' '-Dspiritgate.rpg.spriteFrameMillis=150' -cp server/target/classes com.projetok.prototype.rpg.RpgLauncher --experimental-player-sprites
++
++# Alternativa menor: 35%, 220 ms
++java '-Dspiritgate.rpg.spriteScale=0.35' '-Dspiritgate.rpg.spriteFrameMillis=220' -cp server/target/classes com.projetok.prototype.rpg.RpgLauncher --experimental-player-sprites
++
++# Alternativa mais lenta: 40%, 280 ms
++java '-Dspiritgate.rpg.spriteScale=0.4' '-Dspiritgate.rpg.spriteFrameMillis=280' -cp server/target/classes com.projetok.prototype.rpg.RpgLauncher --experimental-player-sprites
++
++# Geométrico anterior
++.\testar-rpg-sprites.cmd --geometrico
++```
++
++Alternativa sem escrever flags Java:
++
++```powershell
++$env:SPIRIT_GATE_SPRITE_SCALE='0.35'
++$env:SPIRIT_GATE_FRAME_MS='220'
++.\testar-rpg-sprites.cmd
++Remove-Item Env:SPIRIT_GATE_SPRITE_SCALE,Env:SPIRIT_GATE_FRAME_MS
++```
++
++Reinicie o cliente para aplicar outra configuração. Use S/W/A/D e solte cada tecla para conferir o retorno ao Idle. Compare proporção, alinhamento dos pés, percepção do contato com paredes e conforto do ciclo de dois frames. Equipamento, combate e progressão não recebem novos desenhos nesta tarefa.
++
++Os comandos de desenvolvimento, sem `spiritgate.rpg.dataDir`, mantêm o comportamento anterior de saves na pasta de trabalho; não fazem conversão. O harness de evidências usa sua própria pasta de dados. Os pacotes já distribuídos e o atualizador público não recebem esta alteração até uma publicação futura expressamente autorizada.
+--- before/docs/TASK-079-RELATORIO-FINAL.md
++++ after/docs/TASK-079-RELATORIO-FINAL.md
+@@ -0,0 +1,21 @@
++# TASK-079 — Relatório final
++
++**Concluída tecnicamente; aguardando homologação visual do responsável.** Nenhuma aprovação artística automática foi atribuída.
++
++O RPG offline passa a recomendar **40% de escala e 220 ms por frame Walk**. As quatro direções e os dois frames por direção foram preservados. É possível retornar a 50%/150 ms ou testar 35%/220 ms e 40%/280 ms apenas com propriedades JVM ou variáveis de ambiente do iniciador de desenvolvimento, sem recompilar.
++
++`RpgPlayerSprites` usa escala uniforme configurável, aplica esse fator aos pivôs existentes e ao desenho completo em nearest-neighbor, mantendo alfa. Valores inválidos geram diagnóstico e fallback geométrico. O relógio visual já existente continua baseado em ticks, independente de repaint; `RpgPlayerAnimation` não precisou de alteração. Os PNGs e seus metadados permaneceram intactos.
++
++Alterados somente dois arquivos existentes: `RpgPlayerSprites.java` e `testar-rpg-sprites.cmd`. Criado `RpgPlayerRefinementTest.java` com seis casos. Foram produzidos os quatro documentos solicitados, logs, capturas/GIFs das quatro combinações e checkpoints antes/depois com hashes e diff isolado.
++
++Resultado automatizado: **314 testes Java e 30 Python aprovados**, sem falhas, erros ou ignorados. A base efetiva anterior à tarefa era 308/30, pois o atualizador acrescentara 1 Java e 5 Python após a referência 307/25 da TASK-078. Nesta tarefa entram 6 Java adicionais; nenhum teste anterior foi removido ou alterado.
++
++A comparação abriu quatro clientes reais com parâmetros explícitos e personagens sintéticos, usando os bindings de movimento existentes e capturas da janela. As evidências incluem Idle inicial no mesmo ponto, Walk 1/2 e Idle nas quatro direções e uma sequência GIF frontal por configuração. Os resultados, comandos e ressalvas estão em TASK-079-COMPARACAO-VISUAL.md. A resolução de 30 Hz e o custo da captura limitam conclusões perceptivas sobre cadência; homologação do ritmo e do tamanho é do responsável.
++
++Os testes verificaram proporcionalidade, pés e centro em diferentes escalas, ausência de cortes no canvas, alfa, defaults/configuração inválida, duração, Idle, troca de direção, igualdade de estado lógico e fallback. Os hashes antes/depois confirmam que combate, deslocamento, hitboxes, colisão, saves/progressão, arena, Coop, protocolo e atlas oficial não receberam alterações. Alterações de trabalho anteriores foram preservadas e distinguidas do diff TASK-079.
++
++Evidências: `.task-checkpoints/TASK-079/` contém `TASK-079-before/after.json`, ZIPs recuperáveis sem saves pessoais, `preservation.json`, diff isolado, XMLs JUnit, quatro pastas de capturas e GIFs, comparação em PNG/HTML e harness externo. Os saves existentes foram verificados apenas por hash.
++
++Para avaliar agora, executar `testar-rpg-sprites.cmd` na raiz; para recompilar futuramente sem sobrescrever estes logs, usar `python tools/qualidade.py --offline --task 079-local`. Fechar e reiniciar o cliente ao trocar parâmetros.
++
++Não foi gerada nova release, não houve push ou alteração do canal público de atualização, não foram integradas animações novas e a TASK-080 não foi iniciada. O pacote público atual continua com a configuração anterior. Próximo passo: o responsável escolher/homologar a combinação visual antes de autorizar distribuição.
+--- before/docs/TASK-079-TESTES.md
++++ after/docs/TASK-079-TESTES.md
+@@ -0,0 +1,33 @@
++# TASK-079 — Testes e preservação
++
++Comando: `python tools/qualidade.py --offline --task 079`, na raiz. Exit 0. Maven real, offline, em `server/pom.xml`, executando `clean test`, seguido de unittest Python completo.
++
++| Resultado real | Testes | Falhas | Erros | Ignorados |
++| --- | ---: | ---: | ---: | ---: |
++| Java | 314 | 0 | 0 | 0 |
++| Python | 30 | 0 | 0 | 0 |
++
++A referência da TASK-078 era 307 Java/25 Python. Antes desta tarefa, a integração do atualizador já havia acrescentado um teste Java e cinco Python: base efetiva 308/30. A TASK-079 acrescenta seis testes Java e nenhum Python, resultando em 314/30. Todos os testes anteriores foram preservados; não se presumiu a contagem histórica como resultado atual.
++
++## Cobertura específica
++
++`RpgPlayerRefinementTest`, seis casos:
++
++1. Defaults configurados de 40%/220 ms e retorno a 50%/150 ms via propriedades, sem recompilar.
++2. Escalas inválidas, NaN/infinito, duração fora dos limites e propriedades ilegíveis geram fallback. Desativação experimental mantém modo geométrico mesmo com configuração inválida.
++3. Os 12 frames em 35%, 40% e 50% conservam o pivô dos pés, centro horizontal e transparência; o desenho cabe em canvas de teste sem cortes nas bordas.
++4. Redução proporcional dos dois eixos, com tolerância de rasterização de dois pixels.
++5. Durações 220 e 280 ms verificadas por avanço de ticks, estabilidade do frame em repaints repetidos, troca de direção e Idle estável; duração oficial WALK do atlas permanece 0,4 s para quatro frames de 100 ms.
++6. As quatro combinações comparativas não alteram o estado lógico em relação a um mundo-controle idêntico. NPC/morte continuam recusados pelo adaptador para manter o fallback existente.
++
++Os testes anteriores de associação das quatro direções, corrupção/ausência/troca de PNG, capitalização exata, cache, pivôs, movimento bloqueado e identidade pixel a pixel do renderer sem hook também passaram. Não foi alterada nenhuma asserção anterior.
++
++O mundo é 30 Hz: a troca é observada no primeiro tick após completar a duração. Para 220 ms, o primeiro frame 2 aparece após sete intervalos (≈233,3 ms); para 280 ms, após nove (300 ms). O cálculo mantém o período médio usando ticks desde o início do estado, sem redefinir o contrato para múltiplos fixos de repaint.
++
++## Evidências
++
++Logs: `docs/TASK-079-java.log`, `TASK-079-python.log`, versões, `TASK-079-qualidade.json` e `TASK-079-testes.txt`. XMLs JUnit finais preservados em `.task-checkpoints/TASK-079/junit/`.
++
++Quatro processos reais de cliente usados na comparação, com assets copiados para pastas de evidência e personagens sintéticos, sem saves pessoais. O harness externo aciona os bindings reais e lê snapshots; não injeta posições ou altera a simulação. Capturas e GIFs são evidências técnicas, não aprovação artística humana. Detalhes em TASK-079-COMPARACAO-VISUAL.md.
++
++Verificação final de hashes e lista exata de modificações em `.task-checkpoints/TASK-079/preservation.json`. O inventário inclui fontes, recursos, ferramentas, documentos existentes e hashes de saves; somente os dois arquivos existentes declarados na tarefa devem divergir. Os novos arquivos próprios aparecem separadamente. Não há alteração dos PNGs ou dos testes anteriores.
+--- before/docs/TASK-079-java-version.log
++++ after/docs/TASK-079-java-version.log
+@@ -0,0 +1,3 @@
++openjdk version "17.0.20.1" 2026-08-18
++OpenJDK Runtime Environment Temurin-17.0.20.1+1 (build 17.0.20.1+1)
++OpenJDK 64-Bit Server VM Temurin-17.0.20.1+1 (build 17.0.20.1+1, mixed mode, sharing)
+--- before/docs/TASK-079-java.log
++++ after/docs/TASK-079-java.log
+@@ -0,0 +1,249 @@
++[INFO] Scanning for projects...
++[INFO] 
++[INFO] -----------------------< com.projetok:projeto-k >-----------------------
++[INFO] Building projeto-k 1.0-SNAPSHOT
++[INFO]   from pom.xml
++[INFO] --------------------------------[ jar ]---------------------------------
++[INFO] Loaded 24127 auto-discovered prefixes for remote repository central (prefixes-central.txt)
++[INFO] Loaded 74 auto-discovered prefixes for remote repository apache.snapshots (prefixes-apache.snapshots.txt)
++[INFO] Loaded 24127 auto-discovered prefixes for remote repository sonatype-releases (prefixes-sonatype-releases.txt)
++[INFO] 
++[INFO] --- clean:3.5.0:clean (default-clean) @ projeto-k ---
++[INFO] Deleting C:\Users\lucas\Documents\GitHub\Projeto-K\server\target
++[INFO] 
++[INFO] --- resources:3.5.0:resources (default-resources) @ projeto-k ---
++[INFO] Copying 13 resources from src\main\resources to target\classes
++[INFO] 
++[INFO] --- compiler:3.16.0:compile (default-compile) @ projeto-k ---
++[INFO] Recompiling the module because of changed source code.
++[INFO] Compiling 122 source files with javac [debug release 17] to target\classes
++[INFO] 
++[INFO] --- resources:3.5.0:testResources (default-testResources) @ projeto-k ---
++[INFO] skip non existing resourceDirectory C:\Users\lucas\Documents\GitHub\Projeto-K\server\src\test\resources
++[INFO] 
++[INFO] --- compiler:3.16.0:testCompile (default-testCompile) @ projeto-k ---
++[INFO] Recompiling the module because of changed dependency.
++[INFO] Compiling 89 source files with javac [debug release 17] to target\test-classes
++[INFO] 
++[INFO] --- surefire:3.5.2:test (default-test) @ projeto-k ---
++[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
++[INFO] 
++[INFO] -------------------------------------------------------
++[INFO]  T E S T S
++[INFO] -------------------------------------------------------
++[INFO] Running com.projetok.domain.effect.StatusEffectServiceTest
++[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.074 s -- in com.projetok.domain.effect.StatusEffectServiceTest
++[INFO] Running com.projetok.domain.movement.CollisionPolicyTest
++[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.025 s -- in com.projetok.domain.movement.CollisionPolicyTest
++[INFO] Running com.projetok.domain.movement.CollisionRecoveryTest
++[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in com.projetok.domain.movement.CollisionRecoveryTest
++[INFO] Running com.projetok.domain.movement.FreezeMovementTest
++[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.021 s -- in com.projetok.domain.movement.FreezeMovementTest
++[INFO] Running com.projetok.domain.movement.MovementHardeningTest
++[INFO] Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.034 s -- in com.projetok.domain.movement.MovementHardeningTest
++[INFO] Running com.projetok.domain.movement.MovementServiceTest
++[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.005 s -- in com.projetok.domain.movement.MovementServiceTest
++[INFO] Running com.projetok.domain.movement.SoftSlideCollisionTest
++[INFO] Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.023 s -- in com.projetok.domain.movement.SoftSlideCollisionTest
++[INFO] Running com.projetok.domain.movement.SpatialBodyIndexTest
++[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.048 s -- in com.projetok.domain.movement.SpatialBodyIndexTest
++[INFO] Running com.projetok.domain.probability.ProbabilityServiceTest
++[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s -- in com.projetok.domain.probability.ProbabilityServiceTest
++[INFO] Running com.projetok.domain.resource.StaminaServiceTest
++[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in com.projetok.domain.resource.StaminaServiceTest
++[INFO] Running com.projetok.domain.skill.CryostasisFreezeTest
++[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.013 s -- in com.projetok.domain.skill.CryostasisFreezeTest
++[INFO] Running com.projetok.domain.skill.CryostasisServiceTest
++[INFO] Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.018 s -- in com.projetok.domain.skill.CryostasisServiceTest
++[INFO] Running com.projetok.domain.skill.DomainSequenceRegressionTest
++[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.030 s -- in com.projetok.domain.skill.DomainSequenceRegressionTest
++[INFO] Running com.projetok.domain.skill.LightningStepSelectiveCollisionTest
++[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.014 s -- in com.projetok.domain.skill.LightningStepSelectiveCollisionTest
++[INFO] Running com.projetok.domain.skill.LightningStepServiceTest
++[INFO] Tests run: 19, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.012 s -- in com.projetok.domain.skill.LightningStepServiceTest
++[INFO] Running com.projetok.domain.skill.LightningStepZeroDirectionTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 s -- in com.projetok.domain.skill.LightningStepZeroDirectionTest
++[INFO] Running com.projetok.multiplayer.AuthoritativeCombatTest
++[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.035 s -- in com.projetok.multiplayer.AuthoritativeCombatTest
++[INFO] Running com.projetok.multiplayer.CooperativeEncounterTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.039 s -- in com.projetok.multiplayer.CooperativeEncounterTest
++[INFO] Running com.projetok.multiplayer.LocalServerTest
++[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.102 s -- in com.projetok.multiplayer.LocalServerTest
++[INFO] Running com.projetok.multiplayer.NetworkFightIntegrationTest
++COOP_TCP_REAL bossHp=0 rewards=20,20 tick=201
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.670 s -- in com.projetok.multiplayer.NetworkFightIntegrationTest
++[INFO] Running com.projetok.multiplayer.NetworkRobustnessTest
++[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.169 s -- in com.projetok.multiplayer.NetworkRobustnessTest
++[INFO] Running com.projetok.multiplayer.ProtocolTest
++[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s -- in com.projetok.multiplayer.ProtocolTest
++[INFO] Running com.projetok.multiplayer.RemotePresentationTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.005 s -- in com.projetok.multiplayer.RemotePresentationTest
++[INFO] Running com.projetok.multiplayer.TwoClientsTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.380 s -- in com.projetok.multiplayer.TwoClientsTest
++[INFO] Running com.projetok.multiplayer.TwoProcessTest
++TWO_PROCESS_LOCAL {"session":2,"players":2,"moved":true,"tick":27} {"session":1,"players":2,"moved":true,"tick":27}
++[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.929 s -- in com.projetok.multiplayer.TwoProcessTest
++[INFO] Running com.projetok.prototype.ArenaSequenceRegressionTest
++[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.197 s -- in com.projetok.prototype.ArenaSequenceRegressionTest
++[INFO] Running com.projetok.prototype.ArenaViewportTest
++[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.301 s -- in com.projetok.prototype.ArenaViewportTest
++[INFO] Running com.projetok.prototype.CombatFeedbackPresentationTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.083 s -- in com.projetok.prototype.CombatFeedbackPresentationTest
++[INFO] Running com.projetok.prototype.CryostasisIntegrationTest
++[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.267 s -- in com.projetok.prototype.CryostasisIntegrationTest
++[INFO] Running com.projetok.prototype.CullingTest
++[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.340 s -- in com.projetok.prototype.CullingTest
++[INFO] Running com.projetok.prototype.DebugCommandBufferTest
++[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in com.projetok.prototype.DebugCommandBufferTest
++[INFO] Running com.projetok.prototype.DebugLauncherEntrypointTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 s -- in com.projetok.prototype.DebugLauncherEntrypointTest
++[INFO] Running com.projetok.prototype.DebugWorldTest
++[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.052 s -- in com.projetok.prototype.DebugWorldTest
++[INFO] Running com.projetok.prototype.DiagnosticReportTest
++[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.029 s -- in com.projetok.prototype.DiagnosticReportTest
++[INFO] Running com.projetok.prototype.DirectionalAnimationTest
++[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.268 s -- in com.projetok.prototype.DirectionalAnimationTest
++[INFO] Running com.projetok.prototype.FocusControlsTest
++[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 s -- in com.projetok.prototype.FocusControlsTest
++[INFO] Running com.projetok.prototype.FreezeWorldTest
++[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.051 s -- in com.projetok.prototype.FreezeWorldTest
++[INFO] Running com.projetok.prototype.HelpPresentationTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.070 s -- in com.projetok.prototype.HelpPresentationTest
++[INFO] Running com.projetok.prototype.HudPrecisionRegressionTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s -- in com.projetok.prototype.HudPrecisionRegressionTest
++[INFO] Running com.projetok.prototype.HudSkillFeedbackTest
++[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.200 s -- in com.projetok.prototype.HudSkillFeedbackTest
++[INFO] Running com.projetok.prototype.LargeMapTest
++[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.012 s -- in com.projetok.prototype.LargeMapTest
++[INFO] Running com.projetok.prototype.LightningStepIntegrationTest
++[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.223 s -- in com.projetok.prototype.LightningStepIntegrationTest
++[INFO] Running com.projetok.prototype.LocalArenaMapTest
++[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.075 s -- in com.projetok.prototype.LocalArenaMapTest
++[INFO] Running com.projetok.prototype.MovementReplayTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.060 s -- in com.projetok.prototype.MovementReplayTest
++[INFO] Running com.projetok.prototype.rpg.RpgAudioTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in com.projetok.prototype.rpg.RpgAudioTest
++[INFO] Running com.projetok.prototype.rpg.RpgBindingTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in com.projetok.prototype.rpg.RpgBindingTest
++[INFO] Running com.projetok.prototype.rpg.RpgDataHomeTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in com.projetok.prototype.rpg.RpgDataHomeTest
++[INFO] Running com.projetok.prototype.rpg.RpgMapsTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in com.projetok.prototype.rpg.RpgMapsTest
++[INFO] Running com.projetok.prototype.rpg.RpgPlayerRefinementTest
++[Spirit Gate] Sprites RPG experimentais recusadas; fallback geometrico: spriteScale: 0.1..1.0
++[Spirit Gate] Sprites RPG experimentais recusadas; fallback geometrico: spriteScale: 0.1..1.0
++[Spirit Gate] Sprites RPG experimentais recusadas; fallback geometrico: spriteScale: 0.1..1.0
++[Spirit Gate] Sprites RPG experimentais recusadas; fallback geometrico: spriteScale: 0.1..1.0
++[Spirit Gate] Sprites RPG experimentais recusadas; fallback geometrico: spriteScale: 0.1..1.0
++[Spirit Gate] Sprites RPG experimentais recusadas; fallback geometrico: spriteScale: 0.1..1.0
++[Spirit Gate] Sprites RPG experimentais recusadas; fallback geometrico: spriteScale: 0.1..1.0
++[Spirit Gate] Sprites RPG experimentais recusadas; fallback geometrico: frameMillis: 30..2000
++[Spirit Gate] Sprites RPG experimentais recusadas; fallback geometrico: frameMillis: 30..2000
++[Spirit Gate] Configuracao experimental invalida; fallback geometrico: For input string: "invalid"
++[Spirit Gate] Configuracao experimental invalida; fallback geometrico: For input string: "invalid"
++[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.907 s -- in com.projetok.prototype.rpg.RpgPlayerRefinementTest
++[INFO] Running com.projetok.prototype.rpg.RpgPlayerSpritesTest
++[Spirit Gate] Sprites RPG experimentais recusadas; fallback geometrico: Arquivo ausente (nome exato): Main_Character_Idle_Back.png
++[Spirit Gate] Sprites RPG experimentais recusadas; fallback geometrico: C:\Users\lucas\AppData\Local\Temp\junit-4371441056184628803\missing
++[Spirit Gate] Sprites RPG experimentais recusadas; fallback geometrico: Arquivo ausente (nome exato): Walk_character_Front1.png
++[Spirit Gate] Sprites RPG experimentais recusadas; fallback geometrico: SHA-256 divergente: Walk_character_Front1.png
++[Spirit Gate] Sprites RPG experimentais recusadas; fallback geometrico: SHA-256 divergente: Walk_character_Front1.png
++[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.232 s -- in com.projetok.prototype.rpg.RpgPlayerSpritesTest
++[INFO] Running com.projetok.prototype.rpg.RpgRuntimeSaveTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.019 s -- in com.projetok.prototype.rpg.RpgRuntimeSaveTest
++[INFO] Running com.projetok.prototype.ScenarioLayerTest
++[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.030 s -- in com.projetok.prototype.ScenarioLayerTest
++[INFO] Running com.projetok.prototype.SelectiveDashIntegrationTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.084 s -- in com.projetok.prototype.SelectiveDashIntegrationTest
++[INFO] Running com.projetok.prototype.SoftObstacleDemoTest
++[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.091 s -- in com.projetok.prototype.SoftObstacleDemoTest
++[INFO] Running com.projetok.prototype.StabilityStressTest
++[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.308 s -- in com.projetok.prototype.StabilityStressTest
++[INFO] Running com.projetok.prototype.StaminaInterfaceTest
++[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.470 s -- in com.projetok.prototype.StaminaInterfaceTest
++[INFO] Running com.projetok.prototype.StaminaWorldTest
++[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in com.projetok.prototype.StaminaWorldTest
++[INFO] Running com.projetok.prototype.VisualPackageTest
++[Spirit Gate] Pacote visual recusado; usando fallback: Contrato versionado ou revisao invalida
++[Spirit Gate] Pacote visual recusado; usando fallback: Contrato versionado ou revisao invalida
++[Spirit Gate] Pacote visual recusado; usando fallback: Pacote versionado incompleto
++[Spirit Gate] Pacote visual recusado; usando fallback: Recorte fora da grade
++[Spirit Gate] Pacote visual recusado; usando fallback: C:\Users\lucas\AppData\Local\Temp\junit-2122110558656142879\missing.png
++[Spirit Gate] Pacote visual recusado; usando fallback: Caminho visual inseguro
++[Spirit Gate] Pacote visual recusado; usando fallback: Metadados invalidos
++[Spirit Gate] Pacote visual recusado; usando fallback: Contrato versionado ou revisao invalida
++[Spirit Gate] Pacote visual recusado; usando fallback: Contrato versionado ou revisao invalida
++[Spirit Gate] Pacote visual recusado; usando fallback: Hash de asset divergente
++[Spirit Gate] Pacote visual recusado; usando fallback: Manifest visual invalido
++[Spirit Gate] Pacote visual recusado; usando fallback: Metadados invalidos
++[Spirit Gate] Pacote visual recusado; usando fallback: Metadados invalidos
++[Spirit Gate] Pacote visual recusado; usando fallback: Metadados invalidos
++[Spirit Gate] Pacote visual recusado; usando fallback: Manifest excessivo
++[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.218 s -- in com.projetok.prototype.VisualPackageTest
++[INFO] Running com.projetok.rpg.ArchetypesTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.014 s -- in com.projetok.rpg.ArchetypesTest
++[INFO] Running com.projetok.rpg.BossEncounterTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.011 s -- in com.projetok.rpg.BossEncounterTest
++[INFO] Running com.projetok.rpg.CharacterIdentityTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 s -- in com.projetok.rpg.CharacterIdentityTest
++[INFO] Running com.projetok.rpg.CharacterSavesTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.027 s -- in com.projetok.rpg.CharacterSavesTest
++[INFO] Running com.projetok.rpg.ConsumableTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in com.projetok.rpg.ConsumableTest
++[INFO] Running com.projetok.rpg.CorruptBackupProtectionTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.029 s -- in com.projetok.rpg.CorruptBackupProtectionTest
++[INFO] Running com.projetok.rpg.DialogueTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.005 s -- in com.projetok.rpg.DialogueTest
++[INFO] Running com.projetok.rpg.DungeonCycleTest
++[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.266 s -- in com.projetok.rpg.DungeonCycleTest
++[INFO] Running com.projetok.rpg.EnemyAiTest
++[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.020 s -- in com.projetok.rpg.EnemyAiTest
++[INFO] Running com.projetok.rpg.EnemyRpgTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.030 s -- in com.projetok.rpg.EnemyRpgTest
++[INFO] Running com.projetok.rpg.EnvironmentCycleTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in com.projetok.rpg.EnvironmentCycleTest
++[INFO] Running com.projetok.rpg.EquipmentRpgTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.013 s -- in com.projetok.rpg.EquipmentRpgTest
++[INFO] Running com.projetok.rpg.InventoryServiceTest
++[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.012 s -- in com.projetok.rpg.InventoryServiceTest
++[INFO] Running com.projetok.rpg.ItemCatalogTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s -- in com.projetok.rpg.ItemCatalogTest
++[INFO] Running com.projetok.rpg.LocalSaveStoreTest
++[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.064 s -- in com.projetok.rpg.LocalSaveStoreTest
++[INFO] Running com.projetok.rpg.LootServiceTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in com.projetok.rpg.LootServiceTest
++[INFO] Running com.projetok.rpg.NpcInteractionTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 s -- in com.projetok.rpg.NpcInteractionTest
++[INFO] Running com.projetok.rpg.OfflineCycleTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.032 s -- in com.projetok.rpg.OfflineCycleTest
++[INFO] Running com.projetok.rpg.PortalTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in com.projetok.rpg.PortalTest
++[INFO] Running com.projetok.rpg.QuestLifecycleTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in com.projetok.rpg.QuestLifecycleTest
++[INFO] Running com.projetok.rpg.QuestRewardsTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in com.projetok.rpg.QuestRewardsTest
++[INFO] Running com.projetok.rpg.RpgContentTest
++[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.005 s -- in com.projetok.rpg.RpgContentTest
++[INFO] Running com.projetok.rpg.RpgControlsTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.026 s -- in com.projetok.rpg.RpgControlsTest
++[INFO] Running com.projetok.rpg.RpgFinalReliabilityTest
++[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.133 s -- in com.projetok.rpg.RpgFinalReliabilityTest
++[INFO] Running com.projetok.rpg.RpgProgressionTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in com.projetok.rpg.RpgProgressionTest
++[INFO] Running com.projetok.rpg.RpgWorldTest
++[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in com.projetok.rpg.RpgWorldTest
++[INFO] Running com.projetok.rpg.TradeTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.014 s -- in com.projetok.rpg.TradeTest
++[INFO] Running com.projetok.rpg.WorldObjectsTest
++[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.010 s -- in com.projetok.rpg.WorldObjectsTest
++[INFO] 
++[INFO] Results:
++[INFO] 
++[INFO] Tests run: 314, Failures: 0, Errors: 0, Skipped: 0
++[INFO] 
++[INFO] ------------------------------------------------------------------------
++[INFO] BUILD SUCCESS
++[INFO] ------------------------------------------------------------------------
++[INFO] Total time:  40.693 s
++[INFO] Finished at: 2026-10-19T22:03:20-03:00
++[INFO] ------------------------------------------------------------------------
+--- before/docs/TASK-079-maven-version.log
++++ after/docs/TASK-079-maven-version.log
+@@ -0,0 +1,5 @@
++Apache Maven 3.10.0 (c43a36b8d67be7e0805a411bc0898af1a51f5472)
++Maven home: C:\Tools\apache-maven-3.10.0
++Java version: 17.0.20.1, vendor: Eclipse Adoptium, runtime: C:\Program Files\Eclipse Adoptium\jdk-17.0.20.101-hotspot
++Default locale: pt_BR, platform encoding: Cp1252, time zone: America/Sao_Paulo
++OS name: "windows 10", version: "10.0", arch: "amd64", family: "windows"
+--- before/docs/TASK-079-python-version.log
++++ after/docs/TASK-079-python-version.log
+@@ -0,0 +1 @@
++Python 3.14.5
+--- before/docs/TASK-079-python.log
++++ after/docs/TASK-079-python.log
+@@ -0,0 +1,44 @@
++test_background_and_overlap (test_assets.AssetTest.test_background_and_overlap) ... ok
++test_character_contract_and_missing_frame (test_assets.AssetTest.test_character_contract_and_missing_frame) ... ok
++test_corrupt_png (test_assets.AssetTest.test_corrupt_png) ... ok
++test_export_contract_and_invalid_pivot (test_assets.AssetTest.test_export_contract_and_invalid_pivot) ... ok
++test_hash_bound_approval (test_assets.AssetTest.test_hash_bound_approval) ... ok
++test_invalid_dimensions (test_assets.AssetTest.test_invalid_dimensions) ... ok
++test_valid_and_deterministic (test_assets.AssetTest.test_valid_and_deterministic) ... ok
++test_bootstrap_and_feed_hashes_agree (test_atualizacao.UpdateDistributionTest.test_bootstrap_and_feed_hashes_agree) ... ok
++test_case_collisions_are_rejected (test_atualizacao.UpdateDistributionTest.test_case_collisions_are_rejected) ... ok
++test_never_overwrites_a_previous_distribution (test_atualizacao.UpdateDistributionTest.test_never_overwrites_a_previous_distribution) ... ok
++test_personal_saves_and_traversal_cannot_be_published (test_atualizacao.UpdateDistributionTest.test_personal_saves_and_traversal_cannot_be_published) ... ok
++test_requires_https_and_safe_version_before_writing (test_atualizacao.UpdateDistributionTest.test_requires_https_and_safe_version_before_writing) ... ok
++test_escape_excessive_and_invalid_fields_rejected (test_mapas.MapToolTest.test_escape_excessive_and_invalid_fields_rejected) ... ok
++test_generated_maps_load_in_real_java_and_are_deterministic (test_mapas.MapToolTest.test_generated_maps_load_in_real_java_and_are_deterministic) ... ok
++test_exit_categories (test_qualidade.QualityTest.test_exit_categories) ... ok
++test_identifier_cannot_escape (test_qualidade.QualityTest.test_identifier_cannot_escape) ... usage: python.exe -m unittest [-h] [--offline] [--task TASK]
++python.exe -m unittest: error: Identificador inválido
++ok
++test_missing_environment_writes_failure (test_qualidade.QualityTest.test_missing_environment_writes_failure) ... ok
++test_real_totals_and_missing_report (test_qualidade.QualityTest.test_real_totals_and_missing_report) ... ok
++test_alpha_border_and_hash_after_review (test_sprite_review.SpriteReviewTest.test_alpha_border_and_hash_after_review) ... ok
++test_aseprite_exact_export_and_reject_trim_order (test_sprite_review.SpriteReviewTest.test_aseprite_exact_export_and_reject_trim_order) ... ok
++test_direction_order_missing_pivot_overlap (test_sprite_review.SpriteReviewTest.test_direction_order_missing_pivot_overlap) ... ok
++test_directional_preview_and_version_comparison (test_sprite_review.SpriteReviewTest.test_directional_preview_and_version_comparison) ... ok
++test_template_59_empty_reproducible (test_sprite_review.SpriteReviewTest.test_template_59_empty_reproducible) ... ok
++test_reject_pending_missing_corrupt_hash_no_output (test_visual_package.VisualPackageTest.test_reject_pending_missing_corrupt_hash_no_output) ... ok
++test_stage_approved_fixture_exact_whitelist (test_visual_package.VisualPackageTest.test_stage_approved_fixture_exact_whitelist) ... ok
++test_canonical (test_zip_security.ZipSecurityTest.test_canonical) ... ok
++test_case_collision_and_file_parent (test_zip_security.ZipSecurityTest.test_case_collision_and_file_parent) ... ok
++test_original_before_null_truncation (test_zip_security.ZipSecurityTest.test_original_before_null_truncation) ... ok
++test_symlink (test_zip_security.ZipSecurityTest.test_symlink) ... ok
++test_unsafe_names (test_zip_security.ZipSecurityTest.test_unsafe_names) ... ok
++
++----------------------------------------------------------------------
++Ran 30 tests in 2.774s
++
++OK
++Inventario: 1 PNGs; validados: 1
++Inventario: 1 PNGs; validados: 1
++Inventario: 1 PNGs; validados: 1
++{
++  "exitCode": 2,
++  "checks": {}
++}
+--- before/docs/TASK-079-qualidade.json
++++ after/docs/TASK-079-qualidade.json
+@@ -0,0 +1,26 @@
++{
++  "schemaVersion": 1,
++  "exitCode": 0,
++  "tools": {
++    "java": "openjdk version \"17.0.20.1\" 2026-08-18\nOpenJDK Runtime Environment Temurin-17.0.20.1+1 (build 17.0.20.1+1)\nOpenJDK 64-Bit Server VM Temurin-17.0.20.1+1 (build 17.0.20.1+1, mixed mode, sharing)",
++    "maven": "Apache Maven 3.10.0 (c43a36b8d67be7e0805a411bc0898af1a51f5472)\nMaven home: C:\\Tools\\apache-maven-3.10.0\nJava version: 17.0.20.1, vendor: Eclipse Adoptium, runtime: C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.101-hotspot\nDefault locale: pt_BR, platform encoding: Cp1252, time zone: America/Sao_Paulo\nOS name: \"windows 10\", version: \"10.0\", arch: \"amd64\", family: \"windows\"",
++    "python": "Python 3.14.5"
++  },
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 314,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 30
++    }
++  }
++}--- before/docs/TASK-079-testes.txt
++++ after/docs/TASK-079-testes.txt
+@@ -0,0 +1,20 @@
++{
++  "exitCode": 0,
++  "checks": {
++    "java": {
++      "exitCode": 0,
++      "category": 0,
++      "totals": {
++        "tests": 314,
++        "failures": 0,
++        "errors": 0,
++        "skipped": 0
++      }
++    },
++    "python": {
++      "exitCode": 0,
++      "category": 0,
++      "tests": 30
++    }
++  }
++}
+--- before/docs/TASK-079.md
++++ after/docs/TASK-079.md
+@@ -0,0 +1,31 @@
++# TASK-079 — Refinamento visual do personagem principal
++
++Data: 19/10/2026, America/Sao_Paulo. Base: integração TASK-078 e adaptações locais do atualizador já existentes. Escopo: somente escala e duração experimental de Walk no RPG offline. Estado técnico: concluída, aguardando homologação visual do responsável.
++
++## Parâmetros implementados
++
++| Propriedade JVM | Padrão novo | Valores aceitos | Retorno ao anterior |
++| --- | ---: | --- | ---: |
++| `spiritgate.rpg.spriteScale` | `0.4` | número finito entre `0.1` e `1.0`, inclusive | `0.5` |
++| `spiritgate.rpg.spriteFrameMillis` | `220` | inteiro entre `30` e `2000` ms | `150` |
++
++Escala é uma fração com ponto decimal, não porcentagem escrita como `40`. O mesmo fator é aplicado aos dois eixos do PNG completo. Posição de desenho: arredondamento de `posição lógica − pivô × escala`. O desenho mantém nearest-neighbor e alfa. Pivôs e imagens originais não foram modificados. A quantização de rasterização pode variar em até aproximadamente um pixel; os testes admitem margem de dois pixels para limites visíveis reduzidos.
++
++Valores inválidos, NaN, infinito, texto ilegível ou duração fora do limite recusam a apresentação experimental com diagnóstico e fallback geométrico. Não há correção silenciosa para outro valor. O modo geométrico continua disponível sem validar parâmetros de sprites quando a opção experimental estiver desligada.
++
++O sequenciador `RpgPlayerAnimation` não precisou de alteração: continua consumindo snapshots e ticks a 30 Hz, com dois frames por direção, reinício na mudança de estado/direção, Idle sem deslocamento efetivo e preservação da última direção. Repaint não altera o relógio. O contrato oficial de 59 frames/100 ms permanece intacto.
++
++## Arquivos alterados e criados
++
++- Alterado `RpgPlayerSprites.java`: escala configurável, aplicação aos pivôs, defaults 0,4/220, sobrecargas para testes e validação/fallback.
++- Alterado `testar-rpg-sprites.cmd`: novos defaults e variáveis de ambiente opcionais `SPIRIT_GATE_SPRITE_SCALE` e `SPIRIT_GATE_FRAME_MS`.
++- Criado `RpgPlayerRefinementTest.java`: seis testes específicos adicionais, sem alteração dos testes anteriores.
++- Quatro documentos TASK-079, logs, capturas, GIFs e checkpoints próprios.
++
++Não foram alterados mundo, runtime, combate, hitboxes, colisão, saves, progressão, Coop, protocolo, arena, atlas oficial, direção/associação de frames ou PNGs. Alterações locais anteriores permaneceram presentes; o diff próprio é calculado contra o checkpoint do início desta tarefa, não contra um Git que já continha outras alterações pendentes.
++
++## Checkpoints e limites
++
++`.task-checkpoints/TASK-079/TASK-079-before.json` e `TASK-079-before.zip` foram criados antes das alterações. Saves pessoais entram apenas por hash no inventário e não no ZIP. `TASK-079-after.json`, ZIP posterior, `preservation.json` e `TASK-079.diff` fecham a rastreabilidade.
++
++Nenhuma nova release, build portátil, publicação do canal `updates`, push, TASK-080 ou animação adicional foi executada. Os pacotes já publicados continuam com a configuração anterior; esta entrega é local para avaliação antes de nova autorização.
+--- before/server/src/test/java/com/projetok/prototype/rpg/RpgPlayerRefinementTest.java
++++ after/server/src/test/java/com/projetok/prototype/rpg/RpgPlayerRefinementTest.java
+@@ -0,0 +1,109 @@
++package com.projetok.prototype.rpg;
++
++import com.projetok.prototype.*;
++import com.projetok.prototype.DirectionalAnimation.Direction;
++import com.projetok.rpg.RpgWorld;
++import org.junit.jupiter.api.Test;
++import java.awt.image.BufferedImage;
++import java.nio.file.Path;
++import static org.junit.jupiter.api.Assertions.*;
++
++class RpgPlayerRefinementTest {
++    private final Path assets=Path.of("../assets/dev/player-base");
++    private BufferedImage draw(RpgPlayerSprites sprites) {
++        var image=new BufferedImage(256,256,BufferedImage.TYPE_INT_ARGB);var g=image.createGraphics();
++        assertTrue(sprites.draw(g,new DebugSnapshot.ActorView(1,"Test",128,220,18,10,10,true,true)));
++        g.dispose();return image;
++    }
++    private int[] bounds(BufferedImage image) {
++        int left=image.getWidth(),top=image.getHeight(),right=-1,bottom=-1;
++        for(int y=0;y<image.getHeight();y++)for(int x=0;x<image.getWidth();x++)if((image.getRGB(x,y)>>>24)!=0){
++            left=Math.min(left,x);top=Math.min(top,y);right=Math.max(right,x);bottom=Math.max(bottom,y);
++            assertEquals(255,image.getRGB(x,y)>>>24,"nearest-neighbor preserves binary alpha");
++        }
++        return new int[]{left,top,right,bottom};
++    }
++    @Test void configuredDefaultsAreFortyPercentAnd220Milliseconds() throws Exception {
++        String enabled=System.getProperty(RpgPlayerSprites.ENABLED),scale=System.getProperty(RpgPlayerSprites.SCALE),
++                duration=System.getProperty(RpgPlayerSprites.FRAME_MILLIS),exe=System.getProperty("jpackage.app-path");
++        try {
++            System.setProperty(RpgPlayerSprites.ENABLED,"true");System.clearProperty(RpgPlayerSprites.SCALE);
++            System.clearProperty(RpgPlayerSprites.FRAME_MILLIS);
++            System.setProperty("jpackage.app-path",Path.of("../isolated.exe").toAbsolutePath().toString());
++            var sprites=RpgPlayerSprites.configured();assertNotNull(sprites);assertEquals(.4,sprites.scale());
++            assertEquals(220,RpgPlayerSprites.DEFAULT_FRAME_MILLIS);
++            System.setProperty(RpgPlayerSprites.SCALE,"0.5");System.setProperty(RpgPlayerSprites.FRAME_MILLIS,"150");
++            assertEquals(.5,RpgPlayerSprites.configured().scale());
++        } finally {
++            restore(RpgPlayerSprites.ENABLED,enabled);restore(RpgPlayerSprites.SCALE,scale);
++            restore(RpgPlayerSprites.FRAME_MILLIS,duration);restore("jpackage.app-path",exe);
++        }
++    }
++    private void restore(String key,String value){if(value==null)System.clearProperty(key);else System.setProperty(key,value);}
++    @Test void invalidScalesAndDurationsFallBackWithoutAffectingSimulation() {
++        for(double value:new double[]{Double.NaN,Double.POSITIVE_INFINITY,Double.NEGATIVE_INFINITY,-.4,0,.09,1.01})
++            assertNull(RpgPlayerSprites.loadOptional(assets,220,value));
++        assertNull(RpgPlayerSprites.loadOptional(assets,0,.4));
++        assertNull(RpgPlayerSprites.loadOptional(assets,2001,.4));
++        String enabled=System.getProperty(RpgPlayerSprites.ENABLED),scale=System.getProperty(RpgPlayerSprites.SCALE),duration=System.getProperty(RpgPlayerSprites.FRAME_MILLIS);
++        try {
++            System.setProperty(RpgPlayerSprites.ENABLED,"true");System.setProperty(RpgPlayerSprites.SCALE,"invalid");
++            assertNull(RpgPlayerSprites.configured());
++            System.setProperty(RpgPlayerSprites.SCALE,"0.4");System.setProperty(RpgPlayerSprites.FRAME_MILLIS,"invalid");
++            assertNull(RpgPlayerSprites.configured());
++            System.setProperty(RpgPlayerSprites.ENABLED,"false");assertNull(RpgPlayerSprites.configured());
++        } finally {restore(RpgPlayerSprites.ENABLED,enabled);restore(RpgPlayerSprites.SCALE,scale);restore(RpgPlayerSprites.FRAME_MILLIS,duration);}
++    }
++    @Test void allTwelveFramesKeepFootAnchorAndAvoidClippingAtAllComparisonScales() throws Exception {
++        for(double scale:new double[]{.35,.4,.5})for(Direction direction:Direction.values()) {
++            var sprites=RpgPlayerSprites.load(assets,220,scale);var world=new RpgWorld();sprites.update(world.snapshot());
++            int x=direction==Direction.LEFT?-1:direction==Direction.RIGHT?1:0;
++            int y=direction==Direction.BACK?-1:direction==Direction.FRONT?1:0;
++            for(int state=0;state<3;state++) {
++                world.tick(x,y);sprites.update(world.snapshot());
++                if(state==1)for(int i=0;i<7;i++){world.tick(x,y);sprites.update(world.snapshot());}
++                if(state==2){world.tick(0,0);sprites.update(world.snapshot());}
++                assertEquals(direction+"."+(state==0?1:state==1?2:0),sprites.frameKey());
++                var image=draw(sprites);int[] b=bounds(image);
++                assertTrue(b[3]>=218&&b[3]<=220,"feet "+sprites.frameKey()+" at scale "+scale);
++                assertTrue(Math.abs((b[0]+b[2])/2.0-128)<=1.5,"horizontal pivot");
++                assertTrue(b[0]>0&&b[1]>0&&b[2]<255&&b[3]<255,"no clipping");
++                assertEquals(0,image.getRGB(0,0));assertEquals(0,image.getRGB(128,224));
++            }
++        }
++    }
++    @Test void reducedScaleChangesBothAxesProportionally() throws Exception {
++        var previous=bounds(draw(RpgPlayerSprites.load(assets,150,.5)));
++        for(double scale:new double[]{.35,.4}) {
++            int[] actual=bounds(draw(RpgPlayerSprites.load(assets,220,scale)));
++            double ratio=scale/.5;
++            assertEquals((previous[2]-previous[0]+1)*ratio,actual[2]-actual[0]+1,2);
++            assertEquals((previous[3]-previous[1]+1)*ratio,actual[3]-actual[1]+1,2);
++        }
++    }
++    @Test void slowerDurationsUseSimulationTicksAndKeepIdleStable() {
++        for(int duration:new int[]{220,280}) {
++            var animation=new RpgPlayerAnimation(duration);var world=new RpgWorld();animation.update(world.snapshot());
++            int threshold=duration==220?8:10;
++            for(int tick=1;tick<threshold;tick++){world.tick(1,0);assertEquals(0,animation.update(world.snapshot()).frame());}
++            world.tick(1,0);assertEquals(1,animation.update(world.snapshot()).frame());
++            var snapshot=world.snapshot();for(int paint=0;paint<100;paint++)assertEquals(1,animation.update(snapshot).frame());
++            world.tick(0,-1);assertEquals(new RpgPlayerAnimation.Pose(Direction.BACK,true,0),animation.update(world.snapshot()));
++            for(int tick=0;tick<20;tick++){world.tick(0,0);assertEquals(new RpgPlayerAnimation.Pose(Direction.BACK,false,0),animation.update(world.snapshot()));}
++        }
++        assertEquals(.4,DirectionalAnimation.duration(DirectionalAnimation.State.WALK));
++    }
++    @Test void allComparisonSettingsPreserveWorldStateAndGeometryFallback() throws Exception {
++        for(double[] setting:new double[][]{{.5,150},{.4,220},{.35,220},{.4,280}}){
++            var world=new RpgWorld();var control=RpgWorld.restore(world.save());
++            var sprites=RpgPlayerSprites.load(assets,(int)setting[1],setting[0]);
++            for(int tick=0;tick<60;tick++){
++                world.tick(0,tick<30?1:-1);control.tick(0,tick<30?1:-1);
++                sprites.update(world.snapshot());draw(sprites);assertEquals(control.save(),world.save());
++            }
++            var g=new BufferedImage(50,50,2).createGraphics();
++            assertFalse(sprites.draw(g,new DebugSnapshot.ActorView(100,"NPC",25,25,18,10,10,false,true)));
++            assertFalse(sprites.draw(g,new DebugSnapshot.ActorView(1,"Dead",25,25,18,0,10,true,false)));g.dispose();
++        }
++    }
++}

@@ -1,0 +1,71 @@
+--- before/server/src/test/java/com/projetok/prototype/rpg/CorujaoControlsTest.java
++++ after/server/src/test/java/com/projetok/prototype/rpg/CorujaoControlsTest.java
+@@ -0,0 +1,26 @@
++package com.projetok.prototype.rpg;
++import org.junit.jupiter.api.Test;
++import javax.swing.*;
++import java.awt.event.ActionEvent;
++import java.util.concurrent.atomic.AtomicInteger;
++import static org.junit.jupiter.api.Assertions.*;
++
++class CorujaoControlsTest {
++    private static void key(JPanel panel,String name){panel.getActionMap().get(name).actionPerformed(new ActionEvent(panel,0,name));}
++    @Test void rapidPressesHeldKeysAndFocusResetDoNotDuplicateActions() {
++        JPanel panel=new JPanel();AtomicInteger count=new AtomicInteger();RpgLauncher.bind(panel,"SPACE",count::incrementAndGet);
++        for(int i=0;i<30;i++)key(panel,"SPACEtrue");assertEquals(1,count.get());
++        key(panel,"SPACEfalse");key(panel,"SPACEtrue");assertEquals(2,count.get());
++        RpgLauncher.resetHeld(panel);key(panel,"SPACEtrue");assertEquals(3,count.get());
++        for(int i=0;i<20;i++){key(panel,"SPACEfalse");key(panel,"SPACEtrue");}assertEquals(23,count.get());
++    }
++    @Test void commandCapacityAndSimulationCooldownStayBounded() {
++        AtomicInteger count=new AtomicInteger();try(var runtime=new RpgRuntime()) {
++            for(int i=0;i<64;i++)assertTrue(runtime.command(w->count.incrementAndGet()));
++            assertFalse(runtime.command(w->count.incrementAndGet()));runtime.advanceOneTick();assertEquals(64,count.get());
++        }
++        var w=CorujaoVisualStateTest.forest();assertTrue(w.attack());
++        for(int i=0;i<200;i++)assertFalse(w.attack());
++        assertEquals(1,w.snapshot().events().stream().filter(e->e.kind()==com.projetok.rpg.RpgCombatEvent.Kind.ATTACK).count());
++    }
++}
+--- before/docs/TASK-084-RELATORIO-FINAL.md
++++ after/docs/TASK-084-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-084 - Corujao I
++
++Estado: **VALIDADA**.
++
++Auditoria entrada -> fila 64 -> tick 30 Hz -> snapshot -> EDT: bindings existentes ja suprimem repeticao de tecla e limpam movimento ao perder foco. Testes novos verificam pressionamentos rapidos, tecla mantida, reset apos foco, limite da fila e cooldown sem duplicacao. Nenhum buffer acrescentado por ausencia de necessidade reproduzida. A recusa de acoes pausadas/encerradas e tratada na TASK-088, conforme pendencia conhecida.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-084/corujao-i/`. Logs da suite: `docs/TASK-corujao-084-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-084-TESTES.md
++++ after/docs/TASK-084-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-084 - Corujao I
++
++Comando: `python tools/qualidade.py --offline --task corujao-084`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 324,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-084.md
++++ after/docs/TASK-084.md
+@@ -0,0 +1,3 @@
++# TASK-084 - Corujao I
++
++Auditoria entrada -> fila 64 -> tick 30 Hz -> snapshot -> EDT: bindings existentes ja suprimem repeticao de tecla e limpam movimento ao perder foco. Testes novos verificam pressionamentos rapidos, tecla mantida, reset apos foco, limite da fila e cooldown sem duplicacao. Nenhum buffer acrescentado por ausencia de necessidade reproduzida. A recusa de acoes pausadas/encerradas e tratada na TASK-088, conforme pendencia conhecida.

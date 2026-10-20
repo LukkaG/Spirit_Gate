@@ -1,0 +1,8 @@
+SPIRIT GATE - INICIADOR COM ATUALIZACAO
+Extraia tudo e abra Jogar-SpiritGate.cmd. Windows 64 bits; Java integrado.
+Saves e preferencias ficam em data/saves, fora das versoes.
+Canal HTTPS configurado; atualizacoes sao verificadas ao abrir o iniciador.
+Se a internet falhar, a versao instalada continua disponivel.
+Nao copie saves para versions. Para importar saves antigos, com o jogo fechado,
+copie a pasta saves para data/saves e mantenha backup da origem.
+Nao abra o EXE dentro de versions: use o iniciador para manter os saves em data.

@@ -1,0 +1,79 @@
+{
+  "checks": [
+    {
+      "id": "zip_sha256_sidecar",
+      "status": "PASS",
+      "sha256": "89918241b583a3eeef77b75da7e2c41820af587a9091af267f3796fecc077c36",
+      "sizeBytes": 29715793
+    },
+    {
+      "id": "estrutura_segura",
+      "status": "PASS",
+      "files": 153,
+      "root": "SpiritGate"
+    },
+    {
+      "id": "pacote_visual_aprovado_sha",
+      "status": "PASS",
+      "files": 3
+    },
+    {
+      "id": "manifest_e_inventario",
+      "status": "PASS",
+      "manifestFiles": 152,
+      "inventoryFiles": 151,
+      "version": "0.36.0-rc1",
+      "manifestSha256": "51291f4d05be7f9336ff11594ea422b4ead1294e342b65db8f3a90b6dc1a800d"
+    },
+    {
+      "id": "runtime_e_launcher",
+      "status": "PASS",
+      "javaVersion": "17.0.20.1",
+      "javaModules": [
+        "java.base",
+        "java.datatransfer",
+        "java.desktop",
+        "java.prefs",
+        "java.xml",
+        "jdk.random"
+      ],
+      "declaredRootModules": [
+        "java.base",
+        "java.desktop",
+        "jdk.random"
+      ],
+      "mainClass": "com.projetok.prototype.DebugLauncher",
+      "launcherArchitecture": "PE x64 (0x8664)"
+    },
+    {
+      "id": "jar_whitelist_e_bytecode_atual",
+      "status": "PASS",
+      "classesCompared": 145,
+      "comparison": "Byte a byte, todas as classes domain/prototype, sem omissoes.",
+      "allowedPrefixes": [
+        "com/projetok/domain/",
+        "com/projetok/prototype/"
+      ],
+      "mainClass": "com.projetok.prototype.DebugLauncher"
+    },
+    {
+      "id": "credenciais_padronizadas_no_bytecode_do_jogo",
+      "status": "PASS",
+      "classesScanned": 145,
+      "patterns": [
+        "marcador_de_chave_privada",
+        "identificador_aws",
+        "jdbc_com_credenciais_na_url",
+        "jdbc_com_senha_na_query"
+      ],
+      "findings": 0,
+      "scope": "Somente classes domain/prototype; conteudo encontrado nunca e impresso."
+    }
+  ],
+  "zipSha256": "89918241b583a3eeef77b75da7e2c41820af587a9091af267f3796fecc077c36",
+  "version": "0.36.0-rc1",
+  "alteredVisualRejected": true,
+  "status": "PASS",
+  "syntheticOnly": true,
+  "temporaryArchiveDestroyed": true
+}

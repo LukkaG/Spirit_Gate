@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "task": "TASK-012_016",
+  "auditedAtUtc": "2026-10-18T23:03:49.113527+00:00",
+  "zip": "C:\\Users\\lucas\\OneDrive\\Desktop\\Spirit_Gate_Prototipo_Jogavel\\Projeto-K\\dist\\SpiritGate-0.16.0-rc1-20261018T230252Z-a6150a66-portable.zip",
+  "status": "PASS",
+  "checks": [
+    {
+      "id": "zip_sha256_sidecar",
+      "status": "PASS",
+      "sha256": "9bc425107d23ccfd9a4d36279be4da23c7f016a74c92fe03a9bb1f0d36eb79c1",
+      "sizeBytes": 29386343
+    },
+    {
+      "id": "estrutura_segura",
+      "status": "PASS",
+      "files": 150,
+      "root": "SpiritGate"
+    },
+    {
+      "id": "manifest_e_inventario",
+      "status": "PASS",
+      "manifestFiles": 149,
+      "inventoryFiles": 148,
+      "version": "0.16.0-rc1",
+      "manifestSha256": "adfc26c7b73dfbc040fbb5cadeee8c9291fbc4f80e17d936f4b1fde4c21a8a3f"
+    },
+    {
+      "id": "runtime_e_launcher",
+      "status": "PASS",
+      "javaVersion": "17.0.20.1",
+      "javaModules": [
+        "java.base",
+        "java.datatransfer",
+        "java.desktop",
+        "java.prefs",
+        "java.xml",
+        "jdk.random"
+      ],
+      "declaredRootModules": [
+        "java.base",
+        "java.desktop",
+        "jdk.random"
+      ],
+      "mainClass": "com.projetok.prototype.DebugLauncher",
+      "launcherArchitecture": "PE x64 (0x8664)"
+    },
+    {
+      "id": "jar_whitelist_e_bytecode_atual",
+      "status": "PASS",
+      "classesCompared": 138,
+      "comparison": "Byte a byte, todas as classes domain/prototype, sem omissoes.",
+      "allowedPrefixes": [
+        "com/projetok/domain/",
+        "com/projetok/prototype/"
+      ],
+      "mainClass": "com.projetok.prototype.DebugLauncher"
+    },
+    {
+      "id": "credenciais_padronizadas_no_bytecode_do_jogo",
+      "status": "PASS",
+      "classesScanned": 138,
+      "patterns": [
+        "marcador_de_chave_privada",
+        "identificador_aws",
+        "jdbc_com_credenciais_na_url",
+        "jdbc_com_senha_na_query"
+      ],
+      "findings": 0,
+      "scope": "Somente classes domain/prototype; conteudo encontrado nunca e impresso."
+    }
+  ],
+  "limitations": [
+    "Hashes e inventarios detectam divergencias, mas nao substituem assinatura digital nem autenticam um pacote e sidecars adulterados em conjunto.",
+    "A busca de credenciais inspeciona somente o bytecode das classes do jogo, com padroes concretos; nao comprova ausencia absoluta de segredos, ofuscacao ou credenciais em outros formatos.",
+    "A comparacao prova igualdade com server/target/classes no instante da auditoria; a compilacao recente dos fontes depende do mvn clean test registrado separadamente no processo de release.",
+    "A auditoria nao executa o EXE e nao substitui a homologacao interativa em outro Windows sem Java ou Maven instalados."
+  ],
+  "executedPackagedCode": false,
+  "zipSha256": "9bc425107d23ccfd9a4d36279be4da23c7f016a74c92fe03a9bb1f0d36eb79c1",
+  "version": "0.16.0-rc1"
+}

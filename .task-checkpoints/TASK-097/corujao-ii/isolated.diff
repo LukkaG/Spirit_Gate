@@ -1,0 +1,105 @@
+--- before/server/src/test/java/com/projetok/studio/StudioContentTest.java
++++ after/server/src/test/java/com/projetok/studio/StudioContentTest.java
+@@ -0,0 +1,7 @@
++package com.projetok.studio;
++import org.junit.jupiter.api.Test;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++class StudioContentTest {
++    @Test void entitiesComeFromRealCatalogsAndCannotUseUnknownOrWrongRegion(){assertTrue(StudioContent.references(WorldDocument.Kind.NPC).contains("elder"));assertTrue(StudioContent.references(WorldDocument.Kind.CHEST).contains("starter_chest"));var e=new WorldDocument.Element("npc",WorldDocument.Kind.NPC,"","",new WorldDocument.Crop(0,0,32,32),140,320,32,32,"interaction",true,false,"elder","FRONT",Map.of());assertDoesNotThrow(()->StudioContent.validate(e,"village"));assertThrows(IllegalArgumentException.class,()->StudioContent.validate(e,"forest"));assertThrows(IllegalArgumentException.class,()->StudioContent.validate(new WorldDocument.Element("npc",WorldDocument.Kind.NPC,"","",e.crop(),140,320,32,32,"interaction",true,false,"inventado","FRONT",Map.of()),"village"));}
++}
+--- before/server/src/main/java/com/projetok/studio/InteractionTools.java
++++ after/server/src/main/java/com/projetok/studio/InteractionTools.java
+@@ -0,0 +1,17 @@
++package com.projetok.studio;
++import javax.swing.*;
++import java.awt.*;
++import java.util.*;
++
++/** Formularios para colocar entidades registradas sem criar classes ou scripts. */
++final class InteractionTools {
++    final WorldStudio ui;
++    InteractionTools(WorldStudio ui){this.ui=ui;for(var kind:new WorldDocument.Kind[]{WorldDocument.Kind.NPC,WorldDocument.Kind.CHEST,WorldDocument.Kind.RESOURCE,WorldDocument.Kind.ENEMY,WorldDocument.Kind.PLAYER,WorldDocument.Kind.POINT})ui.action("Entidades","Inserir "+kind,()->add(kind));}
++    void add(WorldDocument.Kind kind){JPanel form=new JPanel(new GridLayout(0,2));JComboBox<String> refs=new JComboBox<>(StudioContent.references(kind).toArray(String[]::new));form.add(new JLabel("ID do catalogo"));form.add(refs);JSpinner x=new JSpinner(new SpinnerNumberModel(Math.max(18,ui.lastCursor.x),0,8192,1)),y=new JSpinner(new SpinnerNumberModel(Math.max(18,ui.lastCursor.y),0,8192,1));form.add(new JLabel("X"));form.add(x);form.add(new JLabel("Y"));form.add(y);JComboBox<String> direction=new JComboBox<>(new String[]{"FRONT","BACK","LEFT","RIGHT"});form.add(new JLabel("Orientacao"));form.add(direction);JCheckBox sprite=new JCheckBox("Usar imagem selecionada (opcional)");form.add(sprite);
++        if(JOptionPane.showConfirmDialog(ui,form,"Inserir "+kind,JOptionPane.OK_CANCEL_OPTION)!=JOptionPane.OK_OPTION)return;
++        boolean image=sprite.isSelected()&&ui.brush!=null;String layer=ui.document.layers().stream().filter(l->l.role()==WorldDocument.Role.INTERACTION).findFirst().orElseThrow().id();EditorOperations.editable(ui.document,layer);
++        var element=new WorldDocument.Element(EditorOperations.id(),kind,image?ui.brush.id():"",image?ui.brush.sha():"",image?ui.brushCrop:new WorldDocument.Crop(0,0,32,32),(Integer)x.getValue(),(Integer)y.getValue(),32,32,layer,true,false,(String)refs.getSelectedItem(),(String)direction.getSelectedItem(),Map.of());StudioContent.validate(element,ui.document.region());
++        if(kind==WorldDocument.Kind.PLAYER&&ui.document.elements().stream().anyMatch(e->e.kind()==kind))throw new IllegalArgumentException("O mapa ja tem spawn do jogador");
++        var next=new ArrayList<>(ui.document.elements());next.add(element);ui.change(ui.document.withElements(next));ui.warmImages();
++    }
++}
+--- before/server/src/main/java/com/projetok/studio/StudioContent.java
++++ after/server/src/main/java/com/projetok/studio/StudioContent.java
+@@ -0,0 +1,20 @@
++package com.projetok.studio;
++import com.projetok.rpg.*;
++import java.util.*;
++
++/** Consulta catalogos reais do RPG; nao duplica loot, dialogos ou IA. */
++public final class StudioContent {
++    private StudioContent(){}
++    /** IDs permitidos para cada marcador. */
++    public static List<String> references(WorldDocument.Kind kind) {
++        String category=switch(kind){case NPC->"npc";case ENEMY->"enemy";default->"";};
++        if(!category.isEmpty())return RpgContent.builtin().all(category).stream().map(RpgContent.Definition::id).sorted().toList();
++        if(kind==WorldDocument.Kind.CHEST||kind==WorldDocument.Kind.RESOURCE){var objects=new WorldObjects(RpgContent.builtin(),new ItemCatalog(RpgContent.builtin()));return List.of("village","forest","ruins").stream().flatMap(r->objects.views(r,0,Set.of()).stream()).map(WorldObjects.ObjectView::id).sorted().toList();}
++        return List.of("");
++    }
++    /** Valida referencia e regiao conforme contratos existentes. */
++    public static void validate(WorldDocument.Element e,String region) {
++        if(!references(e.kind()).contains(e.reference()))throw new IllegalArgumentException("Referencia inexistente: "+e.reference());
++        if(e.kind()==WorldDocument.Kind.NPC||e.kind()==WorldDocument.Kind.ENEMY){String kind=e.kind()==WorldDocument.Kind.NPC?"npc":"enemy";if(!RpgContent.builtin().get(kind,e.reference()).region().equals(region))throw new IllegalArgumentException("Referencia pertence a outra regiao de conteudo: "+e.reference());}
++    }
++}
+--- before/server/src/main/java/com/projetok/studio/WorldStudio.java
++++ after/server/src/main/java/com/projetok/studio/WorldStudio.java
+@@ -45,6 +45,7 @@
+         new PaintTools(this);
+         layerTools=new LayerTools(this);
+         collisionTools=new CollisionTools(this);
++        new InteractionTools(this);
+     }
+     void change(WorldDocument next){document=history.commit(next);if(layerTools!=null)layerTools.refresh();canvas.repaint();}
+     void inspectSelection(){details.setText(document.elements().stream().filter(e->canvas.selected.contains(e.id())).map(Object::toString).collect(java.util.stream.Collectors.joining("\n")));}
+--- before/docs/TASK-097-RELATORIO-FINAL.md
++++ after/docs/TASK-097-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-097 - Corujao II
++
++Estado: **VALIDADA**.
++
++Formularios colocam NPC, bau, recurso, inimigo, jogador e ponto de interacao. Referencias consultam RpgContent e WorldObjects reais, com validacao de identidade/regiao e orientacao; sprites opcionais apenas referenciados. Nenhuma regra de loot/IA/quest duplicada. Inspector geral permite editar marcadores. Teste de referencias inexistentes e regiao incorreta aprovado.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-097/corujao-ii/`. Logs da suite: `docs/TASK-studio-097-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-097-TESTES.md
++++ after/docs/TASK-097-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-097 - Corujao II
++
++Comando: `python tools/qualidade.py --offline --task studio-097`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 347,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-097.md
++++ after/docs/TASK-097.md
+@@ -0,0 +1,3 @@
++# TASK-097 - Corujao II
++
++Formularios colocam NPC, bau, recurso, inimigo, jogador e ponto de interacao. Referencias consultam RpgContent e WorldObjects reais, com validacao de identidade/regiao e orientacao; sprites opcionais apenas referenciados. Nenhuma regra de loot/IA/quest duplicada. Inspector geral permite editar marcadores. Teste de referencias inexistentes e regiao incorreta aprovado.

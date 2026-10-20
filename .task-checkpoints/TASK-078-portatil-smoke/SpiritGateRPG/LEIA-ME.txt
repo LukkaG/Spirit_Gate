@@ -1,0 +1,5 @@
+SPIRIT GATE RPG OFFLINE 0.78.0-rc1
+Extraia todo o ZIP. Abra SpiritGateRPG.exe. Java integrado; sem banco ou rede.
+WASD mover; F interagir/portal; SPACE atacar; Q habilidade; 1 pocao; F5 salvar.
+Arena historica continua disponivel separadamente. Sprites experimentais ligadas no EXE. Alternativa sem sprites: Abrir-Geometrico.cmd. Teste privado; aprovacao artistica pendente.
+Windows 64 bits. Nao precisa instalar Java. Extraia TUDO antes de abrir. Saves novos ficam em saves ao lado do EXE; nenhum save pessoal foi incluido.

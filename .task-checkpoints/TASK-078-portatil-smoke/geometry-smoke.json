@@ -1,0 +1,11 @@
+{
+  "exitCode": 0,
+  "bundledRuntimeUsed": true,
+  "capture": {
+    "windowShowing": true,
+    "ticks": 62,
+    "region": "village",
+    "componentCapture": true,
+    "humanApproval": false
+  }
+}

@@ -1,0 +1,1046 @@
+[
+  {
+    "suite": "com.projetok.domain.effect.StatusEffectServiceTest",
+    "tests": 9,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "expiraComDeltaDeTrintaHertz",
+      "mortoNaoRecebeELimpaEfeitoAnterior",
+      "rejeitaDeltasInvalidosSemMutacao",
+      "jogadorNaoRecebeCongelamento",
+      "renovacaoNaoAcumulaTempo",
+      "rejeitaDuracoesInvalidasSemMutacao",
+      "aplicacaoEDuracaoDeUmSegundo",
+      "inicialmenteSemEfeitos",
+      "snapshotImutavelEIndependente"
+    ]
+  },
+  {
+    "suite": "com.projetok.domain.movement.CollisionPolicyTest",
+    "tests": 6,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "varreduraSeletivaDeslizaNoEixoLivre",
+      "varreduraSeletivaMantemParedesFinasEEspessas",
+      "varreduraSeletivaMantemLimitesNosDoisSentidos",
+      "movimentoNormalContinuaBloqueadoPorObstaculosLeves",
+      "consultaSeletivaIgnoraAtoresEArbustosMasPreservaLimites",
+      "obstaculoSemCategoriaContinuaSolido"
+    ]
+  },
+  {
+    "suite": "com.projetok.domain.movement.CollisionRecoveryTest",
+    "tests": 4,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "recuoNaoUsaSaidaAlemDeParedeQueSurgiuNoPercurso",
+      "rejeitaRotasInvalidasSemMutacao",
+      "recuperaPelaCurvaRealAoRedorDaConstrucao",
+      "encontraTangenciaEntreDoisIntervalosEncostados"
+    ]
+  },
+  {
+    "suite": "com.projetok.domain.movement.FreezeMovementTest",
+    "tests": 5,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "freezeBloqueiaTodosOsCaminhosDeMovimento",
+      "entradasInvalidasContinuamRejeitadasDuranteFreeze",
+      "freezeNaoBloqueiaJogadorComComponenteAnexadoManualmente",
+      "mobCongeladoMantemAtaqueEDano",
+      "movimentoRetornaAposExpirarUmSegundo"
+    ]
+  },
+  {
+    "suite": "com.projetok.domain.movement.MovementHardeningTest",
+    "tests": 11,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "respeitaCantoETangencia",
+      "impedeTunelamentoNosDoisSentidos",
+      "validaGeometriaEOrigem",
+      "normalizaMagnitudeExtrema",
+      "varreVerticalEDesliza",
+      "rejeitaOverflowENegativos",
+      "rejeitaNaoFinitosSemMutacaoParcial",
+      "trajetosContinuosNaoPenetramGeometria",
+      "contatoMaisProximoELimites",
+      "origemPenetradaFalhaSemMutacao",
+      "varreCirculosSemTunelamento"
+    ]
+  },
+  {
+    "suite": "com.projetok.domain.movement.MovementServiceTest",
+    "tests": 6,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "allowsBoundaryTangencyAndRejectsOutsideEachEdge",
+      "slidesAlongWallAndResolvesXBeforeY",
+      "skipsSelfAndDeadBodiesAndReadsLivePositions",
+      "calculaDeslocamentoHorizontalVerticalEDiagonal",
+      "normalizesAllDirectionsAndPreservesZero",
+      "resolucaoDiretaPreservaLimitesEDeslizamento"
+    ]
+  },
+  {
+    "suite": "com.projetok.domain.movement.SoftSlideCollisionTest",
+    "tests": 13,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "variosTicksPermitemEscaparSemAtravessarOutroCorpo",
+      "rejeitaEntradasInvalidasSemAlterarPosicao",
+      "origemSobrepostaNaoProvocaExpulsaoAutomatica",
+      "contatoFrontalExatoContinuaBloqueado",
+      "preservaDeslizamentoAnteriorQuandoUmEixoEstaLivre",
+      "atualizaIndiceAposEscapeMantendoOutroAtorFixo",
+      "doisCorposNaoPermitemForcarUmaPassagemEstreita",
+      "contornaQuinaExternaNosQuatroEspelhamentos",
+      "escapeCircularRespeitaEspelhamentosDosContatos",
+      "movimentoLivreEVelocidadeDiagonalPermanecemIguais",
+      "contornaCorpoSemEmpurrarEMaisDevagarQueMovimentoLivre",
+      "paredesLimitesECantosInternosContinuamSolidos",
+      "freezeBloqueiaMovimentoMesmoComPoliticaDeDeslizamento"
+    ]
+  },
+  {
+    "suite": "com.projetok.domain.movement.SpatialBodyIndexTest",
+    "tests": 5,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "atualizaMovimentoETeleporteEMorte",
+      "fallbackEValidacaoDoIndice",
+      "raioGrandeEFronteirasDeCelulas",
+      "varreduraComIndiceEquivaleALinear",
+      "equivaleABuscaLinearEReduzCandidatos"
+    ]
+  },
+  {
+    "suite": "com.projetok.domain.probability.ProbabilityServiceTest",
+    "tests": 5,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "rejeitaProbabilidadesInvalidas",
+      "sorteiosIndependentes",
+      "zeroECemPorCentoSemSorteio",
+      "limiteExatoDeTrintaPorCento",
+      "rejeitaAmostrasInvalidas"
+    ]
+  },
+  {
+    "suite": "com.projetok.domain.resource.StaminaServiceTest",
+    "tests": 5,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "mortoNaoExecutaNemRegenera",
+      "rejeitaInvalidosSemMutacao",
+      "consumoValidoZeroEInsuficiente",
+      "regeneracaoPorTempoELimite",
+      "valoresIniciais"
+    ]
+  },
+  {
+    "suite": "com.projetok.domain.skill.CryostasisFreezeTest",
+    "tests": 7,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "limiarDeTrintaPorCentoEhEstritoPorMob",
+      "mortosEDanoLetalNaoSorteiamNemAplicamFreeze",
+      "cincoPulsosNormaisSemDanoExtraNemSextaTentativa",
+      "sucessoRenovaSemAcumularEFalhaNaoAlteraDuracao",
+      "alvoDuplicadoEForaDaZonaNaoGeramSorteiosExtras",
+      "danoZeroNaoSorteiaNemAplicaFreeze",
+      "sorteiosSaoIndependentesPorMobEPorPulso"
+    ]
+  },
+  {
+    "suite": "com.projetok.domain.skill.CryostasisServiceTest",
+    "tests": 13,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "cincoPulsosSemSexto",
+      "entradaSaidaETangencia",
+      "cooldownBloqueiaELibera",
+      "pulsosComDeltaDaArena",
+      "zonaFixaAposMoverOuMorrer",
+      "afinidadeNeutraEEnumPreservado",
+      "clampEAlcanceExato",
+      "jogadorMortoNaoLanca",
+      "passoGrandeEDeltasInvalidos",
+      "eventosDeMorteESomenteCombatService",
+      "rejeitaComandosInvalidos",
+      "vigorInsuficiente",
+      "lancamentoValido"
+    ]
+  },
+  {
+    "suite": "com.projetok.domain.skill.DomainSequenceRegressionTest",
+    "tests": 4,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "categoriaDeObstaculoNaoAlteraSequenciaDeCombateECongelamento",
+      "floatsAdjacentesATangenciaELimiteContinuamSeguros",
+      "destinoOcupadoPorCorpoMovelCorrigeIndiceERetomaMovimento",
+      "atravessaAtorRecebeDanoERetomaMovimentoEAtaqueSemCusto"
+    ]
+  },
+  {
+    "suite": "com.projetok.domain.skill.LightningStepSelectiveCollisionTest",
+    "tests": 12,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "diagonalSeletivaRespeitaAlcanceELimites",
+      "atravessaMobJogadorENpcSemAlterarOsAtores",
+      "corpoMortoNaoBloqueiaPouso",
+      "todaRotaOcupadaAguardaLiberacaoSemEstenderDash",
+      "destinoDentroDeArbustoRecuaAteUltimaPosicaoLivre",
+      "construtorAnteriorMantemDashSolidoContraArbustos",
+      "destinoDentroDeMobRecuaConsiderandoAmbosOsRaios",
+      "recuoConsideraUniaoDeArbustoEAtor",
+      "devePreservarBloqueioDeParedeNoDashSeletivo",
+      "corpoMovelEIndiceEspacialSaoAtualizadosAposRecuo",
+      "recuoSegueQuinaDoPercursoEmVezDaCordaDiagonal",
+      "atravessaArbustoSemMudarDistanciaDuracaoOuCusto"
+    ]
+  },
+  {
+    "suite": "com.projetok.domain.skill.LightningStepServiceTest",
+    "tests": 19,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "colisaoPreservaDeslizamentoPorEixos",
+      "deltaGrandeNuncaExcedeDistanciaMaxima",
+      "saldoExatoPodeSerConsumido",
+      "duracaoDeUmQuartoDeSegundo",
+      "geometriaInvalidaRecusaLancamento",
+      "vigorInsuficienteNaoMudaEstado",
+      "cooldownBloqueiaEAceitaDepoisDeQuatroSegundos",
+      "progressoSemTeleporteComUltimoTickFracionario",
+      "paredeFinaImpedeTunelamentoESemCompensacao",
+      "jogadorContinuaRecebendoDanoDuranteDash",
+      "morteInterrompeDashAtivo",
+      "comandosInvalidosNaoConsomemNemIniciamCooldown",
+      "diagonalMantemDistanciaSemGanharVelocidade",
+      "jogadorMortoNaoInicia",
+      "cursorProximoDefineDirecaoEAlcanceCompleto",
+      "mobBloqueiaSemReceberDanoOuEfeito",
+      "deltaInvalidoNaoMudaEstadoEZeroEhPermitido",
+      "inicioConsomeUmaVezSemMover",
+      "dashNaoUltrapassaLimitesDaArena"
+    ]
+  },
+  {
+    "suite": "com.projetok.domain.skill.LightningStepZeroDirectionTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "deveRejeitarDashSemDirecao"
+    ]
+  },
+  {
+    "suite": "com.projetok.multiplayer.AuthoritativeCombatTest",
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "serverResolvesDamageCooldownAndReplays",
+      "realSkillServicesOwnCostsAndCooldowns"
+    ]
+  },
+  {
+    "suite": "com.projetok.multiplayer.CooperativeEncounterTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "sharedEnemyAndParticipationRewardOnlyOnce"
+    ]
+  },
+  {
+    "suite": "com.projetok.multiplayer.LocalServerTest",
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "realLoopbackHandshakeMovementAndShutdown",
+      "rejectsPublicBindAndStaleCommands"
+    ]
+  },
+  {
+    "suite": "com.projetok.multiplayer.NetworkFightIntegrationTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "twoClientsDefeatSharedBossAndCannotDuplicateReward"
+    ]
+  },
+  {
+    "suite": "com.projetok.multiplayer.NetworkRobustnessTest",
+    "tests": 3,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "absentInputExpiresAndClosedSessionsCannotAct",
+      "malformedConnectionCannotBreakServerAndPendingHandshakeCloses",
+      "lossDelayDuplicationReorderAndDisconnectAreDeterministic"
+    ]
+  },
+  {
+    "suite": "com.projetok.multiplayer.ProtocolTest",
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "roundTripsExplicitMessages",
+      "rejectsOversizeUnknownTruncationAndNonFinite"
+    ]
+  },
+  {
+    "suite": "com.projetok.multiplayer.RemotePresentationTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "interpolationCannotModifyAuthoritativePhysics"
+    ]
+  },
+  {
+    "suite": "com.projetok.multiplayer.TwoClientsTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "twoDistinctSessionsSeeMovementLeaveAndReconnect"
+    ]
+  },
+  {
+    "suite": "com.projetok.multiplayer.TwoProcessTest",
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "lanNeverAllowsWildcardOrPublicAddresses",
+      "twoSeparateClientProcessesShareOneLocalServer"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.ArenaSequenceRegressionTest",
+    "tests": 8,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "freezeDaFilaImpedeMovimentoMasPermiteAtaqueDoMob",
+      "wasdEAtaqueAtravessamInicioFimDoDashSemSomarDeslocamento",
+      "sequenciaCompletaEReinicioSaoReproduziveisComSorteiosControlados",
+      "morteRecusaLoteDeAcoesEReinicioRestauraRecursosEDisponibilidade",
+      "qEShiftCompetemEmFifoComVigorInsuficienteParaAmbas",
+      "shiftRapidoEMantidoNaoRepeteMesmoDepoisDoCooldown",
+      "qEShiftNoMesmoTickConsomemUmaVezERecusasNaoCobramNovamente",
+      "reinicioRealLimpaAtivosStatusRastrosHudEFilaSemReativarTeclasMantidas"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.ArenaViewportTest",
+    "tests": 4,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "renderingRepeatedIsPureAndHudDoesNotFollowCamera",
+      "defaultIdentityAndResizeLetterbox",
+      "largeSyntheticWorldClampedRoundTripsAllSizesAndZooms",
+      "qAndShiftUseWorldAfterZoomResizeAndRestart"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.CombatFeedbackPresentationTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "realDamageEffectsAreImmutableExpireAndRenderingDoesNotApplyDamage"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.CryostasisIntegrationTest",
+    "tests": 7,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "paredesNaoBloqueiamEZonaExpira",
+      "mouseEQRealSemDuplicacao",
+      "entradaInvalidaECooldown",
+      "filaPreservaContratoELimpaNoReinicio",
+      "capturaDaZonaESnapshotImutavel",
+      "reinicioSemEstadoOuComandosPendentes",
+      "lancamentoPublicaZonaEDano"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.CullingTest",
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "optimizedPixelsEqualReferenceAtZoomResizeAndMapEdges",
+      "visibleRegionAndPartialDiagonalIntersection"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.DebugCommandBufferTest",
+    "tests": 6,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "reinicioOrdenadoComEntradas",
+      "filaComProdutoresConcorrentes",
+      "filaFifoEValidacao",
+      "preservaMultiplasPressoesSemRepetirTeclaMantida",
+      "toqueDeMovimentoEAtaqueESolturaNormal",
+      "preservaToqueRapidoDeEsforco"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.DebugLauncherEntrypointTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "disponibilizaEntradaCompativelComLauncherNativo"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.DebugWorldTest",
+    "tests": 8,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "renderizaCorteEmTodasAsDirecoesSemJanela",
+      "corteNoArRespeitaCooldownDirecaoEExpiracao",
+      "naoAtravessaObstaculos",
+      "criaJogadorETresInimigosComHpDerivado",
+      "aplicaDanoRealEImpedeAtaquesSemCooldown",
+      "normalizaVelocidadeDiagonal",
+      "mobsCausamDanoAoJogador",
+      "preservaAlcanceEConeDoAtaque"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.DiagnosticReportTest",
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "exportIsExplicitSingleEntryAndNeverOverwrites",
+      "reportUsesWhitelistAndExcludesPrivateMessagesAndProperties"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.DirectionalAnimationTest",
+    "tests": 10,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "frozenActorHoldsFrameThenResumes",
+      "timingLoopPauseReturnAndReset",
+      "rejectsUnapprovedAndAlteredAsset",
+      "syntheticAtlasPivotFallbackAndNoMutation",
+      "realDamageAndDeathDriveVisuals",
+      "attackHitDeathPriorityAndClamp",
+      "attackWhileWalkingHitThenDeathAndDirectionTransition",
+      "variableDeltasFullCyclesAndLargeValuesRespectExistingContract",
+      "fourDirectionsAndStableFacing",
+      "realRuntimeAttackRestartAndNoInventedRun"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.FocusControlsTest",
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "hudAndLetterboxNeverBecomeTargetsAtAnyZoom",
+      "focusLossReleasesKeysAndAimAndAllowsNewPress"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.FreezeWorldTest",
+    "tests": 6,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "capturaDoCongelamento",
+      "reinicioLimpaStatusSemCongelarJogador",
+      "limiteTrintaPorCentoNaoCongela",
+      "duracaoCompletaEExpiracaoNoTick",
+      "renovacaoEntrePulsosSemAcumular",
+      "mobCongeladoAindaAtacaNoAlcance"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.HelpPresentationTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "helpBindingPublishesExistingValuesAndDoesNotInterfereWithWorld"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.HudPrecisionRegressionTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "avisoNaoArredondaVigorInsuficienteParaSaldoSuficiente"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.HudSkillFeedbackTest",
+    "tests": 12,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "morteBloqueiaDisponibilidadeEReinicioRestauraHud",
+      "vigorInsuficienteBloqueiaAmbasEFeedbackTerminaSemNovosComandos",
+      "traduzTodosOsResultadosDeCastSemInventarMotivos",
+      "feedbackExpiraPorDeltaEEsperaPodeSerLiberadaSemRenovarHabilidade",
+      "paredeELimiteRealmenteBloqueantesPublicamFeedbackTemporario",
+      "naoInventaBloqueioQuandoAlvoFicaAlemDeUmaParedeNaoAlcancada",
+      "mapeiaEstadosCustosEVigorSemConsultarOuModificarEntidades",
+      "capturaHudProntoSemVigorAtivoEBloqueadoSemModificarMundo",
+      "errosDeAlvoEDirecaoSaoFi\u00e9isAosResultadosDoDominio",
+      "snapshotRefleteAceiteFifoERecusaPorCooldownSemGastoExtra",
+      "recuperacaoDentroDeArbustoNaoEhReportadaComoParedeOuLimite",
+      "stepIndicaSomenteBloqueioFisicoAnteriorACorrecao"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.LargeMapTest",
+    "tests": 3,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "rejectsNonFiniteSpawnsAndExcessiveObjects",
+      "movementDashCollisionCameraAndRestartUseExpandedWorld",
+      "v2LoadsAndV1RemainsStrict"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.LightningStepIntegrationTest",
+    "tests": 9,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "capturaERastroImutavelQueExpira",
+      "jogadorRecebeDanoDuranteDash",
+      "bindingsComShiftMantemControlesAnteriores",
+      "reinicioDescartaDashPendente",
+      "toqueRapidoReinicioEShiftMantido",
+      "distanciaEDuracaoSemSomarWasd",
+      "concorrenciaEntreHabilidadesRespeitaFila",
+      "ativacaoEProgressoSemTeleporte",
+      "cooldownConsumoUnicoEAtaqueBasico"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.LocalArenaMapTest",
+    "tests": 6,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "syntheticRenderHasFallbackAndDoesNotMutate",
+      "mapMovementAndDashMatchReferenceEveryTick",
+      "rejectsInvalidBoundsSpawnsCountsSchemaAndObjects",
+      "visualDimensionsNeverChangeCollisionOrReplay",
+      "loadsRepeatablyAndPreservesDefaultDemo",
+      "restartUsesSameLocalMap"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.MovementReplayTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "reproduzEstadoCompletoAnteriorAExtracao"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.rpg.RpgAudioTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "unavailableDeviceFallsBackAndMuteSkipsOutput"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.rpg.RpgBindingTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "heldKeyDoesNotRepeatAndFocusResetReleases"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.rpg.RpgMapsTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "threeRegionsUseExistingMapContract"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.rpg.RpgRuntimeSaveTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "closingCapturesQueuedCommandsBeforeIoAndPauses"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.ScenarioLayerTest",
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "stableLayerOrderRetainsInputOrderAndRejectsInvalidLayer",
+      "foregroundCoversActorsAndNeverChangesCollision"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.SelectiveDashIntegrationTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "atravessaMobNaArenaSemCausarDanoEPublicaCaptura"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.SoftObstacleDemoTest",
+    "tests": 6,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "destinoDentroDoArbustoRecuaSemAtravessarOutroObstaculo",
+      "cenarioDemoPreservaColisaoComParedeSolida",
+      "todosObjetosBloqueiamWasdEDashSolidoMasPermitemDashSeletivo",
+      "runtimeAbreOCenarioDemonstrativo",
+      "arenaDemonstraWasdBloqueadoTravessiaEPousoLivre",
+      "separaDemoDoCenarioHistoricoEPublicaListaImutavel"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.StabilityStressTest",
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "sixThousandTicksCommandsRestartsAndAnimationsAreDeterministic",
+      "maximumVisualCountRenderingAndRepeatedSolidDashStayValid"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.StaminaInterfaceTest",
+    "tests": 3,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "teclaEReinicioERepeticaoDoTeclado",
+      "barraRefleteVigorDoSnapshot",
+      "preservaToqueRealEntreTicks"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.StaminaWorldTest",
+    "tests": 8,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "reinicioRestauraVigorEExigeNovaPressao",
+      "rejeitaDeltaNaoFinitoAntesDoTick",
+      "insuficienteNaoConsomeNemRepeteAutomaticamente",
+      "fabricaECompatibilidadeDaEntrada",
+      "ataqueEMovimentoIndependemDoVigor",
+      "morteBloqueiaAcoesERegeneracao",
+      "gastoUnicoPorPressao",
+      "danoDoAtaqueBasicoPreservadoComVigorBaixo"
+    ]
+  },
+  {
+    "suite": "com.projetok.prototype.VisualPackageTest",
+    "tests": 4,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "invalidPackagesAlwaysFallback",
+      "duplicatePropertiesAndExtremeOffsetsFailSafely",
+      "portablePathIndependentOfWorkingDirectory",
+      "validLoadsOnceAndSurvivesSourceRemoval"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.ArchetypesTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "guardianMovesMysticHealsAndCostsSurviveSave"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.BossEncounterTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "telegraphsThenExecutesAndNeverAttacksAfterDeath"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.CharacterIdentityTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "validatesNamesAndRestoresStableIdentity"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.CharacterSavesTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "listsCharactersAndRetainsCorruptFileWithRecoverableBackup"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.ConsumableTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "invalidUsesNeverConsumeAndCooldownSurvivesReload"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.CorruptBackupProtectionTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "semanticallyCorruptCurrentFileCannotReplaceLastGoodBackup"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.DialogueTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "branchesCancelRejectInvalidAndRestart"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.DungeonCycleTest",
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "fullDungeonFromNewCharacterWithoutInjectedProgress(String)[1]",
+      "fullDungeonFromNewCharacterWithoutInjectedProgress(String)[2]"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.EnemyAiTest",
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "obstaclesNeverContainEnemies",
+      "perceivesAttacksAndRestoresDeterministically"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.EnemyRpgTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "regionSpawnDeathRewardsAndRespawn"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.EnvironmentCycleTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "deterministicOptionalAndPeriodic"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.EquipmentRpgTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "equipsRecalculatesAndRollsBackFullInventory"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.InventoryServiceTest",
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "stacksSplitTransferAndRollbackWithoutLoss",
+      "worldInventorySurvivesSave"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.ItemCatalogTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "categoryRestrictionsAreValidated"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.LocalSaveStoreTest",
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "roundTripAndFailurePreserveLastGoodSave",
+      "rejectsCorruptionVersionAndDuplicateFields"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.LootServiceTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "generationLedgerAndPendingDropsPreventLossOrDuplication"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.NpcInteractionTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "contextualRangeAndDeathAreEnforced"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.OfflineCycleTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "createQuestFightLootTradeEquipSaveAndResume"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.PortalTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "travelReturnsAndPreservesProgress"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.QuestLifecycleTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "lifecycleAndPersistencePreventRepeatedCompletion"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.QuestRewardsTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "stableEventsAndWorldRewardsAreIdempotent"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.RpgContentTest",
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "rejectsMalformedDuplicatesNonFiniteAndExcess",
+      "loadsTypedReferences"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.RpgControlsTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "rejectsConflictsPersistsAndHotbarMatchesDomain"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.RpgFinalReliabilityTest",
+    "tests": 4,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "malformedPendingRewardCannotOverwriteValidSave",
+      "prolongedFixedSeedSimulationSurvivesRepeatedReloads",
+      "facingAndLootContinueDeterministically",
+      "preferencesAreSeparateAndPersist"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.RpgProgressionTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "multipleLevelsCapAndRestoration"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.RpgWorldTest",
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "invalidMovementDoesNotAdvanceTick",
+      "movementUsesExistingWallsAndBounds"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.TradeTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "moneyAndInventoryCommitTogether"
+    ]
+  },
+  {
+    "suite": "com.projetok.rpg.WorldObjectsTest",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "chestPersistsAndDoesNotDuplicate"
+    ]
+  }
+]

@@ -1,0 +1,27 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/StudioIntegrationTest.java",
+    "server/src/main/java/com/projetok/rpg/EnemyService.java",
+    "server/src/main/java/com/projetok/rpg/NpcService.java",
+    "server/src/main/java/com/projetok/rpg/PortalService.java",
+    "server/src/main/java/com/projetok/rpg/RpgSceneSet.java",
+    "server/src/main/java/com/projetok/rpg/RpgWorld.java",
+    "server/src/main/java/com/projetok/rpg/WorldObjects.java",
+    "server/src/main/java/com/projetok/studio/AssetCatalog.java",
+    "server/src/main/java/com/projetok/studio/StudioExport.java",
+    "server/src/main/java/com/projetok/studio/StudioValidator.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-100-RELATORIO-FINAL.md",
+    "docs/TASK-100-TESTES.md",
+    "docs/TASK-100.md",
+    "docs/TASK-studio-100-java-version.log",
+    "docs/TASK-studio-100-java.log",
+    "docs/TASK-studio-100-maven-version.log",
+    "docs/TASK-studio-100-python-version.log",
+    "docs/TASK-studio-100-python.log",
+    "docs/TASK-studio-100-qualidade.json",
+    "docs/TASK-studio-100-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

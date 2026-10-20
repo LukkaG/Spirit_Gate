@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "task": "TASK-012_016",
+  "auditedAtUtc": "2026-10-19T06:27:29.161630+00:00",
+  "zip": "C:\\Users\\lucas\\OneDrive\\Desktop\\Spirit_Gate_Prototipo_Jogavel\\Projeto-K\\dist\\SpiritGate-0.36.1-compat-check-20261019T062702Z-8b275b76-portable.zip",
+  "status": "FAIL",
+  "checks": [
+    {
+      "id": "zip_sha256_sidecar",
+      "status": "PASS",
+      "sha256": "3481106e7a2af71ef8ec9fbbeedf5b8e513f9a8ceeb67ed05554a9689a511685",
+      "sizeBytes": 29399462
+    },
+    {
+      "id": "estrutura_segura",
+      "status": "PASS",
+      "files": 146,
+      "root": "SpiritGate"
+    },
+    {
+      "id": "manifest_e_inventario",
+      "status": "PASS",
+      "manifestFiles": 145,
+      "inventoryFiles": 144,
+      "version": "0.36.1-compat-check",
+      "manifestSha256": "7443f1495156bec8861a23f2b25e9049d6bbefd165c1daeeb61f1f1e2c4434ec"
+    },
+    {
+      "id": "runtime_e_launcher",
+      "status": "PASS",
+      "javaVersion": "17.0.20.1",
+      "javaModules": [
+        "java.base",
+        "java.datatransfer",
+        "java.desktop",
+        "java.prefs",
+        "java.xml",
+        "jdk.random"
+      ],
+      "declaredRootModules": [
+        "java.base",
+        "java.desktop",
+        "jdk.random"
+      ],
+      "mainClass": "com.projetok.prototype.DebugLauncher",
+      "launcherArchitecture": "PE x64 (0x8664)"
+    }
+  ],
+  "limitations": [
+    "Hashes e inventarios detectam divergencias, mas nao substituem assinatura digital nem autenticam um pacote e sidecars adulterados em conjunto.",
+    "A busca de credenciais inspeciona somente o bytecode das classes do jogo, com padroes concretos; nao comprova ausencia absoluta de segredos, ofuscacao ou credenciais em outros formatos.",
+    "A comparacao prova igualdade com server/target/classes no instante da auditoria; a compilacao recente dos fontes depende do mvn clean test registrado separadamente no processo de release.",
+    "A auditoria nao executa o EXE e nao substitui a homologacao interativa em outro Windows sem Java ou Maven instalados."
+  ],
+  "executedPackagedCode": false,
+  "zipSha256": "3481106e7a2af71ef8ec9fbbeedf5b8e513f9a8ceeb67ed05554a9689a511685",
+  "version": "0.36.1-compat-check",
+  "error": "Inventario de classes do JAR diverge das classes atuais domain/prototype."
+}

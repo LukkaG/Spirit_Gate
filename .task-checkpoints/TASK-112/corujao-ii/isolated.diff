@@ -1,0 +1,119 @@
+--- before/server/src/test/java/com/projetok/studio/StudioDiagnosticTest.java
++++ after/server/src/test/java/com/projetok/studio/StudioDiagnosticTest.java
+@@ -0,0 +1,8 @@
++package com.projetok.studio;
++import org.junit.jupiter.api.Test;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++class StudioDiagnosticTest {
++    @Test void errorsHaveEvidenceAndPreviewLimitationsAreVisible(){var e=new WorldDocument.Element("missing",WorldDocument.Kind.OBJECT,"a".repeat(64),"b".repeat(64),new WorldDocument.Crop(0,0,32,32),32,32,32,32,"ground",true,false,"","FRONT",Map.of());var d=StudioExample.document().withElements(List.of(e)).withMetadata(Map.of("preview.environment","NIGHT"));var problems=StudioValidator.validate(Map.of(d.id(),d),new AssetCatalog.Result(List.of(),List.of(),List.of()),true);assertTrue(problems.stream().anyMatch(p->p.element().equals(e.id())&&p.description().equals("Sprite inexistente")));assertTrue(problems.stream().anyMatch(p->p.description().contains("somente previa")));assertTrue(problems.stream().allMatch(p->!p.evidence().isBlank()&&!p.correction().isBlank()));}
++    @Test void duplicateNpcAndUnsafeEventAreDiagnosed(){var d=StudioExample.document();var npc=d.elements().get(1);var elements=new ArrayList<>(d.elements());elements.add(npc.at("second",230,320));d=d.withElements(elements).withTriggers(List.of(new WorldDocument.Trigger("bad","ENTER","shell","","",0,0,32,32,true)));var issues=StudioValidator.validate(Map.of(d.id(),d),new AssetCatalog.Result(List.of(),List.of(),List.of()),true);assertTrue(issues.stream().anyMatch(p->p.description().contains("NPC repetido")));assertTrue(issues.stream().anyMatch(p->p.description().contains("Acao nao permitida")));}
++}
+--- before/server/src/main/java/com/projetok/studio/DiagnosticTools.java
++++ after/server/src/main/java/com/projetok/studio/DiagnosticTools.java
+@@ -0,0 +1,19 @@
++package com.projetok.studio;
++import javax.swing.*;
++import java.awt.*;
++import java.awt.event.*;
++import java.nio.file.*;
++import java.util.*;
++
++/** Painel de problemas com evidencia e navegacao; revisoes exigem acao explicita. */
++final class DiagnosticTools {
++    final WorldStudio ui;
++    DiagnosticTools(WorldStudio ui){this.ui=ui;ui.action("Diagnostico","Analisar mapas conhecidos",()->analyze(null));ui.action("Diagnostico","Validar arquivo sem abrir",()->{var chooser=new JFileChooser(ui.project.toFile());if(chooser.showOpenDialog(ui)==JFileChooser.APPROVE_OPTION)analyze(chooser.getSelectedFile().toPath());});ui.action("Diagnostico","Aceitar revisao do asset base selecionado",this::review);}
++    void analyze(Path file){var maps=ui.maps();var catalog=ui.catalog;ui.status.setText("Analisando referencias e hashes fora da interface...");new SwingWorker<java.util.List<StudioProblem>,Void>(){
++        protected java.util.List<StudioProblem> doInBackground(){try{if(file==null)return StudioValidator.validate(maps,catalog,true);var d=DocumentStore.load(file);return StudioValidator.validate(Map.of(d.id(),d),catalog,true);}catch(Exception ex){return java.util.List.of(new StudioProblem(StudioProblem.Severity.ERROR,"arquivo","", "Arquivo de mapa invalido",String.valueOf(ex.getMessage()),"Abra backup integro ou corrija uma copia; arquivo original preservado"));}}
++        protected void done(){try{show(get());}catch(Exception ex){ui.error(ex);}}
++    }.execute();}
++    void show(java.util.List<StudioProblem> problems){JDialog dialog=new JDialog(ui,"Problemas: "+problems.size()+" | duplo clique navega",false);JList<StudioProblem> list=new JList<>(problems.toArray(StudioProblem[]::new));JTextArea detail=new JTextArea(6,80);detail.setEditable(false);detail.setLineWrap(true);detail.setWrapStyleWord(true);list.addListSelectionListener(e->{var p=list.getSelectedValue();if(p!=null)detail.setText(p.severity()+" | "+p.map()+" / "+p.element()+"\n"+p.description()+"\nEvidencia: "+p.evidence()+"\nCorrecao possivel: "+p.correction());});list.addMouseListener(new MouseAdapter(){public void mouseClicked(MouseEvent e){if(e.getClickCount()==2&&list.getSelectedValue()!=null)navigate(list.getSelectedValue());}});JPanel panel=new JPanel(new BorderLayout());panel.add(new JScrollPane(list));panel.add(new JScrollPane(detail),BorderLayout.SOUTH);dialog.setContentPane(panel);dialog.setSize(1000,500);dialog.setLocationRelativeTo(ui);dialog.setVisible(true);ui.status.setText("Diagnostico: "+problems.size()+" problemas; nenhuma correcao automatica");}
++    void navigate(StudioProblem p){Runnable action=()->{var d=ui.maps().get(p.map());if(d==null)return;if(!d.id().equals(ui.document.id())){ui.document=ui.history.reset(d);ui.fileTools.file=null;ui.fileTools.saved=null;ui.layerTools.refresh();ui.warmImages();}ui.canvas.selected.clear();ui.canvas.selected.add(p.element());int x=d.width()/2,y=d.height()/2;var element=d.elements().stream().filter(e->e.id().equals(p.element())).findFirst();if(element.isPresent()){x=element.get().x();y=element.get().y();}else{var portal=d.portals().stream().filter(e->e.id().equals(p.element())).findFirst();if(portal.isPresent()){x=portal.get().x();y=portal.get().y();}}ui.canvas.viewport=new StudioViewport(ui.canvas.viewport.zoom(),ui.canvas.getWidth()/2d-x*ui.canvas.viewport.zoom(),ui.canvas.getHeight()/2d-y*ui.canvas.viewport.zoom());ui.canvas.repaint();};if(p.map().equals(ui.document.id()))action.run();else ui.fileTools.confirm(action);}
++    void review(){var e=ui.document.elements().stream().filter(a->ui.canvas.selected.contains(a.id())&&!a.asset().isEmpty()).findFirst().orElseThrow(()->new IllegalArgumentException("Selecione elemento com sprite"));EditorOperations.editable(ui.document,e.layer());if(e.locked())throw new IllegalArgumentException("Objeto bloqueado");var asset=ui.catalog.byId().get(e.asset());if(asset==null)throw new IllegalArgumentException("Reindexe a biblioteca primeiro");if((long)e.crop().x()+e.crop().width()>asset.width()||(long)e.crop().y()+e.crop().height()>asset.height())throw new IllegalArgumentException("Recorte nao cabe na nova revisao");if(JOptionPane.showConfirmDialog(ui,"Aceitar somente a revisao base deste elemento?\nAnterior: "+e.sha()+"\nNova: "+asset.sha()+"\nNao representa aprovacao artistica.","Revisao explicita",JOptionPane.YES_NO_OPTION)!=JOptionPane.YES_OPTION)return;var n=new WorldDocument.Element(e.id(),e.kind(),e.asset(),asset.sha(),e.crop(),e.x(),e.y(),e.width(),e.height(),e.layer(),e.visible(),e.locked(),e.reference(),e.direction(),e.properties());ui.change(ui.document.withElements(ui.document.elements().stream().map(a->a.id().equals(e.id())?n:a).toList()));ui.warmImages();}
++}
+--- before/server/src/main/java/com/projetok/studio/StudioValidator.java
++++ after/server/src/main/java/com/projetok/studio/StudioValidator.java
+@@ -8,10 +8,19 @@
+     public static List<StudioProblem> validate(Map<String,WorldDocument> maps,AssetCatalog.Result catalog,boolean runtime) {
+         var result=new ArrayList<>(PortalGraph.validate(maps));var assets=catalog.byId();Map<String,String> actual=new HashMap<>();Set<String> regions=new HashSet<>();
+         for(var d:maps.values()) {
++            try{StudioEvents.validate(d);}catch(IllegalArgumentException ex){result.add(error(d,"events",ex.getMessage(),"Contrato de eventos","Revise gatilhos, destinos e encadeamentos"));}
++            if(!EnvironmentPreview.mode(d).equals(EnvironmentPreview.Mode.OFF))result.add(warning(d,"environment","Iluminacao/clima do projeto sao somente previa",EnvironmentPreview.mode(d).name(),"Use evento ENVIRONMENT para o playtest ou mantenha previa no editor"));
++            Map<String,Long> npcCounts=d.elements().stream().filter(e->e.kind()==WorldDocument.Kind.NPC).collect(java.util.stream.Collectors.groupingBy(WorldDocument.Element::reference,java.util.stream.Collectors.counting()));
++            npcCounts.forEach((id,count)->{if(count>1)result.add(error(d,id,"NPC repetido no documento","Quantidade "+count,"Mantenha uma instancia por ID real"));});
+             if(runtime&&(d.width()!=960||d.height()!=640))result.add(error(d,"mapa","Runtime inicial exige 960x640","Dimensoes "+d.width()+"x"+d.height(),"Ajuste o documento ou use somente previa"));
+             if(runtime&&!regions.add(d.region()))result.add(error(d,"mapa","Dois mapas usam a mesma regiao de conteudo",d.region(),"Use village, forest e ruins distintos no conjunto exportado"));
+             if(runtime&&d.elements().stream().filter(e->e.kind()==WorldDocument.Kind.PLAYER).count()!=1)result.add(error(d,"spawn","Exatamente um spawn de jogador obrigatorio","Contagem de PLAYER","Insira um marcador PLAYER"));
+             for(var e:d.elements()) {
++                var role=d.layers().stream().filter(l->l.id().equals(e.layer())).findFirst().orElseThrow().role();
++                if(role==WorldDocument.Role.COLLISION)result.add(warning(d,e.id(),"Elemento visual na camada de colisao",e.layer(),"Mova a arte para camada visual; use hitbox explicita"));
++                try{if(e.kind()==WorldDocument.Kind.NPC)NpcEditing.validate(e);if(e.kind()==WorldDocument.Kind.ENEMY)SpawnAreas.points(d,e);
++                    EnvironmentAnimation.sequence(e).ifPresent(s->{for(int i=0;i<s.frames().size();i++){var a=assets.get(s.frames().get(i));if(a==null||!a.sha().equals(s.hashes().get(i)))result.add(error(d,e.id(),"Quadro ambiental ausente ou sem revisao",s.frames().get(i),"Reindexe e revise a sequencia"));else {String hash=actual.computeIfAbsent(a.id(),id->{try{return AssetCatalog.hash(a.file());}catch(Exception ex){return "ilegivel";}});if(!hash.equals(a.sha()))result.add(error(d,e.id(),"Quadro ambiental alterado em disco",a.path(),"Revise explicitamente a sequencia"));}}result.add(warning(d,e.id(),"Animacao ambiental somente na previa; exportacao estatica",s.frames().size()+" quadros","Avalie o quadro base no RPG"));});
++                }catch(IllegalArgumentException ex){result.add(error(d,e.id(),ex.getMessage(),e.properties().toString(),"Ajuste pelo editor especifico"));}
+                 if(!e.asset().isEmpty()) {
+                     var asset=assets.get(e.asset());String reason=null;
+                     if(asset==null)reason="Sprite inexistente";
+@@ -24,8 +33,11 @@
+                 }
+             }
+             for(String overlap:StudioGeometry.overlaps(d))result.add(new StudioProblem(StudioProblem.Severity.WARNING,d.id(),"collision","Solidos sobrepostos",overlap,"Revise a sobreposicao se nao for intencional"));
++            try{for(String missing:Autotiling.missing(d))result.add(warning(d,"terrain","Combinacao de autotiling usa fallback",missing,"Cadastre o recorte correspondente ou aceite o fallback"));}catch(RuntimeException ex){result.add(error(d,"terrain","Regra de terreno invalida",String.valueOf(ex.getMessage()),"Recadastre a regra explicita"));}
+         }
++        if(runtime){Map<String,String> npcMaps=new HashMap<>();for(var d:maps.values())for(var e:d.elements())if(e.kind()==WorldDocument.Kind.NPC){String other=npcMaps.putIfAbsent(e.reference(),d.id());if(other!=null&&!other.equals(d.id()))result.add(error(d,e.id(),"NPC repetido em mapas exportados",other,"Use uma instancia por ID real no conjunto"));}}
+         return List.copyOf(result);
+     }
+     static StudioProblem error(WorldDocument d,String id,String description,String evidence,String correction){return new StudioProblem(StudioProblem.Severity.ERROR,d.id(),id,description,evidence,correction);}
++    static StudioProblem warning(WorldDocument d,String id,String description,String evidence,String correction){return new StudioProblem(StudioProblem.Severity.WARNING,d.id(),id,description,evidence,correction);}
+ }
+--- before/server/src/main/java/com/projetok/studio/WorldStudio.java
++++ after/server/src/main/java/com/projetok/studio/WorldStudio.java
+@@ -60,6 +60,7 @@
+         new SpawnTools(this);
+         new EventTools(this);
+         new NavigationTools(this);
++        new DiagnosticTools(this);
+     }
+     void change(WorldDocument next){document=history.commit(Autotiling.refresh(next));if(layerTools!=null)layerTools.refresh();canvas.repaint();}
+     void inspectSelection(){details.setText(document.elements().stream().filter(e->canvas.selected.contains(e.id())).map(Object::toString).collect(java.util.stream.Collectors.joining("\n")));}
+--- before/docs/TASK-112-RELATORIO-FINAL.md
++++ after/docs/TASK-112-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-112 - Corujao II
++
++Estado: **validada**.
++
++Painel de diagnostico com severidade, localizacao, evidencia, correcao sugerida e navegacao. Valida arquivo sem abri-lo, revisoes/hash, recortes, NPCs repetidos, eventos, spawns, portais, camadas e recursos somente de previa. Revisao de asset base exige confirmacao explicita; IDs duplicados e formato invalido sao recusados pelo parser.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-112/corujao-ii/`. Logs da suite: `docs/TASK-studio-112-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-112-TESTES.md
++++ after/docs/TASK-112-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-112 - Corujao II
++
++Comando: `python tools/qualidade.py --offline --task studio-112`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 366,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-112.md
++++ after/docs/TASK-112.md
+@@ -0,0 +1,3 @@
++# TASK-112 - Corujao II
++
++Painel de diagnostico com severidade, localizacao, evidencia, correcao sugerida e navegacao. Valida arquivo sem abri-lo, revisoes/hash, recortes, NPCs repetidos, eventos, spawns, portais, camadas e recursos somente de previa. Revisao de asset base exige confirmacao explicita; IDs duplicados e formato invalido sao recusados pelo parser.

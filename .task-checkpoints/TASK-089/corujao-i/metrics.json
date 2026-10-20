@@ -1,0 +1,50 @@
+[
+  {
+    "archetype": "guardian",
+    "encounter": "slime",
+    "ticks": 13,
+    "damageReceived": 6,
+    "damageDealt": 40,
+    "staminaSpent": 20,
+    "secondaryUses": 1,
+    "survived": true,
+    "seconds": 0.43333333333333335,
+    "secondaryUsesPerSecond": 2.3076923076923075
+  },
+  {
+    "archetype": "guardian",
+    "encounter": "boss",
+    "ticks": 205,
+    "damageReceived": 42,
+    "damageDealt": 320,
+    "staminaSpent": 40,
+    "secondaryUses": 2,
+    "survived": true,
+    "seconds": 6.833333333333333,
+    "secondaryUsesPerSecond": 0.29268292682926833
+  },
+  {
+    "archetype": "mystic",
+    "encounter": "slime",
+    "ticks": 13,
+    "damageReceived": 6,
+    "damageDealt": 40,
+    "staminaSpent": 25,
+    "secondaryUses": 1,
+    "survived": true,
+    "seconds": 0.43333333333333335,
+    "secondaryUsesPerSecond": 2.3076923076923075
+  },
+  {
+    "archetype": "mystic",
+    "encounter": "boss",
+    "ticks": 157,
+    "damageReceived": 42,
+    "damageDealt": 320,
+    "staminaSpent": 50,
+    "secondaryUses": 2,
+    "survived": true,
+    "seconds": 5.233333333333333,
+    "secondaryUsesPerSecond": 0.38216560509554137
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "configuration": "anterior",
+    "scale": 0.5,
+    "frameMillis": 150,
+    "exitCode": 0
+  },
+  {
+    "configuration": "recomendada",
+    "scale": 0.4,
+    "frameMillis": 220,
+    "exitCode": 0
+  },
+  {
+    "configuration": "menor",
+    "scale": 0.35,
+    "frameMillis": 220,
+    "exitCode": 0
+  },
+  {
+    "configuration": "mais-lenta",
+    "scale": 0.4,
+    "frameMillis": 280,
+    "exitCode": 0
+  }
+]

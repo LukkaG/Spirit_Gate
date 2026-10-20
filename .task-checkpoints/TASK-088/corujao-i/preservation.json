@@ -1,0 +1,20 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/prototype/rpg/CorujaoRuntimeTest.java",
+    "server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java",
+    "server/src/main/java/com/projetok/prototype/rpg/RpgRuntime.java",
+    "docs/CORUJAO-I-PROGRESSO.json",
+    "docs/TASK-088-RELATORIO-FINAL.md",
+    "docs/TASK-088-TESTES.md",
+    "docs/TASK-088.md",
+    "docs/TASK-corujao-088-java-version.log",
+    "docs/TASK-corujao-088-java.log",
+    "docs/TASK-corujao-088-maven-version.log",
+    "docs/TASK-corujao-088-python-version.log",
+    "docs/TASK-corujao-088-python.log",
+    "docs/TASK-corujao-088-qualidade.json",
+    "docs/TASK-corujao-088-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

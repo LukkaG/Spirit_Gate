@@ -1,0 +1,22 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/PortalGraphTest.java",
+    "server/src/main/java/com/projetok/studio/PortalGraph.java",
+    "server/src/main/java/com/projetok/studio/PortalTools.java",
+    "server/src/main/java/com/projetok/studio/StudioProblem.java",
+    "server/src/main/java/com/projetok/studio/WorldStudio.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-098-RELATORIO-FINAL.md",
+    "docs/TASK-098-TESTES.md",
+    "docs/TASK-098.md",
+    "docs/TASK-studio-098-java-version.log",
+    "docs/TASK-studio-098-java.log",
+    "docs/TASK-studio-098-maven-version.log",
+    "docs/TASK-studio-098-python-version.log",
+    "docs/TASK-studio-098-python.log",
+    "docs/TASK-studio-098-qualidade.json",
+    "docs/TASK-studio-098-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

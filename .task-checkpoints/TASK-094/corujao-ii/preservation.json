@@ -1,0 +1,23 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/EditorOperationsTest.java",
+    "server/src/main/java/com/projetok/studio/EditorHistory.java",
+    "server/src/main/java/com/projetok/studio/EditorOperations.java",
+    "server/src/main/java/com/projetok/studio/PaintTools.java",
+    "server/src/main/java/com/projetok/studio/TilePicker.java",
+    "server/src/main/java/com/projetok/studio/WorldStudio.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-094-RELATORIO-FINAL.md",
+    "docs/TASK-094-TESTES.md",
+    "docs/TASK-094.md",
+    "docs/TASK-studio-094-java-version.log",
+    "docs/TASK-studio-094-java.log",
+    "docs/TASK-studio-094-maven-version.log",
+    "docs/TASK-studio-094-python-version.log",
+    "docs/TASK-studio-094-python.log",
+    "docs/TASK-studio-094-qualidade.json",
+    "docs/TASK-studio-094-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

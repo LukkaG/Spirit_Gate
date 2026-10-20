@@ -1,0 +1,431 @@
+--- before/server/src/test/java/com/projetok/studio/StudioIntegrationTest.java
++++ after/server/src/test/java/com/projetok/studio/StudioIntegrationTest.java
+@@ -0,0 +1,13 @@
++package com.projetok.studio;
++import com.projetok.rpg.*;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
++import java.nio.file.*;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++class StudioIntegrationTest {
++    @TempDir Path folder;
++    static WorldDocument map(String id,String region){var d=WorldDocument.empty(id,960,640);var spawn=new WorldDocument.Element("player",WorldDocument.Kind.PLAYER,"","",new WorldDocument.Crop(0,0,32,32),140,320,32,32,"interaction",true,false,"","FRONT",Map.of());return new WorldDocument(1,id,id,region,960,640,32,d.layers(),List.of(spawn),List.of(),List.of(),List.of(),Map.of());}
++    @Test void exportedCollisionAndPortalRunInRealWorldWithoutChangingLegacy()throws Exception{var a=map("novo","village").withHitboxes(List.of(new WorldDocument.Hitbox("wall",200,280,32,100,true,"collision"))).withPortals(List.of(new WorldDocument.Portal("link",140,320,"bosque",140,320,"","FRONT")));var b=map("bosque","forest");var path=StudioExport.write(folder.resolve("export"),a.id(),Map.of(a.id(),a,b.id(),b),new AssetCatalog.Result(List.of(),List.of(),List.of()));var bundle=StudioExport.load(path);var w=new RpgWorld(CharacterIdentity.create("Teste","guardian","azure"),bundle.scenes());for(int i=0;i<25;i++)w.tick(1,0);assertTrue(w.snapshot().x()<=182.01);assertTrue(w.travel(StudioExport.key("portal_",a.id()+"/link")));assertEquals("forest",w.save().region());assertEquals(140,w.snapshot().x());var legacy=new RpgWorld();assertEquals(140,legacy.snapshot().x());assertTrue(legacy.snapshot().enemies().isEmpty());}
++    @Test void unsupportedSizeAndTamperedBundleAreRejected()throws Exception{var a=map("novo","village");var out=StudioExport.write(folder.resolve("ok"),a.id(),Map.of(a.id(),a),new AssetCatalog.Result(List.of(),List.of(),List.of()));Files.writeString(out.resolve("novo.sgmap"),"alterado");assertThrows(java.io.IOException.class,()->StudioExport.load(out));var big=WorldDocument.empty("grande",1920,1280);assertThrows(java.io.IOException.class,()->StudioExport.write(folder.resolve("bad"),big.id(),Map.of(big.id(),big),new AssetCatalog.Result(List.of(),List.of(),List.of())));assertFalse(Files.exists(folder.resolve("bad")));}
++}
+--- before/server/src/main/java/com/projetok/rpg/EnemyService.java
++++ after/server/src/main/java/com/projetok/rpg/EnemyService.java
+@@ -15,11 +15,13 @@
+         }
+     }
+     public record View(int id,String spawn,String name,float x,float y,int hp,int maxHp,String state,boolean boss,RpgBossThreat threat) { }
+-    private final CollisionService.Space geometry;
++    private final java.util.function.Function<String,CollisionService.Space> geometry;
+     private final List<Enemy> enemies=new ArrayList<>();
+-    public EnemyService(RpgContent content,CollisionService.Space space) {
+-        geometry=space;
+-        Properties definitions=read("enemies"),spawns=read("spawns"); Map<String,Definition> types=new TreeMap<>();
++    public EnemyService(RpgContent content,CollisionService.Space space) {this(content,space,RpgSceneSet.entries("spawns"),r->space);}
++    /** Spawns de autoria usam definicoes e IA existentes, validados na geometria da propria regiao. */
++    public EnemyService(RpgContent content,CollisionService.Space space,Map<String,String> spawnData,java.util.function.Function<String,CollisionService.Space> geometry) {
++        this.geometry=geometry;
++        Properties definitions=read("enemies"),spawns=new Properties();spawns.putAll(spawnData); Map<String,Definition> types=new TreeMap<>();
+         for(String id:definitions.stringPropertyNames()) {
+             String[] v=definitions.getProperty(id).split("\\|");if(v.length!=6)throw new IllegalArgumentException("Inimigo invalido");
+             content.get("enemy",id); int[] n=Arrays.stream(v).mapToInt(Integer::parseInt).toArray();
+@@ -33,7 +35,7 @@
+             var base=content.get("enemy",v[0]);content.get("region",v[1]);Definition definition=types.get(v[0]);
+             if(definition==null||!base.region().equals(v[1]))throw new IllegalArgumentException("Spawn em regiao proibida");
+             var enemy=new Enemy(entityId++,spawn,v[1],definition,new Position(Float.parseFloat(v[2]),Float.parseFloat(v[3])),base.name());
+-            if(!new CollisionService().isFree(enemy,enemy.home.x(),enemy.home.y(),19,space))throw new IllegalArgumentException("Spawn obstruido");
++            if(!new CollisionService().isFree(enemy,enemy.home.x(),enemy.home.y(),19,geometry.apply(v[1])))throw new IllegalArgumentException("Spawn obstruido");
+             enemies.add(enemy);
+         }
+     }
+@@ -46,7 +48,7 @@
+     private long viewTick;
+     public List<View> views(String region) { return views(region,viewTick); }
+     /** Publica aviso com o tick do mundo, inclusive imediatamente apos retomar um save. */
+-    public List<View> views(String region,long tick) { return current(region).stream().map(e->new View(e.getId(),e.spawn,e.getName(),e.getPosition().x(),e.getPosition().y(),e.hp,e.definition.hp(),e.hp==0?"DEAD":e.behavior,e.definition.id().equals("warden"),e.hp>0&&e.behavior.equals("PREPARE")?new RpgBossThreat(e.getPosition().x(),e.getPosition().y(),e.hp*2<=e.definition.hp()?135:110,Math.max(0,e.attackTick-tick),e.hp*2<=e.definition.hp(),geometry):null)).toList(); }
++    public List<View> views(String region,long tick) { return current(region).stream().map(e->new View(e.getId(),e.spawn,e.getName(),e.getPosition().x(),e.getPosition().y(),e.hp,e.definition.hp(),e.hp==0?"DEAD":e.behavior,e.definition.id().equals("warden"),e.hp>0&&e.behavior.equals("PREPARE")?new RpgBossThreat(e.getPosition().x(),e.getPosition().y(),e.hp*2<=e.definition.hp()?135:110,Math.max(0,e.attackTick-tick),e.hp*2<=e.definition.hp(),geometry.apply(region)):null)).toList(); }
+     void respawn(long tick,String region) {
+         for(Enemy e:current(region))if(e.hp==0&&e.definition.respawn()>0&&tick>=e.readyTick){e.hp=e.definition.hp();e.generation++;e.setPosition(e.home);e.behavior="PATROL";}
+     }
+--- before/server/src/main/java/com/projetok/rpg/NpcService.java
++++ after/server/src/main/java/com/projetok/rpg/NpcService.java
+@@ -1,22 +1,22 @@
+-package com.projetok.rpg;
+-import com.projetok.domain.entity.Position;
+-import java.util.*;
+-import java.io.*;
+-public final class NpcService {
+-    public record View(String id,String name,String region,float x,float y) { }
+-    private final List<View> npcs=new ArrayList<>();
+-    public NpcService(RpgContent content) {
+-        try(InputStream in=NpcService.class.getResourceAsStream("/rpg/npcs.properties")) {
+-            if(in==null)throw new IOException("NPCs ausentes");Properties p=new Properties();p.load(in);
+-            for(String id:new TreeSet<>(p.stringPropertyNames())) {
+-                String[] v=p.getProperty(id).split("\\|");var base=content.get("npc",id);
+-                if(v.length!=3||!base.region().equals(v[0]))throw new IllegalArgumentException("NPC invalido");
+-                float x=Float.parseFloat(v[1]),y=Float.parseFloat(v[2]);
+-                if(!Float.isFinite(x)||!Float.isFinite(y)||x<18||x>942||y<18||y>622)throw new IllegalArgumentException("Posicao de NPC invalida");
+-                npcs.add(new View(id,base.name(),v[0],x,y));
+-            }
+-        }catch(IOException e){throw new IllegalStateException(e);}
+-    }
+-    public List<View> views(String region){return npcs.stream().filter(n->n.region().equals(region)).toList();}
+-    public Optional<View> nearest(String region,Position player){return views(region).stream().filter(n->Math.hypot(n.x()-player.x(),n.y()-player.y())<=70).min(Comparator.comparingDouble(n->Math.hypot(n.x()-player.x(),n.y()-player.y())));}
+-}
++package com.projetok.rpg;
++import com.projetok.domain.entity.Position;
++import java.util.*;
++import java.io.*;
++public final class NpcService {
++    public record View(String id,String name,String region,float x,float y) { }
++    private final List<View> npcs=new ArrayList<>();
++    public NpcService(RpgContent content) {this(content,RpgSceneSet.entries("npcs"));}
++    /** Configuracao de posicoes para sessao isolada, validada pelos catalogos reais. */
++    public NpcService(RpgContent content,Map<String,String> definitions) {
++        if(definitions.size()>16)throw new IllegalArgumentException("NPCs excessivos");
++        for(String id:new TreeSet<>(definitions.keySet())) {
++            String[] v=definitions.get(id).split("\\|",-1);var base=content.get("npc",id);
++            if(v.length!=3||!base.region().equals(v[0]))throw new IllegalArgumentException("NPC invalido");
++            float x=Float.parseFloat(v[1]),y=Float.parseFloat(v[2]);
++            if(!Float.isFinite(x)||!Float.isFinite(y)||x<18||x>942||y<18||y>622)throw new IllegalArgumentException("Posicao de NPC invalida");
++            npcs.add(new View(id,base.name(),v[0],x,y));
++        }
++    }
++    public List<View> views(String region){return npcs.stream().filter(n->n.region().equals(region)).toList();}
++    public Optional<View> nearest(String region,Position player){return views(region).stream().filter(n->Math.hypot(n.x()-player.x(),n.y()-player.y())<=70).min(Comparator.comparingDouble(n->Math.hypot(n.x()-player.x(),n.y()-player.y())));}
++}
+--- before/server/src/main/java/com/projetok/rpg/PortalService.java
++++ after/server/src/main/java/com/projetok/rpg/PortalService.java
+@@ -1,23 +1,25 @@
+-package com.projetok.rpg;
+-import java.util.*;
+-import java.io.*;
+-import com.projetok.domain.entity.Position;
+-public final class PortalService {
+-    public record Portal(String id,String region,float x,float y,String destination,float arrivalX,float arrivalY) { }
+-    private final Map<String,Portal> portals=new TreeMap<>();
+-    public PortalService(RpgContent content) {
+-        try(InputStream in=PortalService.class.getResourceAsStream("/rpg/portals.properties")) {
+-            if(in==null)throw new IOException("Portais ausentes");Properties p=new Properties();p.load(in);
+-            if(p.size()>64)throw new IllegalArgumentException("Portais excessivos");
+-            for(String id:p.stringPropertyNames()) {
+-                String[] v=p.getProperty(id).split("\\|");if(v.length!=6)throw new IllegalArgumentException("Portal invalido");content.get("region",v[0]);content.get("region",v[3]);
+-                float x=Float.parseFloat(v[1]),y=Float.parseFloat(v[2]),ax=Float.parseFloat(v[4]),ay=Float.parseFloat(v[5]);
+-                for(float n:new float[]{x,y,ax,ay})if(!Float.isFinite(n)||n<18||n>942)throw new IllegalArgumentException("Coordenada invalida");
+-                if(y>622||ay>622)throw new IllegalArgumentException("Portal fora do mapa");portals.put(id,new Portal(id,v[0],x,y,v[3],ax,ay));
+-            }
+-        }catch(IOException e){throw new IllegalStateException(e);}
+-    }
+-    public List<Portal> views(String region){return portals.values().stream().filter(p->p.region().equals(region)).toList();}
+-    public Optional<Portal> nearest(String region,Position p){return views(region).stream().filter(v->Math.hypot(v.x()-p.x(),v.y()-p.y())<=65).findFirst();}
+-    public Portal get(String id){var p=portals.get(id);if(p==null)throw new IllegalArgumentException("Portal ausente");return p;}
+-}
++package com.projetok.rpg;
++import java.util.*;
++import java.io.*;
++import com.projetok.domain.entity.Position;
++public final class PortalService {
++    public record Portal(String id,String region,float x,float y,String destination,float arrivalX,float arrivalY,String quest) {
++        /** Construtor legado sem condicao adicional. */
++        public Portal(String id,String region,float x,float y,String destination,float arrivalX,float arrivalY){this(id,region,x,y,destination,arrivalX,arrivalY,"");}
++    }
++    private final Map<String,Portal> portals=new TreeMap<>();
++    public PortalService(RpgContent content) {this(content,RpgSceneSet.entries("portals"));}
++    /** Rotas de autoria opcionais; condicao adicional significa missao aceita. */
++    public PortalService(RpgContent content,Map<String,String> definitions) {
++        if(definitions.size()>64)throw new IllegalArgumentException("Portais excessivos");
++        for(String id:definitions.keySet()) {
++            String[] v=definitions.get(id).split("\\|",-1);if(v.length!=6&&v.length!=7)throw new IllegalArgumentException("Portal invalido");content.get("region",v[0]);content.get("region",v[3]);
++            float x=Float.parseFloat(v[1]),y=Float.parseFloat(v[2]),ax=Float.parseFloat(v[4]),ay=Float.parseFloat(v[5]);
++            for(float n:new float[]{x,y,ax,ay})if(!Float.isFinite(n)||n<18||n>942)throw new IllegalArgumentException("Coordenada invalida");
++            if(y>622||ay>622)throw new IllegalArgumentException("Portal fora do mapa");String quest=v.length==7?v[6]:"";if(!quest.isEmpty())content.get("quest",quest);portals.put(id,new Portal(id,v[0],x,y,v[3],ax,ay,quest));
++        }
++    }
++    public List<Portal> views(String region){return portals.values().stream().filter(p->p.region().equals(region)).toList();}
++    public Optional<Portal> nearest(String region,Position p){return views(region).stream().filter(v->Math.hypot(v.x()-p.x(),v.y()-p.y())<=65).findFirst();}
++    public Portal get(String id){var p=portals.get(id);if(p==null)throw new IllegalArgumentException("Portal ausente");return p;}
++}
+--- before/server/src/main/java/com/projetok/rpg/RpgSceneSet.java
++++ after/server/src/main/java/com/projetok/rpg/RpgSceneSet.java
+@@ -0,0 +1,23 @@
++package com.projetok.rpg;
++import com.projetok.domain.entity.Position;
++import com.projetok.domain.movement.CollisionService;
++import java.io.*;
++import java.util.*;
++
++/** Configuracao opt-in de sessoes de autoria; nao muda o formato de save legado. */
++public record RpgSceneSet(String initialRegion,Map<String,Geometry> maps,Map<String,String> enemies,
++        Map<String,String> npcs,Map<String,String> objects,Map<String,String> portals) {
++    /** Geometria de uma regiao de conteudo, limitada ao DTO atual 960x640. */
++    public record Geometry(CollisionService.Space space,Position spawn) { }
++    public RpgSceneSet {
++        maps=Map.copyOf(maps);enemies=Map.copyOf(enemies);npcs=Map.copyOf(npcs);objects=Map.copyOf(objects);portals=Map.copyOf(portals);
++        if(maps.isEmpty()||maps.size()>3||!maps.containsKey(initialRegion)||enemies.size()>64||npcs.size()>16||objects.size()>128||portals.size()>64)throw new IllegalArgumentException("Cenario excede limites do RPG");
++        for(var e:maps.entrySet()){RpgContent.builtin().get("region",e.getKey());if(e.getValue().space().width()!=960||e.getValue().space().height()!=640)throw new IllegalArgumentException("Autoria RPG inicial exige 960x640");}
++    }
++    /** Carrega os dados nativos existentes para construtores padrao. */
++    public static Map<String,String> entries(String resource) {
++        try(InputStream in=RpgSceneSet.class.getResourceAsStream("/rpg/"+resource+".properties")) {
++            if(in==null)throw new IOException("Recurso ausente: "+resource);Properties p=new Properties();p.load(in);Map<String,String> map=new TreeMap<>();p.forEach((k,v)->map.put(k.toString(),v.toString()));return Map.copyOf(map);
++        }catch(IOException error){throw new IllegalStateException(error);}
++    }
++}
+--- before/server/src/main/java/com/projetok/rpg/RpgWorld.java
++++ after/server/src/main/java/com/projetok/rpg/RpgWorld.java
+@@ -78,23 +78,32 @@
+     }
+     private final GameEntity body;
+     public RpgWorld() { this(CharacterIdentity.create("Viajante", "guardian", "azure")); }
+-    public RpgWorld(CharacterIdentity identity) {
++    public RpgWorld(CharacterIdentity identity) {this(identity,(RpgSceneSet)null);}
++    /** Configuracao exclusiva de sessao sintetica; construtor padrao conserva a campanha. */
++    public RpgWorld(CharacterIdentity identity,RpgSceneSet scenes) {
++        this.scenes=scenes;
+         this.identity = java.util.Objects.requireNonNull(identity);
+         content.get("region", identity.initialRegion());
+-        body = new GameEntity(1, identity.name(), new Position(140, 320)) { };
++        if(scenes!=null)region=scenes.initialRegion();
++        space=scenes==null?new CollisionService.Space(960,640,List.of(new CollisionService.Obstacle(380,180,120,120)),List.of()):scenes.maps().get(region).space();
++        body = new GameEntity(1, identity.name(), scenes==null?new Position(140,320):scenes.maps().get(region).spawn()) { };
++        enemies=scenes==null?new EnemyService(content,space):new EnemyService(content,space,scenes.enemies(),r->scenes.maps().get(r).space());
++        npcs=scenes==null?new NpcService(content):new NpcService(content,scenes.npcs());
++        portals=scenes==null?new PortalService(content):new PortalService(content,scenes.portals());
++        objects=scenes==null?new WorldObjects(content,items):new WorldObjects(content,items,scenes.objects());
+         hp=identity.baseHp(); inventory.add("potion",3);
+-        flags.add("visited:village");
++        flags.add("visited:"+region);
+     }
+     private final MovementService movement = new MovementService(new CollisionService());
+-    private final CollisionService.Space space = new CollisionService.Space(960, 640,
+-            List.of(new CollisionService.Obstacle(380, 180, 120, 120)), List.of());
+-    private final EnemyService enemies=new EnemyService(content,space);
++    private final RpgSceneSet scenes;
++    private CollisionService.Space space;
++    private final EnemyService enemies;
+     private final LootService loot=new LootService(content,items);
+     private java.util.random.RandomGenerator random;
+     private long attackReadyTick;
+-    private final NpcService npcs=new NpcService(content);
+-    private final PortalService portals=new PortalService(content);
+-    private final WorldObjects objects=new WorldObjects(content,items);
++    private final NpcService npcs;
++    private final PortalService portals;
++    private final WorldObjects objects;
+     public boolean harvest(String id) {
+         if(hp==0||transitioning)return false;
+         var object=objects.views(region,ticks,flags).stream().filter(o->o.id().equals(id)&&o.available()&&distance(body.getPosition(),new Position(o.x(),o.y()))<=65).findFirst();
+@@ -107,12 +116,14 @@
+         var portal=portals.get(id);
+         if(hp==0||transitioning||ticks<portalReadyTick||!portal.region().equals(region)||distance(body.getPosition(),new Position(portal.x(),portal.y()))>65)return false;
+         if(portal.destination().equals("ruins")&&!quests.containsKey("sanctuary")){message="Conclua Ecos no bosque e aceite a missao do Santuario com a Ancia";return false;}
+-        if(!new CollisionService().isFree(body,portal.arrivalX(),portal.arrivalY(),18,space))return false;
++        if(!portal.quest().isEmpty()&&!quests.containsKey(portal.quest()))return false;
++        CollisionService.Space destination=scenes==null?space:scenes.maps().get(portal.destination()).space();
++        if(!new CollisionService().isFree(body,portal.arrivalX(),portal.arrivalY(),18,destination))return false;
+         transitioning=true;
+-        try{region=portal.destination();flags.add("visited:"+region);body.setPosition(new Position(portal.arrivalX(),portal.arrivalY()));closeDialogue();portalReadyTick=ticks+30;if(region.equals("ruins"))flags.add("dungeon-started");questService.refresh(quests,flags,inventory,region);message="Chegou a "+content.get("region",region).name();return true;}finally{transitioning=false;}
++        try{space=destination;region=portal.destination();flags.add("visited:"+region);body.setPosition(new Position(portal.arrivalX(),portal.arrivalY()));closeDialogue();portalReadyTick=ticks+30;if(region.equals("ruins"))flags.add("dungeon-started");questService.refresh(quests,flags,inventory,region);message="Chegou a "+content.get("region",region).name();return true;}finally{transitioning=false;}
+     }
+     private boolean bossUnlocked(){return enemies.current("ruins").stream().filter(e->!e.definition.id().equals("warden")).allMatch(e->e.hp==0);}
+-    public boolean returnHome(){if(hp>0)return false;region="village";body.setPosition(new Position(140,320));hp=maxHp();stamina=1000;closeDialogue();message="Recuperado em Aurora. Progresso preservado.";return true;}
++    public boolean returnHome(){if(hp>0)return false;region=scenes==null?"village":scenes.initialRegion();if(scenes!=null)space=scenes.maps().get(region).space();body.setPosition(scenes==null?new Position(140,320):scenes.maps().get(region).spawn());hp=maxHp();stamina=1000;closeDialogue();message="Recuperado em Aurora. Progresso preservado.";return true;}
+     private String activeNpc="";
+     public boolean trade(String id,int amount,boolean buying) {
+         var item=items.get(id);if(amount<1||amount>99)throw new IllegalArgumentException("Quantidade de comercio invalida");
+--- before/server/src/main/java/com/projetok/rpg/WorldObjects.java
++++ after/server/src/main/java/com/projetok/rpg/WorldObjects.java
+@@ -1,18 +1,18 @@
+-package com.projetok.rpg;
+-import java.util.*;
+-import java.io.*;
+-public final class WorldObjects {
+-    public record ObjectView(String id,String region,float x,float y,String item,int amount,int respawn,boolean available) { }
+-    private final List<ObjectView> definitions=new ArrayList<>();
+-    public WorldObjects(RpgContent content,ItemCatalog items) {
+-        try(InputStream in=WorldObjects.class.getResourceAsStream("/rpg/objects.properties")) {
+-            if(in==null)throw new IOException("Objetos ausentes");Properties p=new Properties();p.load(in);
+-            for(String id:new TreeSet<>(p.stringPropertyNames())) {
+-                String[] v=p.getProperty(id).split("\\|");if(v.length!=6||!id.matches("[a-z_]{1,30}"))throw new IllegalArgumentException("Objeto invalido");content.get("region",v[0]);items.get(v[3]);float x=Float.parseFloat(v[1]),y=Float.parseFloat(v[2]);int n=Integer.parseInt(v[4]),respawn=Integer.parseInt(v[5]);
+-                if(!Float.isFinite(x)||!Float.isFinite(y)||x<18||x>942||y<18||y>622||n<1||n>99||respawn<0||respawn>9000)throw new IllegalArgumentException("Objeto fora dos limites");
+-                definitions.add(new ObjectView(id,v[0],x,y,v[3],n,respawn,true));
+-            }
+-        }catch(IOException e){throw new IllegalStateException(e);}
+-    }
+-    public List<ObjectView> views(String region,long tick,Set<String> flags){return definitions.stream().filter(o->o.region().equals(region)).map(o->new ObjectView(o.id(),o.region(),o.x(),o.y(),o.item(),o.amount(),o.respawn(),!flags.contains("opened:"+o.id())&&flags.stream().filter(f->f.startsWith("object-until:"+o.id()+":")).allMatch(f->Long.parseLong(f.substring(f.lastIndexOf(':')+1))<=tick))).toList();}
+-}
++package com.projetok.rpg;
++import java.util.*;
++import java.io.*;
++public final class WorldObjects {
++    public record ObjectView(String id,String region,float x,float y,String item,int amount,int respawn,boolean available) { }
++    private final List<ObjectView> definitions=new ArrayList<>();
++    public WorldObjects(RpgContent content,ItemCatalog items) {this(content,items,RpgSceneSet.entries("objects"));}
++    /** Objetos de teste reutilizam itens e regras de coleta existentes. */
++    public WorldObjects(RpgContent content,ItemCatalog items,Map<String,String> definitions) {
++        if(definitions.size()>128)throw new IllegalArgumentException("Objetos excessivos");
++        for(String id:new TreeSet<>(definitions.keySet())) {
++            String[] v=definitions.get(id).split("\\|",-1);if(v.length!=6||!id.matches("[a-z_]{1,30}"))throw new IllegalArgumentException("Objeto invalido");content.get("region",v[0]);items.get(v[3]);float x=Float.parseFloat(v[1]),y=Float.parseFloat(v[2]);int n=Integer.parseInt(v[4]),respawn=Integer.parseInt(v[5]);
++            if(!Float.isFinite(x)||!Float.isFinite(y)||x<18||x>942||y<18||y>622||n<1||n>99||respawn<0||respawn>9000)throw new IllegalArgumentException("Objeto fora dos limites");
++            this.definitions.add(new ObjectView(id,v[0],x,y,v[3],n,respawn,true));
++        }
++    }
++    public List<ObjectView> views(String region,long tick,Set<String> flags){return definitions.stream().filter(o->o.region().equals(region)).map(o->new ObjectView(o.id(),o.region(),o.x(),o.y(),o.item(),o.amount(),o.respawn(),!flags.contains("opened:"+o.id())&&flags.stream().filter(f->f.startsWith("object-until:"+o.id()+":")).allMatch(f->Long.parseLong(f.substring(f.lastIndexOf(':')+1))<=tick))).toList();}
++}
+--- before/server/src/main/java/com/projetok/studio/AssetCatalog.java
++++ after/server/src/main/java/com/projetok/studio/AssetCatalog.java
+@@ -50,6 +50,8 @@
+         found.sort(Comparator.comparing(Asset::path));return new Result(found,warnings,changes);
+     }
+     private record Info(int width,int height,boolean alpha,BufferedImage thumb){}
++    /** Confere uma copia exportada sem aceitar dimensoes declaradas como prova do conteudo. */
++    public static Asset verified(Path file,String id,String expected)throws IOException {if(!id.matches("[a-f0-9]{64}")||!hash(file).equals(expected))throw new IOException("Revisao de imagem divergente");var info=inspect(file);return new Asset(id,file.getFileName().toString(),file,expected,info.width,info.height,info.alpha,"Exportado",info.thumb,Instant.now());}
+     private static Info inspect(Path file)throws IOException {
+         if(Files.size(file)>32_000_000)throw new IOException("Imagem acima de 32 MB");
+         try(var input=ImageIO.createImageInputStream(file.toFile())) {
+--- before/server/src/main/java/com/projetok/studio/StudioExport.java
++++ after/server/src/main/java/com/projetok/studio/StudioExport.java
+@@ -0,0 +1,62 @@
++package com.projetok.studio;
++import com.projetok.rpg.*;
++import com.projetok.domain.entity.Position;
++import java.io.*;
++import java.nio.file.*;
++import java.util.*;
++
++/** Exportacao opt-in verificavel: documentos, PNGs por hash e configuracao do RPG real. */
++public final class StudioExport {
++    /** Bundle carregado sem saves pessoais ou substituicao dos mapas padrao. */
++    public record Bundle(String start,Map<String,WorldDocument> maps,AssetCatalog.Result assets,RpgSceneSet scenes) { }
++    private StudioExport(){}
++    /** Apenas mapas alcancaveis participam do primeiro bundle de ate tres regioes. */
++    public static Map<String,WorldDocument> closure(String start,Map<String,WorldDocument> all) {
++        Map<String,WorldDocument> result=new LinkedHashMap<>();ArrayDeque<String> queue=new ArrayDeque<>();queue.add(start);
++        while(!queue.isEmpty()){String id=queue.removeFirst();if(result.containsKey(id))continue;var d=all.get(id);if(d==null)throw new IllegalArgumentException("Mapa referenciado ausente: "+id);result.put(id,d);if(result.size()>3)throw new IllegalArgumentException("Runtime atual suporta ate tres regioes de conteudo");d.portals().forEach(p->queue.add(p.destination()));}return Map.copyOf(result);
++    }
++    /** Identificador deterministico de spawn/portal, sem executar ou usar caminhos do documento. */
++    public static String key(String prefix,String value){try{return prefix+HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256").digest(value.getBytes(java.nio.charset.StandardCharsets.UTF_8))).substring(0,20);}catch(java.security.NoSuchAlgorithmException impossible){throw new IllegalStateException(impossible);}}
++    /** Monta configuracoes por injecao, conservando regras dos servicos de dominio. */
++    public static RpgSceneSet scenes(String start,Map<String,WorldDocument> maps) {
++        Map<String,RpgSceneSet.Geometry> geometry=new LinkedHashMap<>();Map<String,String> enemies=new TreeMap<>(),npcs=new TreeMap<>(),objects=new TreeMap<>(),portals=new TreeMap<>();
++        var builtinObjects=new WorldObjects(RpgContent.builtin(),new ItemCatalog(RpgContent.builtin()));var prototypes=new ArrayList<WorldObjects.ObjectView>();for(String region:List.of("village","forest","ruins"))prototypes.addAll(builtinObjects.views(region,0,Set.of()));
++        for(var d:maps.values()) {
++            var spawn=d.elements().stream().filter(e->e.kind()==WorldDocument.Kind.PLAYER).findFirst().orElseThrow(()->new IllegalArgumentException("Spawn ausente: "+d.id()));
++            if(geometry.put(d.region(),new RpgSceneSet.Geometry(StudioGeometry.space(d),new Position(spawn.x(),spawn.y())))!=null)throw new IllegalArgumentException("Regiao repetida");
++            for(var e:d.elements())switch(e.kind()) {
++                case ENEMY->{String id=key("spawn_",d.id()+"/"+e.id());if(enemies.put(id,e.reference()+"|"+d.region()+"|"+e.x()+"|"+e.y())!=null)throw new IllegalArgumentException("Spawn duplicado");}
++                case NPC->{if(npcs.put(e.reference(),d.region()+"|"+e.x()+"|"+e.y())!=null)throw new IllegalArgumentException("NPC repetido: "+e.reference());}
++                case CHEST,RESOURCE->{var prototype=prototypes.stream().filter(o->o.id().equals(e.reference())).findFirst().orElseThrow();String id=key("obj_",d.id()+"/"+e.id());for(char c='0';c<='9';c++)id=id.replace(c,(char)('g'+c-'0'));if(objects.put(id,d.region()+"|"+e.x()+"|"+e.y()+"|"+prototype.item()+"|"+prototype.amount()+"|"+prototype.respawn())!=null)throw new IllegalArgumentException("Objeto duplicado");}
++                default->{}
++            }
++            for(var p:d.portals()){var target=maps.get(p.destination());portals.put(key("portal_",d.id()+"/"+p.id()),d.region()+"|"+p.x()+"|"+p.y()+"|"+target.region()+"|"+p.arrivalX()+"|"+p.arrivalY()+"|"+p.quest());}
++        }
++        var result=new RpgSceneSet(maps.get(start).region(),geometry,enemies,npcs,objects,portals);
++        // Construtores reais recusam referencias/posicoes incompatíveis antes de qualquer exportacao.
++        new RpgWorld(CharacterIdentity.create("Validador","guardian","azure"),result);return result;
++    }
++    /** Cria diretorio novo e publica manifesto por ultimo; nunca sobrescreve projeto existente. */
++    public static Path write(Path output,String start,Map<String,WorldDocument> all,AssetCatalog.Result catalog)throws IOException {
++        try {
++            var maps=closure(start,all);var issues=StudioValidator.validate(maps,catalog,true);if(issues.stream().anyMatch(p->p.severity()==StudioProblem.Severity.ERROR))throw new IOException(issues.toString());scenes(start,maps);
++            Path root=output.toAbsolutePath();Files.createDirectories(root.getParent());Files.createDirectory(root);Files.createDirectory(root.resolve("images"));Properties manifest=new Properties();manifest.setProperty("schema","1");manifest.setProperty("start",start);manifest.setProperty("map.count",""+maps.size());int n=0;
++            for(var d:maps.values()){Path file=root.resolve(d.id()+".sgmap");DocumentStore.save(file,d);manifest.setProperty("map."+n+".id",d.id());manifest.setProperty("map."+n+".sha",AssetCatalog.hash(file));n++;}
++            Set<String> used=new LinkedHashSet<>();maps.values().forEach(d->d.elements().forEach(e->{if(!e.asset().isEmpty())used.add(e.asset());}));manifest.setProperty("asset.count",""+used.size());n=0;var assets=catalog.byId();
++            for(String id:used){var a=assets.get(id);Path dest=root.resolve("images/"+a.sha()+".png");if(!Files.exists(dest))Files.copy(a.file(),dest);if(!AssetCatalog.hash(dest).equals(a.sha()))throw new IOException("Imagem mudou durante exportacao");manifest.setProperty("asset."+n+".id",id);manifest.setProperty("asset."+n+".sha",a.sha());n++;}
++            try(var out=Files.newBufferedWriter(root.resolve("world.properties"))){manifest.store(out,"Spirit Gate Studio export V1 - sessao sem saves");}load(root);return root;
++        }catch(IllegalArgumentException error){throw new IOException("Exportacao recusada: "+error.getMessage(),error);}
++    }
++    private static Path local(Path root,String relative)throws IOException {Path file=root.resolve(relative);if(Files.isSymbolicLink(file)||!file.toRealPath().startsWith(root.toRealPath()))throw new IOException("Caminho exportado fora do bundle");return file;}
++    private static String take(Properties p,String key){String v=(String)p.remove(key);if(v==null)throw new IllegalArgumentException("Campo ausente: "+key);return v;}
++    /** Le manifesto limitado, confere hashes e instancia configuracao validada do mundo real. */
++    public static Bundle load(Path root)throws IOException {
++        try {
++            Properties p=new Properties(){@Override public synchronized Object put(Object k,Object v){if(containsKey(k))throw new IllegalArgumentException("Campo duplicado");return super.put(k,v);}};Path manifest=local(root,"world.properties");if(Files.size(manifest)>1_000_000)throw new IOException("Manifesto excessivo");try(var reader=Files.newBufferedReader(manifest)){p.load(reader);}if(!take(p,"schema").equals("1"))throw new IOException("Versao de exportacao desconhecida");String start=take(p,"start");int count=Integer.parseInt(take(p,"map.count"));if(count<1||count>3)throw new IOException("Numero de regioes invalido");Map<String,WorldDocument> maps=new LinkedHashMap<>();
++            for(int i=0;i<count;i++){String id=take(p,"map."+i+".id"),sha=take(p,"map."+i+".sha");if(!WorldDocument.validId(id))throw new IOException("ID de mapa invalido");Path file=local(root,id+".sgmap");if(!AssetCatalog.hash(file).equals(sha))throw new IOException("Mapa alterado apos exportacao");var d=DocumentStore.load(file);if(!d.id().equals(id)||maps.put(id,d)!=null)throw new IOException("ID divergente/duplicado");}
++            count=Integer.parseInt(take(p,"asset.count"));if(count<0||count>4096)throw new IOException("Assets excessivos");var assets=new ArrayList<AssetCatalog.Asset>();Set<String> ids=new HashSet<>();
++            for(int i=0;i<count;i++){String id=take(p,"asset."+i+".id"),sha=take(p,"asset."+i+".sha");if(!sha.matches("[a-f0-9]{64}")||!ids.add(id))throw new IOException("Revisao/ID invalido");assets.add(AssetCatalog.verified(local(root,"images/"+sha+".png"),id,sha));}
++            if(!p.isEmpty()||!maps.containsKey(start))throw new IOException("Manifesto inconsistente");var catalog=new AssetCatalog.Result(assets,List.of(),List.of());var issues=StudioValidator.validate(maps,catalog,true);if(issues.stream().anyMatch(e->e.severity()==StudioProblem.Severity.ERROR))throw new IOException(issues.toString());return new Bundle(start,Map.copyOf(maps),catalog,scenes(start,maps));
++        }catch(IllegalArgumentException error){throw new IOException("Bundle invalido: "+error.getMessage(),error);}
++    }
++}
+--- before/server/src/main/java/com/projetok/studio/StudioValidator.java
++++ after/server/src/main/java/com/projetok/studio/StudioValidator.java
+@@ -0,0 +1,31 @@
++package com.projetok.studio;
++import java.util.*;
++
++/** Valida conteudo e compatibilidade explicita antes de exportar, sem corrigir arquivos. */
++public final class StudioValidator {
++    private StudioValidator(){}
++    /** Chamador executa fora da EDT, pois revisoes de assets sao conferidas em disco. */
++    public static List<StudioProblem> validate(Map<String,WorldDocument> maps,AssetCatalog.Result catalog,boolean runtime) {
++        var result=new ArrayList<>(PortalGraph.validate(maps));var assets=catalog.byId();Map<String,String> actual=new HashMap<>();Set<String> regions=new HashSet<>();
++        for(var d:maps.values()) {
++            if(runtime&&(d.width()!=960||d.height()!=640))result.add(error(d,"mapa","Runtime inicial exige 960x640","Dimensoes "+d.width()+"x"+d.height(),"Ajuste o documento ou use somente previa"));
++            if(runtime&&!regions.add(d.region()))result.add(error(d,"mapa","Dois mapas usam a mesma regiao de conteudo",d.region(),"Use village, forest e ruins distintos no conjunto exportado"));
++            if(runtime&&d.elements().stream().filter(e->e.kind()==WorldDocument.Kind.PLAYER).count()!=1)result.add(error(d,"spawn","Exatamente um spawn de jogador obrigatorio","Contagem de PLAYER","Insira um marcador PLAYER"));
++            for(var e:d.elements()) {
++                if(!e.asset().isEmpty()) {
++                    var asset=assets.get(e.asset());String reason=null;
++                    if(asset==null)reason="Sprite inexistente";
++                    else try{String hash=actual.computeIfAbsent(asset.id(),id->{try{return AssetCatalog.hash(asset.file());}catch(Exception ex){return "ilegivel";}});if(!e.sha().equals(asset.sha())||!hash.equals(e.sha()))reason="Asset alterado sem revisao";else if((long)e.crop().x()+e.crop().width()>asset.width()||(long)e.crop().y()+e.crop().height()>asset.height())reason="Recorte fora da imagem";}catch(RuntimeException ex){reason=ex.getMessage();}
++                    if(reason!=null)result.add(error(d,e.id(),reason,e.asset(),"Reindexe, revise a imagem e ajuste a referencia"));
++                }
++                if(e.kind()!=WorldDocument.Kind.TILE&&e.kind()!=WorldDocument.Kind.OBJECT) {
++                    try{StudioContent.validate(e,d.region());}catch(IllegalArgumentException ex){result.add(error(d,e.id(),ex.getMessage(),e.reference(),"Escolha uma referencia do catalogo da regiao"));}
++                    if(!StudioGeometry.free(d,e.x(),e.y(),e.kind()==WorldDocument.Kind.ENEMY?19:18))result.add(error(d,e.id(),"Marcador bloqueado ou fora do espaco fisico",e.x()+","+e.y(),"Mova para um ponto livre"));
++                }
++            }
++            for(String overlap:StudioGeometry.overlaps(d))result.add(new StudioProblem(StudioProblem.Severity.WARNING,d.id(),"collision","Solidos sobrepostos",overlap,"Revise a sobreposicao se nao for intencional"));
++        }
++        return List.copyOf(result);
++    }
++    static StudioProblem error(WorldDocument d,String id,String description,String evidence,String correction){return new StudioProblem(StudioProblem.Severity.ERROR,d.id(),id,description,evidence,correction);}
++}
+--- before/docs/TASK-100-RELATORIO-FINAL.md
++++ after/docs/TASK-100-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-100 - Corujao II
++
++Estado: **VALIDADA COM RESSALVAS**.
++
++Exportacao versionada copia PNGs necessarios por hash e publica manifesto por ultimo em diretorio novo. Loader confere caminhos, revisoes e formatos. Injecao opcional de RpgSceneSet em RpgWorld/servicos existentes conserva campanha padrao, regras e saves. Teste real de parede personalizada e portal entre mapas aprovado; bundle adulterado recusado. Limite explicito 960x640 e ate tres slots village/forest/ruins, sem persistir sessao de autoria. Mapas maiores permanecem autoria/previa; nao houve migracao de save ou protocolo.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-100/corujao-ii/`. Logs da suite: `docs/TASK-studio-100-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-100-TESTES.md
++++ after/docs/TASK-100-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-100 - Corujao II
++
++Comando: `python tools/qualidade.py --offline --task studio-100`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 353,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-100.md
++++ after/docs/TASK-100.md
+@@ -0,0 +1,3 @@
++# TASK-100 - Corujao II
++
++Exportacao versionada copia PNGs necessarios por hash e publica manifesto por ultimo em diretorio novo. Loader confere caminhos, revisoes e formatos. Injecao opcional de RpgSceneSet em RpgWorld/servicos existentes conserva campanha padrao, regras e saves. Teste real de parede personalizada e portal entre mapas aprovado; bundle adulterado recusado. Limite explicito 960x640 e ate tres slots village/forest/ruins, sem persistir sessao de autoria. Mapas maiores permanecem autoria/previa; nao houve migracao de save ou protocolo.

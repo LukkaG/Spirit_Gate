@@ -1,0 +1,19 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/rpg/CorujaoEnemyTest.java",
+    "server/src/main/java/com/projetok/rpg/EnemyService.java",
+    "docs/CORUJAO-I-PROGRESSO.json",
+    "docs/TASK-086-RELATORIO-FINAL.md",
+    "docs/TASK-086-TESTES.md",
+    "docs/TASK-086.md",
+    "docs/TASK-corujao-086-java-version.log",
+    "docs/TASK-corujao-086-java.log",
+    "docs/TASK-corujao-086-maven-version.log",
+    "docs/TASK-corujao-086-python-version.log",
+    "docs/TASK-corujao-086-python.log",
+    "docs/TASK-corujao-086-qualidade.json",
+    "docs/TASK-corujao-086-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

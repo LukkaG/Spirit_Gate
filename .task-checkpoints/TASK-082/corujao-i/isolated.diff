@@ -1,0 +1,88 @@
+--- before/server/src/test/java/com/projetok/prototype/rpg/CorujaoAttackPresentationTest.java
++++ after/server/src/test/java/com/projetok/prototype/rpg/CorujaoAttackPresentationTest.java
+@@ -0,0 +1,21 @@
++package com.projetok.prototype.rpg;
++import com.projetok.rpg.*;
++import com.projetok.prototype.*;
++import org.junit.jupiter.api.Test;
++import java.nio.file.Path;
++import static org.junit.jupiter.api.Assertions.*;
++
++class CorujaoAttackPresentationTest {
++    @Test void successiveAttacksExpireAndDamageInterruptsWithoutBlockingMovement() throws Exception {
++        var w=CorujaoVisualStateTest.forest();var s=RpgPlayerSprites.load(Path.of("../assets/dev/player-base"),250);s.update(w.snapshot());
++        assertTrue(w.attack());s.update(w.snapshot());assertEquals(RpgVisualState.State.ATTACK,s.visualState());
++        var save=w.save();var image=new java.awt.image.BufferedImage(300,300,2);var g=image.createGraphics();
++        for(int i=0;i<50;i++)s.draw(g,new DebugSnapshot.ActorView(1,"Test",140,220,18,save.hp(),w.maxHp(),true,true));
++        g.dispose();assertEquals(save,w.save());assertFalse(w.attack());
++        w.receiveDamage(1);s.update(w.snapshot());assertEquals(RpgVisualState.State.HIT,s.visualState());
++        float x=w.snapshot().x();for(int i=0;i<12;i++){w.tick(-1,0);s.update(w.snapshot());}
++        assertTrue(w.snapshot().x()<x);assertEquals(RpgVisualState.State.WALK,s.visualState());
++        w.receiveDamage(10000);s.update(w.snapshot());assertEquals(RpgVisualState.State.KO,s.visualState());
++        assertTrue(w.returnHome());s.update(w.snapshot());assertEquals(RpgVisualState.State.IDLE,s.visualState());
++    }
++}
+--- before/server/src/main/java/com/projetok/prototype/rpg/RpgPlayerSprites.java
++++ after/server/src/main/java/com/projetok/prototype/rpg/RpgPlayerSprites.java
+@@ -97,6 +97,19 @@
+             g.translate(Math.round(actor.x()-frame.pivotX()*scale),Math.round(actor.y()-frame.pivotY()*scale));
+             g.scale(scale,scale);g.drawImage(frame.image(),0,0,null);
+         } finally { g.dispose(); }
++        // Sem arte de ataque/dano: sinais geometricos sobre o PNG original, sem trava logica.
++        Graphics2D effect=(Graphics2D)original.create();
++        try {
++            int x=Math.round(actor.x()),y=Math.round(actor.y());
++            if(visual.state()==RpgVisualState.State.ATTACK) {
++                effect.setColor(new Color(255,220,110));effect.setStroke(new BasicStroke(3));
++                int angle=switch(animation.pose().direction()){case FRONT->210;case BACK->30;case LEFT->120;case RIGHT->300;};
++                effect.drawArc(x-32,y-45,64,64,angle,120);
++            } else if(visual.state()==RpgVisualState.State.HIT) {
++                effect.setColor(new Color(255,100,100,190));effect.setStroke(new BasicStroke(2));
++                effect.drawOval(x-24,y-24,48,30);
++            }
++        } finally {effect.dispose();}
+         return true;
+     }
+ }
+--- before/docs/TASK-082-RELATORIO-FINAL.md
++++ after/docs/TASK-082-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-082 - Corujao I
++
++Estado: **VALIDADA COM RESSALVAS**.
++
++Ataque confirmado recebe arco direcional provisorio; dano recebe anel discreto. Prioridade e recuperacao visual limitadas por ticks; nao bloqueiam movimento, nao concedem dano e nao alteram alcance/cooldown. KO usa geometria anterior e texto de derrota. Nao existem PNGs Attack/Hit/KO/Run aprovados; fallback documentado, sem frames artificiais. Teste de ataques sucessivos, interrupcao, derrota e recuperacao aprovado.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-082/corujao-i/`. Logs da suite: `docs/TASK-corujao-082-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-082-TESTES.md
++++ after/docs/TASK-082-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-082 - Corujao I
++
++Comando: `python tools/qualidade.py --offline --task corujao-082`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 320,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-082.md
++++ after/docs/TASK-082.md
+@@ -0,0 +1,3 @@
++# TASK-082 - Corujao I
++
++Ataque confirmado recebe arco direcional provisorio; dano recebe anel discreto. Prioridade e recuperacao visual limitadas por ticks; nao bloqueiam movimento, nao concedem dano e nao alteram alcance/cooldown. KO usa geometria anterior e texto de derrota. Nao existem PNGs Attack/Hit/KO/Run aprovados; fallback documentado, sem frames artificiais. Teste de ataques sucessivos, interrupcao, derrota e recuperacao aprovado.

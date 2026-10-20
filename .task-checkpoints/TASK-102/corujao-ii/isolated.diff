@@ -1,0 +1,191 @@
+--- before/server/src/test/java/com/projetok/studio/StudioMilestoneTest.java
++++ after/server/src/test/java/com/projetok/studio/StudioMilestoneTest.java
+@@ -0,0 +1,7 @@
++package com.projetok.studio;
++import org.junit.jupiter.api.Test;
++import java.util.*;
++import static org.junit.jupiter.api.Assertions.*;
++class StudioMilestoneTest {
++    @Test void firstMapIsSerializableAndCompatibleWithRealRpg()throws Exception{var d=StudioExample.document();assertEquals(d,DocumentStore.decode(DocumentStore.encode(d)));assertTrue(StudioValidator.validate(Map.of(d.id(),d),new AssetCatalog.Result(List.of(),List.of(),List.of()),true).isEmpty());assertDoesNotThrow(()->StudioExport.scenes(d.id(),Map.of(d.id(),d)));}
++}
+--- before/server/src/main/java/com/projetok/studio/StudioExample.java
++++ after/server/src/main/java/com/projetok/studio/StudioExample.java
+@@ -0,0 +1,12 @@
++package com.projetok.studio;
++import java.nio.file.*;
++import java.util.*;
++
++/** Exemplo sintetico de dados, sem gerar ou aprovar arte. */
++public final class StudioExample {
++    private StudioExample(){}
++    /** Mapa inicial com spawn, NPC real, colisao e portal local validos. */
++    public static WorldDocument document(){var d=WorldDocument.empty("studio_tutorial",960,640);var crop=new WorldDocument.Crop(0,0,32,32);var player=new WorldDocument.Element("player",WorldDocument.Kind.PLAYER,"","",crop,140,320,32,32,"interaction",true,false,"","FRONT",Map.of());var npc=new WorldDocument.Element("elder",WorldDocument.Kind.NPC,"","",crop,190,320,32,32,"interaction",true,false,"elder","FRONT",Map.of());return d.withElements(List.of(player,npc)).withHitboxes(List.of(new WorldDocument.Hitbox("wall",300,200,64,128,true,"collision"))).withPortals(List.of(new WorldDocument.Portal("portal",750,320,d.id(),140,320,"","FRONT")));}
++    /** Escreve um exemplo novo; jamais sobrescreve arquivo existente. */
++    public static void main(String[] args)throws Exception{if(args.length!=1)throw new IllegalArgumentException("Uso: StudioExample arquivo.sgmap");Path target=Path.of(args[0]);if(Files.exists(target))throw new IllegalArgumentException("Exemplo ja existe");DocumentStore.save(target,document());}
++}
+--- before/server/src/main/java/com/projetok/studio/StudioPlaytest.java
++++ after/server/src/main/java/com/projetok/studio/StudioPlaytest.java
+@@ -24,6 +24,7 @@
+         var render=new StudioMapRenderer(bundle,images,runtime::snapshot,player);var feedback=new RpgCombatFeedback();var boss=new RpgBossOverlay();panel.setActorRenderer(render);panel.setWorldUnderlay(g->render.layers(g,false));panel.setWorldOverlay(g->{render.layers(g,true);boss.draw(g);feedback.draw(g);});
+         JFrame frame=new JFrame("Spirit Gate | PLAYTEST ISOLADO | "+bundle.start());frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);JPanel root=new JPanel(new BorderLayout());JLabel banner=new JLabel("Sessao sintetica sem saves pessoais | WASD mover | SPACE golpe | Q habilidade | F interagir | R recuperar");root.add(banner,BorderLayout.NORTH);root.add(panel);RpgHud hud=new RpgHud(runtime);root.add(hud,BorderLayout.SOUTH);frame.setContentPane(root);frame.setSize(1260,900);frame.setLocationRelativeTo(null);
+         var logs=new ArrayList<String>();logs.add("Inicio: "+bundle.start()+" | runtime real, sem LocalSaveStore");boolean[] held=new boolean[4];String[] keys={"W","S","A","D"};
++        JPanel controls=new JPanel(new java.awt.BorderLayout());controls.add(banner);JPanel actions=new JPanel(new FlowLayout(FlowLayout.RIGHT));JToggleButton geometry=new JToggleButton("Colisoes");geometry.addActionListener(e->panel.setPhysicalGeometryVisible(geometry.isSelected()));actions.add(geometry);JButton secondary=new JButton("Golpe de Impacto");secondary.addActionListener(e->runtime.command(w->w.activate("rpg.secondary")));actions.add(secondary);controls.add(actions,java.awt.BorderLayout.EAST);root.add(controls,java.awt.BorderLayout.NORTH);
+         for(int i=0;i<4;i++)for(boolean down:new boolean[]{true,false}){final int at=i;String key=keys[i]+down;panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke((down?"pressed ":"released ")+keys[i]),key);panel.getActionMap().put(key,new AbstractAction(){public void actionPerformed(ActionEvent e){held[at]=down;runtime.input((held[3]?1:0)-(held[2]?1:0),(held[1]?1:0)-(held[0]?1:0));}});}
+         RpgLauncher.bind(panel,"SPACE",()->runtime.command(RpgWorld::attack));RpgLauncher.bind(panel,"Q",()->runtime.command(RpgWorld::castAbility));RpgLauncher.bind(panel,"R",()->runtime.command(RpgWorld::returnHome));RpgLauncher.bind(panel,"1",()->runtime.command(w->w.use("potion")));RpgLauncher.bind(panel,"F",()->runtime.action(RpgWorld::interact).thenAccept(ok->{if(!ok)synchronized(logs){if(logs.size()<1000)logs.add("Interacao recusada pela simulacao");}}));
+         long[] lastBlocked={-30};RpgWorld.View[] previous={runtime.snapshot()};
+--- before/server/src/main/java/com/projetok/studio/WorldStudio.java
++++ after/server/src/main/java/com/projetok/studio/WorldStudio.java
+@@ -57,7 +57,7 @@
+     void action(String group,String name,Runnable action){JMenuBar bar=getJMenuBar();if(bar==null){bar=new JMenuBar();setJMenuBar(bar);}JMenu menu=null;for(int i=0;i<bar.getMenuCount();i++)if(bar.getMenu(i).getText().equals(group))menu=bar.getMenu(i);if(menu==null){menu=new JMenu(group);bar.add(menu);}JMenuItem item=new JMenuItem(name);item.addActionListener(e->{try{action.run();}catch(Exception error){error(error);}});menu.add(item);}
+     void filter(){assets.clear();AssetCatalog.search(catalog,search.getText(),(String)categories.getSelectedItem()).forEach(assets::addElement);}
+     void rescan(){refresh.setEnabled(false);status.setText("Indexando somente assets e recursos autorizados...");new SwingWorker<AssetCatalog.Result,Void>(){
+-        protected AssetCatalog.Result doInBackground()throws Exception{return AssetCatalog.scan(project,catalog);}
++        protected AssetCatalog.Result doInBackground()throws Exception{var previous=catalog;var result=AssetCatalog.scan(project,previous);Path categories=project.resolve("studio-projects/catalog.properties");if(java.nio.file.Files.isRegularFile(categories)&&java.nio.file.Files.size(categories)<=1_000_000&&categories.toRealPath().startsWith(project.toRealPath())){Properties saved=new Properties();try(var in=java.nio.file.Files.newBufferedReader(categories)){saved.load(in);}var known=previous.byId();result=new AssetCatalog.Result(result.assets().stream().map(a->{String c=saved.getProperty(a.id());return c!=null&&c.length()<=80&&!known.containsKey(a.id())?a.category(c):a;}).toList(),result.warnings(),result.changes());}return result;}
+         protected void done(){try{catalog=get();images.clear();filter();warmImages();status.setText(catalog.assets().size()+" imagens | "+catalog.changes().size()+" alteracoes | "+catalog.warnings().size()+" avisos");if(!catalog.warnings().isEmpty())details.setText(String.join("\n",catalog.warnings()));}catch(Exception error){error(error);}finally{refresh.setEnabled(true);}}
+     }.execute();}
+     void warmImages(){var ids=new HashSet<String>();document.elements().forEach(e->ids.add(e.asset()));if(brush!=null)ids.add(brush.id());var selected=catalog.byId();new SwingWorker<Void,Void>(){
+@@ -66,5 +66,5 @@
+     }.execute();}
+     void error(Exception error){status.setText("Operacao recusada: "+(error.getCause()==null?error.getMessage():error.getCause().getMessage()));}
+     /** Inicializa a ferramenta sem iniciar banco, servidor ou personagem. */
+-    public static void main(String[] args){Path root=args.length==2&&args[0].equals("--project")?Path.of(args[1]):Path.of("");SwingUtilities.invokeLater(()->{var studio=new WorldStudio(root);studio.setVisible(true);studio.rescan();});}
++    public static void main(String[] args){String exe=System.getProperty("jpackage.app-path");Path root=args.length==2&&args[0].equals("--project")?Path.of(args[1]):exe==null?Path.of(""):Path.of(exe).toAbsolutePath().getParent();SwingUtilities.invokeLater(()->{var studio=new WorldStudio(root);studio.setVisible(true);studio.rescan();});}
+ }
+--- before/tools/auditar_world_studio.py
++++ after/tools/auditar_world_studio.py
+@@ -0,0 +1,25 @@
++"""Auditoria real de pacote World Studio; sem extrair nem publicar conteudo."""
++from pathlib import Path,PurePosixPath
++import hashlib,json,zipfile,sys,io
++
++package=Path(sys.argv[1]).resolve()
++manifest=json.loads(Path(str(package)+'.manifest.json').read_text(encoding='utf-8-sig'))
++expected={'SpiritGateWorldStudio/'+row['path']:row for row in manifest}
++with zipfile.ZipFile(package) as archive:
++    names={n.replace('\\','/'):n for n in archive.namelist() if not n.endswith('/')}
++    assert set(names)==set(expected)
++    for name,raw in names.items():
++        assert not PurePosixPath(name).is_absolute() and '..' not in PurePosixPath(name).parts
++        assert not any(p in name.lower().split('/') for p in ('saves','studio-projects','.git','.aws','.codex'))
++        data=archive.read(raw);assert len(data)==expected[name]['bytes'];assert hashlib.sha256(data).hexdigest()==expected[name]['sha256']
++    assert 'SpiritGateWorldStudio/runtime/bin/java.exe' in names and 'SpiritGateWorldStudio/SpiritGateWorldStudio.exe' in names
++    assert 'SpiritGateWorldStudio/assets/maps/studio_tutorial.sgmap' in names
++    with zipfile.ZipFile(io.BytesIO(archive.read(names['SpiritGateWorldStudio/app/world-studio.jar']))) as jar:
++        assert 'com/projetok/studio/WorldStudio.class' in jar.namelist()
++        assert not any('DatabaseManager' in n or 'multiplayer/' in n or n.endswith('Test.class') for n in jar.namelist())
++        for n in jar.namelist():
++            if n.endswith('.class'):assert int.from_bytes(jar.read(n)[6:8],'big')==61
++sha=hashlib.sha256(package.read_bytes()).hexdigest();assert sha==Path(str(package)+'.sha256').read_text().strip()
++report={'package':str(package),'bytes':package.stat().st_size,'sha256':sha,'files':len(names),'pngs':sum(n.endswith('.png') for n in names),'javaBundled':True,'personalDataIncluded':False,'databaseOrCoopRequired':False}
++print(json.dumps(report,indent=2))
++if len(sys.argv)>2:Path(sys.argv[2]).write_text(json.dumps(report,indent=2),encoding='utf-8')
+--- before/tools/build-world-studio.ps1
++++ after/tools/build-world-studio.ps1
+@@ -0,0 +1,33 @@
++param([string]$Version='0.114.0-rc1')
++Set-StrictMode -Version Latest
++$ErrorActionPreference='Stop'
++if($Version -notmatch '^0[.]\d+[.]\d+-rc\d+$'){throw 'Versao invalida'}
++$project=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
++$jdk=Split-Path (Get-Command java.exe).Source
++$buildId=$Version+'-'+[DateTime]::UtcNow.ToString('yyyyMMddTHHmmssZ')+'-'+[Guid]::NewGuid().ToString('N').Substring(0,8)
++$build=Join-Path $project ('server/target/studio-'+$buildId)
++$inputDir=Join-Path $build 'input'; $output=Join-Path $build 'output'; $runtime=Join-Path $build 'runtime'
++New-Item -ItemType Directory -Path $inputDir,$output | Out-Null
++function Checked([string]$tool,[string[]]$parameters){& (Join-Path $jdk $tool) @parameters;if($LASTEXITCODE -ne 0){throw "$tool falhou"}}
++$classes=Join-Path $project 'server/target/classes'
++Checked 'jar.exe' @('--create','--file',(Join-Path $inputDir 'world-studio.jar'),'--main-class','com.projetok.studio.WorldStudio','-C',$classes,'com/projetok/studio','-C',$classes,'com/projetok/domain','-C',$classes,'com/projetok/prototype','-C',$classes,'com/projetok/rpg','-C',$classes,'rpg')
++Checked 'jlink.exe' @('--add-modules','java.base,java.desktop,java.logging,jdk.random','--strip-debug','--no-man-pages','--no-header-files','--compress=2','--output',$runtime)
++Checked 'jpackage.exe' @('--type','app-image','--dest',$output,'--name','SpiritGateWorldStudio','--input',$inputDir,'--main-jar','world-studio.jar','--main-class','com.projetok.studio.WorldStudio','--runtime-image',$runtime,'--app-version',($Version -split '-')[0],'--vendor','Spirit Gate')
++$image=Join-Path $output 'SpiritGateWorldStudio'
++foreach($file in Get-ChildItem -LiteralPath $build -Recurse -File){if($file.IsReadOnly){$file.IsReadOnly=$false}}
++$assets=Join-Path $project 'assets'
++foreach($file in Get-ChildItem -LiteralPath $assets -Recurse -File | Where-Object {$_.Extension -eq '.png' -or $_.Name -eq 'studio_tutorial.sgmap'}){
++    $relative=$file.FullName.Substring($assets.Length+1);$destination=Join-Path (Join-Path $image 'assets') $relative
++    New-Item -ItemType Directory -Path (Split-Path $destination) -Force | Out-Null
++    Copy-Item -LiteralPath $file.FullName -Destination $destination
++    if((Get-FileHash -LiteralPath $file.FullName).Hash -ne (Get-FileHash -LiteralPath $destination).Hash){throw 'Hash divergente na copia de assets'}
++}
++Copy-Item -LiteralPath (Join-Path $project 'docs/WORLD-EDITOR-MANUAL.md') -Destination (Join-Path $image 'MANUAL.md')
++[IO.File]::WriteAllText((Join-Path $image 'LEIA-ME.txt'),"Spirit Gate World Studio $Version`r`nExtraia todo o ZIP e abra SpiritGateWorldStudio.exe. Java integrado, sem PostgreSQL ou multiplayer.`r`nAssets de trabalho experimentais; nenhuma aprovacao artistica presumida. Projetos novos em studio-projects. Manual em MANUAL.md. Exemplo em assets/maps/studio_tutorial.sgmap.",[Text.Encoding]::UTF8)
++$manifest=@(Get-ChildItem -LiteralPath $image -Recurse -File | Sort-Object FullName | ForEach-Object {[ordered]@{path=$_.FullName.Substring($image.Length+1).Replace('\','/');bytes=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}})
++$zip=Join-Path $project ('dist/SpiritGate-WorldStudio-'+$buildId+'.zip')
++Compress-Archive -LiteralPath $image -DestinationPath $zip -CompressionLevel Optimal
++$manifest | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath ($zip+'.manifest.json') -Encoding UTF8
++(Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant() | Set-Content -LiteralPath ($zip+'.sha256') -Encoding ASCII
++Write-Output "STUDIO_EXE=$image\SpiritGateWorldStudio.exe"
++Write-Output "STUDIO_ZIP=$zip"
+--- before/docs/TASK-102-RELATORIO-FINAL.md
++++ after/docs/TASK-102-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-102 - Corujao II
++
++Estado: **VALIDADA COM RESSALVAS**.
++
++Marco basico com 355 Java/30 Python aprovados; cliente/editor reais verificados na TASK-101. Pacote Windows 0.102.0-rc1 auditado: 397 arquivos/248 PNGs, runtime Java, sem saves, banco ou Coop. EXE abriu janela filha World Studio e encerrou normalmente (sonda inicial inspecionou apenas processo pai, corrigida sem alterar app). Manifesto/SHA em dist e package-audit.json no checkpoint. Manual, contrato, catalogo e exemplo sintetico incluidos. Arte e UX humana pendentes; ampliacao autorizada continua na TASK-103.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-102/corujao-ii/`. Logs da suite: `docs/TASK-studio-102-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-102-TESTES.md
++++ after/docs/TASK-102-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-102 - Corujao II
++
++Comando: `python tools/qualidade.py --offline --task studio-102`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 355,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-102.md
++++ after/docs/TASK-102.md
+@@ -0,0 +1,3 @@
++# TASK-102 - Corujao II
++
++Marco basico com 355 Java/30 Python aprovados; cliente/editor reais verificados na TASK-101. Pacote Windows 0.102.0-rc1 auditado: 397 arquivos/248 PNGs, runtime Java, sem saves, banco ou Coop. EXE abriu janela filha World Studio e encerrou normalmente (sonda inicial inspecionou apenas processo pai, corrigida sem alterar app). Manifesto/SHA em dist e package-audit.json no checkpoint. Manual, contrato, catalogo e exemplo sintetico incluidos. Arte e UX humana pendentes; ampliacao autorizada continua na TASK-103.
+--- before/docs/WORLD-EDITOR-CATALOGO-ASSETS.md
++++ after/docs/WORLD-EDITOR-CATALOGO-ASSETS.md
+@@ -0,0 +1,7 @@
++# Catálogo do World Studio
++
++Raízes autorizadas: assets e server/src/main/resources, sob a raiz do projeto selecionado. PNGs são lidos, nunca executados ou modificados. Links e caminhos que saem das raízes são recusados. Limites: 32 MB por PNG, oito milhões de pixels, 8192 por eixo e 4096 imagens indexadas.
++
++ID é SHA-256 do caminho relativo; revisão é SHA-256 dos bytes. A revisão do documento deve coincidir com a biblioteca e o arquivo no momento da exportação. Reindexar não aprova arte nem atualiza silenciosamente referências salvas. Categorias são manuais. Tilesets são recortes virtuais com grade, margens, espaçamento e região; não se presume qualquer layout universal.
++
++Miniaturas 64×64 ficam em memória. Imagens usadas no canvas são carregadas em worker e limitadas por cache LRU de 64 MiB. A pintura não lê arquivos. Avisos de arquivos inválidos aparecem no painel, preservando os demais assets.
+--- before/docs/WORLD-EDITOR-MANUAL.md
++++ after/docs/WORLD-EDITOR-MANUAL.md
+@@ -0,0 +1,19 @@
++# Spirit Gate World Studio — manual
++
++Abra `world-studio.cmd` no checkout compilado, ou extraia o pacote inteiro e execute SpiritGateWorldStudio.exe. Não exige PostgreSQL, servidor ou Java instalado quando empacotado.
++
++Use Arquivo → Novo mapa e escolha nome, ID, tamanho, grade e região de conteúdo. A biblioteca indexa somente assets e recursos autorizados; busca por nome/categoria e miniaturas não modificam os PNGs. Defina categorias manualmente. Escolha uma imagem, use Recortar tileset para cadastrar largura/altura, margem, espaço e região e clique no recorte desejado.
++
++No canvas, roda do mouse altera zoom ancorado; botão central arrasta a câmera. Selecione camada no painel direito. Objetos reais mantêm o tamanho do recorte; Tile na grade ajusta o desenho ao tamanho escolhido. Escolha lápis, borracha, retângulo, balde, conta-gotas ou seleção. Ctrl+C/Ctrl+V copiam/colam; Ctrl+Z/Ctrl+Y desfazem/refazem. Retângulo e balde têm limite de 4.096 células. Selecione um elemento e use Editar elemento selecionado para ajustar dimensões, camada, referência e propriedades.
++
++Crie, renomeie, reordene, oculte ou bloqueie camadas. Colisões são retângulos explícitos, nunca inferidas da imagem. Menu Mapa permite criar/editar; ferramenta Colisão desenha pelo mouse. Ver → Raio do jogador usa o mesmo CollisionService com raio 18. Snap pode ser alternado no menu Editar. Uma área transitável não abre um furo em outro retângulo sólido.
++
++Menu Entidades coloca NPC, baú, recurso, inimigo e jogador. Escolha IDs reais; NPCs e inimigos respeitam a região de conteúdo. Um mapa exportável precisa de exatamente um PLAYER em posição livre. Portais referenciam o ID de outro documento, chegada e missão aceita opcional. Conexões entre mapas mostra o grafo e os problemas; abrir documentos do mesmo diretório registra mapas relacionados.
++
++Salvar/Salvar como usam `.sgmap` V1 e backup `.bak` de uma versão íntegra. Para recuperar, escolha Recuperar backup e depois Salvar como. Um arquivo corrompido não é sobrescrito automaticamente. Não há migração silenciosa de mapas antigos.
++
++Para o primeiro teste, abra `assets/maps/studio_tutorial.sgmap`, examine spawn/NPC/parede/portal e use Mapa → Testar mapa no RPG. A exportação validada inicia runtime e cliente reais em sessão sintética sem salvar personagens. WASD move, Espaço ataca, Q usa habilidade e F interage. R recupera após KO. O botão Colisões revela a geometria; o botão adicional usa a habilidade do Guardian. Diagnósticos ficam no diretório do playtest ao fechar.
++
++O primeiro adaptador aceita mapas 960×640 e até três regiões de conteúdo distintas (village, forest, ruins) no conjunto alcançável. A autoria aceita até 8192×8192; mapas incompatíveis continuam editáveis, mas não são apresentados como executáveis no jogo. Condições de campanha existentes, inclusive o acesso ao santuário, continuam válidas.
++
++Esta é ferramenta experimental: arte e experiência precisam de homologação humana. O marco TASK-102 é ampliado nas TASK-103 a TASK-114; consultar o relatório final para funcionalidades avançadas e limites efetivos.

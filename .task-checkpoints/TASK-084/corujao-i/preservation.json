@@ -1,0 +1,18 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/prototype/rpg/CorujaoControlsTest.java",
+    "docs/CORUJAO-I-PROGRESSO.json",
+    "docs/TASK-084-RELATORIO-FINAL.md",
+    "docs/TASK-084-TESTES.md",
+    "docs/TASK-084.md",
+    "docs/TASK-corujao-084-java-version.log",
+    "docs/TASK-corujao-084-java.log",
+    "docs/TASK-corujao-084-maven-version.log",
+    "docs/TASK-corujao-084-python-version.log",
+    "docs/TASK-corujao-084-python.log",
+    "docs/TASK-corujao-084-qualidade.json",
+    "docs/TASK-corujao-084-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

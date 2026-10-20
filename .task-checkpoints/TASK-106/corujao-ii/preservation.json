@@ -1,0 +1,23 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/EnvironmentAnimationTest.java",
+    "server/src/main/java/com/projetok/studio/AnimationTools.java",
+    "server/src/main/java/com/projetok/studio/EnvironmentAnimation.java",
+    "server/src/main/java/com/projetok/studio/StudioExport.java",
+    "server/src/main/java/com/projetok/studio/WorldCanvas.java",
+    "server/src/main/java/com/projetok/studio/WorldStudio.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-106-RELATORIO-FINAL.md",
+    "docs/TASK-106-TESTES.md",
+    "docs/TASK-106.md",
+    "docs/TASK-studio-106-java-version.log",
+    "docs/TASK-studio-106-java.log",
+    "docs/TASK-studio-106-maven-version.log",
+    "docs/TASK-studio-106-python-version.log",
+    "docs/TASK-studio-106-python.log",
+    "docs/TASK-studio-106-qualidade.json",
+    "docs/TASK-studio-106-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

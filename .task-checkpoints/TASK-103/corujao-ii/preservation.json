@@ -1,0 +1,23 @@
+{
+  "changed": [
+    "server/src/test/java/com/projetok/studio/AutotilingTest.java",
+    "server/src/main/java/com/projetok/studio/Autotiling.java",
+    "server/src/main/java/com/projetok/studio/PaintTools.java",
+    "server/src/main/java/com/projetok/studio/TerrainTools.java",
+    "server/src/main/java/com/projetok/studio/TilePicker.java",
+    "server/src/main/java/com/projetok/studio/WorldStudio.java",
+    "docs/CORUJAO-II-PROGRESSO.json",
+    "docs/TASK-103-RELATORIO-FINAL.md",
+    "docs/TASK-103-TESTES.md",
+    "docs/TASK-103.md",
+    "docs/TASK-studio-103-java-version.log",
+    "docs/TASK-studio-103-java.log",
+    "docs/TASK-studio-103-maven-version.log",
+    "docs/TASK-studio-103-python-version.log",
+    "docs/TASK-studio-103-python.log",
+    "docs/TASK-studio-103-qualidade.json",
+    "docs/TASK-studio-103-testes.txt"
+  ],
+  "removed": [],
+  "savesUnchanged": true
+}

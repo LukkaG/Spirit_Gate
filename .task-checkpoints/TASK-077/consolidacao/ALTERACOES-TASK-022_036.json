@@ -1,0 +1,127 @@
+{
+  "022": [
+    "docs/TASK-022-testes.txt",
+    "docs/TASK-022.md",
+    "tools/registrar_task.py"
+  ],
+  "023": [
+    "docs/TASK-023-testes.txt",
+    "docs/TASK-023.md",
+    "tools/qualidade.py",
+    "tools/test_qualidade.py"
+  ],
+  "024": [
+    "docs/TASK-024-testes.txt",
+    "docs/TASK-024.md",
+    "server/src/main/java/com/projetok/prototype/DebugPanel.java",
+    "server/src/main/java/com/projetok/prototype/DebugWorld.java",
+    "server/src/main/java/com/projetok/prototype/LocalArenaMap.java",
+    "server/src/test/java/com/projetok/prototype/LargeMapTest.java"
+  ],
+  "025": [
+    "docs/TASK-025-testes.txt",
+    "docs/TASK-025.md",
+    "server/src/main/java/com/projetok/prototype/ArenaViewport.java",
+    "server/src/main/java/com/projetok/prototype/DebugPanel.java",
+    "server/src/main/java/com/projetok/prototype/LocalArenaMap.java",
+    "server/src/test/java/com/projetok/prototype/CullingTest.java"
+  ],
+  "026": [
+    "docs/TASK-026-testes.txt",
+    "docs/TASK-026.md",
+    "server/src/main/java/com/projetok/prototype/DebugPanel.java",
+    "server/src/main/java/com/projetok/prototype/LocalArenaMap.java",
+    "server/src/test/java/com/projetok/prototype/ScenarioLayerTest.java"
+  ],
+  "027": [
+    "docs/TASK-027-testes.txt",
+    "docs/TASK-027.md",
+    "docs/mapas/demo-v2.properties",
+    "server/src/main/java/com/projetok/prototype/LocalArenaMap.java",
+    "tools/mapas.py",
+    "tools/test_mapas.py"
+  ],
+  "028": [
+    "docs/TASK-028-testes.txt",
+    "docs/TASK-028.md",
+    "tools/revisar_sprites.py",
+    "tools/test_sprite_review.py"
+  ],
+  "029": [
+    "docs/TASK-029-testes.txt",
+    "docs/TASK-029.md",
+    "server/src/main/java/com/projetok/prototype/ValidatedSpriteAtlas.java",
+    "server/src/test/java/com/projetok/prototype/VisualPackageTest.java",
+    "tools/test_visual_package.py",
+    "tools/validar_assets.py"
+  ],
+  "030": [
+    "docs/TASK-030-testes.txt",
+    "docs/TASK-030.md",
+    "server/src/test/java/com/projetok/prototype/DirectionalAnimationTest.java"
+  ],
+  "031": [
+    "docs/TASK-031-testes.txt",
+    "docs/TASK-031.md",
+    "server/src/main/java/com/projetok/prototype/DebugLauncher.java",
+    "server/src/test/java/com/projetok/prototype/FocusControlsTest.java"
+  ],
+  "032": [
+    "docs/TASK-032-testes.txt",
+    "docs/TASK-032.md",
+    "server/src/main/java/com/projetok/prototype/DebugLauncher.java",
+    "server/src/main/java/com/projetok/prototype/DebugPanel.java",
+    "server/src/test/java/com/projetok/prototype/HelpPresentationTest.java"
+  ],
+  "033": [
+    "docs/TASK-033-testes.txt",
+    "docs/TASK-033.md",
+    "server/src/main/java/com/projetok/prototype/DebugPanel.java",
+    "server/src/main/java/com/projetok/prototype/DebugSnapshot.java",
+    "server/src/test/java/com/projetok/prototype/CombatFeedbackPresentationTest.java"
+  ],
+  "034": [
+    "docs/TASK-034-testes.txt",
+    "docs/TASK-034.md",
+    "server/src/main/java/com/projetok/prototype/DebugLauncher.java",
+    "server/src/main/java/com/projetok/prototype/DebugPanel.java",
+    "server/src/main/java/com/projetok/prototype/DiagnosticReport.java",
+    "server/src/test/java/com/projetok/prototype/DiagnosticReportTest.java"
+  ],
+  "035": [
+    "docs/TASK-035-testes.txt",
+    "docs/TASK-035.md",
+    "server/src/test/java/com/projetok/prototype/StabilityStressTest.java"
+  ],
+  "036": [
+    "CHANGELOG-PROTOTIPO.md",
+    "README-PROTOTIPO.md",
+    "docs/CONTINUIDADE-TASK-022_036.md",
+    "docs/RELATORIO-FINAL-TASK-022_036.md",
+    "docs/TASK-022.md",
+    "docs/TASK-023.md",
+    "docs/TASK-024.md",
+    "docs/TASK-025.md",
+    "docs/TASK-026.md",
+    "docs/TASK-027.md",
+    "docs/TASK-028.md",
+    "docs/TASK-029.md",
+    "docs/TASK-030.md",
+    "docs/TASK-031.md",
+    "docs/TASK-032.md",
+    "docs/TASK-033.md",
+    "docs/TASK-034.md",
+    "docs/TASK-035.md",
+    "docs/TASK-036-testes.txt",
+    "docs/TASK-036.md",
+    "docs/kit-homologacao-022-036/CHANGELOG-RESUMIDO.md",
+    "docs/kit-homologacao-022-036/MODELO-RELATO-BUG.md",
+    "docs/kit-homologacao-022-036/ROTEIRO-HOMOLOGACAO.md",
+    "docs/kit-homologacao-022-036/mapa-demo.properties",
+    "server/src/main/java/com/projetok/prototype/DiagnosticReport.java",
+    "tools/build-windows-portable.ps1",
+    "tools/consolidar_rodada.py",
+    "tools/revisar_sprites.py",
+    "tools/test_sprite_review.py"
+  ]
+}

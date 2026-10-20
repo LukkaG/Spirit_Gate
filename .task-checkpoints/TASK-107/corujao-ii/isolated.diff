@@ -1,0 +1,100 @@
+--- before/server/src/test/java/com/projetok/studio/EnvironmentPreviewTest.java
++++ after/server/src/test/java/com/projetok/studio/EnvironmentPreviewTest.java
+@@ -0,0 +1,9 @@
++package com.projetok.studio;
++import org.junit.jupiter.api.Test;
++import java.awt.*;
++import java.awt.image.BufferedImage;
++import java.util.Map;
++import static org.junit.jupiter.api.Assertions.*;
++class EnvironmentPreviewTest {
++    @Test void modesAreVisualOnlyAndOffIsTransparent(){var d=WorldDocument.empty("mapa",128,128);for(var mode:EnvironmentPreview.Mode.values()){var b=new BufferedImage(100,100,BufferedImage.TYPE_INT_ARGB);var g=b.createGraphics();EnvironmentPreview.draw(g,new Rectangle(0,0,100,100),mode,1_000_000_000);g.dispose();if(mode==EnvironmentPreview.Mode.OFF)assertEquals(0,b.getRGB(20,20));assertEquals(d.hitboxes(),d.withMetadata(Map.of("preview.environment",mode.name())).hitboxes());}assertEquals(EnvironmentPreview.Mode.OFF,EnvironmentPreview.mode(d.withMetadata(Map.of("preview.environment","unknown"))));}
++}
+--- before/server/src/main/java/com/projetok/studio/EnvironmentPreview.java
++++ after/server/src/main/java/com/projetok/studio/EnvironmentPreview.java
+@@ -0,0 +1,14 @@
++package com.projetok.studio;
++import com.projetok.rpg.EnvironmentCycle;
++import java.awt.*;
++
++/** Iluminacao e clima somente visuais, sem consulta ou alteracao da fisica. */
++public final class EnvironmentPreview {
++    /** Modos cadastrados e opcionais de apresentacao. */
++    public enum Mode {OFF,DAY,NIGHT,DUSK,RAIN,FOG,INDOOR,CYCLE}
++    private EnvironmentPreview(){}
++    /** Pinta overlay barato limitado ao viewport, usando tempo externo monotono. */
++    public static void draw(Graphics2D g,Rectangle area,Mode mode,long nanos){Color color=switch(mode){case NIGHT->new Color(8,15,55,145);case DUSK->new Color(135,55,25,75);case FOG->new Color(210,220,230,80);case INDOOR->new Color(8,5,15,175);case RAIN->new Color(20,35,65,60);case CYCLE->new Color(10,15,40,Math.round((1-EnvironmentCycle.light(Math.max(0,nanos/33_333_333),true))*255));default->null;};if(color!=null){g.setColor(color);g.fillRect(area.x,area.y,area.width,area.height);}if(mode==Mode.RAIN){g.setColor(new Color(175,200,230,120));int offset=(int)(Math.max(0,nanos)/20_000_000%48);int count=0;for(int y=area.y-48;y<area.y+area.height&&count<4096;y+=48)for(int x=area.x-48;x<area.x+area.width&&count++<4096;x+=48)g.drawLine(x+offset,y+offset,x+offset-5,y+offset+12);}}
++    /** Configuracao salva no projeto, sem impacto no bundle de jogo. */
++    public static Mode mode(WorldDocument d){try{return Mode.valueOf(d.metadata().getOrDefault("preview.environment","OFF"));}catch(IllegalArgumentException ex){return Mode.OFF;}}
++}
+--- before/server/src/main/java/com/projetok/studio/EnvironmentTools.java
++++ after/server/src/main/java/com/projetok/studio/EnvironmentTools.java
+@@ -0,0 +1,6 @@
++package com.projetok.studio;
++import javax.swing.*;
++import java.util.*;
++final class EnvironmentTools {
++    EnvironmentTools(WorldStudio ui){ui.action("Ambiente","Iluminacao e clima (previa)",()->{var mode=(EnvironmentPreview.Mode)JOptionPane.showInputDialog(ui,"Somente apresentacao; OFF desativa","Ambiente",JOptionPane.PLAIN_MESSAGE,null,EnvironmentPreview.Mode.values(),EnvironmentPreview.mode(ui.document));if(mode!=null){var m=new HashMap<>(ui.document.metadata());m.put("preview.environment",mode.name());ui.change(ui.document.withMetadata(m));}});}
++}
+--- before/server/src/main/java/com/projetok/studio/WorldCanvas.java
++++ after/server/src/main/java/com/projetok/studio/WorldCanvas.java
+@@ -53,6 +53,7 @@
+             if(collisions)for(var h:d.hitboxes()) {g.setColor(h.solid()?new Color(255,85,70,80):new Color(65,220,160,60));g.fillRect(h.x(),h.y(),h.width(),h.height());g.setColor(selected.contains(h.id())?Color.YELLOW:h.solid()?Color.RED:Color.GREEN);g.drawRect(h.x(),h.y(),h.width(),h.height());}
+             if(playerPreview){g.setColor(StudioGeometry.free(d,cursor.x,cursor.y,18)?Color.GREEN:Color.RED);g.drawOval(cursor.x-18,cursor.y-18,36,36);}
+             for(var p:d.portals()){g.setColor(Color.MAGENTA);g.drawOval(p.x()-12,p.y()-12,24,24);g.drawString(p.destination(),p.x()+14,p.y());}
++            EnvironmentPreview.draw(g,visible,EnvironmentPreview.mode(d),System.nanoTime()-animationStart);
+         }finally{g.dispose();}
+     }
+ }
+--- before/server/src/main/java/com/projetok/studio/WorldStudio.java
++++ after/server/src/main/java/com/projetok/studio/WorldStudio.java
+@@ -55,6 +55,7 @@
+         new PrefabTools(this);
+         new GroupTools(this);
+         new AnimationTools(this);
++        new EnvironmentTools(this);
+     }
+     void change(WorldDocument next){document=history.commit(Autotiling.refresh(next));if(layerTools!=null)layerTools.refresh();canvas.repaint();}
+     void inspectSelection(){details.setText(document.elements().stream().filter(e->canvas.selected.contains(e.id())).map(Object::toString).collect(java.util.stream.Collectors.joining("\n")));}
+--- before/docs/TASK-107-RELATORIO-FINAL.md
++++ after/docs/TASK-107-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-107 - Corujao II
++
++Estado: **validada-com-limitacoes**.
++
++Dia, noite, entardecer, chuva, nevoa, interior e ciclo existente; previa opcional persistida no projeto, sem alterar fisica ou combate. Efeitos nao exportados para o jogo.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-107/corujao-ii/`. Logs da suite: `docs/TASK-studio-107-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-107-TESTES.md
++++ after/docs/TASK-107-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-107 - Corujao II
++
++Comando: `python tools/qualidade.py --offline --task studio-107`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 360,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-107.md
++++ after/docs/TASK-107.md
+@@ -0,0 +1,3 @@
++# TASK-107 - Corujao II
++
++Dia, noite, entardecer, chuva, nevoa, interior e ciclo existente; previa opcional persistida no projeto, sem alterar fisica ou combate. Efeitos nao exportados para o jogo.

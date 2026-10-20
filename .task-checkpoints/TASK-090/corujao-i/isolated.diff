@@ -1,0 +1,267 @@
+--- before/server/src/main/java/com/projetok/prototype/rpg/RpgBossOverlay.java
++++ after/server/src/main/java/com/projetok/prototype/rpg/RpgBossOverlay.java
+@@ -22,7 +22,7 @@
+     public void draw(Graphics2D original) {
+         if(threat==null)return;Graphics2D g=(Graphics2D)original.create();
+         try {g.setColor(new Color(255,180,65,180));g.fill(dots);g.setColor(new Color(255,210,100));
+-            g.setFont(new Font("SansSerif",Font.BOLD,13));g.drawString("Preparando "+RpgCombatStatus.cooldown(threat.remainingTicks()),threat.x()-60,threat.y()-40);
++            g.setFont(new Font("SansSerif",Font.BOLD,13));g.drawString("Preparando "+RpgCombatStatus.cooldown(threat.remainingTicks()),threat.x()-60,threat.y()-threat.radius()-10);
+         } finally {g.dispose();}
+     }
+ }
+--- before/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
++++ after/server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java
+@@ -51,7 +51,7 @@
+         Runnable bindActions=()->actions.forEach((id,action)->bind(panel,controls[0].key(id),action));bindActions.run();
+         boolean amber=runtime.snapshot().identity().appearance().equals("amber");
+         panel.setActorPalette(id->id==1?(amber?new java.awt.Color(230,177,65):new java.awt.Color(65,190,220)):id>=500?new java.awt.Color(90,200,160):null);
+-        JButton menuButton=new JButton("Salvar e voltar ao menu");menuButton.addActionListener(e->frame.dispatchEvent(new WindowEvent(frame,WindowEvent.WINDOW_CLOSING)));JPanel toolbar=new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));toolbar.add(menuButton);root.add(toolbar,java.awt.BorderLayout.NORTH);
++        JButton menuButton=new JButton("Salvar e voltar ao menu");menuButton.addActionListener(e->frame.dispatchEvent(new WindowEvent(frame,WindowEvent.WINDOW_CLOSING)));JPanel toolbar=new JPanel(new java.awt.GridLayout(0,4,4,4));toolbar.add(menuButton);root.add(toolbar,java.awt.BorderLayout.NORTH);
+         java.util.Map<String,JButton> hotbar=new java.util.TreeMap<>();
+         for(String action:new String[]{"attack","ability","potion","inventory","journal","map"}){JButton button=new JButton(actionLabel(action)+" ["+controls[0].key(action)+"]");button.addActionListener(e->{audio.play(RpgAudio.Cue.UI);actions.get(action).run();});toolbar.add(button);hotbar.put(action,button);}
+         var secondary=com.projetok.rpg.RpgSecondaryAbility.forArchetype(world.snapshot().identity().archetype());
+--- before/tools/auditar_corujao.py
++++ after/tools/auditar_corujao.py
+@@ -0,0 +1,31 @@
++"""Audita o ZIP experimental e seus hashes sem extrair nem incluir dados pessoais."""
++from pathlib import Path,PurePosixPath
++import sys,json,hashlib,zipfile,io
++
++package=Path(sys.argv[1]).resolve()
++manifest=json.loads(Path(str(package)+'.manifest.json').read_text(encoding='utf-8-sig'))
++expected={'SpiritGateRPG/'+row['path']:row for row in manifest}
++with zipfile.ZipFile(package) as archive:
++    names={name.replace('\\','/'):name for name in archive.namelist() if not name.endswith('/')}
++    assert set(names)==set(expected),(set(names)-set(expected),set(expected)-set(names))
++    for name,rawname in names.items():
++        assert not PurePosixPath(name).is_absolute() and '..' not in PurePosixPath(name).parts
++        assert not any(p in name.lower().split('/') for p in ('saves','data','.git','.aws','.codex'))
++        data=archive.read(rawname);assert len(data)==expected[name]['bytes']
++        assert hashlib.sha256(data).hexdigest()==expected[name]['sha256']
++    pngs={name.split('/')[-1]:hashlib.sha256(archive.read(raw)).hexdigest() for name,raw in names.items() if name.endswith('.png')}
++    metadata={}
++    for line in Path('server/src/main/resources/rpg/experimental-player.properties').read_text().splitlines():
++        if line and not line.startswith('#'):
++            values=line.split('=',1)[1].split(',');metadata[values[0]]=values[1]
++    assert len(pngs)==20 and pngs==metadata
++    assert 'SpiritGateRPG/runtime/bin/java.exe' in names
++    assert 'SpiritGateRPG/SpiritGateRPG.exe' in names and 'SpiritGateRPG/Abrir-Geometrico.cmd' in names
++    with zipfile.ZipFile(io.BytesIO(archive.read(names['SpiritGateRPG/app/spirit-gate-rpg.jar']))) as jar:
++        assert not any('multiplayer/' in n or 'DatabaseManager' in n or n.endswith('Test.class') for n in jar.namelist())
++        assert 'com/projetok/rpg/RpgSecondaryAbility.class' in jar.namelist()
++sha=hashlib.sha256(package.read_bytes()).hexdigest()
++assert sha==Path(str(package)+'.sha256').read_text().strip()
++report={'package':str(package),'bytes':package.stat().st_size,'sha256':sha,'filesVerified':len(names),'pngsVerified':20,'personalSavesIncluded':False,'javaBundled':True,'geometryFallbackIncluded':True,'humanApproved':False}
++print(json.dumps(report,indent=2))
++Path('.task-checkpoints/TASK-090/corujao-i/package-audit.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
+--- before/tools/build-rpg-sprites-portable.ps1
++++ after/tools/build-rpg-sprites-portable.ps1
+@@ -24,8 +24,8 @@
+ $assetTarget=Join-Path $image 'assets/dev/player-base'
+ New-Item -ItemType Directory -Path $assetTarget | Out-Null
+ $metadata=Join-Path $classes 'rpg/experimental-player.properties'
+-$expected=@(Get-Content -LiteralPath $metadata | Where-Object {$_ -match '^(FRONT|BACK|LEFT|RIGHT)[.][012]='})
+-if($expected.Count -ne 12){throw 'Contrato experimental incompleto'}
++$expected=@(Get-Content -LiteralPath $metadata | Where-Object {$_ -match '^(FRONT|BACK|LEFT|RIGHT)[.][0-4]='})
++if($expected.Count -ne 20){throw 'Contrato experimental incompleto: esperado Idle e quatro Walk por direcao'}
+ foreach($line in $expected){
+     $fields=($line -split '=',2)[1] -split ','
+     $asset=Join-Path $assetSource $fields[0]
+--- before/docs/CORUJAO-I-CONTINUIDADE.md
++++ after/docs/CORUJAO-I-CONTINUIDADE.md
+@@ -0,0 +1,11 @@
++# Corujão I — continuidade
++
++Consultar CORUJAO-I-RELATORIO-FINAL.md, CORUJAO-I-INVENTARIO.md, CORUJAO-I-HOMOLOGACAO.md e CORUJAO-I-PENDENCIAS.md. O progresso por etapa e as contagens reais estão em CORUJAO-I-PROGRESSO.json.
++
++Os documentos históricos da TASK-079 anterior foram preservados. A nova TASK-079 do Corujão está em `docs/corujao-i/`. As demais tarefas desta rodada estão diretamente em docs. Checkpoints recuperáveis e diffs por etapa: `.task-checkpoints/TASK-NNN/corujao-i/`.
++
++Recompilar/validar: `python tools/qualidade.py --offline --task identificador-novo`. Usar identificador novo para preservar os logs existentes. Java 17; POM em server/pom.xml. Nenhuma dependência foi acrescentada.
++
++Navegador: game-src/game-resources são cópias explícitas da produção desta rodada. Manter as adaptações de BrowserLauncher, Random do template e filesystem /str ao sincronizar. Executar `python build.py`, `python check.py` e o QA antes de usar o fluxo Sites. O atualizador continua com distribuição separada; não publicar automaticamente os pacotes desta rodada.
++
++Parar na TASK-090 e aguardar homologação do responsável. Não iniciar TASK-091, ampliar multiplayer ou declarar a arte definitiva.
+--- before/docs/CORUJAO-I-HOMOLOGACAO.md
++++ after/docs/CORUJAO-I-HOMOLOGACAO.md
+@@ -0,0 +1,27 @@
++# Corujão I — roteiro de homologação humana
++
++Arte e balanceamento continuam experimentais. Nenhuma aprovação humana foi presumida.
++
++## Navegador
++
++Abra https://spirit-gate-sprites-lab.eageremu2049.chatgpt.site e selecione **Recomendada: 50% / 250 ms**. Escolha Guardian ou Mystic e clique em Iniciar teste. Cada início cria um visitante novo; para carregar um save manual, use Salvar e voltar ao menu e selecione o personagem. Os arquivos ficam no navegador, separados do desktop.
++
++1. Use WASD nas quatro direções; observe os quatro passos por direção, pés, proporção e transparência. Pare e tente andar contra uma parede: o personagem deve voltar ao Idle quando não houver deslocamento efetivo.
++2. Verifique se a escala e o ritmo estão agradáveis. Um frame dura 250 ms, quantizado pelo relógio de 30 ticks/s; o ciclo completo tem quatro frames. O deslocamento continua em 215 unidades/s.
++3. Atravesse o portal para o bosque e ataque com Espaço. Golpes acertados mostram o dano aplicado; uma tentativa sem alvo não deve mostrar dano falso. Dano recebido e cura têm cores diferentes.
++4. Use Q para a habilidade original. O botão Golpe de Impacto (Guardian) ou Pulso Arcano (Mystic) ativa a adicional. Elas compartilham recarga com Q e respeitam a recarga do golpe básico. Observe os custos no tooltip e as barras de vigor/vida.
++5. Complete a campanha e encontre o chefe. Compare preparação pontilhada, tempo restante, recuperação, vida e fase enfurecida. A regra de visibilidade mantém a amostragem histórica de até seis pixels; trajetos rasantes a quinas têm essa limitação conhecida.
++6. Teste perder foco, soltar teclas, pressionar rapidamente, salvar com F5, voltar ao menu e continuar. F5 deve salvar no jogo sem recarregar a página.
++7. Registre clareza do HUD, tamanho, ritmo, deslizamento dos pés, legibilidade do chefe e desempenho. O formulário copia o texto ou prepara uma issue; nada é enviado automaticamente.
++
++O navegador foi exercitado em Edge com teclado. Outros navegadores, desempenho em outras máquinas e controles de toque ainda precisam de avaliação. A primeira abertura depende do download do CheerpJ; não há servidor multiplayer nem salvamento em nuvem.
++
++## Desktop experimental
++
++O pacote indicado no relatório final contém Java. Extraia todo o ZIP e abra SpiritGateRPG.exe. `Abrir-Geometrico.cmd` conserva o modo anterior. Não mova saves pessoais para dentro de pacotes de teste sem manter sua própria cópia.
++
++No código local, execute `testar-rpg-sprites.cmd`; `--geometrico` abre o fallback. As variáveis `SPIRIT_GATE_SPRITE_SCALE` e `SPIRIT_GATE_FRAME_MS` continuam opcionais e não exigem recompilação. As classes desta rodada já foram compiladas.
++
++## Decisão do responsável
++
++Registrar separadamente: aprovação visual das sprites e pivôs; aprovação do ritmo; aprovação dos efeitos provisórios; legibilidade do HUD/chefe; jogabilidade de Guardian/Mystic; problemas e configuração da máquina. A rodada seguinte depende dessa avaliação. TASK-091 não foi iniciada.
+--- before/docs/CORUJAO-I-INVENTARIO.md
++++ after/docs/CORUJAO-I-INVENTARIO.md
+@@ -0,0 +1,28 @@
++# Corujao I - inventario real
++
++Data: 20/10/2026 (America/Sao_Paulo). 20 PNGs: 4 Idle e 16 Walk. Comparacao com TASK-078: 8 novos, 5 modificados pelo responsavel e 7 historicos inalterados. Nenhum PNG foi regravado pela rodada.
++
++Fonte tecnica: `.task-checkpoints/TASK-079/corujao-i/assets.json`; folha de contato `contact.png`; originais anteriores recuperaveis em `historical-pngs.zip` e checkpoint TASK-078. Alfa, dimensoes e piv?s foram inferidos dos pixels reais. A ordem Walk 1-4 foi inspecionada e testada; aprovacao artistica pendente.
++
++| Chave | Arquivo | Situacao | Canvas | Bounding box | Pivo | SHA-256 |
++| --- | --- | --- | --- | --- | --- | --- |
++| FRONT.0 | Main_Character_Idle_Front.png | HISTORICO | 153x153 | [45, 11, 111, 144] | [78, 145] | `2daf77863ea6b0c6b7840c6a83e682e16e79564b160eced24858b1526b38297c` |
++| FRONT.1 | Walk_character_Front1.png | HISTORICO | 132x148 | [33, 3, 102, 144] | [68, 145] | `8bb5c12853fa084db51624a99ee3b350f342531a21a0dbd8b1deb5d37ee3168b` |
++| FRONT.2 | Walk_character_Front2.png | MODIFICADO PELO USUARIO | 132x148 | [40, 4, 106, 144] | [73, 145] | `e80cd02c38cbf5a2d2cdc103de4a72a36e00c34a21969a1fee05d801fb686598` |
++| FRONT.3 | Walk_character_Front3.png | NOVO | 132x148 | [35, 5, 103, 144] | [69, 145] | `8dfb422cf689a2a59e6953c20f5fae1732a23384e8bb65fa2a84733ed89a0d51` |
++| FRONT.4 | Walk_character_Front4.png | NOVO | 132x148 | [32, 4, 98, 144] | [65, 145] | `1a3c4ccb7c059f20a33dbf0ac1d63e295aaac44e3c49a8bca8526e37a57a31ee` |
++| BACK.0 | Main_Character_Idle_Back.png | HISTORICO | 153x153 | [42, 10, 111, 145] | [77, 146] | `81d93e06334d60b36b553eb6ff6e086c1d6c92658e6a70012a6a2b2a65464d6e` |
++| BACK.1 | Walk_Character_Back1.png | HISTORICO | 142x153 | [31, 7, 98, 147] | [65, 148] | `ff83b04e6d2f95dbbaa4017b39af6a4d9c61d421fd0585d0f27bd119981a1408` |
++| BACK.2 | Walk_Character_Back2.png | MODIFICADO PELO USUARIO | 142x153 | [35, 11, 102, 148] | [69, 149] | `ea170c973d37c6af41b763af147d24dc99fb044d8630a0a4ee290d8478271d43` |
++| BACK.3 | Walk_Character_Back3.png | NOVO | 142x153 | [33, 10, 102, 151] | [68, 152] | `659c0d7ab4d47a9c18ace87c18b284e1c779625b3339a0b3b7f413b7ad90d220` |
++| BACK.4 | Walk_Character_Back4.png | NOVO | 142x153 | [39, 11, 106, 148] | [73, 149] | `4f32888da7c830b3146089db730c4d436050c42cea207d6d02ed9388c10727fb` |
++| LEFT.0 | Main_Character_Idle_Left.png | HISTORICO | 153x153 | [48, 10, 106, 143] | [77, 144] | `0795c957fb19c81c64d4881308fa2e3c29fffaf2a43601f6134efd32034fe192` |
++| LEFT.1 | Walk_Character_Left1.png | HISTORICO | 163x154 | [45, 7, 112, 143] | [79, 144] | `a1bcbf3de8714a1ff9785a6ede1d07805f31f65fd042ea26477efbded77a4c93` |
++| LEFT.2 | Walk_Character_Left2.png | MODIFICADO PELO USUARIO | 163x154 | [66, 11, 135, 148] | [101, 149] | `83d152e65e116e9ad0a4639fe0e786a04a357d6112ec30673862845a48690d1c` |
++| LEFT.3 | Walk_Character_Left3.png | NOVO | 163x154 | [52, 12, 128, 148] | [90, 149] | `ca7f870541659c268d160ecadc03f475d6529571feaccd19ad2026a507d1f8c7` |
++| LEFT.4 | Walk_Character_Left4.png | NOVO | 163x154 | [45, 7, 116, 143] | [81, 144] | `6df54479d04f596e0d7f4b6574d95bd992e5756c320928a76b4e45c0f51c875e` |
++| RIGHT.0 | Main_Character_Idle_Right.png | HISTORICO | 153x153 | [47, 12, 105, 145] | [76, 146] | `eb0c0a64d4e7009d7415e5f0c54dc99aec1c6e140b50b2d7990da10cafaa7ec2` |
++| RIGHT.1 | Walk_character_Right1.png | MODIFICADO PELO USUARIO | 155x159 | [28, 1, 95, 137] | [62, 138] | `382db872046aa56fa7b745cbfc21d5fb109f817f4fc1830b9b5177a179fa2cdc` |
++| RIGHT.2 | Walk_character_Right2.png | MODIFICADO PELO USUARIO | 155x159 | [27, 11, 96, 148] | [62, 149] | `794b7377f57d53540a68d5dc8dce024c0e4cd60dd343fff93750e3dfd0a7e855` |
++| RIGHT.3 | Walk_character_Right3.png | NOVO | 155x159 | [25, 12, 101, 148] | [63, 149] | `672954482868c7c5da817f8cdc55eda0ecd1026e7eef4c6afe895f2ae96ff04e` |
++| RIGHT.4 | Walk_character_Right4.png | NOVO | 155x159 | [37, 7, 108, 143] | [73, 144] | `8b776595c5737b55db78172e9dc69c5335ffb0e89b5f6d1d660ccb6688ae9c98` |
+--- before/docs/CORUJAO-I-PENDENCIAS.md
++++ after/docs/CORUJAO-I-PENDENCIAS.md
+@@ -0,0 +1,11 @@
++# Corujão I — pendências e limites
++
++- Homologação humana de arte, ordem perceptiva dos passos, pivôs, efeitos e balanceamento permanece pendente. Os arquivos foram ativados experimentalmente por autorização do responsável, sem redesenho.
++- Há quatro Idle e 16 Walk. Não existem PNGs aprovados de Run, Attack, Hit ou KO nesta pasta. Run não foi inventado; ataque/dano usam sinais geométricos, e KO conserva o fallback anterior com feedback e HP zero.
++- A linha de visão mantém a política histórica amostrada em até seis pixels. O aviso de chefe usa o mesmo predicado; não se declara raycast contínuo perfeito em trajetos rasantes a quinas. O pontilhado visual usa grade de seis pixels.
++- As habilidades adicionais compartilham recarga com Q; não são um novo sistema de slots persistentes. São de alvo único e não mudam schema. Acesso adicional pelo botão da interface, sem migrar arquivos de atalhos.
++- Métricas da TASK-089 cobrem quatro encontros fixos. Não equivalem a um estudo estatístico de toda a campanha nem aprovam artisticamente a experiência.
++- Site continua público por autorização expressa do pedido atual, preservando a audiência existente. Isso excepciona a proibição de publicação do roteiro somente para o experimento web. O pacote Windows é local/experimental; não foi enviado ao canal público do atualizador nem publicado como release.
++- O fluxo Sites exige commit/push no repositório de fonte do próprio Site. Foi usado apenas o checkout secundário browser-preview. Não houve commit no checkout principal nem push para GitHub nesta rodada. A branch GitHub remota pode continuar na revisão anterior; a revisão publicada está registrada em CORUJAO-I-DEPLOY.json.
++- Coop, protocolos, banco, LAN física, autenticação e persistência online permanecem fora da rodada. Não se declara MMORPG completo.
++- Falha fatal interrompe a simulação e informa o usuário; não há promessa de recuperar progresso posterior ao último save confirmado. Não se introduziu fsync nem coordenação de dois processos sobre um mesmo save.
+--- before/docs/CORUJAO-I-RELATORIO-FINAL.md
++++ after/docs/CORUJAO-I-RELATORIO-FINAL.md
+@@ -0,0 +1,64 @@
++# Corujao I - relatorio consolidado
++
++**Estado tecnico: VALIDADA COM RESSALVAS. Homologacao humana pendente.** Rodada TASK-079 a TASK-090, 20/10/2026, America/Sao_Paulo. Nenhuma TASK-091 iniciada.
++
++## Resultado
++
++Sprite experimental com 50% de escala uniforme, quatro frames Walk por direcao e 250 ms/frame. Nearest-neighbor, transparencia, pivos e fallback preservados. Velocidade logica continua 215 unidades/s. Estados visuais, efeitos de combate, HUD, habilidades adicionais, IA localizada e lifecycle foram integrados no desktop e na copia web. Nenhuma arte nova foi gerada e o atlas oficial de 59 frames/100 ms nao foi alterado.
++
++Site: https://spirit-gate-sprites-lab.eageremu2049.chatgpt.site . Publicacao Sites versao 4, estado succeeded, commit `21b132e00e31ceec758ccefc9b160eef7c3abaf3`. Mesmo endereco e audiencia publica. Autorizacao atual para o site prevaleceu sobre a restricao de publicacao do roteiro somente nesse experimento. Sem push GitHub nem commit no checkout principal; o fluxo Sites gravou apenas a fonte do checkout secundario. Canal updates e releases anteriores preservados.
++
++## Testes e etapas
++
++Baseline real antes de implementar: 314 Java e 30 Python; duas falhas e seis erros Java causados pelos PNGs modificados, recusados pelos hashes antigos. A referencia 307/25 era historica. A integracao autorizada atualizou metadados e ciclo, preservando a validacao. Final: **335 Java e 30 Python, zero falhas, erros ou ignorados**. Vinte e um testes Java novos. Expectativas historicas de escala/duracao e ciclo de dois frames foram atualizadas para o contrato solicitado; fontes anteriores recuperaveis nos checkpoints.
++
++| TASK | Estado | Java/Python | Producao/testes alterados | Evidencia e ressalva |
++| --- | --- | --- | --- | --- |
++| 079 | VALIDADA COM RESSALVAS | 315/30 | CorujaoSpritesTest.java, RpgPlayerRefinementTest.java, RpgPlayerSpritesTest.java, experimental-player.properties, RpgPlayerAnimation.java, RpgPlayerSprites.java, testar-rpg-sprites.cmd | [079 relatorio](corujao-i/TASK-079-RELATORIO-FINAL.md); checkpoints e diff em TASK-079/corujao-i |
++| 080 | VALIDADA COM RESSALVAS | 317/30 | CorujaoVisualStateTest.java, RpgCombatEvent.java, RpgWorld.java, RpgPlayerSprites.java, RpgVisualState.java | [080 relatorio](TASK-080-RELATORIO-FINAL.md); checkpoints e diff em TASK-080/corujao-i |
++| 081 | VALIDADA COM RESSALVAS | 319/30 | CorujaoFeedbackTest.java, DebugPanel.java, RpgWorld.java, RpgCombatFeedback.java, RpgLauncher.java | [081 relatorio](TASK-081-RELATORIO-FINAL.md); checkpoints e diff em TASK-081/corujao-i |
++| 082 | VALIDADA COM RESSALVAS | 320/30 | CorujaoAttackPresentationTest.java, RpgPlayerSprites.java | [082 relatorio](TASK-082-RELATORIO-FINAL.md); checkpoints e diff em TASK-082/corujao-i |
++| 083 | VALIDADA COM RESSALVAS | 322/30 | CorujaoHudTest.java, RpgCombatStatus.java, RpgHud.java | [083 relatorio](TASK-083-RELATORIO-FINAL.md); checkpoints e diff em TASK-083/corujao-i |
++| 084 | VALIDADA | 324/30 | CorujaoControlsTest.java | [084 relatorio](TASK-084-RELATORIO-FINAL.md); checkpoints e diff em TASK-084/corujao-i |
++| 085 | VALIDADA COM RESSALVAS | 326/30 | CorujaoAbilitiesTest.java, RpgSecondaryAbility.java, RpgWorld.java, RpgLauncher.java, RpgPlayerSprites.java | [085 relatorio](TASK-085-RELATORIO-FINAL.md); checkpoints e diff em TASK-085/corujao-i |
++| 086 | VALIDADA | 328/30 | CorujaoEnemyTest.java, EnemyService.java | [086 relatorio](TASK-086-RELATORIO-FINAL.md); checkpoints e diff em TASK-086/corujao-i |
++| 087 | VALIDADA COM RESSALVAS | 330/30 | CorujaoBossThreatTest.java, EnemyService.java, RpgBossThreat.java, RpgSight.java, RpgWorld.java, RpgBossOverlay.java, RpgHud.java, RpgLauncher.java | [087 relatorio](TASK-087-RELATORIO-FINAL.md); checkpoints e diff em TASK-087/corujao-i |
++| 088 | VALIDADA | 333/30 | CorujaoRuntimeTest.java, RpgLauncher.java, RpgRuntime.java | [088 relatorio](TASK-088-RELATORIO-FINAL.md); checkpoints e diff em TASK-088/corujao-i |
++| 089 | VALIDADA | 335/30 | CorujaoCombatRegressionTest.java | [089 relatorio](TASK-089-RELATORIO-FINAL.md); checkpoints e diff em TASK-089/corujao-i |
++| 090 | VALIDADA COM RESSALVAS | 335/30 | RpgLauncher (layout), RpgBossOverlay (legibilidade), builder/auditoria, copia web e documentacao | Suite final, EXE RC2, modo geometrico, capturas reais, auditoria ZIP e deploy Sites; arte humana pendente |
++
++Cada etapa possui before/after JSON+ZIP recuperavel e isolated.diff; nenhuma evidencia historica foi sobrescrita. Falhas intermediarias de testes novos e de preparacao foram corrigidas e os logs preservados. Comando por etapa: `python tools/qualidade.py --offline --task corujao-NNN`. Logs Java/Python e JSON em docs/TASK-corujao-NNN-*.
++
++## Metricas dos encontros fixos
++
++| Arquetipo | Encontro | Ticks / segundos | Dano recebido | Dano aplicado | Vigor gasto | Usos da secundaria | Sobreviveu |
++| --- | --- | --- | --- | --- | --- | --- | --- |
++| guardian | slime | 13 / 0.433 | 6 | 40 | 20 | 1 | Sim |
++| guardian | boss | 205 / 6.833 | 42 | 320 | 40 | 2 | Sim |
++| mystic | slime | 13 / 0.433 | 6 | 40 | 25 | 1 | Sim |
++| mystic | boss | 157 / 5.233 | 42 | 320 | 50 | 2 | Sim |
++
++Taxa observada de uso = usos/segundos da janela, registrada no JSON de metricas; inclui a primeira acao pronta e nao representa frequencia sustentada. Recargas da secundaria: Guardian 120 ticks (4 s), Mystic 150 (5 s), compartilhadas com Q. Dano medio recebido por encontro nesses quatro fixtures: 24. Nao houve ajuste adicional de balanceamento sem desequilibrio reproduzido. O mundo com apresentacao manteve saves iguais ao controle sem feedback a cada tick.
++
++## Evidencias reais
++
++- `.task-checkpoints/TASK-090/corujao-i/visual/`: 21 capturas com os 16 Walk e quatro Idle, mais inicial, GIF frontal e tempos; escala 0.5/duracao 250 registradas.
++- `visual-final/`: chefe em preparacao, ataque, dano/recuperacao, menu apos save e cliente retomado. Fixtures sinteticos foram usados para chegar ao chefe; as imagens sao de janelas reais, sem montagem.
++- `visual/runtime-failure-dialog.png` e failure.json: falha controlada do loop informada na UI, sem alegacao de save. `visual/ko.png` e `ko-recovered.png`: derrota e retorno reais via dominio.
++- `geometry.png` e JSON: fallback real sem sprites. `portable-rc2.png` e JSON: EXE com Java integrado, exit 0 e janela real.
++- QA web publico Guardian/Mystic e capturas em `web-public-guardian/` e `web-public-mystic/`; nao houve envio automatico de feedback.
++
++## Pacote experimental local
++
++[SpiritGate-RPG-Sprites-Teste-0.90.0-rc2-20261020T034659Z-1a18d30f.zip](../dist/SpiritGate-RPG-Sprites-Teste-0.90.0-rc2-20261020T034659Z-1a18d30f.zip)
++
++- Windows 64 bits, Java integrado, 169 arquivos e 20 PNGs conferidos por manifesto/SHA-256.
++- Tamanho: 29989701 bytes. SHA-256: `7a40cc9df69cf0cbe32b9a529e7b5836aaf20a04a15580574bdc5f162d7be70a`.
++- Nenhum save pessoal, credencial, banco ou Coop no ZIP. Alternativa Abrir-Geometrico.cmd incluida.
++- RC1 intermediario preservado; o candidato a compartilhar nesta rodada e RC2. Nenhum pacote foi publicado no atualizador nem como release.
++
++## Preservacao e ressalvas
++
++Tres arquivos pessoais de save conferidos por hash e inalterados. Os 20 PNGs recebidos, documentos historicos e formatos de save foram preservados. Protocolos/banco/Coop e regras historicas da arena nao foram alterados. Extensoes no renderer compartilhado sao opcionais e nulas por padrao.
++
++Consultar [pendencias](CORUJAO-I-PENDENCIAS.md), [inventario](CORUJAO-I-INVENTARIO.md), [roteiro de homologacao](CORUJAO-I-HOMOLOGACAO.md) e [continuidade](CORUJAO-I-CONTINUIDADE.md). Linha de visao amostrada, arte Attack/Hit/KO/Run ausente e homologacao em outras maquinas permanecem ressalvas. Nao se declara MMORPG completo, aprovacao artistica ou balanceamento humano. A execucao encerra na TASK-090.
+--- before/docs/TASK-090-RELATORIO-FINAL.md
++++ after/docs/TASK-090-RELATORIO-FINAL.md
+@@ -0,0 +1,7 @@
++# TASK-090 - Corujao I
++
++Estado: **VALIDADA COM RESSALVAS**.
++
++Consolidacao final: 335 Java e 30 Python sem falhas/erros/ignorados. Cliente real com 21 capturas Idle/Walk, GIF, chefe, dano, KO, recuperacao, menu e retomada, modo geometrico e dialogo de falha. Pacote local 0.90.0-rc2 auditado: 169 arquivos/20 PNGs, Java integrado, nenhum save pessoal, SHA-256 e EXE exit 0. Site versao 4 publicado com autorizacao atual, QA publico Guardian/Mystic aprovado sem excecoes Java. Tres saves pessoais e todos PNGs/documentos historicos inalterados. Commit/push apenas no repositorio-fonte do Site exigido pelo fluxo Sites; nenhum push GitHub ou commit principal. Homologacao artistica/humana pendente. Parar na TASK-090.
++
++Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-090/corujao-i/`. Logs da suite: `docs/TASK-corujao-090-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.
+--- before/docs/TASK-090-TESTES.md
++++ after/docs/TASK-090-TESTES.md
+@@ -0,0 +1,23 @@
++# TASK-090 - Corujao I
++
++Comando: `python tools/qualidade.py --offline --task corujao-090`
++
++```json
++{
++  "java": {
++    "exitCode": 0,
++    "category": 0,
++    "totals": {
++      "tests": 335,
++      "failures": 0,
++      "errors": 0,
++      "skipped": 0
++    }
++  },
++  "python": {
++    "exitCode": 0,
++    "category": 0,
++    "tests": 30
++  }
++}
++```
+--- before/docs/TASK-090.md
++++ after/docs/TASK-090.md
+@@ -0,0 +1,3 @@
++# TASK-090 - Corujao I
++
++Consolidacao final: 335 Java e 30 Python sem falhas/erros/ignorados. Cliente real com 21 capturas Idle/Walk, GIF, chefe, dano, KO, recuperacao, menu e retomada, modo geometrico e dialogo de falha. Pacote local 0.90.0-rc2 auditado: 169 arquivos/20 PNGs, Java integrado, nenhum save pessoal, SHA-256 e EXE exit 0. Site versao 4 publicado com autorizacao atual, QA publico Guardian/Mystic aprovado sem excecoes Java. Tres saves pessoais e todos PNGs/documentos historicos inalterados. Commit/push apenas no repositorio-fonte do Site exigido pelo fluxo Sites; nenhum push GitHub ou commit principal. Homologacao artistica/humana pendente. Parar na TASK-090.
