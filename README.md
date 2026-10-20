@@ -17,9 +17,9 @@ O JAR contém somente domínio/apresentação/RPG e recursos necessários, sem J
 ## Diferenças da cópia desktop
 
 1. `BrowserLauncher` entra diretamente com personagem anônimo para facilitar ensaios de sprites.
-2. O loader usa a lista explícita dos metadados para recursos sob `/app/`, pois o filesystem HTTP do CheerpJ não enumera diretórios. Hashes e dimensões continuam sendo conferidos antes de ativar as imagens.
+2. O loader usa a lista explícita dos metadados para recursos sob `/app/` ou `/str/`, pois esses filesystems do CheerpJ não enumeram diretórios. Hashes e dimensões continuam sendo conferidos antes de ativar as imagens.
 3. O template de apresentação usa `DebugWorld.demo(new java.util.Random())`; o runtime web não fornece o provider LXM selecionado por `RandomGenerator.getDefault()` do JDK desktop. As regras de RPG não foram modificadas.
-4. Propriedades da página direcionam assets para `/app/` (HTTP) e dados para `/files/spirit-gate-web` (filesystem virtual persistente). F5 é encaminhado ao jogo.
+4. A página baixa JAR/PNGs e valida SHA-256 antes de montar os bytes em `/str/` via `cheerpOSAddStringFile`. Esse mount não admite subdiretórios: os nomes originais dos PNGs ficam diretamente em `/str` e a propriedade exclusiva web `spiritgate.rpg.spriteFolder=/str` seleciona a pasta. Isso evita depender de HTTP Range, não preservado pelo host estático publicado. Dados ficam em `/files/spirit-gate-web` (filesystem virtual persistente). F5 é encaminhado ao jogo.
 
 Fontes originais preservadas por hash em `snapshot.json`. `game-src` e `game-resources` são uma cópia explícita e independente; não são links para a produção. Nenhuma mudança será mesclada automaticamente na branch principal.
 

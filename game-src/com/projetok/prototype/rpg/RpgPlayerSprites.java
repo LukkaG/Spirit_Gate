@@ -24,7 +24,10 @@ public final class RpgPlayerSprites implements DebugPanel.ActorRenderer {
     private RpgPlayerSprites(Map<String,Frame> frames,int frameMillis,double scale) {
         this.frames=Map.copyOf(frames);animation=new RpgPlayerAnimation(frameMillis);this.scale=scale;
     }
-    public static Path defaultFolder() { return RpgMenu.home().resolve("assets/dev/player-base"); }
+    public static Path defaultFolder() {
+        String browserFolder=System.getProperty("spiritgate.rpg.spriteFolder");
+        return browserFolder==null?RpgMenu.home().resolve("assets/dev/player-base"):Path.of(browserFolder);
+    }
     public static RpgPlayerSprites loadOptional(Path folder,int frameMillis) {
         return loadOptional(folder,frameMillis,DEFAULT_SCALE);
     }
@@ -53,7 +56,7 @@ public final class RpgPlayerSprites implements DebugPanel.ActorRenderer {
             if(input==null) throw new IOException("Metadados experimentais ausentes");metadata.load(input);
         }
         Set<String> actual=new HashSet<>();
-        if(folder.toString().startsWith("/app/")) {
+        if(folder.toString().startsWith("/app/") || folder.toString().equals("/str") || folder.toString().startsWith("/str/")) {
             for(Object value:metadata.values()) actual.add(value.toString().split(",")[0]);
         } else {
             try(var files=Files.list(folder)) { files.forEach(p->actual.add(p.getFileName().toString())); }

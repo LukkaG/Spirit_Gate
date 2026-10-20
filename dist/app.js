@@ -11,8 +11,13 @@ document.querySelector('#start').onclick=async()=>{
  document.querySelector('#game-section').hidden=false;status.textContent='Preparando o jogo no navegador… Na primeira vez, o carregamento pode demorar.';
  try{
   await loadRuntime();const config=configurations[preset];
-  const base='/app'+new URL('.',location.href).pathname;
-  await cheerpjInit({version:17,status:'splash',javaProperties:['spiritgate.rpg.experimentalSprites=true',`spiritgate.rpg.spriteScale=${config.scale}`,`spiritgate.rpg.spriteFrameMillis=${config.ms}`,`jpackage.app-path=${base}browser.exe`,'spiritgate.rpg.dataDir=/files/spirit-gate-web'],overrideShortcuts:event=>!document.querySelector('#feedback-form').contains(document.activeElement)&&['F5','Space'].includes(event.code)});
+  const response=await fetch(new URL('build-info.json',location.href),{cache:'no-cache'});if(!response.ok)throw Error('Não foi possível carregar a versão do teste.');
+  const info=await response.json();
+  const resources=await Promise.all(Object.entries(info.files).filter(([name])=>name.endsWith('.jar')||name.endsWith('.png')).map(async([name,hash])=>{const url=new URL(name,location.href);url.searchParams.set('v',hash);const result=await fetch(url);if(!result.ok)throw Error('Não foi possível carregar '+name);const bytes=new Uint8Array(await result.arrayBuffer());const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),b=>b.toString(16).padStart(2,'0')).join('');if(digest!==hash)throw Error('Um arquivo do teste veio incompleto. Recarregue a página.');return[name,bytes];}));
+  const base='/str/';
+  await cheerpjInit({version:17,status:'splash',javaProperties:['spiritgate.rpg.experimentalSprites=true','spiritgate.rpg.spriteFolder=/str',`spiritgate.rpg.spriteScale=${config.scale}`,`spiritgate.rpg.spriteFrameMillis=${config.ms}`,`jpackage.app-path=${base}browser.exe`,'spiritgate.rpg.dataDir=/files/spirit-gate-web'],overrideShortcuts:event=>!document.querySelector('#feedback-form').contains(document.activeElement)&&['F5','Space'].includes(event.code)});
+  // Mount verified application bytes in memory: works even when a static host strips HTTP Range.
+  for(const [name,bytes] of resources)cheerpOSAddStringFile(base+name.split('/').pop(),bytes);
   cheerpjCreateDisplay(1260,900,document.querySelector('#game'));
   status.textContent='Ambiente pronto. A janela do jogo aparecerá abaixo; clique nela para mover o personagem.';
   const code=await cheerpjRunMain('com.projetok.prototype.rpg.BrowserLauncher',base+'spirit-gate-web.jar');

@@ -4,9 +4,9 @@
   "defaultScale": 0.4,
   "defaultFrameMillis": 220,
   "files": {
-    "app.js": "836d5667524bee3416e654c75daeda0402c5a9bf69c924d46dbe313c5688438c",
+    "app.js": "fc3f266a0d6acc7bb12ed8adb026614f9ed23d64775a0d9426fdcb8c175a60e4",
     "index.html": "5b785c5ded8eb812c5b392a6339d79c966fdc0c6b4a5a228883255749df7b9eb",
-    "spirit-gate-web.jar": "99aed3933530707123a7d8ecdb7577610e5f14d412476036b27c78c63b9881ba",
+    "spirit-gate-web.jar": "d381184dc032f88010d00484414dbe641ee5628c328425c5b2e33db7624437b0",
     "style.css": "a06eafef7947762f2e7b407544d87c9d11b9814e18dca0d11e77490e68345c24",
     "assets/dev/player-base/Main_Character_Idle_Back.png": "81d93e06334d60b36b553eb6ff6e086c1d6c92658e6a70012a6a2b2a65464d6e",
     "assets/dev/player-base/Main_Character_Idle_Front.png": "2daf77863ea6b0c6b7840c6a83e682e16e79564b160eced24858b1526b38297c",
