@@ -1,0 +1,28 @@
+#Spirit Gate World Studio V1
+#Tue Oct 20 01:29:21 BRT 2026
+schema=1
+element.count=2
+metadata=
+layer.count=8
+id=studio_tutorial
+portal.0=portal|750|320|studio_tutorial|140|320||FRONT
+height=640
+hitbox.count=1
+layer.7=interaction|SU5URVJBQ1RJT04|INTERACTION|7|true|false
+layer.6=collision|Q09MTElTSU9O|COLLISION|6|true|false
+layer.5=roof|Uk9PRg|ROOF|5|true|false
+format=spirit-gate-world-studio
+layer.4=above|QUJPVkU|ABOVE|4|true|false
+element.1=elder|NPC|||0|0|32|32|190|320|32|32|interaction|true|false|ZWxkZXI|FRONT|
+layer.3=objects|T0JKRUNUUw|OBJECTS|3|true|false
+element.0=player|PLAYER|||0|0|32|32|140|320|32|32|interaction|true|false||FRONT|
+hitbox.0=wall|300|200|64|128|true|collision
+layer.2=below|QkVMT1c|BELOW|2|true|false
+layer.1=detail|REVUQUlM|DETAIL|1|true|false
+layer.0=ground|R1JPVU5E|GROUND|0|true|false
+grid=32
+name=studio_tutorial
+width=960
+trigger.count=0
+region=village
+portal.count=1

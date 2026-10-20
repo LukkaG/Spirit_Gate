@@ -1,0 +1,30 @@
+package com.projetok.studio;
+import javax.swing.*;
+import java.awt.*;
+import java.util.*;
+
+/** Camadas com ordem deterministica e propriedades editaveis em formularios. */
+final class LayerTools {
+    final WorldStudio ui;final DefaultListModel<WorldDocument.Layer> model=new DefaultListModel<>();final JList<WorldDocument.Layer> list=new JList<>(model);boolean refreshing;
+    LayerTools(WorldStudio ui){this.ui=ui;JPanel panel=new JPanel(new BorderLayout());list.setVisibleRowCount(8);list.setCellRenderer((l,v,i,s,f)->{JLabel label=new JLabel((v.visible()?"[V] ":"[-] ")+(v.locked()?"[L] ":"")+v.name());label.setOpaque(true);label.setBackground(s?new Color(180,210,225):Color.WHITE);return label;});panel.add(new JScrollPane(list));
+        JPanel buttons=new JPanel(new GridLayout(0,2));button(buttons,"Nova",()->{String name=JOptionPane.showInputDialog(ui,"Nome da camada");if(name==null)return;var role=(WorldDocument.Role)JOptionPane.showInputDialog(ui,"Papel","Camada",JOptionPane.PLAIN_MESSAGE,null,WorldDocument.Role.values(),WorldDocument.Role.OBJECTS);if(role==null)return;var next=new ArrayList<>(ui.document.layers());next.add(new WorldDocument.Layer(EditorOperations.id(),name,role,next.size(),true,false));ui.change(ui.document.withLayers(next));});
+        button(buttons,"Renomear",()->{var l=selected();String name=JOptionPane.showInputDialog(ui,"Nome",l.name());if(name!=null)replace(new WorldDocument.Layer(l.id(),name,l.role(),l.order(),l.visible(),l.locked()));});
+        button(buttons,"Visibilidade",()->{var l=selected();replace(new WorldDocument.Layer(l.id(),l.name(),l.role(),l.order(),!l.visible(),l.locked()));});button(buttons,"Bloquear",()->{var l=selected();replace(new WorldDocument.Layer(l.id(),l.name(),l.role(),l.order(),l.visible(),!l.locked()));});button(buttons,"Subir",()->move(-1));button(buttons,"Descer",()->move(1));panel.add(buttons,BorderLayout.SOUTH);
+        ui.inspector.add(panel,BorderLayout.NORTH);JButton edit=new JButton("Editar elemento selecionado");edit.addActionListener(e->{try{editElement();}catch(Exception error){ui.error(error);}});ui.inspector.add(edit,BorderLayout.SOUTH);
+        list.addListSelectionListener(e->{if(!refreshing&&list.getSelectedValue()!=null){ui.canvas.activeLayer=list.getSelectedValue().id();ui.status.setText("Camada ativa: "+list.getSelectedValue().name());ui.canvas.repaint();}});refresh();
+    }
+    void button(JPanel panel,String name,Runnable action){JButton b=new JButton(name);b.addActionListener(e->{try{action.run();}catch(Exception error){ui.error(error);}});panel.add(b);}
+    WorldDocument.Layer selected(){var v=list.getSelectedValue();if(v==null)throw new IllegalArgumentException("Selecione uma camada");return v;}
+    void replace(WorldDocument.Layer next){ui.change(ui.document.withLayers(ui.document.layers().stream().map(l->l.id().equals(next.id())?next:l).toList()));}
+    void move(int direction){var layer=selected();var ordered=new ArrayList<>(ui.document.orderedLayers());int at=ordered.indexOf(layer),next=at+direction;if(next<0||next>=ordered.size())return;Collections.swap(ordered,at,next);var result=new ArrayList<WorldDocument.Layer>();for(int i=0;i<ordered.size();i++){var l=ordered.get(i);result.add(new WorldDocument.Layer(l.id(),l.name(),l.role(),i,l.visible(),l.locked()));}ui.change(ui.document.withLayers(result));}
+    void refresh(){refreshing=true;model.clear();for(var l:ui.document.orderedLayers())model.addElement(l);for(int i=0;i<model.size();i++)if(model.get(i).id().equals(ui.canvas.activeLayer))list.setSelectedIndex(i);refreshing=false;}
+    void editElement(){var element=ui.document.elements().stream().filter(e->ui.canvas.selected.contains(e.id())).findFirst().orElseThrow(()->new IllegalArgumentException("Selecione um elemento no canvas"));if(element.locked())throw new IllegalArgumentException("Objeto bloqueado; use Desbloquear selecao");EditorOperations.editable(ui.document,element.layer());
+        JPanel form=new JPanel(new GridLayout(0,2,4,4));String[] labels={"X","Y","Largura","Altura","Referencia","Direcao"};String[] values={""+element.x(),""+element.y(),""+element.width(),""+element.height(),element.reference(),element.direction()};JTextField[] fields=new JTextField[6];for(int i=0;i<6;i++){form.add(new JLabel(labels[i]));fields[i]=new JTextField(values[i]);form.add(fields[i]);}
+        JComboBox<String> layer=new JComboBox<>(ui.document.layers().stream().map(WorldDocument.Layer::id).toArray(String[]::new));layer.setSelectedItem(element.layer());form.add(new JLabel("Camada"));form.add(layer);JCheckBox visible=new JCheckBox("Visivel",element.visible()),locked=new JCheckBox("Bloqueado",element.locked());form.add(visible);form.add(locked);
+        JTextArea properties=new JTextArea(element.properties().entrySet().stream().map(e->e.getKey()+"="+e.getValue()).collect(java.util.stream.Collectors.joining("\n")),5,20);form.add(new JLabel("Propriedades (chave=valor)"));form.add(new JScrollPane(properties));
+        if(JOptionPane.showConfirmDialog(ui,form,"Propriedades: "+element.id(),JOptionPane.OK_CANCEL_OPTION)!=JOptionPane.OK_OPTION)return;
+        Map<String,String> props=new TreeMap<>();for(String line:properties.getText().split("\n"))if(!line.isBlank()){var parts=line.split("=",2);if(parts.length!=2||props.put(parts[0],parts[1])!=null)throw new IllegalArgumentException("Propriedade invalida/duplicada");}
+        var next=new WorldDocument.Element(element.id(),element.kind(),element.asset(),element.sha(),element.crop(),Integer.parseInt(fields[0].getText()),Integer.parseInt(fields[1].getText()),Integer.parseInt(fields[2].getText()),Integer.parseInt(fields[3].getText()),(String)layer.getSelectedItem(),visible.isSelected(),locked.isSelected(),fields[4].getText(),fields[5].getText(),props);
+        EditorOperations.editable(ui.document,next.layer());ui.change(ui.document.withElements(ui.document.elements().stream().map(e->e.id().equals(next.id())?next:e).toList()));
+    }
+}

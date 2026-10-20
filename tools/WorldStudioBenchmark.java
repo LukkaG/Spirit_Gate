@@ -1,0 +1,20 @@
+package com.projetok.studio;
+import java.awt.*;
+import java.awt.image.*;
+import java.nio.file.*;
+import java.util.*;
+import javax.swing.*;
+
+/** Benchmark local reproduzivel; valores medidos nesta maquina, sem metas inventadas. */
+public final class WorldStudioBenchmark {
+    private static double ms(long start){return (System.nanoTime()-start)/1_000_000d;}
+    /** Argumentos: diretorio novo de evidencias e raiz do projeto. */
+    public static void main(String[] args)throws Exception{
+        Path out=Path.of(args[0]),root=Path.of(args[1]);Files.createDirectory(out);long t=System.nanoTime();var catalog=AssetCatalog.scan(root,null);double index=ms(t);long thumbnails=catalog.assets().stream().mapToLong(a->a.thumbnail().getWidth()*a.thumbnail().getHeight()*4L).sum();AssetImages images=new AssetImages();var chosen=catalog.assets().stream().filter(a->a.width()>=32&&a.height()>=32).findFirst().orElseThrow();images.load(chosen);
+        var empty=WorldDocument.empty("benchmark",4096,4096);var elements=new ArrayList<WorldDocument.Element>();for(int i=0;i<12000;i++)elements.add(new WorldDocument.Element("tile_"+i,WorldDocument.Kind.TILE,chosen.id(),chosen.sha(),new WorldDocument.Crop(0,0,32,32),i%128*32,i/128*32,32,32,empty.layers().get(i%4).id(),true,false,"","FRONT",Map.of()));var document=empty.withElements(elements);var canvas=new WorldCanvas(()->document,images);canvas.setSize(1000,700);canvas.grid=false;var surface=new BufferedImage(1000,700,BufferedImage.TYPE_INT_RGB);var g=surface.createGraphics();StringBuilder paints=new StringBuilder();for(double zoom:new double[]{.25,.75,2,8}){canvas.viewport=new StudioViewport(zoom,0,0);for(int i=0;i<12;i++)canvas.paint(g);double[] values=new double[40];for(int i=0;i<values.length;i++){canvas.viewport=new StudioViewport(zoom,-i*11,-i*7);t=System.nanoTime();canvas.paint(g);values[i]=ms(t);}Arrays.sort(values);if(paints.length()>0)paints.append(',');paints.append(String.format(Locale.ROOT,"{\"zoom\":%.2f,\"p50Ms\":%.4f,\"p95Ms\":%.4f}",zoom,values[20],values[38]));}g.dispose();
+        t=System.nanoTime();byte[] encoded=DocumentStore.encode(document);double encode=ms(t);t=System.nanoTime();DocumentStore.decode(encoded);double decode=ms(t);t=System.nanoTime();Files.write(out.resolve("raw.sgmap"),encoded);double write=ms(t);Files.writeString(out.resolve("profile.json"),String.format(Locale.ROOT,"{\"encodeMs\":%.4f,\"decodeMs\":%.4f,\"rawWriteMs\":%.4f}",encode,decode,write));
+        t=System.nanoTime();DocumentStore.save(out.resolve("benchmark.sgmap"),document);double save=ms(t);t=System.nanoTime();var loaded=DocumentStore.load(out.resolve("benchmark.sgmap"));double load=ms(t);if(!loaded.equals(document))throw new IllegalStateException("Roundtrip divergente");var h=new EditorHistory(document);var next=GroupEditing.move(document,Set.of("tile_0"),32,0);t=System.nanoTime();for(int i=0;i<1000;i++){h.commit(next);h.undo();h.redo();h.undo();}double history=ms(t);t=System.nanoTime();var view=new StudioViewport(.75,0,0);for(int i=0;i<100000;i++){view=view.zoomAt(i%2==0?1:.75,400,300);view.world(400,300);}double transforms=ms(t);
+        final double[] opening={0};SwingUtilities.invokeAndWait(()->{long start=System.nanoTime();var studio=new WorldStudio(root);studio.setVisible(true);Toolkit.getDefaultToolkit().sync();opening[0]=ms(start);studio.dispose();});
+        String json=String.format(Locale.ROOT,"{\n\"java\":\"%s\",\"processors\":%d,\"assets\":%d,\"indexMs\":%.4f,\"thumbnailPixelBytes\":%d,\"residentPixelBytes\":%d,\"elements\":12000,\"paintSamplesPerZoom\":40,\"paint\":[%s],\"saveMs\":%.4f,\"loadMs\":%.4f,\"undoRedo1000Ms\":%.4f,\"zoomPan100000Ms\":%.4f,\"windowOpenMs\":%.4f,\"mapBytes\":%d,\"filesystemCache\":\"not-controlled\",\"humanApproved\":false\n}",System.getProperty("java.version"),Runtime.getRuntime().availableProcessors(),catalog.assets().size(),index,thumbnails,images.bytes(),paints,save,load,history,transforms,opening[0],Files.size(out.resolve("benchmark.sgmap")));Files.writeString(out.resolve("metrics.json"),json);System.out.println(json);System.exit(0);
+    }
+}

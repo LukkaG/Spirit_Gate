@@ -1,0 +1,8 @@
+package com.projetok.studio;
+import javax.swing.*;
+import java.awt.*;
+final class NavigationTools {
+    NavigationTools(WorldStudio ui){ui.action("Ver","Minimapa e navegacao aproximada",()->{
+        var doc=ui.document;var map=new MinimapPanel(()->doc,p->{ui.canvas.viewport=new StudioViewport(ui.canvas.viewport.zoom(),ui.canvas.getWidth()/2d-p.x*ui.canvas.viewport.zoom(),ui.canvas.getHeight()/2d-p.y*ui.canvas.viewport.zoom());ui.canvas.repaint();});JDialog dialog=new JDialog(ui,"Minimapa | Analise nao garante jogabilidade",false);JPanel panel=new JPanel(new BorderLayout());panel.add(map);JPanel controls=new JPanel();JCheckBox collisions=new JCheckBox("Colisoes",true);collisions.addActionListener(e->{map.collisions=collisions.isSelected();map.repaint();});JButton analyze=new JButton("Analisar amostras");JLabel result=new JLabel("Clique no mapa para centralizar o canvas");controls.add(collisions);controls.add(analyze);panel.add(controls,BorderLayout.NORTH);panel.add(result,BorderLayout.SOUTH);analyze.addActionListener(e->{analyze.setEnabled(false);new SwingWorker<NavigationAnalysis.Result,Void>(){protected NavigationAnalysis.Result doInBackground(){return NavigationAnalysis.analyze(doc);}protected void done(){try{map.navigation=get();result.setText("Grade "+map.navigation.cell()+" px; "+map.navigation.isolated()+" amostras potencialmente isoladas. Revise no playtest.");map.repaint();}catch(Exception error){ui.error(error);}finally{analyze.setEnabled(true);}}}.execute();});dialog.setContentPane(panel);dialog.pack();dialog.setLocationRelativeTo(ui);dialog.setVisible(true);
+    });}
+}

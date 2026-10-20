@@ -6,13 +6,15 @@ import java.nio.file.*;
 /** Menu local. IO em SwingWorker, sem login ou rede. */
 final class RpgMenu {
     static Path home(){String exe=System.getProperty("jpackage.app-path");return exe==null?Path.of("").toAbsolutePath():Path.of(exe).toAbsolutePath().getParent();}
+    /** Updater stores user data outside disposable application versions. */
+    static Path dataHome(){String data=System.getProperty("spiritgate.rpg.dataDir");return data==null?home():Path.of(data).toAbsolutePath();}
     static void open() {
         JFrame frame=new JFrame("Spirit Gate | Inicio");frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         JPanel root=new JPanel(new BorderLayout(16,16));root.setBorder(BorderFactory.createEmptyBorder(24,24,24,24));
         JLabel title=new JLabel("SPIRIT GATE - RPG OFFLINE");title.setFont(title.getFont().deriveFont(Font.BOLD,26));root.add(title,BorderLayout.NORTH);
         DefaultListModel<CharacterSaves.Slot> model=new DefaultListModel<>();JList<CharacterSaves.Slot> list=new JList<>(model);root.add(new JScrollPane(list),BorderLayout.CENTER);
         JLabel status=new JLabel("Lendo personagens locais...");JPanel south=new JPanel(new BorderLayout());south.add(status,BorderLayout.NORTH);JPanel buttons=new JPanel(new GridLayout(2,2,8,8));south.add(buttons,BorderLayout.CENTER);root.add(south,BorderLayout.SOUTH);
-        CharacterSaves repository=new CharacterSaves(home().resolve("saves/characters"));
+        CharacterSaves repository=new CharacterSaves(dataHome().resolve("saves/characters"));
         JButton create=new JButton("Criar personagem");JButton resume=new JButton("Continuar selecionado");resume.setEnabled(false);JButton arena=new JButton("Arena historica");JButton exit=new JButton("Sair");
         buttons.add(create);buttons.add(resume);buttons.add(arena);buttons.add(exit);
         list.addListSelectionListener(e->resume.setEnabled(list.getSelectedValue()!=null&&list.getSelectedValue().state()!=null));

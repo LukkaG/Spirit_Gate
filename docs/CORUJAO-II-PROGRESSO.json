@@ -1,0 +1,530 @@
+[
+  {
+    "task": "091",
+    "status": "VALIDADA",
+    "description": "Auditoria da base Corujao I confirmada (335/30), mapa sintetico legado e fontes efetivas inspecionados. Aplicacao Swing independente sem dependencias; modelo V1 imutavel com pixels, grade separada, IDs, camadas, recortes, fisica e referencias. Contrato de integracao opt-in sem migracao de save. main remoto nao existe neste momento; criacao autorizada pelo pedido atual apos validacao. Arquitetura em WORLD-EDITOR-ARQUITETURA.md.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 336,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "092",
+    "status": "VALIDADA",
+    "description": "Scanner restrito a assets e recursos, PNGs com limites de arquivo/dimensoes, links recusados, ID estavel por caminho, SHA-256 por revisao, canal alfa, miniaturas em memoria, categorias manuais e busca. Recortes com margem/espacamento/regiao validados sem alterar fonte. Cache limitado a 64MiB; invalidos viram avisos. Testes de arquivos alterados/invalidos e tilesets aprovados.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 338,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "093",
+    "status": "VALIDADA",
+    "description": "Janela Swing independente com biblioteca pesquisavel, miniaturas, dados de asset, canvas central, inspector, grade, zoom ancorado, pan pelo botao central e status de coordenadas/camada. Scanner/cache em SwingWorker; paint sem disco e locks curtos. Testes de conversao e pintura em memoria. Iniciador world-studio.cmd; persistencia e ferramentas acrescentadas nas tarefas seguintes.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 340,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "094",
+    "status": "VALIDADA",
+    "description": "Ferramentas de lapis, borracha, retangulo, balde conectado, conta-gotas, selecao, copiar/colar e Undo/Redo integradas ao canvas. Historico por gesto ate 64 estados/250 mil referencias. Limite de 4096 celulas por operacao em massa. Recortador visual de tilesets com grade/margens/espaco/regiao; dimensoes reais de objetos separadas de tiles. Testes atomicos, limites, IDs e bloqueio aprovados.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 343,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "095",
+    "status": "VALIDADA",
+    "description": "Camadas criaveis, renomeaveis, reordenaveis, ocultaveis e bloqueaveis; selecao ativa explicita e ordem estavel. Inspector edita posicao, dimensoes, camada, visibilidade, bloqueio, direcao e propriedades em dados. Barra responsiva com quebra de linhas. Historico preserva mudancas de camadas. Teste de ordenacao/visibilidade e Undo aprovado.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 344,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "096",
+    "status": "VALIDADA",
+    "description": "Retangulos solidos/transitaveis, desenho pelo mouse, edicao numerica, selecao, snap opcional e visualizacao de sobreposicoes. Previa do jogador com raio 18 consulta CollisionService real, nunca alfa do PNG. Testes de tangencia, bloqueio, areas transitaveis e sobreposicoes sem correcao silenciosa aprovados.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 346,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "097",
+    "status": "VALIDADA",
+    "description": "Formularios colocam NPC, bau, recurso, inimigo, jogador e ponto de interacao. Referencias consultam RpgContent e WorldObjects reais, com validacao de identidade/regiao e orientacao; sprites opcionais apenas referenciados. Nenhuma regra de loot/IA/quest duplicada. Inspector geral permite editar marcadores. Teste de referencias inexistentes e regiao incorreta aprovado.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 347,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "098",
+    "status": "VALIDADA",
+    "description": "Portais editaveis por ID de mapa, entrada, chegada, orientacao e missao existente. Grafo visual e validacao cruzada detectam destino ausente, entrada/chegada bloqueada e referencias invalidas usando raio real 18. Nenhuma transicao online criada; execucao no RPG depende do adaptador TASK-100.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 349,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "099",
+    "status": "VALIDADA",
+    "description": "Formato .sgmap Properties UTF-8 V1, registros estruturados com Base64URL para textos, limites 32MB e contagens, recusa de versoes/chaves duplicadas/desconhecidas. Novo/Abrir/Salvar/Salvar como/recuperar backup e confirmacao de descarte em UI; IO em worker. Temporario validado e backup integro sem sobrescrever arquivo corrompido. Testes round-trip, corrupcao, backup e UTF-8 aprovados; sem migracao de mapas legados.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 351,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "100",
+    "status": "VALIDADA COM RESSALVAS",
+    "description": "Exportacao versionada copia PNGs necessarios por hash e publica manifesto por ultimo em diretorio novo. Loader confere caminhos, revisoes e formatos. Injecao opcional de RpgSceneSet em RpgWorld/servicos existentes conserva campanha padrao, regras e saves. Teste real de parede personalizada e portal entre mapas aprovado; bundle adulterado recusado. Limite explicito 960x640 e ate tres slots village/forest/ruins, sem persistir sessao de autoria. Mapas maiores permanecem autoria/previa; nao houve migracao de save ou protocolo.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 353,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "101",
+    "status": "VALIDADA",
+    "description": "Menu Testar mapa valida/exporta em worker e abre cliente isolado com RpgRuntime, RpgWorld, HUD, renderer e sprites reais. WASD, combate, interacao, foco e fechamento usam o ciclo existente; nenhuma operacao de salvar personagem. Diagnosticos limitados de bloqueio/recusa/falha gravados ao encerrar a sessao. Janelas reais capturadas em visual: 248 assets indexados, personagem moveu de x140 e parou na parede personalizada em x240.3334. Teste automatizado do runtime aprovado.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 354,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "102",
+    "status": "VALIDADA COM RESSALVAS",
+    "description": "Marco basico com 355 Java/30 Python aprovados; cliente/editor reais verificados na TASK-101. Pacote Windows 0.102.0-rc1 auditado: 397 arquivos/248 PNGs, runtime Java, sem saves, banco ou Coop. EXE abriu janela filha World Studio e encerrou normalmente (sonda inicial inspecionou apenas processo pai, corrigida sem alterar app). Manifesto/SHA em dist e package-audit.json no checkpoint. Manual, contrato, catalogo e exemplo sintetico incluidos. Arte e UX humana pendentes; ampliacao autorizada continua na TASK-103.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 355,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "103",
+    "status": "VALIDADA COM RESSALVAS",
+    "description": "Autotiling NESW de quatro vizinhos com 16 mascaras, recortes cadastrados pelo usuario, terreno por paleta e modo manual. Celulas vizinhas recalculadas ao confirmar gesto, com Undo/Redo e persistencia; exportacao usa recortes ja resolvidos. Combinacao ausente usa fallback explicito e e diagnosticavel; nao ha inferencia universal ou regras diagonais/inner-corner de oito vizinhos. Teste de borda, vizinho, remocao, fallback e round-trip aprovado.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 356,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "104",
+    "status": "validada",
+    "description": "Prefabs locais com miniaturas, referencias relativas, colisoes e IDs novos por insercao.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 357,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "105",
+    "status": "validada",
+    "description": "Edicao atomica em grupo: mover, duplicar elementos, excluir elementos/colisoes, alinhar, distribuir, ordenar, bloquear e desbloquear por selecao explicita. Portais continuam no editor proprio.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 358,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "106",
+    "status": "validada-com-limitacoes",
+    "description": "Sequencias ambientais de 1..32 imagens existentes, ordem editavel, 30..5000 ms e repeticao configuravel. Previa monotona no editor; exportacao explicitamente estatica, sem contrato novo no runtime.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 359,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "107",
+    "status": "validada-com-limitacoes",
+    "description": "Dia, noite, entardecer, chuva, nevoa, interior e ciclo existente; previa opcional persistida no projeto, sem alterar fisica ou combate. Efeitos nao exportados para o jogo.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 360,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "108",
+    "status": "validada-com-limitacoes",
+    "description": "Editor de NPC real com busca, nome, sprite, posicao, orientacao, dialogo validado do proprio NPC e referencia de missao. Nome/dialogo integrados ao servico real; orientacao nao gera arte ausente, missao associada nao e concedida automaticamente.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 361,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "109",
+    "status": "validada-com-limitacoes",
+    "description": "Pontos e regioes de encontro com populacao determinista 1..64 e limite simultaneo igual a quantidade. Grade de 48 pixels valida raio real 19 em cada ponto; exportacao e renderizacao usam spawns reais. Respawn, boss e IA permanecem builtin; overrides nao suportados sao recusados.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 362,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "110",
+    "status": "validada-com-limitacoes",
+    "description": "Eventos ENTER/AREA/INTERACT/NEAR_NPC/QUEST_DONE/MANUAL e acoes MESSAGE/ENVIRONMENT/PORTAL/INTERACTION/CHAIN, sem scripts. Referencias e ciclos validados, fila limitada 256 e orcamento 8 por atualizacao. INTERACT observa interacao humana aceita; INTERACTION solicita a interacao proxima escolhida pelo runtime. Eventos executados no playtest isolado, sem alterar campanha padrao.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 363,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "111",
+    "status": "validada-com-limitacoes",
+    "description": "Minimapa navegavel por clique com portais, spawns, entidades e colisoes opcionais; grafo regional preservado. BFS de quatro vizinhos amostra geometria real, raio 18, grade >=32 e ate 65536 pontos. Resultado indica isolamento potencial, nao certifica caminhos nem jogabilidade.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 364,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "112",
+    "status": "validada",
+    "description": "Painel de diagnostico com severidade, localizacao, evidencia, correcao sugerida e navegacao. Valida arquivo sem abri-lo, revisoes/hash, recortes, NPCs repetidos, eventos, spawns, portais, camadas e recursos somente de previa. Revisao de asset base exige confirmacao explicita; IDs duplicados e formato invalido sao recusados pelo parser.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 366,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "113",
+    "status": "validada-com-limitacoes",
+    "description": "Benchmark real antes/depois com 12000 elementos e 248 assets; indice de viewport, cache geometrico e decodificacao limitada. 367 Java e 30 Python aprovados. Pintura melhorou em zoom alto; primeiro salvamento continua cerca de 8,4 s e fica registrado para investigacao, sem promessa de ganho universal.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 367,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  },
+  {
+    "task": "114",
+    "status": "validada-com-limitacoes",
+    "description": "Consolidacao das 24 tarefas com limites explicitos, 373 testes Java e 30 Python sem falhas, 500 gestos aleatorios, prova real de canvas/Undo/salvamento/exportacao/colisao/NPC, pacote Windows com Java integrado auditado e EXE encerrado com codigo 0. Homologacao humana pendente; sem TASK-115 e sem release publica.",
+    "checks": {
+      "java": {
+        "exitCode": 0,
+        "category": 0,
+        "totals": {
+          "tests": 373,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      "python": {
+        "exitCode": 0,
+        "category": 0,
+        "tests": 30
+      }
+    }
+  }
+]

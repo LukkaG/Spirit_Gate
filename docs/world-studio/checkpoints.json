@@ -1,0 +1,173 @@
+{
+  "note": "Indice derivado apos o checkpoint final; arquivos recuperaveis locais nao publicados.",
+  "tasks": [
+    {
+      "task": "091",
+      "beforeZipSha256": "02e7843427de9fabee0fff23d821d2022c81231d470e1c000e22719e5324ce6f",
+      "afterZipSha256": "c81075cecd10ac87dfce54738658d2a89160e3e1dd9f1e1fc4f880241191d232",
+      "isolatedDiffSha256": "30500f1db58ee26242b3941db995c58e4cb18724c8217a5ee04730f67977f78d",
+      "savesUnchanged": true
+    },
+    {
+      "task": "092",
+      "beforeZipSha256": "8abeca8ba924d472187bbe6aeb8fd3d3477a8c4545d485ca6973d8590d954111",
+      "afterZipSha256": "481e76ef77b1ce2e99cab1fb9c355427a92fe57de223255a8041493cfc3a1f4f",
+      "isolatedDiffSha256": "222a3a27df02d03682b2c34b178b086b40042dc49891df773b2ac2ccf1a6e8b9",
+      "savesUnchanged": true
+    },
+    {
+      "task": "093",
+      "beforeZipSha256": "4e8b42e89b56d51e9a6dfc10f2a57ff81fba0b5a7caa3e396d8f03f8d8cf5b63",
+      "afterZipSha256": "f601bdf85d03338050f949135f11a40a0929a67e03fad20a104be612817ed389",
+      "isolatedDiffSha256": "6296d1fe24a6787090a5e23fd7c647b83baa970400ad17b9d51bed6d99aac7c9",
+      "savesUnchanged": true
+    },
+    {
+      "task": "094",
+      "beforeZipSha256": "647cf797fc0596b063c6a760de4ab26fa1640021183e6e5aa56191321cf3c8cd",
+      "afterZipSha256": "7cf1f415ebf17b64109f318388b994f82ad279ae64ff77cd9072cef644d89fa9",
+      "isolatedDiffSha256": "66172cdd918d243a9641c7708a682a85f3781d0f410c08702f3e1dd1174ce26b",
+      "savesUnchanged": true
+    },
+    {
+      "task": "095",
+      "beforeZipSha256": "bf66988be958279a400c5bc5226701acd8c3b0183f00cad6053cfd30599d10f9",
+      "afterZipSha256": "67137e663b0dccbf71db0d93e9e521eca5c24fdfcce7abaf2f7a3c066f3db0ac",
+      "isolatedDiffSha256": "d831e22674cd86e20886799a4f4945c5df6993a2ab06485266abfcd3cc1c4575",
+      "savesUnchanged": true
+    },
+    {
+      "task": "096",
+      "beforeZipSha256": "45dd2b59f22077cee028fe98d43202372a795779004b3d330012046edd467a3f",
+      "afterZipSha256": "e00803854a71c8e0079143d6cc45e771c4c2e565b5321ce6de29a8b27bbc79a6",
+      "isolatedDiffSha256": "f09d02ae977b5d4f1f5fac6cc4f60607ce89686e236db7380f3de82a91bd40d7",
+      "savesUnchanged": true
+    },
+    {
+      "task": "097",
+      "beforeZipSha256": "16dc9e65de19626d914f8a095d1c60703be00ea49db719cc5c317eb5a46b7d02",
+      "afterZipSha256": "a86cb8c0ea4877629fa9536e4ccbba0110b6e97608bdde77ed881e417dd17bc5",
+      "isolatedDiffSha256": "25dd1404bd913714be00135b090caa14c231b3877de23f616a95773261f9f2d9",
+      "savesUnchanged": true
+    },
+    {
+      "task": "098",
+      "beforeZipSha256": "9de1a11a6c11cb84ded8a38af4bbced0b7e2729e6e594e3625757343f028c2f6",
+      "afterZipSha256": "e1eaee9d0d5c09dd0f1c837aa3f54c12e1bfa5f913b73badc1c81138631e6723",
+      "isolatedDiffSha256": "815a0b5da712c94583f4b6cee4de9b81921faf7c15ce2984ee23ac91deee207c",
+      "savesUnchanged": true
+    },
+    {
+      "task": "099",
+      "beforeZipSha256": "64338d68977333e5f8710e10136432cc708d91670588beac2299834b427bbf5d",
+      "afterZipSha256": "2c4bc2eb1be2cadfcdb8d4e75453545d362dad60cd5007557d8c94b04f14c825",
+      "isolatedDiffSha256": "43f14015a6cd7b0ba6e5b02e721de0398515ff2f325040d308cedb927206f678",
+      "savesUnchanged": true
+    },
+    {
+      "task": "100",
+      "beforeZipSha256": "0d9398abfacad8b4c9a206dcecb035bf1fa19a46f8e740e2ae7e115e424004b1",
+      "afterZipSha256": "2e366d335165701fe0b85bfecc9d678047c5c0c37460cd0dd51c05da998fc0a3",
+      "isolatedDiffSha256": "8f75b35308a9f6cbbec93a40a82cac41fca9d6ed909fda81a1edd032a80ba4f7",
+      "savesUnchanged": true
+    },
+    {
+      "task": "101",
+      "beforeZipSha256": "ebaf53281088195647656f48649020ba4327f399328ef2247c97bcf963f0d675",
+      "afterZipSha256": "6f7812bc782cf28927ca1e88df6d7979d0e6642f74ed4acd74f29f4d1dc5f955",
+      "isolatedDiffSha256": "efca7930f8ad8aa91af2081434de1f175e43c3857b0b2895c765f12255e49767",
+      "savesUnchanged": true
+    },
+    {
+      "task": "102",
+      "beforeZipSha256": "ef5540c5b4a339bb8c8fdd30e68ebad1d583a84039759d2de378bccbab614172",
+      "afterZipSha256": "059d19abbb130bbba136ea924c802f870f8be17e14835b3218fb9f828c09bb51",
+      "isolatedDiffSha256": "5d53d5560a36ada941fd4519b7d120d43f0420c8859f89c16f393da9d723ee2f",
+      "savesUnchanged": true
+    },
+    {
+      "task": "103",
+      "beforeZipSha256": "fa4d82496063244bae2f370941e36f17d5657b0078f43efd423ddf7f9ff96c57",
+      "afterZipSha256": "257f0a3a65cb381276c723f4ce2d3165bfdb2989e4c017a4c7f0772e3bbcfd2b",
+      "isolatedDiffSha256": "7fe4e526e2f5f56db9aab30c0366d91f87447bc1a4e0f88978cef2dfdaccb4df",
+      "savesUnchanged": true
+    },
+    {
+      "task": "104",
+      "beforeZipSha256": "c59a229186f24dd9a9aa67258c570716d4e7420c7a833dffa296b3b367522c96",
+      "afterZipSha256": "01d2f704074f1f67abcf493c303a182adb9cf4a1bd64ce57ec719031ca85e54e",
+      "isolatedDiffSha256": "5c7da76918e02190dd257e9d1d4db4837a06ee7bca2af80e2ade8bb80d2fd9ed",
+      "savesUnchanged": true
+    },
+    {
+      "task": "105",
+      "beforeZipSha256": "24740f848779dc9f29aea5a57f34a944159840679cb17c781fff3649e8c3b19a",
+      "afterZipSha256": "24d79cac379bb886b33b7ace81ff28e0df4c4c9a3ec9ff2d192771e4e3e1de1c",
+      "isolatedDiffSha256": "02a961ecba5ea7a39a5e80ed95901e3249beb2d3ec99e1fcd93ece3e3286c9ef",
+      "savesUnchanged": true
+    },
+    {
+      "task": "106",
+      "beforeZipSha256": "6ea291f432040994c4ed8a079de7e3fa730e45ceb4385e59d170bbb78a0c98bf",
+      "afterZipSha256": "e07ecd9ca8984d0aa2c4d507c12d701793696a7c44a1bead2c9ae071e07105b4",
+      "isolatedDiffSha256": "12240051d400284271168583e8d272f8ad05bddc8b0b6ac063b0c7c161d33b21",
+      "savesUnchanged": true
+    },
+    {
+      "task": "107",
+      "beforeZipSha256": "7ce0eb3ba7171df5c53fde23d320e501d87fb5470b08ef2a8e69d4658073af68",
+      "afterZipSha256": "3feb575647c6e2bcf137f19eb0325bbd2abe1e60a87ab58f00c66c7d91d54b19",
+      "isolatedDiffSha256": "cb7a9d6c1b529b5edccffd70333d85c8081e3727e0c05ac67035f7157ffd0918",
+      "savesUnchanged": true
+    },
+    {
+      "task": "108",
+      "beforeZipSha256": "8c7e957c653190ff3423672e740cf928d2ec922bd8737a0b3b295d836a777f13",
+      "afterZipSha256": "1a7b766b83c723f8459b725cbd841f0596445f800c7a4c5e1ad63925aabb88f9",
+      "isolatedDiffSha256": "c320608dc3b27d01e4bdc5679eba856d132d12ae8f568ec52ab6f7ab5eb23d06",
+      "savesUnchanged": true
+    },
+    {
+      "task": "109",
+      "beforeZipSha256": "d574cf3fbf5590980d3bd49f06003a5a0de3e877f78a7a93d41515d639206393",
+      "afterZipSha256": "637141e8f091be461ccd3fabd7c20cd656453886195b4174c701c2fa71e40287",
+      "isolatedDiffSha256": "99e0a5ff9166eedb9aef26737f68dd695035877a4c1306ee0ba92313c87b8362",
+      "savesUnchanged": true
+    },
+    {
+      "task": "110",
+      "beforeZipSha256": "72399f116f239bfd0b21b727140817fa28668156d8ec64de3ff5a2f901dee9f1",
+      "afterZipSha256": "0149f9d4670d94f565baf5dcb6c31e113c34097dea4feb9c836d7163709017b2",
+      "isolatedDiffSha256": "012c6eb74dfb5d0f64e2f4b39f9dfbfa776a6fd5cc8498b51ef46ac2f7cea371",
+      "savesUnchanged": true
+    },
+    {
+      "task": "111",
+      "beforeZipSha256": "a131bc1605bd1d4f42df5030808de194071080561802602497c9a9bb11a43fff",
+      "afterZipSha256": "63afa9842e55bff5993cdc7c2d7c4592eadbf6cd0dc11cb79d5320dabd746ba5",
+      "isolatedDiffSha256": "0a0bcebeef4fc6eb4fe98073611237ff70e4c4982a4e8bcd156ad16fb18513f7",
+      "savesUnchanged": true
+    },
+    {
+      "task": "112",
+      "beforeZipSha256": "95b2435e9da2eefe8d7bce8d252ed58defe25b26edbe1d1c038712bb36b89cd6",
+      "afterZipSha256": "388281460fae667c07b5410fd352659cd56a1d469c6628c6c6dacb3f9019e749",
+      "isolatedDiffSha256": "fb680550147f2bb86adfb55dbb06e48f343149df8425cfd77483a8eec595e6c8",
+      "savesUnchanged": true
+    },
+    {
+      "task": "113",
+      "beforeZipSha256": "e46c4d6f31b8f8d47dd1da96921b05d23d35bc8f2311e8e818029b45476445ab",
+      "afterZipSha256": "bacd05e8d2a2a021ceecb385e84f6005715b8b1aa1dd0817edf99b6c08a08b9f",
+      "isolatedDiffSha256": "7a2c74552b61ff058d2ba90b0d2aa82f133f50ba77733ac9e5d89acce5e68f51",
+      "savesUnchanged": true
+    },
+    {
+      "task": "114",
+      "beforeZipSha256": "36839fcf495a80947e75f7f137770c397802c6f754224a58ea7d18f5e54c1825",
+      "afterZipSha256": "ae3b1de2367c169e5997a2ecd70b10e44fc112279e5027475b079ba60ae83025",
+      "isolatedDiffSha256": "c9c358259299db49cf07f6f2dc96355ae0fc905613c4d6fa553ad743e1656dc2",
+      "savesUnchanged": true
+    }
+  ]
+}
