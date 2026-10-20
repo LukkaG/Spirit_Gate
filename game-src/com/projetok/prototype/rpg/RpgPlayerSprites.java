@@ -15,8 +15,8 @@ public final class RpgPlayerSprites implements DebugPanel.ActorRenderer {
     public static final String ENABLED="spiritgate.rpg.experimentalSprites";
     public static final String FRAME_MILLIS="spiritgate.rpg.spriteFrameMillis";
     public static final String SCALE="spiritgate.rpg.spriteScale";
-    public static final int DEFAULT_FRAME_MILLIS=220;
-    public static final double DEFAULT_SCALE=0.4;
+    public static final int DEFAULT_FRAME_MILLIS=250;
+    public static final double DEFAULT_SCALE=0.5;
     private record Frame(BufferedImage image,int pivotX,int pivotY) { }
     private final Map<String,Frame> frames;
     private final RpgPlayerAnimation animation;

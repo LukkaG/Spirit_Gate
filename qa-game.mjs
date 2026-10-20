@@ -7,7 +7,7 @@ try{
  page.on('console',m=>logs.push(m.type()+': '+m.text()));page.on('pageerror',e=>logs.push('PAGEERROR '+e.message));
  await page.goto(process.env.TEST_URL||'http://127.0.0.1:8789',{waitUntil:'networkidle'});
  await page.selectOption('#size-rating','Bom tamanho');await page.selectOption('#pace-rating','Bom ritmo');await page.fill('#comments','Teste automatizado local; nao enviado.');
- const link=await page.locator('#github-feedback').getAttribute('href');if(!decodeURIComponent(link).includes('40%, 220 ms/frame'))throw Error('Feedback parameters missing');
+ const link=await page.locator('#github-feedback').getAttribute('href');if(!decodeURIComponent(link).includes('50%, 250 ms/frame'))throw Error('Feedback parameters missing');
  await page.click('#start');await page.waitForTimeout(12000);
  if(logs.some(l=>/PAGEERROR|Exception in thread|Sprites RPG experimentais recusadas|Network error/.test(l)))throw Error('Java or sprites failure: '+logs.join('\n'));
  const game=page.locator('#game');await game.scrollIntoViewIfNeeded();await game.screenshot({path:'qa/idle.png'});

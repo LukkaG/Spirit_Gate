@@ -1,12 +1,12 @@
 {
-  "build": "sprites-browser-079",
+  "build": "sprites-browser-50-250",
   "java": 17,
-  "defaultScale": 0.4,
-  "defaultFrameMillis": 220,
+  "defaultScale": 0.5,
+  "defaultFrameMillis": 250,
   "files": {
-    "app.js": "fc3f266a0d6acc7bb12ed8adb026614f9ed23d64775a0d9426fdcb8c175a60e4",
-    "index.html": "5b785c5ded8eb812c5b392a6339d79c966fdc0c6b4a5a228883255749df7b9eb",
-    "spirit-gate-web.jar": "d381184dc032f88010d00484414dbe641ee5628c328425c5b2e33db7624437b0",
+    "app.js": "1c328e930918717495b34096ad37369124b1718a63550a2a38d51c6486bbc01d",
+    "index.html": "8df6dfd29bb962af62717686d55f1c492be275a101633d52edd8dbec50653307",
+    "spirit-gate-web.jar": "b21225585dc0cded714a1a6cb7c47078dae100bbb2b6687db89807ba291f4a45",
     "style.css": "a06eafef7947762f2e7b407544d87c9d11b9814e18dca0d11e77490e68345c24",
     "assets/dev/player-base/Main_Character_Idle_Back.png": "81d93e06334d60b36b553eb6ff6e086c1d6c92658e6a70012a6a2b2a65464d6e",
     "assets/dev/player-base/Main_Character_Idle_Front.png": "2daf77863ea6b0c6b7840c6a83e682e16e79564b160eced24858b1526b38297c",

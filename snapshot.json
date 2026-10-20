@@ -70,7 +70,7 @@
     "server/src/main/java/com/projetok/prototype/rpg/RpgMaps.java": "57f78d4b0533824f74ae8de1a6b4bbf7dd94aac96871bbcb46cca0e05aa4afbb",
     "server/src/main/java/com/projetok/prototype/rpg/RpgMenu.java": "dba83c4db966d107580d2fc7b7abae5ea57bbfac1ca1283ad9325beed6422f6f",
     "server/src/main/java/com/projetok/prototype/rpg/RpgPlayerAnimation.java": "2a4289ec8921da3dd11da85cc536a2c07890aed34e5d35b1b3000124fd28da1d",
-    "server/src/main/java/com/projetok/prototype/rpg/RpgPlayerSprites.java": "d9924e660e69121a8e33d93c2e481cb2d351b3ad62a4f45130fde0f54ffcf956",
+    "server/src/main/java/com/projetok/prototype/rpg/RpgPlayerSprites.java": "5c6b63f80f8b2ad9cf5e7b0f3fd999cf5ee09a2dd649985e04e0d8be7daf583c",
     "server/src/main/java/com/projetok/prototype/rpg/RpgRuntime.java": "b3b8b705d47896cfba102e5114db0edd8da5330581575a8a9a66bfb35e60a570",
     "server/src/main/java/com/projetok/domain/ai/AggressiveBehavior.java": "c2938ff5c6815b19cd5f4382a349ead29f1d7efc8ecd8d41224d575e5440ca77",
     "server/src/main/java/com/projetok/domain/ai/AiBehavior.java": "89a780fd5789702cf830ff9201e32b39c328c9d7bf04bb0a62d90b678ed8695f",
