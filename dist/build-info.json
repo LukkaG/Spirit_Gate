@@ -1,0 +1,24 @@
+{
+  "build": "sprites-browser-079",
+  "java": 17,
+  "defaultScale": 0.4,
+  "defaultFrameMillis": 220,
+  "files": {
+    "app.js": "836d5667524bee3416e654c75daeda0402c5a9bf69c924d46dbe313c5688438c",
+    "index.html": "5b785c5ded8eb812c5b392a6339d79c966fdc0c6b4a5a228883255749df7b9eb",
+    "spirit-gate-web.jar": "99aed3933530707123a7d8ecdb7577610e5f14d412476036b27c78c63b9881ba",
+    "style.css": "a06eafef7947762f2e7b407544d87c9d11b9814e18dca0d11e77490e68345c24",
+    "assets/dev/player-base/Main_Character_Idle_Back.png": "81d93e06334d60b36b553eb6ff6e086c1d6c92658e6a70012a6a2b2a65464d6e",
+    "assets/dev/player-base/Main_Character_Idle_Front.png": "2daf77863ea6b0c6b7840c6a83e682e16e79564b160eced24858b1526b38297c",
+    "assets/dev/player-base/Main_Character_Idle_Left.png": "0795c957fb19c81c64d4881308fa2e3c29fffaf2a43601f6134efd32034fe192",
+    "assets/dev/player-base/Main_Character_Idle_Right.png": "eb0c0a64d4e7009d7415e5f0c54dc99aec1c6e140b50b2d7990da10cafaa7ec2",
+    "assets/dev/player-base/Walk_Character_Back1.png": "ff83b04e6d2f95dbbaa4017b39af6a4d9c61d421fd0585d0f27bd119981a1408",
+    "assets/dev/player-base/Walk_Character_Back2.png": "2932e4aa72430fdf72e243eef3136d315014de3f02741de3d7a6f0d5e4f132c3",
+    "assets/dev/player-base/Walk_character_Front1.png": "8bb5c12853fa084db51624a99ee3b350f342531a21a0dbd8b1deb5d37ee3168b",
+    "assets/dev/player-base/Walk_character_Front2.png": "8dfb422cf689a2a59e6953c20f5fae1732a23384e8bb65fa2a84733ed89a0d51",
+    "assets/dev/player-base/Walk_Character_Left1.png": "a1bcbf3de8714a1ff9785a6ede1d07805f31f65fd042ea26477efbded77a4c93",
+    "assets/dev/player-base/Walk_Character_Left2.png": "68369a5834cd08c9a0dd0920857b977d6bea52441b8f1b1613b2f3d15891f560",
+    "assets/dev/player-base/Walk_character_Right1.png": "74e7382a3287a83eee87fc6fc2bda6b195956793865f6223b4ad0ba37ad55176",
+    "assets/dev/player-base/Walk_character_Right2.png": "1e742253e9b75db53e37f2fbc08ad2dbf4ae934b83f78ae15b9952438c823ce9"
+  }
+}

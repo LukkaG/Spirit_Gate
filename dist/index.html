@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101f1c">
+  <title>Spirit Gate — teste de sprites</title>
+  <link rel="stylesheet" href="style.css"><link rel="icon" href="data:,">
+</head>
+<body>
+<header><a class="brand" href="./"><span class="gate">門</span><span>SPIRIT GATE<small>LABORATÓRIO DE SPRITES</small></span></a><span class="pill">Experimento no navegador</span></header>
+<main>
+  <section class="intro"><div><p class="eyebrow">SEU OLHAR AJUDA A CONSTRUIR O MUNDO</p><h1>Um personagem.<br>Quatro formas de sentir.</h1><p>Explore, compare o tamanho e o ritmo da caminhada e conte o que parece mais natural.</p></div><div class="character"><img src="assets/dev/player-base/Main_Character_Idle_Front.png" alt="Personagem principal visto de frente"><span>BASE VISUAL · EM AVALIAÇÃO</span></div></section>
+  <section class="setup" aria-labelledby="choose"><div><p class="eyebrow">01 / ESCOLHA UMA CONFIGURAÇÃO</p><h2 id="choose">Como você quer testar?</h2></div>
+    <div class="presets" role="group" aria-label="Configuração visual">
+      <button data-preset="anterior"><strong>Anterior</strong><span>50% · 150 ms</span></button>
+      <button data-preset="recomendada" class="selected" aria-pressed="true"><strong>Recomendada <i>ATUAL</i></strong><span>40% · 220 ms</span></button>
+      <button data-preset="menor"><strong>Menor</strong><span>35% · 220 ms</span></button>
+      <button data-preset="lenta"><strong>Mais lenta</strong><span>40% · 280 ms</span></button>
+    </div>
+    <div class="launch"><button id="start" class="primary">Iniciar teste <span>↗</span></button><p id="status" role="status">A primeira abertura pode levar alguns instantes. Recomendamos computador com teclado.</p></div>
+    <p class="quiet">Para comparar outra configuração, <button id="restart" class="text-button">reinicie a página</button>. Os saves deste navegador são separados do jogo instalado.</p>
+  </section>
+  <section id="game-section" class="game-section" hidden><div class="game-head"><h2>Entre no mundo</h2><button id="fullscreen" class="secondary">Tela cheia</button></div><div class="game-scroll"><div id="game" tabindex="0" aria-label="Área do jogo Spirit Gate"></div></div><p class="quiet">Clique no jogo para usar o teclado. Cada teste começa com um visitante novo; salvamentos manuais ficam somente neste navegador.</p></section>
+  <section class="guide"><div><p class="eyebrow">02 / SINTA O MOVIMENTO</p><h2>O que observar</h2><p>Ande nas quatro direções, pare e encoste em uma parede. Repare no tamanho, nos pés e no ritmo entre os dois passos.</p></div><div class="controls"><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> <span>Mover</span></p><p><kbd>F</kbd> <span>Interagir</span><kbd>SPACE</kbd> <span>Atacar</span></p><p><kbd>I</kbd> <span>Inventário</span><kbd>F5</kbd> <span>Salvar no jogo</span></p></div></section>
+  <section class="feedback"><div><p class="eyebrow">03 / CONTE COMO FOI</p><h2>Seu feedback vira direção.</h2><p>Não existe resposta certa. A melhor versão é a que funciona para quem joga.</p></div><form id="feedback-form">
+    <label>Tamanho do personagem<select id="size-rating"><option value="">Escolha uma opção</option><option>Pequeno demais</option><option>Bom tamanho</option><option>Grande demais</option></select></label>
+    <label>Ritmo da caminhada<select id="pace-rating"><option value="">Escolha uma opção</option><option>Lento demais</option><option>Bom ritmo</option><option>Rápido demais</option></select></label>
+    <label class="wide">O que você percebeu?<textarea id="comments" rows="4" maxlength="3000" placeholder="Os pés parecem deslizar? A troca de direção é natural? Algo chamou sua atenção?"></textarea></label>
+    <div class="wide feedback-actions"><button class="secondary" type="submit">Copiar avaliação</button><a id="github-feedback" target="_blank" rel="noopener noreferrer">Enviar pelo GitHub ↗</a></div><p id="feedback-status" class="quiet wide" role="status">Nada é enviado automaticamente. O GitHub exige login; você também pode copiar e compartilhar a avaliação.</p>
+  </form></section>
+</main>
+<footer><span>Spirit Gate · experimento isolado da versão desktop</span><span>Java no navegador com <a href="https://cheerpj.com/" target="_blank" rel="noopener noreferrer">CheerpJ</a> · Leaning Technologies</span></footer>
+<script src="app.js"></script>
+</body></html>

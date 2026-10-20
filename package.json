@@ -1,0 +1,1 @@
+{"name":"spirit-gate-browser-preview","version":"0.1.0","private":true,"type":"module","scripts":{"build":"python build.py"},"devDependencies":{"playwright-core":"^1.58.2"}}
