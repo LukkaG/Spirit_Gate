@@ -1,0 +1,23 @@
+{
+  "javaTests": 373,
+  "javaFailures": 0,
+  "javaErrors": 0,
+  "javaSkipped": 0,
+  "pythonTests": 30,
+  "randomizedEdits": 500,
+  "benchmarkElements": 12000,
+  "junitReportFiles": 122,
+  "realClientProbe": {
+    "catalogAssets": 248,
+    "paintedTiles": 600,
+    "realMouseRectangle": true,
+    "realUndoRedo": true,
+    "savedAndReloaded": true,
+    "initialX": 140.0,
+    "blockedX": 240.3334,
+    "npcInteraction": true,
+    "runtimeFailure": false,
+    "personalSavesUsed": false,
+    "humanApproved": false
+  }
+}

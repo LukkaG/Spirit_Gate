@@ -1,0 +1,15 @@
+package com.projetok.studio;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.nio.file.*;
+import java.util.*;
+import static org.junit.jupiter.api.Assertions.*;
+class StudioFinalRegressionTest {
+    @TempDir Path root;
+    @Test void randomizedEditsUndoAndPersistenceKeepOriginals()throws Exception{var original=WorldDocument.empty("randomized",512,512);var d=original;var h=new EditorHistory(d);Random r=new Random(114);for(int i=0;i<500;i++){int x=r.nextInt(16)*32,y=r.nextInt(16)*32;var before=d;d=i%4==0?EditorOperations.erase(d,"ground",x,y):EditorOperations.pencil(d,EditorOperationsTest.brush(),x,y,true);h.commit(d);if(!before.equals(d)){assertEquals(before,h.undo());assertEquals(d,h.redo());}if(i%20==0)assertEquals(d,DocumentStore.decode(DocumentStore.encode(d)));}DocumentStore.save(root.resolve("mapa.sgmap"),d);assertEquals(d,DocumentStore.load(root.resolve("mapa.sgmap")));assertTrue(original.elements().isEmpty());}
+    @Test void forgedImageDimensionsAreRejectedBeforeDecode()throws Exception{Path p=Files.createDirectories(root.resolve("assets")).resolve("image.png");ImageIO.write(new BufferedImage(32,32,2),"png",p.toFile());var a=AssetCatalog.scan(root,null).assets().get(0);var forged=new AssetCatalog.Asset(a.id(),a.path(),a.file(),a.sha(),8192,8192,true,a.category(),a.thumbnail(),a.indexedAt());assertThrows(java.io.IOException.class,()->new AssetImages().load(forged));}
+    @Test void invalidAnimationDoesNotBreakCanvasAndUtf8CorruptionIsRejected()throws Exception{var e=EditorOperationsTest.brush();var bad=new WorldDocument.Element(e.id(),e.kind(),e.asset(),e.sha(),e.crop(),0,0,32,32,e.layer(),true,false,"","FRONT",Map.of("animation.frames","invalid"));var d=WorldDocument.empty("mapa",128,128).withElements(List.of(bad));var canvas=new WorldCanvas(()->d,new AssetImages());canvas.setSize(300,300);var image=new BufferedImage(300,300,2);var g=image.createGraphics();assertDoesNotThrow(()->canvas.paint(g));g.dispose();assertThrows(java.io.IOException.class,()->DocumentStore.decode(new byte[]{(byte)0xff}));assertTrue(StudioValidator.validate(Map.of(d.id(),d),new AssetCatalog.Result(List.of(),List.of(),List.of()),false).stream().anyMatch(p->p.severity()==StudioProblem.Severity.ERROR));}
+    @Test void realWorldUsesConfiguredNpcDialogueAndEventsKeepPortalGuards(){var d=StudioExample.document();var npc=d.elements().get(1);var edited=new WorldDocument.Element(npc.id(),npc.kind(),npc.asset(),npc.sha(),npc.crop(),npc.x(),npc.y(),npc.width(),npc.height(),npc.layer(),true,false,npc.reference(),npc.direction(),Map.of("npc.dialogue","elder.help","npc.name","Guia"));d=d.withElements(List.of(d.elements().get(0),edited));var world=new com.projetok.rpg.RpgWorld(com.projetok.rpg.CharacterIdentity.create("Teste","guardian","azure"),StudioExport.scenes(d.id(),Map.of(d.id(),d)));assertTrue(world.interact());assertEquals("elder.help",world.dialogue().id());assertFalse(world.travel(StudioExport.key("portal_",d.id()+"/portal")));}
+}

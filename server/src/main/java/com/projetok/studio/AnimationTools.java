@@ -1,0 +1,15 @@
+package com.projetok.studio;
+import javax.swing.*;
+import java.awt.*;
+import java.util.*;
+
+/** Montagem ordenada de quadros existentes, sem recortar ou regravar PNGs. */
+final class AnimationTools {
+    AnimationTools(WorldStudio ui){ui.action("Ambiente","Animar selecao (previa)",()->{
+        var chosen=ui.document.elements().stream().filter(e->ui.canvas.selected.contains(e.id())).toList();if(chosen.size()!=1)throw new IllegalArgumentException("Selecione um objeto ambiental");var element=chosen.get(0);EditorOperations.editable(ui.document,element.layer());if(element.locked())throw new IllegalArgumentException("Objeto bloqueado");
+        var options=ui.catalog.assets().toArray(AssetCatalog.Asset[]::new);JComboBox<AssetCatalog.Asset> picker=new JComboBox<>(options);picker.setRenderer((l,v,i,s,f)->new JLabel(v==null?"":v.path()));DefaultListModel<AssetCatalog.Asset> frames=new DefaultListModel<>();EnvironmentAnimation.sequence(element).ifPresent(seq->seq.frames().forEach(id->{var a=ui.catalog.byId().get(id);if(a!=null)frames.addElement(a);}));JList<AssetCatalog.Asset> list=new JList<>(frames);list.setCellRenderer((l,v,i,s,f)->{JLabel label=new JLabel(v.path(),new ImageIcon(v.thumbnail()),JLabel.LEFT);label.setOpaque(true);label.setBackground(s?Color.LIGHT_GRAY:Color.WHITE);return label;});
+        JPanel buttons=new JPanel();for(String command:new String[]{"Adicionar","Remover","Subir","Descer"}){JButton b=new JButton(command);buttons.add(b);b.addActionListener(ev->{int i=list.getSelectedIndex();switch(command){case "Adicionar"->{if(frames.size()<32&&picker.getSelectedItem()!=null)frames.addElement((AssetCatalog.Asset)picker.getSelectedItem());}case "Remover"->{if(i>=0)frames.remove(i);}default->{int j=i+(command.equals("Subir")?-1:1);if(i>=0&&j>=0&&j<frames.size()){var a=frames.remove(i);frames.add(j,a);list.setSelectedIndex(j);}}}});}
+        JSpinner ms=new JSpinner(new SpinnerNumberModel(250,30,5000,10));JCheckBox loop=new JCheckBox("Repetir",true);EnvironmentAnimation.sequence(element).ifPresent(s->{ms.setValue(s.duration());loop.setSelected(s.loop());});JPanel panel=new JPanel(new BorderLayout());panel.add(picker,BorderLayout.NORTH);panel.add(new JScrollPane(list));JPanel south=new JPanel(new BorderLayout());south.add(buttons,BorderLayout.NORTH);JPanel timing=new JPanel();timing.add(new JLabel("ms/quadro"));timing.add(ms);timing.add(loop);south.add(timing);panel.add(south,BorderLayout.SOUTH);panel.setPreferredSize(new Dimension(700,420));if(JOptionPane.showConfirmDialog(ui,panel,"Animacao apenas na previa; exportacao usa asset base",JOptionPane.OK_CANCEL_OPTION)!=JOptionPane.OK_OPTION)return;
+        var ordered=Collections.list(frames.elements());var sequence=new EnvironmentAnimation.Sequence(ordered.stream().map(AssetCatalog.Asset::id).toList(),ordered.stream().map(AssetCatalog.Asset::sha).toList(),(int)ms.getValue(),loop.isSelected());var replacement=EnvironmentAnimation.configure(element,sequence);ui.change(ui.document.withElements(ui.document.elements().stream().map(e->e.id().equals(element.id())?replacement:e).toList()));ui.warmImages();
+    });}
+}

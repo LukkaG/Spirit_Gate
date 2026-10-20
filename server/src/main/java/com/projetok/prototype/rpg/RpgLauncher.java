@@ -9,8 +9,11 @@ import java.util.List;
 public final class RpgLauncher {
     private RpgLauncher() { }
     public static void main(String[] args) {
+        if(args.length>0 && args[0].equals("--experimental-player-sprites")) {
+            System.setProperty(RpgPlayerSprites.ENABLED,"true");args=java.util.Arrays.copyOfRange(args,1,args.length);
+        }
         if(args.length==3&&args[0].equals("--smoke")){System.setProperty("spiritgate.smoke.name",args[1]);System.setProperty("spiritgate.smoke.output",args[2]);}
-        else if(args.length!=0)throw new IllegalArgumentException("Uso: RpgLauncher [--smoke nome captura.png]");
+        else if(args.length!=0)throw new IllegalArgumentException("Uso: RpgLauncher [--experimental-player-sprites] [--smoke nome captura.png]");
         SwingUtilities.invokeLater(()->{if(System.getProperty("spiritgate.smoke.name")!=null)open();else RpgMenu.open();});
     }
     static void open() {
@@ -20,23 +23,26 @@ public final class RpgLauncher {
         com.projetok.rpg.CharacterIdentity identity;
         try { identity = com.projetok.rpg.CharacterIdentity.create(name, "guardian", "azure"); }
         catch (IllegalArgumentException error) { JOptionPane.showMessageDialog(null, error.getMessage()); open(); return; }
-        play(new com.projetok.rpg.RpgWorld(identity),new com.projetok.rpg.LocalSaveStore(RpgMenu.home().resolve("saves/characters/"+identity.id()+".properties")));
+        play(new com.projetok.rpg.RpgWorld(identity),new com.projetok.rpg.LocalSaveStore(RpgMenu.dataHome().resolve("saves/characters/"+identity.id()+".properties")));
     }
     static void play(com.projetok.rpg.RpgWorld world,com.projetok.rpg.LocalSaveStore store) {
         RpgRuntime runtime = new RpgRuntime(world);
-        var preferencesFile=RpgMenu.home().resolve("saves/preferences.properties");
+        var preferencesFile=RpgMenu.dataHome().resolve("saves/preferences.properties");
         com.projetok.rpg.RpgPreferences[] preferences={com.projetok.rpg.RpgPreferences.defaults()};
         try{preferences[0]=com.projetok.rpg.RpgPreferences.load(preferencesFile);}catch(Exception error){JOptionPane.showMessageDialog(null,"Preferencias invalidas preservadas; usando padrao: "+error.getMessage());}
         RpgAudio audio=new RpgAudio(preferences[0]);audio.play(RpgAudio.Cue.UI);
         DebugSnapshot template = DebugWorld.demo().snapshot();
         DebugPanel panel = new DebugPanel(() -> adapt(runtime.snapshot(), template));
+        RpgPlayerSprites playerSprites=RpgPlayerSprites.configured();
+        if(playerSprites!=null) { playerSprites.update(runtime.snapshot());panel.setActorRenderer(playerSprites); }
+        RpgCombatFeedback feedback=new RpgCombatFeedback();feedback.update(runtime.snapshot());RpgBossOverlay bossOverlay=new RpgBossOverlay();bossOverlay.update(runtime.snapshot());panel.setWorldOverlay(g->{bossOverlay.draw(g);feedback.draw(g);});
         panel.setLocalMap(RpgMaps.region("village"),false);
-        JFrame frame = new JFrame("Spirit Gate | RPG offline");
+        JFrame frame = new JFrame("Spirit Gate | RPG offline"+(playerSprites==null?"":" | SPRITES EXPERIMENTAIS"));
         JPanel root=new JPanel(new java.awt.BorderLayout());RpgHud hud=new RpgHud(runtime);root.add(panel,java.awt.BorderLayout.CENTER);root.add(hud,java.awt.BorderLayout.SOUTH);
         frame.setContentPane(root); frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         InventoryWindow inventory=new InventoryWindow(frame,runtime);
         ExplorationWindow exploration=new ExplorationWindow(frame,runtime);
-        java.nio.file.Path controlsFile=RpgMenu.home().resolve("saves/controls.properties");
+        java.nio.file.Path controlsFile=RpgMenu.dataHome().resolve("saves/controls.properties");
         com.projetok.rpg.RpgControls[] controls={new com.projetok.rpg.RpgControls(com.projetok.rpg.RpgControls.DEFAULTS)};
         try{controls[0]=com.projetok.rpg.RpgControls.load(controlsFile);}catch(Exception error){JOptionPane.showMessageDialog(frame,"Atalhos invalidos preservados; usando padrao: "+error.getMessage());}
         java.util.Map<String,Runnable> actions=new java.util.TreeMap<>();
@@ -45,9 +51,13 @@ public final class RpgLauncher {
         Runnable bindActions=()->actions.forEach((id,action)->bind(panel,controls[0].key(id),action));bindActions.run();
         boolean amber=runtime.snapshot().identity().appearance().equals("amber");
         panel.setActorPalette(id->id==1?(amber?new java.awt.Color(230,177,65):new java.awt.Color(65,190,220)):id>=500?new java.awt.Color(90,200,160):null);
-        JButton menuButton=new JButton("Salvar e voltar ao menu");menuButton.addActionListener(e->frame.dispatchEvent(new WindowEvent(frame,WindowEvent.WINDOW_CLOSING)));JPanel toolbar=new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));toolbar.add(menuButton);root.add(toolbar,java.awt.BorderLayout.NORTH);
+        JButton menuButton=new JButton("Salvar e voltar ao menu");menuButton.addActionListener(e->frame.dispatchEvent(new WindowEvent(frame,WindowEvent.WINDOW_CLOSING)));JPanel toolbar=new JPanel(new java.awt.GridLayout(0,4,4,4));toolbar.add(menuButton);root.add(toolbar,java.awt.BorderLayout.NORTH);
         java.util.Map<String,JButton> hotbar=new java.util.TreeMap<>();
         for(String action:new String[]{"attack","ability","potion","inventory","journal","map"}){JButton button=new JButton(actionLabel(action)+" ["+controls[0].key(action)+"]");button.addActionListener(e->{audio.play(RpgAudio.Cue.UI);actions.get(action).run();});toolbar.add(button);hotbar.put(action,button);}
+        var secondary=com.projetok.rpg.RpgSecondaryAbility.forArchetype(world.snapshot().identity().archetype());
+        JButton secondaryButton=new JButton(secondary.name());
+        secondaryButton.setToolTipText("Custo "+secondary.cost()+" vigor; recarga compartilhada "+RpgCombatStatus.cooldown(secondary.cooldown()));
+        secondaryButton.addActionListener(e->runtime.command(w->w.activate("rpg.secondary")));toolbar.add(secondaryButton);
         JButton configure=new JButton("Atalhos");configure.addActionListener(e->ControlsDialog.open(frame,controls[0],controlsFile,next->{for(String key:controls[0].keys().values())for(boolean down:new boolean[]{true,false}){panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(KeyStroke.getKeyStroke((down?"pressed ":"released ")+key));panel.getActionMap().remove(key+down);}resetHeld(panel);controls[0]=next;bindActions.run();hotbar.forEach((id,button)->button.setText(actionLabel(id)+" ["+next.key(id)+"]"));}));toolbar.add(configure);
         JButton settings=new JButton("Audio / ambiente");settings.addActionListener(e->PreferencesDialog.open(frame,preferences[0],preferencesFile,next->{preferences[0]=next;audio.preferences(next);audio.play(RpgAudio.Cue.UI);}));toolbar.add(settings);
         frame.addWindowListener(new WindowAdapter(){public void windowClosing(WindowEvent e){runtime.input(0,0);inventory.setVisible(false);exploration.setVisible(false);frame.setEnabled(false);runtime.saveAndPause(store).whenComplete((unused,error)->SwingUtilities.invokeLater(()->{if(error!=null){frame.setEnabled(true);JOptionPane.showMessageDialog(frame,"Falha ao salvar; sessao preservada: "+error.getMessage());}else frame.dispose();}));}});
@@ -69,7 +79,14 @@ public final class RpgLauncher {
         String[] displayedRegion={"village"};
         com.projetok.rpg.RpgWorld.View[] previous={runtime.snapshot()};
         Timer timer = new Timer(33, e -> {
+            if(runtime.failure()!=null) {
+                ((Timer)e.getSource()).stop();runtime.close();frame.setEnabled(false);
+                JOptionPane.showMessageDialog(frame,"A simulacao foi interrompida: "+runtime.failure().getMessage()+"\nO progresso apos o ultimo salvamento nao foi confirmado. Voltando ao menu.","Falha da simulacao",JOptionPane.ERROR_MESSAGE);
+                frame.dispose();return;
+            }
             var view=runtime.snapshot();var before=previous[0];
+            feedback.update(view);bossOverlay.update(view);
+            if(playerSprites!=null) playerSprites.update(view);
             if(view.state().hp()<before.state().hp())audio.play(RpgAudio.Cue.HURT);
             else if(view.state().hp()>before.state().hp())audio.play(RpgAudio.Cue.HEAL);
             if(view.level()>before.level())audio.play(RpgAudio.Cue.LEVEL);
@@ -92,18 +109,23 @@ public final class RpgLauncher {
         });capture.setRepeats(false);capture.start();}
     }
     static DebugSnapshot adapt(com.projetok.rpg.RpgWorld.View v, DebugSnapshot t) {
+        return adapt(v,t,List.of(new DebugSnapshot.Obstacle(380,180,120,120)));
+    }
+    /** Adapta a mesma simulacao com geometria explicita de sessao de autoria. */
+    public static DebugSnapshot adapt(com.projetok.rpg.RpgWorld.View v,DebugSnapshot t,List<DebugSnapshot.Obstacle> obstacles) {
         var actors=new java.util.ArrayList<DebugSnapshot.ActorView>();
         actors.add(new DebugSnapshot.ActorView(1,v.identity().name(),v.x(),v.y(),18,v.state().hp(),v.maxHp(),true,v.state().hp()>0));
         for(var enemy:v.enemies())actors.add(new DebugSnapshot.ActorView(enemy.id(),enemy.name(),enemy.x(),enemy.y(),19,enemy.hp(),enemy.maxHp(),false,enemy.hp()>0));
         int npcId=500;for(var npc:v.npcs())actors.add(new DebugSnapshot.ActorView(npcId++,npc.name(),npc.x(),npc.y(),16,1,1,false,true));
         for(var portal:v.portals())actors.add(new DebugSnapshot.ActorView(npcId++,"Portal: "+portal.destination(),portal.x(),portal.y(),22,1,1,false,true));
         for(var object:v.objects())if(object.available())actors.add(new DebugSnapshot.ActorView(npcId++,object.id().contains("chest")?"Bau do aprendiz":object.id().contains("herbs")?"Ervas curativas":"Reserva de pocoes",object.x(),object.y(),15,1,1,false,true));
-        var warnings=v.enemies().stream().filter(e->e.state().equals("PREPARE")).map(e->new DebugSnapshot.IceZoneView(e.x(),e.y(),e.hp()*2<=e.maxHp()?135:110,0,1)).toList();
+        java.util.List<DebugSnapshot.IceZoneView> warnings=List.of(); // Aviso RPG ocluido pelo overlay do chefe.
         return new DebugSnapshot(actors,
-            List.of(new DebugSnapshot.Obstacle(380,180,120,120)),List.of(),v.state().hp(),v.maxHp(),0,v.state().hp()==0,v.ticks(),v.message(),1,0,0,null,
+            obstacles,List.of(),v.state().hp(),v.maxHp(),0,v.state().hp()==0,v.ticks(),v.message(),1,0,0,null,
             100,100,0,warnings,List.of(),false,0,0,List.of(),false,List.of(),t.cryostasisHud(),t.lightningStepHud());
     }
-    static void bind(JComponent component,String key,Runnable action) {
+    /** Binding compartilhado que evita repeticao automatica de comandos. */
+    public static void bind(JComponent component,String key,Runnable action) {
         @SuppressWarnings("unchecked") java.util.Set<String> existing=(java.util.Set<String>)component.getClientProperty("rpg.held");
         if(existing==null){existing=new java.util.HashSet<>();component.putClientProperty("rpg.held",existing);}final java.util.Set<String> held=existing;
         for(boolean down:new boolean[]{true,false}) {
@@ -112,6 +134,7 @@ public final class RpgLauncher {
             component.getActionMap().put(id,new AbstractAction(){public void actionPerformed(ActionEvent e){if(down){if(held.add(key))action.run();}else held.remove(key);}});
         }
     }
-    static void resetHeld(JComponent component){Object held=component.getClientProperty("rpg.held");if(held instanceof java.util.Set<?> keys)keys.clear();}
+    /** Limpa teclas mantidas ao perder foco. */
+    public static void resetHeld(JComponent component){Object held=component.getClientProperty("rpg.held");if(held instanceof java.util.Set<?> keys)keys.clear();}
     static String actionLabel(String action){return switch(action){case "attack"->"Golpe";case "ability"->"Habilidade";case "potion"->"Pocao";case "inventory"->"Inventario";case "journal"->"Diario";case "map"->"Mapa";case "interact"->"Interagir";case "save"->"Salvar";case "revive"->"Recuperar";default->action;};}
 }

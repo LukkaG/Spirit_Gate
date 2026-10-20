@@ -23,6 +23,8 @@ public final class DialogueService {
             nodes=Map.copyOf(map);
         }catch(IOException e){throw new IllegalStateException(e);}
     }
+    /** IDs de dialogos reais disponiveis para ferramentas de autoria. */
+    public Set<String> ids(){return nodes.keySet();}
     public Node node(String id,java.util.function.Predicate<String> condition) {
         Node n=nodes.get(id);if(n==null)throw new IllegalArgumentException("No ausente: "+id);
         return new Node(n.id(),n.text(),n.choices().stream().filter(c->condition.test(c.condition())).toList());

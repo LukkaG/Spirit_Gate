@@ -14,10 +14,14 @@ public final class EnemyService {
             super(id,name,home);this.spawn=spawn;this.region=region;this.definition=definition;this.home=home;hp=definition.hp();
         }
     }
-    public record View(int id,String spawn,String name,float x,float y,int hp,int maxHp,String state,boolean boss) { }
+    public record View(int id,String spawn,String name,float x,float y,int hp,int maxHp,String state,boolean boss,RpgBossThreat threat) { }
+    private final java.util.function.Function<String,CollisionService.Space> geometry;
     private final List<Enemy> enemies=new ArrayList<>();
-    public EnemyService(RpgContent content,CollisionService.Space space) {
-        Properties definitions=read("enemies"),spawns=read("spawns"); Map<String,Definition> types=new TreeMap<>();
+    public EnemyService(RpgContent content,CollisionService.Space space) {this(content,space,RpgSceneSet.entries("spawns"),r->space);}
+    /** Spawns de autoria usam definicoes e IA existentes, validados na geometria da propria regiao. */
+    public EnemyService(RpgContent content,CollisionService.Space space,Map<String,String> spawnData,java.util.function.Function<String,CollisionService.Space> geometry) {
+        this.geometry=geometry;
+        Properties definitions=read("enemies"),spawns=new Properties();spawns.putAll(spawnData); Map<String,Definition> types=new TreeMap<>();
         for(String id:definitions.stringPropertyNames()) {
             String[] v=definitions.getProperty(id).split("\\|");if(v.length!=6)throw new IllegalArgumentException("Inimigo invalido");
             content.get("enemy",id); int[] n=Arrays.stream(v).mapToInt(Integer::parseInt).toArray();
@@ -31,7 +35,7 @@ public final class EnemyService {
             var base=content.get("enemy",v[0]);content.get("region",v[1]);Definition definition=types.get(v[0]);
             if(definition==null||!base.region().equals(v[1]))throw new IllegalArgumentException("Spawn em regiao proibida");
             var enemy=new Enemy(entityId++,spawn,v[1],definition,new Position(Float.parseFloat(v[2]),Float.parseFloat(v[3])),base.name());
-            if(!new CollisionService().isFree(enemy,enemy.home.x(),enemy.home.y(),19,space))throw new IllegalArgumentException("Spawn obstruido");
+            if(!new CollisionService().isFree(enemy,enemy.home.x(),enemy.home.y(),19,geometry.apply(v[1])))throw new IllegalArgumentException("Spawn obstruido");
             enemies.add(enemy);
         }
     }
@@ -41,11 +45,15 @@ public final class EnemyService {
         }catch(IOException e){throw new IllegalStateException(e);}
     }
     List<Enemy> current(String region) { return enemies.stream().filter(e->e.region.equals(region)).toList(); }
-    public List<View> views(String region) { return current(region).stream().map(e->new View(e.getId(),e.spawn,e.getName(),e.getPosition().x(),e.getPosition().y(),e.hp,e.definition.hp(),e.hp==0?"DEAD":e.behavior,e.definition.id().equals("warden"))).toList(); }
+    private long viewTick;
+    public List<View> views(String region) { return views(region,viewTick); }
+    /** Publica aviso com o tick do mundo, inclusive imediatamente apos retomar um save. */
+    public List<View> views(String region,long tick) { return current(region).stream().map(e->new View(e.getId(),e.spawn,e.getName(),e.getPosition().x(),e.getPosition().y(),e.hp,e.definition.hp(),e.hp==0?"DEAD":e.behavior,e.definition.id().equals("warden"),e.hp>0&&e.behavior.equals("PREPARE")?new RpgBossThreat(e.getPosition().x(),e.getPosition().y(),e.hp*2<=e.definition.hp()?135:110,Math.max(0,e.attackTick-tick),e.hp*2<=e.definition.hp(),geometry.apply(region)):null)).toList(); }
     void respawn(long tick,String region) {
         for(Enemy e:current(region))if(e.hp==0&&e.definition.respawn()>0&&tick>=e.readyTick){e.hp=e.definition.hp();e.generation++;e.setPosition(e.home);e.behavior="PATROL";}
     }
     void update(String region,long tick,Position player,boolean alive,MovementService movement,CollisionService.Space space,java.util.function.IntConsumer damage,java.util.function.Predicate<Position> visible,boolean bossUnlocked) {
+        viewTick=tick;
         for(Enemy e:current(region)) {
             if(e.hp==0)continue;
             if(e.definition.id().equals("warden")&&!bossUnlocked){e.behavior="DORMANT";continue;}
@@ -72,7 +80,7 @@ public final class EnemyService {
                 if(d<=46 && visible.test(e.getPosition())) {
                     e.behavior="ATTACK";
                     if(tick>=e.attackTick){damage.accept(e.definition.attack());e.attackTick=tick+36;}
-                } else moveToward(e,player,e.definition.speed(),movement,space);
+                } else {e.behavior="CHASE";moveToward(e,player,e.definition.speed(),movement,space);}
             } else {
                 Position patrol=new Position(e.home.x()+(tick/90%2==0?24:-24),e.home.y());
                 moveToward(e,patrol,e.definition.speed()*0.3f,movement,space);
@@ -82,7 +90,9 @@ public final class EnemyService {
     private static double distance(Position a,Position b){return Math.hypot(a.x()-b.x(),a.y()-b.y());}
     private static void moveToward(Enemy e,Position target,float speed,MovementService movement,CollisionService.Space space) {
         Position p=e.getPosition(),direction=movement.direction(target.x()-p.x(),target.y()-p.y());
-        movement.moveContinuous(e,direction.x()*speed/30,direction.y()*speed/30,19,space);
+        // Limita o ultimo passo ao destino para evitar oscilacao em torno do ponto de patrulha.
+        float step=(float)Math.min(speed/30,distance(p,target));
+        movement.moveContinuous(e,direction.x()*step,direction.y()*step,19,space);
     }
     Set<String> saveFlags() {
         Set<String> result=new TreeSet<>();

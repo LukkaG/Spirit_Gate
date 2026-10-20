@@ -9,6 +9,12 @@ import java.util.List;
 /** Mundo offline: uma thread proprietaria, geometria compartilhada com a arena. */
 public final class RpgWorld {
     private final CharacterIdentity identity;
+    private final java.util.ArrayDeque<RpgCombatEvent> events=new java.util.ArrayDeque<>();
+    private long eventSequence;
+    private void event(RpgCombatEvent.Kind kind,int target,float x,float y,int amount) {
+        events.addLast(new RpgCombatEvent(++eventSequence,ticks,kind,target,x,y,amount));
+        while(events.size()>64)events.removeFirst();
+    }
     private final RpgContent content = RpgContent.builtin();
     private final ItemCatalog items = new ItemCatalog(content);
     private final RpgProgression progression = RpgProgression.builtin();
@@ -25,12 +31,14 @@ public final class RpgWorld {
     private long abilityReadyTick;
     private float facingX=1,facingY;
     public boolean castAbility() {
+        int beforeHp=hp;
         var ability=Archetypes.get(identity.archetype());
         if(hp==0||transitioning||ticks<abilityReadyTick||stamina<ability.cost()*10||ability.ability().equals("mend")&&hp==maxHp())return false;
         if(ability.ability().equals("dash")) movement.moveContinuous(body,facingX*ability.effect(),facingY*ability.effect(),18,space);
         else hp=Math.min(maxHp(),hp+ability.effect());
         stamina-=ability.cost()*10;abilityReadyTick=ticks+ability.cooldown();
         flags.removeIf(f->f.startsWith("ability-until:"));flags.add("ability-until:"+abilityReadyTick);
+        if(hp>beforeHp)event(RpgCombatEvent.Kind.HEAL,1,body.getPosition().x(),body.getPosition().y(),hp-beforeHp);
         message=ability.ability().equals("dash")?"Investida!":"Restauracao!";return true;
     }
     private String message="Bem-vindo a Aurora";
@@ -40,16 +48,19 @@ public final class RpgWorld {
         int previous=maxHp(); xp=progression.award(xp,amount);
         if(hp>0) hp+=maxHp()-previous;
     }
-    public void receiveDamage(int amount) { if(amount<0||amount>10000) throw new IllegalArgumentException("Dano invalido"); hp=Math.max(0,hp-amount); }
+    public void receiveDamage(int amount) { if(amount<0||amount>10000) throw new IllegalArgumentException("Dano invalido"); int before=hp;hp=Math.max(0,hp-amount);
+        if(before>hp)event(RpgCombatEvent.Kind.HIT,1,body.getPosition().x(),body.getPosition().y(),before-hp);
+        if(before>0&&hp==0)event(RpgCombatEvent.Kind.KO,1,body.getPosition().x(),body.getPosition().y(),0); }
     public boolean use(String id) {
         ItemCatalog.Item item=items.get(id);
         if(item.category()!=ItemCatalog.Category.CONSUMABLE || hp==0 || hp==maxHp() || transitioning || ticks<potionReadyTick || inventory.count(id)==0) return false;
-        inventory.remove(id,1); hp=Math.min(maxHp(),hp+item.healing()); potionReadyTick=ticks+60;
+        int beforeHp=hp;inventory.remove(id,1); hp=Math.min(maxHp(),hp+item.healing()); potionReadyTick=ticks+60;
         flags.removeIf(f->f.startsWith("potion-until:")); flags.add("potion-until:"+potionReadyTick);
+        event(RpgCombatEvent.Kind.HEAL,1,body.getPosition().x(),body.getPosition().y(),hp-beforeHp);
         message=item.name()+": vida recuperada"; return true;
     }
     public InventoryService inventory() { return inventory; }
-    public boolean activate(String action){return switch(action){case "rpg.attack"->attack();case "rpg.ability"->castAbility();case "item.potion"->use("potion");default->throw new IllegalArgumentException("Acao de hotbar desconhecida");};}
+    public boolean activate(String action){boolean accepted=switch(action){case "rpg.attack"->attack();case "rpg.ability"->castAbility();case "rpg.secondary"->castSecondaryAbility();case "item.potion"->use("potion");default->throw new IllegalArgumentException("Acao de hotbar desconhecida");};if(!accepted)event(RpgCombatEvent.Kind.REJECT,1,body.getPosition().x(),body.getPosition().y(),0);return accepted;}
     public int attackPower() { return identity.baseAttack()+(level()-1)*progression.attackPerLevel()+equipmentPower("weapon"); }
     public int defense() { return equipmentPower("torso")+equipmentPower("legs")+equipmentPower("accessory"); }
     private int equipmentPower(String slot) { return equipment.containsKey(slot)?items.get(equipment.get(slot)).power():0; }
@@ -67,23 +78,32 @@ public final class RpgWorld {
     }
     private final GameEntity body;
     public RpgWorld() { this(CharacterIdentity.create("Viajante", "guardian", "azure")); }
-    public RpgWorld(CharacterIdentity identity) {
+    public RpgWorld(CharacterIdentity identity) {this(identity,(RpgSceneSet)null);}
+    /** Configuracao exclusiva de sessao sintetica; construtor padrao conserva a campanha. */
+    public RpgWorld(CharacterIdentity identity,RpgSceneSet scenes) {
+        this.scenes=scenes;
         this.identity = java.util.Objects.requireNonNull(identity);
         content.get("region", identity.initialRegion());
-        body = new GameEntity(1, identity.name(), new Position(140, 320)) { };
+        if(scenes!=null)region=scenes.initialRegion();
+        space=scenes==null?new CollisionService.Space(960,640,List.of(new CollisionService.Obstacle(380,180,120,120)),List.of()):scenes.maps().get(region).space();
+        body = new GameEntity(1, identity.name(), scenes==null?new Position(140,320):scenes.maps().get(region).spawn()) { };
+        enemies=scenes==null?new EnemyService(content,space):new EnemyService(content,space,scenes.enemies(),r->scenes.maps().get(r).space());
+        npcs=scenes==null?new NpcService(content):new NpcService(content,scenes.npcs());
+        portals=scenes==null?new PortalService(content):new PortalService(content,scenes.portals());
+        objects=scenes==null?new WorldObjects(content,items):new WorldObjects(content,items,scenes.objects());
         hp=identity.baseHp(); inventory.add("potion",3);
-        flags.add("visited:village");
+        flags.add("visited:"+region);
     }
     private final MovementService movement = new MovementService(new CollisionService());
-    private final CollisionService.Space space = new CollisionService.Space(960, 640,
-            List.of(new CollisionService.Obstacle(380, 180, 120, 120)), List.of());
-    private final EnemyService enemies=new EnemyService(content,space);
+    private final RpgSceneSet scenes;
+    private CollisionService.Space space;
+    private final EnemyService enemies;
     private final LootService loot=new LootService(content,items);
     private java.util.random.RandomGenerator random;
     private long attackReadyTick;
-    private final NpcService npcs=new NpcService(content);
-    private final PortalService portals=new PortalService(content);
-    private final WorldObjects objects=new WorldObjects(content,items);
+    private final NpcService npcs;
+    private final PortalService portals;
+    private final WorldObjects objects;
     public boolean harvest(String id) {
         if(hp==0||transitioning)return false;
         var object=objects.views(region,ticks,flags).stream().filter(o->o.id().equals(id)&&o.available()&&distance(body.getPosition(),new Position(o.x(),o.y()))<=65).findFirst();
@@ -96,12 +116,14 @@ public final class RpgWorld {
         var portal=portals.get(id);
         if(hp==0||transitioning||ticks<portalReadyTick||!portal.region().equals(region)||distance(body.getPosition(),new Position(portal.x(),portal.y()))>65)return false;
         if(portal.destination().equals("ruins")&&!quests.containsKey("sanctuary")){message="Conclua Ecos no bosque e aceite a missao do Santuario com a Ancia";return false;}
-        if(!new CollisionService().isFree(body,portal.arrivalX(),portal.arrivalY(),18,space))return false;
+        if(!portal.quest().isEmpty()&&!quests.containsKey(portal.quest()))return false;
+        CollisionService.Space destination=scenes==null?space:scenes.maps().get(portal.destination()).space();
+        if(!new CollisionService().isFree(body,portal.arrivalX(),portal.arrivalY(),18,destination))return false;
         transitioning=true;
-        try{region=portal.destination();flags.add("visited:"+region);body.setPosition(new Position(portal.arrivalX(),portal.arrivalY()));closeDialogue();portalReadyTick=ticks+30;if(region.equals("ruins"))flags.add("dungeon-started");questService.refresh(quests,flags,inventory,region);message="Chegou a "+content.get("region",region).name();return true;}finally{transitioning=false;}
+        try{space=destination;region=portal.destination();flags.add("visited:"+region);body.setPosition(new Position(portal.arrivalX(),portal.arrivalY()));closeDialogue();portalReadyTick=ticks+30;if(region.equals("ruins"))flags.add("dungeon-started");questService.refresh(quests,flags,inventory,region);message="Chegou a "+content.get("region",region).name();return true;}finally{transitioning=false;}
     }
     private boolean bossUnlocked(){return enemies.current("ruins").stream().filter(e->!e.definition.id().equals("warden")).allMatch(e->e.hp==0);}
-    public boolean returnHome(){if(hp>0)return false;region="village";body.setPosition(new Position(140,320));hp=maxHp();stamina=1000;closeDialogue();message="Recuperado em Aurora. Progresso preservado.";return true;}
+    public boolean returnHome(){if(hp>0)return false;region=scenes==null?"village":scenes.initialRegion();if(scenes!=null)space=scenes.maps().get(region).space();body.setPosition(scenes==null?new Position(140,320):scenes.maps().get(region).spawn());hp=maxHp();stamina=1000;closeDialogue();message="Recuperado em Aurora. Progresso preservado.";return true;}
     private String activeNpc="";
     public boolean trade(String id,int amount,boolean buying) {
         var item=items.get(id);if(amount<1||amount>99)throw new IllegalArgumentException("Quantidade de comercio invalida");
@@ -138,16 +160,27 @@ public final class RpgWorld {
         var portal=portals.nearest(region,body.getPosition());if(portal.isPresent())return travel(portal.get().id());
         var npc=npcs.nearest(region,body.getPosition());
         if(npc.isEmpty()||!lineClear(body.getPosition(),new Position(npc.get().x(),npc.get().y()))){closeDialogue();var object=objects.views(region,ticks,flags).stream().filter(o->o.available()&&distance(body.getPosition(),new Position(o.x(),o.y()))<=65).findFirst();if(object.isPresent())return harvest(object.get().id());message="Aproxime-se de NPC, portal ou objeto e pressione F";return false;}
-        activeNpc=npc.get().id();questService.event("talk",activeNpc,activeNpc,ticks+1,quests,flags);questService.refresh(quests,flags,inventory,region);dialogueNode=activeNpc+".start";message=npc.get().name()+": seja bem-vindo!";return true;
+        activeNpc=npc.get().id();questService.event("talk",activeNpc,activeNpc,ticks+1,quests,flags);questService.refresh(quests,flags,inventory,region);dialogueNode=npc.get().dialogue();message=npc.get().name()+": seja bem-vindo!";return true;
     }
     public RpgWorld(CharacterIdentity identity,java.util.random.RandomGenerator random) { this(identity);this.random=java.util.Objects.requireNonNull(random); }
-    public boolean attack() {
+    /** Ataque basico conserva alcance, dano e recarga anteriores. */
+    public boolean attack() { return strike(identity.archetype().equals("mystic")?145:82,attackPower()); }
+    /** Acao adicional com custo e recarga compartilhada; nenhuma mudanca de formato de save. */
+    public boolean castSecondaryAbility() {
+        var ability=RpgSecondaryAbility.forArchetype(identity.archetype());
+        if(hp==0||transitioning||ticks<abilityReadyTick||stamina<ability.cost()*10)return false;
+        if(!strike(ability.range(),attackPower()+ability.bonus()))return false;
+        stamina-=ability.cost()*10;abilityReadyTick=ticks+ability.cooldown();
+        flags.removeIf(f->f.startsWith("ability-until:"));flags.add("ability-until:"+abilityReadyTick);
+        message=ability.name()+"!";return true;
+    }
+    private boolean strike(int range,int power) {
         if(hp==0||transitioning||ticks<attackReadyTick)return false;
-        EnemyService.Enemy target=enemies.current(region).stream().filter(e->e.hp>0&&(!e.definition.id().equals("warden")||bossUnlocked())&&distance(body.getPosition(),e.getPosition())<= (identity.archetype().equals("mystic")?145:82))
+        EnemyService.Enemy target=enemies.current(region).stream().filter(e->e.hp>0&&(!e.definition.id().equals("warden")||bossUnlocked())&&distance(body.getPosition(),e.getPosition())<= range)
             .min(java.util.Comparator.comparingDouble(e->distance(body.getPosition(),e.getPosition()))).orElse(null);
         if(target==null||!lineClear(body.getPosition(),target.getPosition()))return false;
-        attackReadyTick=ticks+12;target.hp=Math.max(0,target.hp-attackPower());
-        message="Golpe em "+target.getName()+": "+attackPower();
+        attackReadyTick=ticks+12;int previousHp=target.hp;target.hp=Math.max(0,target.hp-power);
+        message="Golpe em "+target.getName()+": "+(previousHp-target.hp);
         if(target.hp==0) {
             target.readyTick=ticks+target.definition.respawn();
             if(loot.award(target.spawn,target.generation,target.definition.id(),inventory,flags,random==null?new java.util.Random(741L^((long)target.spawn.hashCode()<<16)^target.generation):random)) {
@@ -158,13 +191,14 @@ public final class RpgWorld {
                 if(target.definition.id().equals("warden")){flags.add("boss-defeated");flags.add("dungeon-completed");message="Santuario concluido! Volte a Ancia com a reliquia.";}
             }else{target.hp=1;target.readyTick=0;message="Libere espaco nas recompensas pendentes antes da derrota";}
         }
+        event(RpgCombatEvent.Kind.ATTACK,target.getId(),target.getPosition().x(),target.getPosition().y(),0);
+        if(previousHp>target.hp)event(RpgCombatEvent.Kind.HIT,target.getId(),target.getPosition().x(),target.getPosition().y(),previousHp-target.hp);
+        if(target.hp==0)event(RpgCombatEvent.Kind.KO,target.getId(),target.getPosition().x(),target.getPosition().y(),0);
         return true;
     }
     private static double distance(Position a,Position b) { return Math.hypot(a.x()-b.x(),a.y()-b.y()); }
     private boolean lineClear(Position a,Position b) {
-        int samples=Math.max(1,(int)(distance(a,b)/6));
-        for(int i=1;i<samples;i++)if(!new CollisionService().isFree(body,a.x()+(b.x()-a.x())*i/samples,a.y()+(b.y()-a.y())*i/samples,1,space))return false;
-        return true;
+        return RpgSight.clear(a,b,space);
     }
     public void collectLoot() { loot.collect(inventory,flags);message="Recompensas pendentes recolhidas quando houver espaco"; }
     private long ticks;
@@ -214,7 +248,7 @@ public final class RpgWorld {
             if(!keys.add(key))throw new IllegalArgumentException("Estado duplicado: "+key);
         }
     }
-    public record View(float x, float y, long ticks, CharacterIdentity identity, RpgSave state, int attack, int defense, String message, int maxHp, int level,List<EnemyService.View> enemies,List<NpcService.View> npcs,String activeNpc,DialogueService.Node dialogue,List<QuestService.View> journal,List<PortalService.Portal> portals,List<WorldObjects.ObjectView> objects) { public View { enemies=List.copyOf(enemies);npcs=List.copyOf(npcs);journal=List.copyOf(journal);portals=List.copyOf(portals);objects=List.copyOf(objects); } }
+    public record View(float x, float y, long ticks, CharacterIdentity identity, RpgSave state, int attack, int defense, String message, int maxHp, int level,List<EnemyService.View> enemies,List<NpcService.View> npcs,String activeNpc,DialogueService.Node dialogue,List<QuestService.View> journal,List<PortalService.Portal> portals,List<WorldObjects.ObjectView> objects,List<RpgCombatEvent> events) { public View { events=List.copyOf(events);enemies=List.copyOf(enemies);npcs=List.copyOf(npcs);journal=List.copyOf(journal);portals=List.copyOf(portals);objects=List.copyOf(objects); } }
     public void tick(float x, float y) {
         Position direction=movement.direction(x,y);
         if(hp>0) {
@@ -227,5 +261,5 @@ public final class RpgWorld {
         questService.refresh(quests,flags,inventory,region);
         enemies.update(region,ticks,body.getPosition(),hp>0,movement,space,n->receiveDamage(Math.max(1,n-defense())),p->lineClear(body.getPosition(),p),bossUnlocked());
     }
-    public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message,maxHp(),level(),enemies.views(region),npcs.views(region),activeNpc,dialogue(),questService.views(quests,flags),portals.views(region),objects.views(region,ticks,flags)); }
+    public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message,maxHp(),level(),enemies.views(region,ticks),npcs.views(region),activeNpc,dialogue(),questService.views(quests,flags),portals.views(region),objects.views(region,ticks,flags),List.copyOf(events)); }
 }

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "exitCode": 0,
+  "tools": {
+    "java": "openjdk version \"17.0.20.1\" 2026-08-18\nOpenJDK Runtime Environment Temurin-17.0.20.1+1 (build 17.0.20.1+1)\nOpenJDK 64-Bit Server VM Temurin-17.0.20.1+1 (build 17.0.20.1+1, mixed mode, sharing)",
+    "maven": "Apache Maven 3.10.0 (c43a36b8d67be7e0805a411bc0898af1a51f5472)\nMaven home: C:\\Tools\\apache-maven-3.10.0\nJava version: 17.0.20.1, vendor: Eclipse Adoptium, runtime: C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.101-hotspot\nDefault locale: pt_BR, platform encoding: Cp1252, time zone: America/Sao_Paulo\nOS name: \"windows 10\", version: \"10.0\", arch: \"amd64\", family: \"windows\"",
+    "python": "Python 3.14.5"
+  },
+  "checks": {
+    "java": {
+      "exitCode": 0,
+      "category": 0,
+      "totals": {
+        "tests": 315,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "python": {
+      "exitCode": 0,
+      "category": 0,
+      "tests": 30
+    }
+  }
+}

@@ -53,6 +53,21 @@ public final class DebugPanel extends JPanel {
     }
     private Supplier<DirectionalAnimation.Presentation> presentationSource;
     private ValidatedSpriteAtlas spriteAtlas;
+    /** Optional presentation hook. Returning false preserves the existing renderer. */
+    @FunctionalInterface public interface ActorRenderer {
+        boolean draw(Graphics2D graphics, DebugSnapshot.ActorView actor);
+    }
+    private ActorRenderer actorRenderer;
+    private java.util.function.Consumer<Graphics2D> worldOverlay;
+    private java.util.function.Consumer<Graphics2D> worldUnderlay;
+    private boolean physicalGeometry=true;
+    /** Camada opcional de autoria, desativada nas entradas historicas. */
+    public void setWorldUnderlay(java.util.function.Consumer<Graphics2D> underlay){worldUnderlay=underlay;}
+    /** Oculta apenas o desenho diagnostico, nunca a colisao da simulacao. */
+    public void setPhysicalGeometryVisible(boolean value){physicalGeometry=value;}
+    /** Overlay opcional do RPG; nulo preserva a arena e o Coop. */
+    public void setWorldOverlay(java.util.function.Consumer<Graphics2D> overlay){worldOverlay=overlay;}
+    public void setActorRenderer(ActorRenderer renderer) { actorRenderer=renderer; }
     private LocalArenaMap.Renderer mapRenderer;
     private int cameraZoom=1;
     private int worldWidth=DebugWorld.WIDTH, worldHeight=DebugWorld.HEIGHT;
@@ -171,8 +186,8 @@ public final class DebugPanel extends JPanel {
     private void renderWorld(Graphics2D g,DebugSnapshot s,java.util.List<DirectionalAnimation.View> animations) {
         drawWorld(g);
         if (mapRenderer != null) mapRenderer.drawLayers(g,0,4);
-        drawObstacles(g, s);
-        drawSoftObstacles(g, s);
+        if(worldUnderlay!=null)worldUnderlay.accept(g);
+        if(physicalGeometry){drawObstacles(g, s);drawSoftObstacles(g, s);}
         drawIceZones(g, s);
         drawLightningTrails(g, s);
         for (DebugSnapshot.ActorView actor : s.actors()) {
@@ -180,11 +195,13 @@ public final class DebugPanel extends JPanel {
             if(spriteAtlas==null && !visible(g,actor.x()-100,actor.y()-100,200,200)) continue;
             DirectionalAnimation.View visual = null;
             for (var candidate : animations) if (candidate.actorId() == actor.id()) { visual=candidate; break; }
+            if (actorRenderer != null && actorRenderer.draw(g, actor)) continue;
             if (spriteAtlas == null || visual == null || !spriteAtlas.draw(g, actor, visual)) drawActor(g, actor, s);
         }
         if (mapRenderer != null) mapRenderer.drawLayers(g,5,10);
         drawAttack(g, s.attack());
         drawEffects(g, s);
+        if(worldOverlay!=null)worldOverlay.accept(g);
     }
 
     // --- Cenário ---

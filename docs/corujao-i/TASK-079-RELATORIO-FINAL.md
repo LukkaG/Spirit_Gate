@@ -1,0 +1,7 @@
+# TASK-079 - Corujao I
+
+Estado: **VALIDADA COM RESSALVAS**.
+
+20 PNGs integrados: quatro Idle e quatro Walk por direcao, escala 50%, 250 ms por frame. Hashes, alfa, bounds e pivos em assets.json; PNGs anteriores recuperaveis em historical-pngs.zip e checkpoint TASK-078. Suite inicial 314 Java: duas falhas/seis erros por hashes antigos; corrigidos pela integracao autorizada, nao pela desativacao da validacao. Cliente real: 17 capturas e GIF em visual; frames 1-3 capturados, quatro frames cobertos em teste. Ordem nominal 1-4 inspecionada, homologacao artistica pendente. Relatorios TASK-079 anteriores preservados; documentos desta rodada em docs/corujao-i.
+
+Checkpoints recuperaveis, hashes e diff isolado: `.task-checkpoints/TASK-079/corujao-i/`. Logs da suite: `docs/TASK-corujao-079-*`. A aprovacao artistica permanece humana; os testes nao equivalem a homologacao perceptiva.

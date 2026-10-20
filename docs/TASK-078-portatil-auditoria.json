@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "package": "SpiritGate-RPG-Sprites-Teste-0.78.0-rc1-20261020T003645Z-593b5c5d.zip",
+  "sha256": "7ee27742d91db25779583dc7b774822f3dbafc8ad2880f6d167127f547df2024",
+  "automatedApproved": true,
+  "humanApproved": false,
+  "checks": {
+    "zipIntegrity": true,
+    "productionClasses": 223,
+    "contentIncluded": true,
+    "manifestHashes": true,
+    "javaIntegrated": true
+  }
+}

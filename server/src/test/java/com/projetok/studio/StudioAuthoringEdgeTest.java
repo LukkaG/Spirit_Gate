@@ -1,0 +1,9 @@
+package com.projetok.studio;
+import org.junit.jupiter.api.Test;
+import java.util.*;
+import static org.junit.jupiter.api.Assertions.*;
+class StudioAuthoringEdgeTest {
+    static Autotiling.Rule rule(String id){return new Autotiling.Rule(id,"a".repeat(64),"b".repeat(64),new WorldDocument.Crop(0,0,32,32),Map.of());}
+    @Test void prefabCarriesTerrainRulesAndRejectsConflicts(){var d=Autotiling.register(WorldDocument.empty("source",128,128),rule("grass"));d=EditorOperations.pencil(d,Autotiling.brush(d,"grass","ground"),32,32,true);var prefab=Prefabs.capture(d,Set.of(d.elements().get(0).id()),"terrain_prefab");var target=WorldDocument.empty("target",256,256);var inserted=Autotiling.refresh(Prefabs.insert(target,prefab,64,64));assertEquals(List.of("grass"),Autotiling.terrains(inserted));var conflict=Autotiling.register(target,new Autotiling.Rule("grass","c".repeat(64),"d".repeat(64),rule("grass").fallback(),Map.of()));assertThrows(IllegalArgumentException.class,()->Prefabs.insert(conflict,prefab,64,64));}
+    @Test void bucketDistinguishesTerrainsWithIdenticalFallbackAndRefreshRespectsLayerLock(){var d=Autotiling.register(Autotiling.register(WorldDocument.empty("mapa",64,64),rule("grass")),rule("earth"));d=EditorOperations.flood(d,Autotiling.brush(d,"grass","ground"),0,0);d=EditorOperations.flood(d,Autotiling.brush(d,"earth","ground"),0,0);assertTrue(d.elements().stream().allMatch(e->e.properties().get("terrain").equals("earth")));var variant=new Autotiling.Rule("earth",rule("earth").asset(),rule("earth").sha(),new WorldDocument.Crop(32,0,32,32),Map.of());d=Autotiling.register(d,variant);var locked=d.withLayers(d.layers().stream().map(l->l.id().equals("ground")?new WorldDocument.Layer(l.id(),l.name(),l.role(),l.order(),true,true):l).toList());assertEquals(locked,Autotiling.refresh(locked));}
+}

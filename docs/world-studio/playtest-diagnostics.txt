@@ -1,0 +1,2 @@
+Inicio: primeiro_mapa | runtime real, sem LocalSaveStore
+Movimento bloqueado em 240.3334,320.0
