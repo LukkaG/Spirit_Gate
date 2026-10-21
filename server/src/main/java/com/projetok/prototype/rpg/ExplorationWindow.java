@@ -4,24 +4,35 @@ import javax.swing.*;
 import java.awt.*;
 /** Diario e representacao da regiao atual; nao revela mapas futuros. */
 final class ExplorationWindow extends JDialog {
-    private final JTextArea journal=new JTextArea(),map=new JTextArea();
+    private final JTextArea journal=new JTextArea();
+    private final NavigationMap navigation;
     private final JTabbedPane tabs=new JTabbedPane();
     private final RpgRuntime runtime;
+    private final DefaultListModel<QuestService.View> missions=new DefaultListModel<>();
+    private final JList<QuestService.View> selection=new JList<>(missions);
+    private java.util.List<QuestService.View> lastMissions=java.util.List.of();
     ExplorationWindow(JFrame owner,RpgRuntime runtime){
-        super(owner,"Diario e exploracao",false);this.runtime=runtime;setDefaultCloseOperation(HIDE_ON_CLOSE);
-        journal.setEditable(false);journal.setLineWrap(true);journal.setWrapStyleWord(true);map.setEditable(false);map.setFont(new Font(Font.MONOSPACED,Font.PLAIN,14));
-        tabs.addTab("Diario",new JScrollPane(journal));tabs.addTab("Mapa atual",new JScrollPane(map));setContentPane(tabs);setSize(800,600);setLocationRelativeTo(owner);
+        super(owner,"Diario e exploracao",false);this.runtime=runtime;navigation=new NavigationMap(runtime);setDefaultCloseOperation(HIDE_ON_CLOSE);
+        journal.setEditable(false);journal.setLineWrap(true);journal.setWrapStyleWord(true);
+        selection.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        selection.setCellRenderer((list,value,index,selected,focus)->{JLabel label=new JLabel(value.state()==QuestService.State.UNAVAILABLE?"Missão indisponível":value.name()+" | "+value.state());label.setOpaque(true);label.setBackground(selected?new Color(18,66,85):SpiritTheme.BACKGROUND);label.setForeground(Color.WHITE);label.setBorder(BorderFactory.createLineBorder(focus?Color.WHITE:SpiritTheme.ACCENT));return label;});
+        selection.addListSelectionListener(e->journal.setText(selection.getSelectedValue()==null?"Nenhuma missão conhecida":describe(selection.getSelectedValue())));
+        JSplitPane diary=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,new JScrollPane(selection),new JScrollPane(journal));diary.setResizeWeight(.35);
+        JPanel regionMap=new JPanel(new BorderLayout());regionMap.add(navigation);JSpinner zoom=new JSpinner(new SpinnerNumberModel(1.0,1.0,3.0,.25));zoom.getAccessibleContext().setAccessibleName("Zoom do mapa");zoom.addChangeListener(e->navigation.zoom((Double)zoom.getValue()));regionMap.add(zoom,BorderLayout.SOUTH);
+        tabs.addTab("Diario",diary);tabs.addTab("Mapa atual",regionMap);SpiritTheme.apply(tabs);setContentPane(tabs);setSize(800,600);setLocationRelativeTo(owner);
+        getRootPane().registerKeyboardAction(e->setVisible(false),KeyStroke.getKeyStroke("ESCAPE"),JComponent.WHEN_IN_FOCUSED_WINDOW);
         Timer timer=new Timer(200,e->{if(isVisible())refresh();});timer.start();owner.addWindowListener(new java.awt.event.WindowAdapter(){public void windowClosed(java.awt.event.WindowEvent e){timer.stop();dispose();}});
     }
     void showTab(int index){tabs.setSelectedIndex(index);refresh();setVisible(true);}
-    private void refresh(){var v=runtime.snapshot();StringBuilder text=new StringBuilder("DIARIO DE "+v.identity().name()+"\n\n");
-        for(var q:v.journal()){if(q.state()==QuestService.State.UNAVAILABLE){text.append("Missao ainda indisponivel\n\n");continue;}text.append(q.name()).append(" - ").append(q.state()).append(" [").append(q.progress()).append('/').append(q.required()).append("]\n").append(q.objective()).append("\nRecompensas na entrega a Ancia.\n\n");}journal.setText(text.toString());
-        char[][] cells=new char[24][48];for(char[] row:cells)java.util.Arrays.fill(row,'.');
-        for(int y=7;y<12;y++)for(int x=19;x<25;x++)cells[y][x]='#';
-        for(var p:v.portals())mark(cells,p.x(),p.y(),'O');for(var n:v.npcs())mark(cells,n.x(),n.y(),'N');for(var o:v.objects())if(o.available())mark(cells,o.x(),o.y(),'C');
-        for(var enemy:v.enemies())if(enemy.hp()>0&&Math.hypot(enemy.x()-v.x(),enemy.y()-v.y())<=280)mark(cells,enemy.x(),enemy.y(),'!');mark(cells,v.x(),v.y(),'@');
-        StringBuilder grid=new StringBuilder(RpgContent.builtin().get("region",v.state().region()).name()+"\n");for(char[] row:cells)grid.append(row).append('\n');
-        grid.append("@ voce | O portal [F] | N NPC [F] | C recurso [F]\n! inimigo proximo | # solido\n\nRegioes visitadas:\n");v.state().flags().stream().filter(f->f.startsWith("visited:")).sorted().forEach(f->grid.append(RpgContent.builtin().get("region",f.substring(8)).name()).append('\n'));map.setText(grid.toString());
+    /** Detalhes derivados do catálogo; missões bloqueadas não revelam objetivos. */
+    static String describe(QuestService.View quest){
+        if(quest.state()==QuestService.State.UNAVAILABLE)return "Missão ainda indisponível";
+        var reward=new QuestService(RpgContent.builtin()).definition(quest.id());
+        var item=new ItemCatalog(RpgContent.builtin()).get(reward.item());
+        return quest.name()+" — "+quest.state()+"\n\nProgresso: "+quest.progress()+" / "+quest.required()+"\n"+quest.objective()+"\n\nRecompensa: "+reward.xp()+" XP, "+reward.coins()+" moedas, "+item.name()+" x"+reward.quantity()+"\nEntrega conforme as condições da missão.";
     }
-    private static void mark(char[][] cells,float x,float y,char marker){cells[Math.max(0,Math.min(23,(int)(y/640*24)))][Math.max(0,Math.min(47,(int)(x/960*48)))]=marker;}
+    private void refresh(){var v=runtime.snapshot();
+        if(!lastMissions.equals(v.journal())){int index=selection.getSelectedIndex();missions.clear();v.journal().forEach(missions::addElement);lastMissions=v.journal();if(!missions.isEmpty())selection.setSelectedIndex(Math.max(0,Math.min(index,missions.size()-1)));}
+        navigation.repaint();
+    }
 }

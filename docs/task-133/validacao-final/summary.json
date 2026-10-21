@@ -1,0 +1,50 @@
+[
+  {
+    "probe": "SpiritGateCreationProbe",
+    "java2dScale": "1",
+    "exitCode": 0,
+    "folder": "docs/task-133/validacao-final/SpiritGateCreationProbe"
+  },
+  {
+    "probe": "SpiritGateCorujao3Probe",
+    "java2dScale": "1",
+    "exitCode": 0,
+    "folder": "docs/task-133/validacao-final/SpiritGateCorujao3Probe"
+  },
+  {
+    "probe": "SpiritGateWindowsProbe",
+    "java2dScale": "1",
+    "exitCode": 0,
+    "folder": "docs/task-133/validacao-final/SpiritGateWindowsProbe"
+  },
+  {
+    "probe": "SpiritGateWindowsProbe",
+    "java2dScale": "1.5",
+    "exitCode": 0,
+    "folder": "docs/task-133/validacao-final/SpiritGateWindowsProbe-dpi150"
+  },
+  {
+    "probe": "SpiritGateTradeProbe",
+    "java2dScale": "1",
+    "exitCode": 0,
+    "folder": "docs/task-133/validacao-final/SpiritGateTradeProbe"
+  },
+  {
+    "probe": "SpiritGateOptionsProbe",
+    "java2dScale": "1",
+    "exitCode": 0,
+    "folder": "docs/task-133/validacao-final/SpiritGateOptionsProbe"
+  },
+  {
+    "probe": "SpiritGateFinalJourneyProbe",
+    "java2dScale": "1",
+    "exitCode": 0,
+    "folder": "docs/task-133/validacao-final/SpiritGateFinalJourneyProbe"
+  },
+  {
+    "probe": "SpiritGatePerformanceProbe",
+    "java2dScale": "1",
+    "exitCode": 0,
+    "folder": "docs/task-133/validacao-final/SpiritGatePerformanceProbe"
+  }
+]

@@ -12,6 +12,7 @@ public final class WorldCanvas extends JPanel {
     StudioViewport viewport=new StudioViewport(.75,20,20);
     boolean grid=true,collisions=true;
     boolean playerPreview;
+    Rectangle selectionBox;
     Point cursor=new Point();
     String activeLayer="ground";
     final Set<String> selected=new LinkedHashSet<>();
@@ -57,6 +58,7 @@ public final class WorldCanvas extends JPanel {
             if(collisions)for(var h:d.hitboxes()) {g.setColor(h.solid()?new Color(255,85,70,80):new Color(65,220,160,60));g.fillRect(h.x(),h.y(),h.width(),h.height());g.setColor(selected.contains(h.id())?Color.YELLOW:h.solid()?Color.RED:Color.GREEN);g.drawRect(h.x(),h.y(),h.width(),h.height());}
             if(playerPreview){g.setColor(StudioGeometry.free(physics,cursor.x,cursor.y,18)?Color.GREEN:Color.RED);g.drawOval(cursor.x-18,cursor.y-18,36,36);}
             for(var p:d.portals()){g.setColor(Color.MAGENTA);g.drawOval(p.x()-12,p.y()-12,24,24);g.drawString(p.destination(),p.x()+14,p.y());}
+            if(selectionBox!=null){g.setColor(new Color(80,190,255,50));g.fill(selectionBox);g.setColor(Color.CYAN);g.setStroke(new BasicStroke((float)(1/viewport.zoom())));g.draw(selectionBox);}
             EnvironmentPreview.draw(g,visible,EnvironmentPreview.mode(d),System.nanoTime()-animationStart);
         }finally{g.dispose();}
     }

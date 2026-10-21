@@ -87,6 +87,16 @@ public final class RpgPlayerSprites implements DebugPanel.ActorRenderer {
     public String frameKey() {
         var pose=animation.pose();return pose.direction()+"."+(pose.walking()?pose.frame()+1:0);
     }
+    /** Desenha Idle já carregado, sem alterar animação, orientação ou regras da sessão. */
+    public boolean drawPreview(Graphics2D original, com.projetok.prototype.DirectionalAnimation.Direction direction, int x, int y) {
+        Frame frame=frames.get(direction+".0");if(frame==null)return false;
+        Graphics2D g=(Graphics2D)original.create();
+        try {
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+            g.translate(Math.round(x-frame.pivotX()*scale),Math.round(y-frame.pivotY()*scale));
+            g.scale(scale,scale);g.drawImage(frame.image(),0,0,null);return true;
+        } finally {g.dispose();}
+    }
     @Override public boolean draw(Graphics2D original,DebugSnapshot.ActorView actor) {
         if(!actor.player() || actor.id()!=1 || !actor.alive()) return false;
         Frame frame=frames.get(frameKey());

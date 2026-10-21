@@ -14,7 +14,7 @@ public final class RpgLauncher {
         }
         if(args.length==3&&args[0].equals("--smoke")){System.setProperty("spiritgate.smoke.name",args[1]);System.setProperty("spiritgate.smoke.output",args[2]);}
         else if(args.length!=0)throw new IllegalArgumentException("Uso: RpgLauncher [--experimental-player-sprites] [--smoke nome captura.png]");
-        SwingUtilities.invokeLater(()->{if(System.getProperty("spiritgate.smoke.name")!=null)open();else RpgMenu.open();});
+        SwingUtilities.invokeLater(()->{if(System.getProperty("spiritgate.smoke.name")!=null)open();else SpiritGateEntry.open();});
     }
     static void open() {
         String name = System.getProperty("spiritgate.smoke.name");
@@ -26,11 +26,15 @@ public final class RpgLauncher {
         play(new com.projetok.rpg.RpgWorld(identity),new com.projetok.rpg.LocalSaveStore(RpgMenu.dataHome().resolve("saves/characters/"+identity.id()+".properties")));
     }
     static void play(com.projetok.rpg.RpgWorld world,com.projetok.rpg.LocalSaveStore store) {
+        play(world,store,false);
+    }
+    static void play(com.projetok.rpg.RpgWorld world,com.projetok.rpg.LocalSaveStore store,boolean introduction) {
         RpgRuntime runtime = new RpgRuntime(world);
         var preferencesFile=RpgMenu.dataHome().resolve("saves/preferences.properties");
         com.projetok.rpg.RpgPreferences[] preferences={com.projetok.rpg.RpgPreferences.defaults()};
         try{preferences[0]=com.projetok.rpg.RpgPreferences.load(preferencesFile);}catch(Exception error){JOptionPane.showMessageDialog(null,"Preferencias invalidas preservadas; usando padrao: "+error.getMessage());}
         RpgAudio audio=new RpgAudio(preferences[0]);audio.play(RpgAudio.Cue.UI);
+        SpiritTheme.reducedMotion=!preferences[0].environment();AmbientFeedback ambientFeedback=new AmbientFeedback(audio::play);ambientFeedback.update(runtime.snapshot());
         DebugSnapshot template = DebugWorld.demo().snapshot();
         DebugPanel panel = new DebugPanel(() -> adapt(runtime.snapshot(), template));
         RpgPlayerSprites playerSprites=RpgPlayerSprites.configured();
@@ -38,10 +42,13 @@ public final class RpgLauncher {
         RpgCombatFeedback feedback=new RpgCombatFeedback();feedback.update(runtime.snapshot());RpgBossOverlay bossOverlay=new RpgBossOverlay();bossOverlay.update(runtime.snapshot());panel.setWorldOverlay(g->{bossOverlay.draw(g);feedback.draw(g);});
         panel.setLocalMap(RpgMaps.region("village"),false);
         JFrame frame = new JFrame("Spirit Gate | RPG offline"+(playerSprites==null?"":" | SPRITES EXPERIMENTAIS"));
+        java.beans.PropertyChangeListener audioFocus=e->{boolean internal=false;for(java.awt.Window active=(java.awt.Window)e.getNewValue();active!=null;active=active.getOwner())if(active==frame)internal=true;audio.suspended(!internal);};
+        java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener("activeWindow",audioFocus);
         JPanel root=new JPanel(new java.awt.BorderLayout());RpgHud hud=new RpgHud(runtime);root.add(panel,java.awt.BorderLayout.CENTER);root.add(hud,java.awt.BorderLayout.SOUTH);
         frame.setContentPane(root); frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         InventoryWindow inventory=new InventoryWindow(frame,runtime);
         ExplorationWindow exploration=new ExplorationWindow(frame,runtime);
+        NavigationMap navigation=new NavigationMap(runtime);root.add(navigation,java.awt.BorderLayout.EAST);
         java.nio.file.Path controlsFile=RpgMenu.dataHome().resolve("saves/controls.properties");
         com.projetok.rpg.RpgControls[] controls={new com.projetok.rpg.RpgControls(com.projetok.rpg.RpgControls.DEFAULTS)};
         try{controls[0]=com.projetok.rpg.RpgControls.load(controlsFile);}catch(Exception error){JOptionPane.showMessageDialog(frame,"Atalhos invalidos preservados; usando padrao: "+error.getMessage());}
@@ -59,7 +66,10 @@ public final class RpgLauncher {
         secondaryButton.setToolTipText("Custo "+secondary.cost()+" vigor; recarga compartilhada "+RpgCombatStatus.cooldown(secondary.cooldown()));
         secondaryButton.addActionListener(e->runtime.command(w->w.activate("rpg.secondary")));toolbar.add(secondaryButton);
         JButton configure=new JButton("Atalhos");configure.addActionListener(e->ControlsDialog.open(frame,controls[0],controlsFile,next->{for(String key:controls[0].keys().values())for(boolean down:new boolean[]{true,false}){panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(KeyStroke.getKeyStroke((down?"pressed ":"released ")+key));panel.getActionMap().remove(key+down);}resetHeld(panel);controls[0]=next;bindActions.run();hotbar.forEach((id,button)->button.setText(actionLabel(id)+" ["+next.key(id)+"]"));}));toolbar.add(configure);
-        JButton settings=new JButton("Audio / ambiente");settings.addActionListener(e->PreferencesDialog.open(frame,preferences[0],preferencesFile,next->{preferences[0]=next;audio.preferences(next);audio.play(RpgAudio.Cue.UI);}));toolbar.add(settings);
+        JButton settings=new CharacterSelection.SpiritButton("Opções",false);settings.addActionListener(e->PreferencesDialog.open(frame,preferences[0],preferencesFile,next->{preferences[0]=next;audio.preferences(next);audio.play(RpgAudio.Cue.UI);}));toolbar.add(settings);
+        JButton help=new CharacterSelection.SpiritButton("Ajuda",false);help.addActionListener(e->GettingStarted.open(frame,controls[0]));toolbar.add(help);
+        boolean[] showNavigation={true};JButton minimap=new CharacterSelection.SpiritButton("Minimapa",false);minimap.addActionListener(e->{showNavigation[0]=!showNavigation[0];navigation.setVisible(showNavigation[0]&&frame.getWidth()>=800);});toolbar.add(minimap);
+        frame.addComponentListener(new java.awt.event.ComponentAdapter(){public void componentResized(java.awt.event.ComponentEvent e){navigation.setVisible(showNavigation[0]&&frame.getWidth()>=800);}});
         frame.addWindowListener(new WindowAdapter(){public void windowClosing(WindowEvent e){runtime.input(0,0);inventory.setVisible(false);exploration.setVisible(false);frame.setEnabled(false);runtime.saveAndPause(store).whenComplete((unused,error)->SwingUtilities.invokeLater(()->{if(error!=null){frame.setEnabled(true);JOptionPane.showMessageDialog(frame,"Falha ao salvar; sessao preservada: "+error.getMessage());}else frame.dispose();}));}});
         frame.pack(); frame.setLocationRelativeTo(null);
         var screen=java.awt.Toolkit.getDefaultToolkit().getScreenSize();frame.setSize(Math.min(1260,screen.width-60),Math.min(900,screen.height-80));frame.setLocationRelativeTo(null);
@@ -85,6 +95,7 @@ public final class RpgLauncher {
                 frame.dispose();return;
             }
             var view=runtime.snapshot();var before=previous[0];
+            ambientFeedback.update(view);SpiritTheme.reducedMotion=!preferences[0].environment();
             feedback.update(view);bossOverlay.update(view);
             if(playerSprites!=null) playerSprites.update(view);
             if(view.state().hp()<before.state().hp())audio.play(RpgAudio.Cue.HURT);
@@ -96,11 +107,13 @@ public final class RpgLauncher {
             panel.setCustomHud(java.util.List.of("SPIRIT GATE | RPG OFFLINE",view.identity().name(),"Nivel "+view.level()+" | XP "+view.state().xp(),"HP "+view.state().hp()+" / "+view.maxHp(),"Ataque "+view.attack()+" | Defesa "+view.defense(),"Moedas "+view.state().coins(),"Regiao: "+view.state().region(),"["+keysNow.key("interact")+"] NPC / portal / objeto","["+keysNow.key("attack")+"] Ataque basico","["+keysNow.key("ability")+"] Habilidade do arquetipo","["+keysNow.key("potion")+"] Pocao de vida","["+keysNow.key("inventory")+"] Inventario / equipamentos","["+keysNow.key("journal")+"] Diario | ["+keysNow.key("map")+"] Mapa","["+keysNow.key("save")+"] Salvar progresso","["+keysNow.key("revive")+"] Recuperar se morto"));
             panel.setAmbientLight(com.projetok.rpg.EnvironmentCycle.light(view.ticks(),preferences[0].environment()));
             if(!displayedRegion[0].equals(view.state().region())){displayedRegion[0]=view.state().region();panel.setLocalMap(RpgMaps.region(displayedRegion[0]),false);}
-            panel.repaint();hud.update(view);
+            panel.repaint();hud.update(view);navigation.repaint();
         });
-        frame.addWindowListener(new WindowAdapter() { public void windowClosed(WindowEvent e) { timer.stop(); runtime.close();audio.close();if(System.getProperty("spiritgate.smoke.output")==null)RpgMenu.open(); } });
-        frame.addWindowFocusListener(new WindowAdapter() { public void windowLostFocus(WindowEvent e) { java.util.Arrays.fill(held, false);resetHeld(panel); runtime.input(0, 0); } });
+        frame.addWindowListener(new WindowAdapter() { public void windowClosed(WindowEvent e) { timer.stop(); runtime.close();audio.close();java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager().removePropertyChangeListener("activeWindow",audioFocus);if(System.getProperty("spiritgate.smoke.output")==null)RpgMenu.open(); } });
+        frame.addWindowFocusListener(new WindowAdapter() { public void windowLostFocus(WindowEvent e) {java.util.Arrays.fill(held, false);resetHeld(panel); runtime.input(0, 0); } });
+        for(java.awt.Component control:toolbar.getComponents())if(control instanceof JButton button)button.setToolTipText(button.getText());
         runtime.start(); timer.start(); frame.setVisible(true);
+        if(introduction)GettingStarted.open(frame,controls[0]);
         if(System.getProperty("spiritgate.smoke.output")!=null){Timer capture=new Timer(2000,e->{
             java.awt.Rectangle bounds=frame.getBounds();String output=System.getProperty("spiritgate.smoke.output");
             var componentImage=new java.awt.image.BufferedImage(frame.getWidth(),frame.getHeight(),java.awt.image.BufferedImage.TYPE_INT_RGB);var graphics=componentImage.createGraphics();frame.printAll(graphics);graphics.dispose();

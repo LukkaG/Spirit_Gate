@@ -10,33 +10,38 @@ final class RpgMenu {
     static Path dataHome(){String data=System.getProperty("spiritgate.rpg.dataDir");return data==null?home():Path.of(data).toAbsolutePath();}
     static void open() {
         JFrame frame=new JFrame("Spirit Gate | Inicio");frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        JPanel root=new JPanel(new BorderLayout(16,16));root.setBorder(BorderFactory.createEmptyBorder(24,24,24,24));
-        JLabel title=new JLabel("SPIRIT GATE - RPG OFFLINE");title.setFont(title.getFont().deriveFont(Font.BOLD,26));root.add(title,BorderLayout.NORTH);
-        DefaultListModel<CharacterSaves.Slot> model=new DefaultListModel<>();JList<CharacterSaves.Slot> list=new JList<>(model);root.add(new JScrollPane(list),BorderLayout.CENTER);
-        JLabel status=new JLabel("Lendo personagens locais...");JPanel south=new JPanel(new BorderLayout());south.add(status,BorderLayout.NORTH);JPanel buttons=new JPanel(new GridLayout(2,2,8,8));south.add(buttons,BorderLayout.CENTER);root.add(south,BorderLayout.SOUTH);
+        CharacterSelection root=new CharacterSelection();
+        var list=root.list;var status=root.status;
         CharacterSaves repository=new CharacterSaves(dataHome().resolve("saves/characters"));
-        JButton create=new JButton("Criar personagem");JButton resume=new JButton("Continuar selecionado");resume.setEnabled(false);JButton arena=new JButton("Arena historica");JButton exit=new JButton("Sair");
-        buttons.add(create);buttons.add(resume);buttons.add(arena);buttons.add(exit);
-        list.addListSelectionListener(e->resume.setEnabled(list.getSelectedValue()!=null&&list.getSelectedValue().state()!=null));
+        JButton create=root.create,resume=root.play;
+        root.arena.addActionListener(e->com.projetok.prototype.DebugLauncher.main(new String[0]));
+        root.back.addActionListener(e->{frame.dispose();SpiritGateEntry.open();});
+        root.delete.addActionListener(e->{
+            var slot=list.getSelectedValue();if(slot==null||slot.backup())return;
+            String confirmation=JOptionPane.showInputDialog(frame,"Arquivar este save? O arquivo ser\u00e1 movido para archived; backups .bak ser\u00e3o mantidos.\nDigite ARQUIVAR para confirmar.","Confirmar arquivamento",JOptionPane.WARNING_MESSAGE);
+            if(!"ARQUIVAR".equals(confirmation))return;
+            root.delete.setEnabled(false);resume.setEnabled(false);
+            new SwingWorker<Void,Void>(){protected Void doInBackground()throws Exception{repository.archive(slot,confirmation);return null;}protected void done(){try{get();frame.dispose();open();}catch(Exception error){root.delete.setEnabled(true);resume.setEnabled(slot.state()!=null);JOptionPane.showMessageDialog(frame,"Falha ao arquivar: "+error.getMessage());}}}.execute();
+        });
         create.addActionListener(e->{
-            JTextField name=new JTextField(20);JComboBox<String> archetype=new JComboBox<>(new String[]{"guardian","mystic"});JComboBox<String> appearance=new JComboBox<>(new String[]{"azure","amber"});
-            JPanel form=new JPanel(new GridLayout(0,2,8,8));form.add(new JLabel("Nome (3-24 caracteres)"));form.add(name);form.add(new JLabel("Guardian: investida | Mystic: cura"));form.add(archetype);form.add(new JLabel("Aparencia geometrica"));form.add(appearance);
-            if(JOptionPane.showConfirmDialog(frame,form,"Criar personagem local",JOptionPane.OK_CANCEL_OPTION)!=JOptionPane.OK_OPTION)return;
-            try{var identity=CharacterIdentity.create(name.getText(),(String)archetype.getSelectedItem(),(String)appearance.getSelectedItem());var world=new RpgWorld(identity);launch(frame,world,new LocalSaveStore(repository.newFile(identity)),true);}catch(IllegalArgumentException error){JOptionPane.showMessageDialog(frame,error.getMessage());}
+            CharacterCreation.open(frame,root.preview.sprites,identity->launch(frame,new RpgWorld(identity),new LocalSaveStore(repository.newFile(identity)),true,true));
         });
         resume.addActionListener(e->{var slot=list.getSelectedValue();if(slot==null||slot.state()==null)return;Path file=slot.backup()?repository.recoveryFile(slot.state().identity()):slot.file();launch(frame,RpgWorld.restore(slot.state()),new LocalSaveStore(file),slot.backup());});
-        arena.addActionListener(e->com.projetok.prototype.DebugLauncher.main(new String[0]));exit.addActionListener(e->frame.dispose());
         new SwingWorker<java.util.List<CharacterSaves.Slot>,Void>() {
-            protected java.util.List<CharacterSaves.Slot> doInBackground() throws Exception{return repository.list();}
-            protected void done(){try{var slots=get();slots.forEach(model::addElement);status.setText(slots.stream().anyMatch(s->s.state()!=null)?"Selecione um personagem. Entradas invalidas sao preservadas.":"Nenhum save valido. Crie um personagem para comecar.");if(!slots.isEmpty())list.setSelectedIndex(0);}catch(Exception error){status.setText("Nao foi possivel ler saves: "+error.getMessage());}}
+            protected java.util.List<CharacterSaves.Slot> doInBackground() throws Exception{root.loadBackdrop();root.preview.sprites=RpgPlayerSprites.loadOptional(RpgPlayerSprites.defaultFolder(),250);return repository.list();}
+            protected void done(){try{root.loaded(get());}catch(Exception error){create.setEnabled(true);status.setText("N\u00e3o foi poss\u00edvel ler saves: "+error.getMessage());}}
+
         }.execute();
-        frame.setContentPane(root);frame.setSize(760,450);frame.setLocationRelativeTo(null);frame.setVisible(true);
+        frame.setContentPane(root);frame.getRootPane().setDefaultButton(resume);frame.setMinimumSize(new Dimension(640,480));var screen=Toolkit.getDefaultToolkit().getScreenSize();frame.setSize(Math.min(1000,screen.width-40),Math.min(620,screen.height-60));frame.setLocationRelativeTo(null);frame.setVisible(true);
     }
     private static void launch(JFrame menu,RpgWorld world,LocalSaveStore store,boolean initialSave) {
+        launch(menu,world,store,initialSave,false);
+    }
+    private static void launch(JFrame menu,RpgWorld world,LocalSaveStore store,boolean initialSave,boolean introduction) {
         menu.setEnabled(false);
         new SwingWorker<Void,Void>() {
             protected Void doInBackground() throws Exception{if(initialSave)store.save(world.save());return null;}
-            protected void done(){try{get();menu.dispose();RpgLauncher.play(world,store);}catch(Exception error){menu.setEnabled(true);JOptionPane.showMessageDialog(menu,"Falha ao abrir personagem: "+error.getMessage());}}
+            protected void done(){try{get();menu.dispose();RpgLauncher.play(world,store,introduction);}catch(Exception error){menu.setEnabled(true);JOptionPane.showMessageDialog(menu,"Falha ao abrir personagem: "+error.getMessage());}}
         }.execute();
     }
 }

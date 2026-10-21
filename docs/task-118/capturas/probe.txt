@@ -1,0 +1,1 @@
+PASS: diálogo modal real, nome inválido preserva formulário, Mystic/amber, fallback e criação válida. Capturas printAll; não homologam monitor físico. Nenhum save escrito.

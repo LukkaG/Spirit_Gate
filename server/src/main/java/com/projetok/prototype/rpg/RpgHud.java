@@ -8,6 +8,8 @@ public final class RpgHud extends JPanel {
     private final JTextArea journal=new JTextArea(3,80);
     private final JPanel dialogue=new JPanel(new BorderLayout(4,4));
     private DialogueService.Node last;
+    private String lastNpc="";
+    private TradeWindow tradeWindow;
     private final RpgRuntime runtime;
     private final JProgressBar hp=new JProgressBar(),stamina=new JProgressBar(0,1000);
     private final JProgressBar boss=new JProgressBar();
@@ -17,9 +19,12 @@ public final class RpgHud extends JPanel {
     /** HUD compartilhado com a sessao isolada de autoria. */
     public RpgHud(RpgRuntime runtime) {
         super(new BorderLayout());this.runtime=runtime;
-        JPanel bars=new JPanel(new GridLayout(0,1));hp.setStringPainted(true);stamina.setStringPainted(true);
+        JPanel bars=new JPanel();bars.setLayout(new BoxLayout(bars,BoxLayout.Y_AXIS));hp.setStringPainted(true);stamina.setStringPainted(true);
+        for(JProgressBar bar:new JProgressBar[]{hp,stamina,boss}){bar.setPreferredSize(new Dimension(200,18));bar.setMaximumSize(new Dimension(Integer.MAX_VALUE,18));bar.setAlignmentX(LEFT_ALIGNMENT);}
         bars.add(hp);bars.add(stamina);boss.setStringPainted(true);boss.setVisible(false);bars.add(boss);bars.add(combat);bars.add(status);add(bars,BorderLayout.NORTH);
-        add(dialogue,BorderLayout.CENTER);journal.setEditable(false);add(new JScrollPane(journal),BorderLayout.SOUTH);
+        add(dialogue,BorderLayout.CENTER);journal.setEditable(false);journal.setLineWrap(true);journal.setWrapStyleWord(true);add(new JScrollPane(journal),BorderLayout.SOUTH);
+        setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(SpiritTheme.ACCENT),BorderFactory.createEmptyBorder(4,6,4,6)));
+        SpiritTheme.apply(this);hp.getAccessibleContext().setAccessibleName("Vida");stamina.getAccessibleContext().setAccessibleName("Vigor");boss.getAccessibleContext().setAccessibleName("Vida do chefe");
     }
     /** Consome somente valores publicados pelo mundo real. */
     public void update(RpgWorld.View view) {
@@ -30,19 +35,23 @@ public final class RpgHud extends JPanel {
         stamina.setValue(values.stamina());stamina.setString("Vigor "+values.stamina()/10+" / 100");
         if(previousXp>=0&&view.state().xp()>previousXp){xpNotice=" | +"+(view.state().xp()-previousXp)+" XP";xpUntil=view.ticks()+90;}
         previousXp=view.state().xp();combat.setText(values.text()+(view.ticks()<xpUntil?xpNotice:"")+" | "+view.message());
-        journal.setText(view.journal().stream().map(q->q.name()+" | "+q.state()+" | "+q.progress()+"/"+q.required()+" - "+q.objective()).collect(java.util.stream.Collectors.joining("\n")));
-        status.setText("  "+view.identity().name()+" | Nivel "+view.level()+" | XP "+view.state().xp()+" | Moedas "+view.state().coins()+" | Ataque "+view.attack()+" | Defesa "+view.defense()+" | "+view.state().region()+" | Atalhos na barra superior");
-        if(!java.util.Objects.equals(last,view.dialogue())) {
-            last=view.dialogue();dialogue.removeAll();
+        combat.setToolTipText(combat.getText());
+        journal.setText(view.journal().stream().map(q->q.state()==QuestService.State.UNAVAILABLE?"Missão indisponível":q.name()+" | "+q.state()+" | "+q.progress()+"/"+q.required()+" - "+q.objective()).collect(java.util.stream.Collectors.joining("\n")));
+        status.setText("<html>"+view.identity().name()+" | Nível "+view.level()+" | XP "+view.state().xp()+" | Moedas "+view.state().coins()+"<br>Ataque "+view.attack()+" | Defesa "+view.defense()+" | "+view.state().region()+" | Atalhos na barra superior</html>");
+        if(!java.util.Objects.equals(last,view.dialogue())||!lastNpc.equals(view.activeNpc())) {
+            last=view.dialogue();lastNpc=view.activeNpc();dialogue.removeAll();
+            journal.getParent().getParent().setVisible(last==null);
             if(last!=null) {
-                JTextArea words=new JTextArea(last.text(),2,40);words.setLineWrap(true);words.setWrapStyleWord(true);words.setEditable(false);dialogue.add(words,BorderLayout.NORTH);
-                JPanel choices=new JPanel(new GridLayout(0,3,4,4));dialogue.add(choices,BorderLayout.CENTER);
-                for(int i=0;i<last.choices().size();i++){int index=i;JButton button=new JButton(last.choices().get(i).text());button.addActionListener(e->runtime.command(w->w.choose(index)));choices.add(button);}
-                JButton close=new JButton("Fechar");close.addActionListener(e->runtime.command(RpgWorld::closeDialogue));choices.add(close);
+                String npc=view.npcs().stream().filter(n->n.id().equals(view.activeNpc())).map(NpcService.View::name).findFirst().orElse(view.activeNpc());
+                dialogue.add(new JLabel(npc+" — Escolha uma resposta | Escape: fechar"),BorderLayout.NORTH);
+                JTextArea words=new JTextArea(last.text(),2,40);words.setLineWrap(true);words.setWrapStyleWord(true);words.setEditable(false);words.setCaretPosition(0);dialogue.add(new JScrollPane(words),BorderLayout.CENTER);
+                JPanel choices=new JPanel(new GridLayout(0,3,4,4));dialogue.add(choices,BorderLayout.SOUTH);
+                for(int i=0;i<last.choices().size();i++){int index=i;JButton button=new CharacterSelection.SpiritButton(last.choices().get(i).text(),false);button.setMnemonic('1'+i);button.addActionListener(e->runtime.command(w->w.choose(index)));choices.add(button);}
+                JButton close=new CharacterSelection.SpiritButton("Fechar",false);close.addActionListener(e->runtime.command(RpgWorld::closeDialogue));choices.add(close);
                 if(view.activeNpc().equals("trader")) {
-                    for(String id:new String[]{"potion","sword","robe"}){var item=new ItemCatalog(RpgContent.builtin()).get(id);JButton buy=new JButton("Comprar "+item.name()+" ("+item.price()+")");buy.addActionListener(e->runtime.command(w->w.trade(id,1,true)));choices.add(buy);}
-                    JButton sell=new JButton("Vender cristal (1 moeda)");sell.addActionListener(e->runtime.command(w->w.trade("crystal",1,false)));choices.add(sell);
+                    JButton shop=new CharacterSelection.SpiritButton("Comércio",true);shop.addActionListener(e->{var owner=SwingUtilities.getWindowAncestor(this);if(owner instanceof JFrame frame){if(tradeWindow==null)tradeWindow=new TradeWindow(frame,runtime);tradeWindow.setVisible(true);}});choices.add(shop);
                 }
+                SpiritTheme.apply(dialogue);
             }
             revalidate();repaint();
         }

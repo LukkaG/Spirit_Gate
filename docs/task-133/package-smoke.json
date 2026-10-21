@@ -1,0 +1,15 @@
+{
+  "exe": "C:\\Users\\lucas\\Documents\\GitHub\\Projeto-K\\server\\target\\rpg-portable-0.133.0-rc2-20261021T035239Z-034cc11f\\output\\SpiritGateRPG\\SpiritGateRPG.exe",
+  "package": "C:\\Users\\lucas\\Documents\\GitHub\\Projeto-K\\dist\\SpiritGate-RPG-Sprites-Teste-0.133.0-rc2-20261021T035239Z-034cc11f.zip",
+  "exitCode": 0,
+  "syntheticData": "C:\\Users\\lucas\\AppData\\Local\\Temp\\corujao3-packaged-gkgc1cxe",
+  "state": {
+    "windowShowing": true,
+    "ticks": 62,
+    "region": "village",
+    "componentCapture": true,
+    "humanApproval": false
+  },
+  "offlineRuntimeBundled": true,
+  "externalPublication": false
+}

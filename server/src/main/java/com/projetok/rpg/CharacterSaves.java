@@ -23,5 +23,15 @@ public final class CharacterSaves {
         }
         return List.copyOf(result);
     }
+    /** Retirada reversivel do catalogo. Nunca remove nem substitui backups. */
+    public Path archive(Slot slot,String confirmation) throws IOException {
+        if(!"ARQUIVAR".equals(confirmation))throw new IllegalArgumentException("Confirmacao explicita obrigatoria");
+        Path source=slot.file().toAbsolutePath().normalize();
+        if(slot.backup()||!source.getParent().equals(folder.normalize())||Files.isSymbolicLink(source)||!Files.isRegularFile(source,LinkOption.NOFOLLOW_LINKS))throw new IOException("Entrada invalida para arquivamento");
+        Path archive=folder.resolve("archived");
+        if(Files.isSymbolicLink(archive))throw new IOException("Pasta de arquivo invalida");
+        Files.createDirectories(archive);
+        return Files.move(source,archive.resolve(UUID.randomUUID()+"-"+source.getFileName()));
+    }
     public Path recoveryFile(CharacterIdentity identity){return folder.resolve(identity.id()+"-recovery-"+UUID.randomUUID()+".properties");}
 }

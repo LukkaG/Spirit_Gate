@@ -1,0 +1,1 @@
+PASS: cancelar preserva bytes, restaurar padrões apenas no formulário, volume 65 persistido/recarregado e resolução 800x600 aplicada. Dados temporários; sem alteração de saves.

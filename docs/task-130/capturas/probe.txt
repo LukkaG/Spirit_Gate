@@ -1,0 +1,1 @@
+PASS: NPC real, HUD 1000x620/800x600/640x480, inventário, diário, salvar e encerrar. Capturas printAll, sem homologação física. Dados sintéticos: C:\Users\lucas\AppData\Local\Temp\corujao3-windows-7763222367853211682

@@ -125,11 +125,15 @@ public final class RpgWorld {
     private boolean bossUnlocked(){return enemies.current("ruins").stream().filter(e->!e.definition.id().equals("warden")).allMatch(e->e.hp==0);}
     public boolean returnHome(){if(hp>0)return false;region=scenes==null?"village":scenes.initialRegion();if(scenes!=null)space=scenes.maps().get(region).space();body.setPosition(scenes==null?new Position(140,320):scenes.maps().get(region).spawn());hp=maxHp();stamina=1000;closeDialogue();message="Recuperado em Aurora. Progresso preservado.";return true;}
     private String activeNpc="";
+    /** Mercadorias oferecidas pelo comerciante local, sem estoque persistente. */
+    public static java.util.Set<String> merchantItems(){return java.util.Set.of("potion","sword","robe");}
+    /** Cotação unitária usada tanto na transação quanto na apresentação. */
+    public static int tradePrice(ItemCatalog.Item item,boolean buying){return buying?item.price():Math.max(1,item.price()/2);}
     public boolean trade(String id,int amount,boolean buying) {
         var item=items.get(id);if(amount<1||amount>99)throw new IllegalArgumentException("Quantidade de comercio invalida");
         if(hp==0||transitioning||!activeNpc.equals("trader")||npcs.nearest(region,body.getPosition()).filter(n->n.id().equals("trader")).isEmpty())return false;
-        if(item.category()==ItemCatalog.Category.QUEST||item.price()==0||buying&&!java.util.Set.of("potion","sword","robe").contains(id))return false;
-        int value=(buying?item.price():Math.max(1,item.price()/2))*amount;var copy=inventory.copy();
+        if(item.category()==ItemCatalog.Category.QUEST||item.price()==0||buying&&!merchantItems().contains(id))return false;
+        int value=tradePrice(item,buying)*amount;var copy=inventory.copy();
         if(buying){if(coins<value||!copy.add(id,amount))return false;}else if(coins>1_000_000-value||!copy.remove(id,amount))return false;
         inventory.replace(copy);coins+=buying?-value:value;message=buying?"Compra realizada":"Venda realizada";return true;
     }

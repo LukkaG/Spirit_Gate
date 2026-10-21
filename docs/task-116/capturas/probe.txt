@@ -1,0 +1,3 @@
+PASS: entrada offline, perfil lembrado, lista vazia, criacao via dialogo, jogar, salvar/retornar, reabrir save, voltar, corrompido, backup, fallback, 640x480.
+Dados isolados: C:\Users\lucas\AppData\Local\Temp\task116-ui-5184493553386355203
+Capturas .png: printAll das janelas Swing reais. .desktop.png: Robot (desktop pode estar bloqueado). Sem aprovacao humana.

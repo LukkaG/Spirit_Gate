@@ -1,0 +1,1 @@
+PASS: comércio real, compra única apesar de dois cliques, fechamento durante operação, saldo atualizado e save temporário íntegro. Capturas printAll; sem homologação física.

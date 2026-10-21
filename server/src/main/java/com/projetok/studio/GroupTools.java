@@ -9,7 +9,14 @@ final class GroupTools {
         ui.action("Selecao","Selecionar por ID",()->{var model=new DefaultListModel<String>();ui.document.elements().forEach(e->model.addElement(e.id()+" | "+e.kind()+" | "+e.layer()+(e.locked()?" [bloqueado]":"")));ui.document.hitboxes().forEach(b->model.addElement(b.id()+" | colisao"));JList<String> list=new JList<>(model);if(JOptionPane.showConfirmDialog(ui,new JScrollPane(list),"Selecao multipla",JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION){ui.canvas.selected.clear();list.getSelectedValuesList().forEach(s->ui.canvas.selected.add(s.split(" ")[0]));ui.canvas.repaint();}});
         ui.action("Selecao","Mover grupo",()->{String value=JOptionPane.showInputDialog(ui,"Deslocamento dx,dy (pixels)","32,0");if(value==null)return;String[] xy=value.split(",");if(xy.length!=2)throw new IllegalArgumentException("Informe dx,dy");ui.change(GroupEditing.move(ui.document,ui.canvas.selected,Integer.parseInt(xy[0].trim()),Integer.parseInt(xy[1].trim())));});
         ui.action("Selecao","Duplicar",()->ui.change(EditorOperations.paste(ui.document,EditorOperations.copy(ui.document,ui.canvas.selected),ui.lastCursor.x,ui.lastCursor.y)));
-        ui.action("Selecao","Excluir",()->ui.change(GroupEditing.delete(ui.document,ui.canvas.selected)));
+        Runnable deleteSelection=()->{
+            if(ui.canvas.selected.isEmpty())return;
+            ui.change(GroupEditing.delete(ui.document,ui.canvas.selected));
+            ui.canvas.selected.clear();ui.inspectSelection();ui.canvas.repaint();ui.status.setText("Selecao excluida. Ctrl+Z para desfazer.");
+        };
+        ui.action("Selecao","Excluir",deleteSelection);
+        ui.canvas.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"),"deleteSelection");
+        ui.canvas.getActionMap().put("deleteSelection",new AbstractAction(){public void actionPerformed(java.awt.event.ActionEvent e){try{deleteSelection.run();}catch(Exception error){ui.error(error);}}});
         ui.action("Selecao","Bloquear",()->ui.change(GroupEditing.lock(ui.document,ui.canvas.selected,true)));
         ui.action("Selecao","Desbloquear",()->ui.change(GroupEditing.lock(ui.document,ui.canvas.selected,false)));
         ui.action("Selecao","Trazer para frente",()->ui.change(GroupEditing.order(ui.document,ui.canvas.selected,true)));

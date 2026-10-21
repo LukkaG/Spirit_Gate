@@ -1,0 +1,9 @@
+{
+  "startupWindowMillis": 445.9797,
+  "loadAndRestoreMeanMillis100": 7.591547,
+  "heapDeltaBytesUnisolated": 22012056,
+  "swingPaintCyclesPerSecondMoving": 22.87614739420043,
+  "minimapMeanMicros500Offscreen": 29.2054,
+  "physicalMonitorFpsMeasured": false,
+  "notes": "JVM local; heap sem isolamento de GC; pintura Swing, não scanout físico; minimapa offscreen após 50 aquecimentos."
+}

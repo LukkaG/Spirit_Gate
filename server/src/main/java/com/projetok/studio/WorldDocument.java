@@ -47,6 +47,8 @@ public record WorldDocument(int schema,String id,String name,String region,int w
         List<Layer> layers=new ArrayList<>();for(Role r:Role.values())layers.add(new Layer(r.name().toLowerCase(Locale.ROOT),r.name(),r,layers.size(),true,false));
         return new WorldDocument(1,id,id,"village",width,height,32,layers,List.of(),List.of(),List.of(),List.of(),Map.of());
     }
+    /** Altera a area do mapa preservando todo o conteudo e validando limites. */
+    public WorldDocument resized(int width,int height){return new WorldDocument(schema,id,name,region,width,height,grid,layers,elements,hitboxes,portals,triggers,metadata);}
     /** Substitui elementos em uma operacao imutavel. */
     public WorldDocument withElements(List<Element> next){return new WorldDocument(schema,id,name,region,width,height,grid,layers,next,hitboxes,portals,triggers,metadata);}
     /** Substitui camadas, conservando referencias e validando-as. */
