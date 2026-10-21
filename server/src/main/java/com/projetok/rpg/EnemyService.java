@@ -6,7 +6,10 @@ import java.io.*;
 
 /** Populacao finita definida em conteudo; estado persistente de cada spawn. */
 public final class EnemyService {
-    public record Definition(String id,int hp,int attack,int speed,int aggro,int leash,int respawn) { }
+    public record Definition(String id,int hp,int attack,int speed,int aggro,int leash,int respawn,int level) {
+        public Definition { if(level!=1)throw new IllegalArgumentException("Recompensas de mobs acima do nivel 1 ainda nao definidas"); }
+        public Definition(String id,int hp,int attack,int speed,int aggro,int leash,int respawn) {this(id,hp,attack,speed,aggro,leash,respawn,1);}
+    }
     public static final class Enemy extends GameEntity {
         final String spawn,region; final Definition definition; final Position home;
         int hp; long generation=1,readyTick,attackTick; String behavior="PATROL";
@@ -23,10 +26,10 @@ public final class EnemyService {
         this.geometry=geometry;
         Properties definitions=read("enemies"),spawns=new Properties();spawns.putAll(spawnData); Map<String,Definition> types=new TreeMap<>();
         for(String id:definitions.stringPropertyNames()) {
-            String[] v=definitions.getProperty(id).split("\\|");if(v.length!=6)throw new IllegalArgumentException("Inimigo invalido");
+            String[] v=definitions.getProperty(id).split("\\|");if(v.length!=6&&v.length!=7)throw new IllegalArgumentException("Inimigo invalido");
             content.get("enemy",id); int[] n=Arrays.stream(v).mapToInt(Integer::parseInt).toArray();
             if(n[0]<1||n[0]>10000||n[1]<1||n[1]>100||n[2]<1||n[2]>200||n[3]<40||n[3]>800||n[4]<n[3]||n[4]>900||n[5]<0||n[5]>9000)throw new IllegalArgumentException("Parametros PvE invalidos");
-            types.put(id,new Definition(id,n[0],n[1],n[2],n[3],n[4],n[5]));
+            types.put(id,new Definition(id,n[0],n[1],n[2],n[3],n[4],n[5],n.length==7?n[6]:1));
         }
         if(spawns.size()>64)throw new IllegalArgumentException("Populacao excessiva"); int entityId=100;
         for(String spawn:new TreeSet<>(spawns.stringPropertyNames())) {

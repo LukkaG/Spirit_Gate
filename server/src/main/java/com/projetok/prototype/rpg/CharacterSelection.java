@@ -13,7 +13,7 @@ final class CharacterSelection extends JPanel {
     final DefaultListModel<CharacterSaves.Slot> model=new DefaultListModel<>();
     final JList<CharacterSaves.Slot> list=new JList<>(model){@Override public boolean getScrollableTracksViewportWidth(){return true;}};
     final JButton play=new SpiritButton("Jogar",true), create=new SpiritButton("Criar personagem",false), back=new SpiritButton("Voltar",false), delete=new SpiritButton("Arquivar personagem",false);
-    final JButton arena=new SpiritButton("Arena histórica",false);
+    final JButton techniques=new SpiritButton("Conhecer os caminhos",false);
     final JLabel status=new JLabel("Carregando personagens locais...");
     final Preview preview=new Preview();
     final JLabel name=label("Seu próximo destino",22), details=label("Selecione um personagem",13);
@@ -45,27 +45,29 @@ final class CharacterSelection extends JPanel {
         JPanel center=new JPanel(new GridLayout(1,2,12,0));center.setOpaque(false);center.add(roster);center.add(right);add(center);
         JPanel south=new JPanel(new BorderLayout(0,8));south.setOpaque(false);
         JPanel buttons=new JPanel(new GridLayout(0,2,8,6));buttons.setOpaque(false);
-        for(JButton button:new JButton[]{play,create,delete,arena,back})buttons.add(button);
+        for(JButton button:new JButton[]{play,create,delete,techniques,back})buttons.add(button);
         south.add(buttons);status.setForeground(CYAN);status.setFont(new Font("SansSerif",Font.PLAIN,11));south.add(status,BorderLayout.SOUTH);add(south,BorderLayout.SOUTH);
-        play.setMnemonic('J');create.setMnemonic('C');back.setMnemonic('V');delete.setMnemonic('A');arena.setMnemonic('H');
-        play.setEnabled(false);delete.setEnabled(false);create.setEnabled(false);
-        list.addListSelectionListener(e->{var slot=list.getSelectedValue();play.setEnabled(slot!=null&&slot.state()!=null);delete.setEnabled(slot!=null&&!slot.backup());preview.slot=slot;updateSummary(slot);preview.repaint();});
+        play.setMnemonic('J');create.setMnemonic('C');back.setMnemonic('V');delete.setMnemonic('A');techniques.setMnemonic('T');
+        play.setEnabled(false);delete.setEnabled(false);create.setEnabled(false);techniques.setEnabled(false);
+        list.addListSelectionListener(e->{var slot=list.getSelectedValue();play.setEnabled(slot!=null&&slot.state()!=null);techniques.setEnabled(slot!=null&&slot.state()!=null);delete.setEnabled(slot!=null&&!slot.backup());preview.slot=slot;updateSummary(slot);preview.repaint();});
+        techniques.addActionListener(e->{var slot=list.getSelectedValue();if(slot!=null&&slot.state()!=null){var state=slot.state();DomainPreview.open(SwingUtilities.getWindowAncestor(this),state.identity().race(),RpgWorld.restore(state).level(),DomainProgression.read(state.flags()).domain(),null);}});
         list.getInputMap().put(KeyStroke.getKeyStroke("ENTER"),"play");list.getActionMap().put("play",new AbstractAction(){public void actionPerformed(java.awt.event.ActionEvent e){play.doClick();}});
         getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("ESCAPE"),"back");getActionMap().put("back",new AbstractAction(){public void actionPerformed(java.awt.event.ActionEvent e){back.doClick();}});
     }
     static JLabel label(String text,int size){JLabel l=new JLabel(text);l.setFont(new Font(size>=20?"Serif":"SansSerif",size>=20?Font.BOLD:Font.PLAIN,size));l.setForeground(size>=20?new Color(227,248,255):CYAN);return l;}
     static JPanel panel(LayoutManager layout){JPanel p=new JPanel(layout);p.setBackground(new Color(5,19,33));p.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(40,103,125)),BorderFactory.createEmptyBorder(10,10,10,10)));return p;}
-    static String className(RpgSave s){return s.identity().archetype().equals("guardian")?"Guardião":"Místico";}
-    static String describe(CharacterSaves.Slot slot){if(slot.state()==null)return "Save inválido | "+slot.file().getFileName();var s=slot.state();return s.identity().name()+" | "+className(s)+" | Nível "+RpgWorld.restore(s).level()+(slot.backup()?" | Backup recuperável":"");}
+    static String raceName(RpgSave s){return CharacterRaces.get(s.identity().race()).name();}
+    static String describe(CharacterSaves.Slot slot){if(slot.state()==null)return "Save inválido | "+slot.file().getFileName();var s=slot.state();return s.identity().name()+" | "+raceName(s)+" | Nível "+RpgWorld.restore(s).level()+(slot.backup()?" | Backup recuperável":"");}
     void updateSummary(CharacterSaves.Slot slot){
         name.setText(slot==null?"Seu próximo destino":slot.state()==null?"Arquivo preservado":slot.state().identity().name());
-        details.setText(slot==null?"Selecione um personagem":slot.state()==null?"Save inválido":className(slot.state())+"  •  Nível "+RpgWorld.restore(slot.state()).level());
+        details.setText(slot==null?"Selecione um personagem":slot.state()==null?"Save inválido":raceName(slot.state())+"  •  Nível "+RpgWorld.restore(slot.state()).level());
         resources.setText(" ");style.setText(" ");
         if(slot!=null&&slot.state()!=null){
             var view=RpgWorld.restore(slot.state()).snapshot();var combat=RpgCombatStatus.from(view);
             resources.setText("HP "+combat.hp()+" / "+combat.maxHp()+"   •   Vigor "+combat.stamina()/10+" / 100");
-            var definition=Archetypes.get(slot.state().identity().archetype());
-            style.setText("<html>XP "+view.state().xp()+" • Ataque "+view.attack()+" • Defesa "+view.defense()+"<br>"+(slot.state().identity().archetype().equals("guardian")?"Corpo a corpo • Investida":"Combate à distância • Cura")+" • Custo "+definition.cost()+" vigor</html>");
+            var domain=DomainProgression.read(slot.state().flags());
+            String mastery=domain.domain().equals("none")?"Aprendiz • Domínio no nível 15":Domains.get(domain.domain()).name()+"<br>XP de domínio "+DomainPreview.formatXp(domain.xpHalfUnits());
+            style.setText("<html>XP "+view.state().xp()+" • Ataque "+view.attack()+" • Defesa "+view.defense()+"<br>"+mastery+"</html>");
         }
         for(JLabel line:new JLabel[]{name,details,resources,style})line.setToolTipText(line.getText());
     }
@@ -87,7 +89,7 @@ final class CharacterSelection extends JPanel {
             slot=value;setBackground(selected?new Color(18,66,85):new Color(8,25,40));
             setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(focus?Color.WHITE:selected?CYAN:new Color(26,60,78),focus?2:1),BorderFactory.createEmptyBorder(5,6,5,6)));
             title.setText(value.state()==null?"Save inválido":value.state().identity().name());
-            subtitle.setText(value.state()==null?value.file().getFileName().toString():className(value.state())+" • Nível "+RpgWorld.restore(value.state()).level());
+            subtitle.setText(value.state()==null?value.file().getFileName().toString():raceName(value.state())+" • Nível "+RpgWorld.restore(value.state()).level());
             note.setText(value.backup()?"Backup recuperável":value.state()==null?"Arquivo preservado":selected?"◆ Selecionado":"Personagem local");
             setToolTipText(value.problem().isEmpty()?describe(value):value.problem());return this;
         }

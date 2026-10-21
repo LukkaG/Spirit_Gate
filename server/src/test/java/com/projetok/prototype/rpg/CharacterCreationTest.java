@@ -7,18 +7,24 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 class CharacterCreationTest {
-    @Test void validationAndClassPreviewUseDomain() throws Exception {
+    @Test void validationAndRacePreviewStartWithoutDomain() throws Exception {
         SwingUtilities.invokeAndWait(() -> {
             var form = new CharacterCreation(null);
             var accepted = new AtomicReference<CharacterIdentity>();
             form.name.setText("!"); form.submit(accepted::set);
             assertNull(accepted.get()); assertFalse(form.error.getText().isBlank());
-            form.mystic.doClick(); form.appearance.setSelectedItem("amber");
-            assertEquals("mystic", form.preview.slot.state().identity().archetype());
-            assertEquals(Archetypes.get("mystic").hp(), form.preview.slot.state().hp());
+            assertEquals(4, form.races.size());
+            for (var race : CharacterRaces.all()) {
+                form.races.get(race.id()).doClick();
+                assertEquals(race.id(), form.preview.slot.state().identity().race());
+                assertEquals(race.hp(), form.preview.slot.state().hp());
+                assertFalse(DomainProgression.read(form.preview.slot.state().flags()).chosen());
+                assertTrue(form.origin.getText().contains(race.startingAttackName()));
+            }
+            form.races.get("aetheri").doClick(); form.appearance.setSelectedItem("amber");
             var previous=form.preview.direction;form.preview.orientation().doClick();assertNotEquals(previous,form.preview.direction);
             form.name.setText("Heroi teste"); form.submit(accepted::set);
-            assertEquals("mystic", accepted.get().archetype());
+            assertEquals("aetheri", accepted.get().race());
             assertEquals("amber", accepted.get().appearance());
         });
     }

@@ -5,7 +5,7 @@ import java.util.*;
 /** Catalogo de saves locais, sem apagar entradas corrompidas. Chamar fora do EDT/tick. */
 public final class CharacterSaves {
     public record Slot(Path file,RpgSave state,String problem,boolean backup) {
-        public String toString(){return state==null?file.getFileName()+" - invalido: "+problem:state.identity().name()+" | "+state.identity().archetype()+" | XP "+state.xp()+(backup?" | BACKUP RECUPERAVEL":"");}
+        public String toString(){return state==null?file.getFileName()+" - invalido: "+problem:state.identity().name()+" | "+CharacterRaces.get(state.identity().race()).name()+" | XP "+state.xp()+(backup?" | BACKUP RECUPERAVEL":"");}
     }
     private final Path folder;
     public CharacterSaves(Path folder){this.folder=folder.toAbsolutePath();}

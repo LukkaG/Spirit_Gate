@@ -1,21 +1,24 @@
-param([string]$Version='0.78.0-rc1')
+param([string]$Version='1.0.0-rc1')
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
-if($Version -notmatch '^0[.]\d+[.]\d+-rc\d+$'){throw 'Versao invalida'}
+if($Version -notmatch '^\d+[.]\d+[.]\d+-rc\d+$'){throw 'Versao invalida'}
 $project=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
-$jdkBin=Split-Path (Get-Command java.exe).Source
+$compiled = & (Join-Path $PSScriptRoot 'compile-local.ps1') -PassThru
+$jdkBin=$compiled.JdkBin
 $buildId=$Version+'-'+[DateTime]::UtcNow.ToString('yyyyMMddTHHmmssZ')+'-'+[Guid]::NewGuid().ToString('N').Substring(0,8)
 $build=Join-Path $project ('server\target\rpg-portable-'+$buildId)
 $inputDir=Join-Path $build 'input'
 $destination=Join-Path $build 'output'
 $runtimeDir=Join-Path $build 'runtime'
-$classes=Join-Path $project 'server\target\classes'
+$classes=$compiled.Classes
 New-Item -ItemType Directory -Path $inputDir,$destination | Out-Null
 function Checked([string]$tool,[string[]]$arguments){ & (Join-Path $jdkBin $tool) @arguments; if($LASTEXITCODE -ne 0){throw "$tool falhou: $LASTEXITCODE"} }
 $jar=Join-Path $inputDir 'spirit-gate-rpg.jar'
 Checked 'jar.exe' @('--create','--file',$jar,'--main-class','com.projetok.prototype.rpg.RpgLauncher','-C',$classes,'com/projetok/domain','-C',$classes,'com/projetok/prototype','-C',$classes,'com/projetok/rpg','-C',$classes,'rpg')
 Checked 'jdeps.exe' @('--multi-release','17','--print-module-deps',$jar)
-Checked 'jlink.exe' @('--add-modules','java.base,java.desktop,java.logging,jdk.random','--strip-debug','--no-man-pages','--no-header-files','--compress=2','--output',$runtimeDir)
+$modules = 'java.base,java.desktop,java.logging'
+if (@(& (Join-Path $jdkBin 'java.exe') --list-modules) -match '^jdk[.]random@') { $modules += ',jdk.random' }
+Checked 'jlink.exe' @('--add-modules',$modules,'--strip-debug','--no-man-pages','--no-header-files','--compress=2','--output',$runtimeDir)
 $windowsVersion=($Version -split '-')[0]
 Checked 'jpackage.exe' @('--type','app-image','--dest',$destination,'--name','SpiritGateRPG','--input',$inputDir,'--main-jar','spirit-gate-rpg.jar','--main-class','com.projetok.prototype.rpg.RpgLauncher','--runtime-image',$runtimeDir,'--app-version',$windowsVersion,'--vendor','Spirit Gate','--description','Spirit Gate RPG offline - sprites experimentais','--java-options','-Dspiritgate.rpg.experimentalSprites=true')
 $image=Join-Path $destination 'SpiritGateRPG'
@@ -39,6 +42,7 @@ $notice="SPIRIT GATE RPG OFFLINE $Version`r`nExtraia todo o ZIP. Abra SpiritGate
 Copy-Item -LiteralPath (Join-Path $project 'docs\ROTEIRO-RPG-OFFLINE.md') -Destination (Join-Path $image 'ROTEIRO-RPG-OFFLINE.md')
 $manifest=@(Get-ChildItem -LiteralPath $image -Recurse -File | Sort-Object FullName | ForEach-Object { [ordered]@{path=$_.FullName.Substring($image.Length+1).Replace('\','/');bytes=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()} })
 $zip=Join-Path $project ('dist\SpiritGate-RPG-Sprites-Teste-'+$buildId+'.zip')
+New-Item -ItemType Directory -Path (Split-Path -Parent $zip) -Force | Out-Null
 Compress-Archive -LiteralPath $image -DestinationPath $zip -CompressionLevel Optimal
 $manifest | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath ($zip+'.manifest.json') -Encoding UTF8
 (Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant() | Set-Content -LiteralPath ($zip+'.sha256') -Encoding ASCII

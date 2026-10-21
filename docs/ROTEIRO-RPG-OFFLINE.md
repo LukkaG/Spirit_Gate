@@ -1,22 +1,19 @@
-# Roteiro de teste privado - Spirit Gate RPG offline
+# Roteiro de validação — Spirit Gate RPG desktop
 
-Extraia o ZIP RPG inteiro em pasta gravavel. Abra SpiritGateRPG.exe. O Java esta integrado. Nenhum servidor, banco ou login e necessario. A arena antiga continua disponivel pelo menu e pelos pacotes anteriores.
+Extraia o ZIP inteiro em uma pasta gravável e abra `SpiritGateRPG.exe`. O Java acompanha a distribuição. No repositório, `rodar-prototipo.cmd` compila e abre o mesmo cliente com JDK 17 ou superior. Esta é uma base local, sem servidor de pagamento ou multiplayer de produção.
 
-1. Crie um personagem com nome de 3 a 24 caracteres. Escolha Guardian (mais vida e investida) ou Mystic (ataque a distancia e cura), e aparencia azure/amber. O save inicial e criado sem apagar outro personagem.
-2. Na vila, aproxime-se da Ancia e pressione F. Escolha aceitar Ecos no bosque. Escape fecha dialogo. Consulte J para ver objetivos.
-3. WASD move. O bau ao sudeste da vila entrega uma espada. F abre o bau; I abre inventario. Selecione espada e clique Equipar. Atributo de ataque deve aumentar. M mostra mapa e posicao.
-4. Caminhe para o portal leste da vila e pressione F. No bosque, SPACE ataca o inimigo mais proximo ao alcance e sem parede entre voces. Cada pressao e um golpe; solte para atacar novamente. O botao Golpe tambem funciona.
-5. Q usa habilidade do arquetipo. Guardian faz investida; Mystic cura quando estiver ferido. Vigor e recarga limitam uso. 1 consome pocao apenas se ferido e fora da recarga.
-6. Derrote dois ecos. E possivel explorar os dois spawns ou aguardar respawn. HP, XP, nivel, moedas e cristais devem refletir combate. F coleta ervas curativas. Se cair, R recupera na vila preservando progresso.
-7. Volte pelo portal oeste. Converse com a Ancia e entregue Ecos. Receba XP, moedas e pocoes. Aceite O Santuario Partido.
-8. Nilo fica ao sul da Ancia. Aproxime-se e pressione F. Compre manto/pocoes ou venda cristais. I permite equipar manto, aumentando defesa. Inventario cheio/saldo insuficiente devem recusar a compra sem perder moedas.
-9. Atravesse bosque ate portal leste e entre no Santuario. Derrote os dois sentinelas; o chefe so desperta depois deles. Explore a reserva de pocoes ao sul da entrada.
-10. Enfrente o Guardiao. Circulo indica preparacao de ataque em area: afaste-se antes da execucao. A segunda fase acelera o aviso e aumenta alcance/dano. Derrota concede reliquia unica.
-11. F5 salva. Use Menu para salvar e voltar a selecao. Continue o mesmo personagem e confirme inventario, equipamento, posicao, inimigos mortos e progresso. Volte a Ancia e entregue a reliquia para concluir a campanha inicial.
-12. Experimente I: separar/mover pilhas, usar pocao e desequipar. J: objetivos e estado. M: regiao atual/visitadas. Atalhos: remapeie sem conflitos; WASD e teclas de sistema sao reservados. Audio/ambiente: altere volume, mudo e ciclo; reabra para confirmar preferencias.
-13. Crie outro personagem e confirme isolamento de saves. Nao e necessario apagar o primeiro. Saves invalidos sao preservados; backups recuperaveis aparecem na selecao e abrem em novo arquivo.
-14. Abra Arena historica e confira os controles legados Q/Shift/E, colisao e combate. Configuracoes RPG nao mudam a arena.
+1. Crie separadamente Reaper, Human, Aetheri e Spirit, com nomes válidos. Confirme que o novo save não apaga outro personagem e que nenhuma raça começa com domínio.
+2. Confira a apresentação inicial e o ataque básico: espada pequena para Reaper, socos para Human/Aetheri, feixe básico para Spirit. O feixe não deve liberar o domínio humano de luz.
+3. Abra as prévias de domínio, confira apenas os caminhos compatíveis e feche. Não deve haver mudança permanente de domínio, XP ou técnicas.
+4. Antes do nível 15, a escolha permanente deve estar bloqueada. No nível 15, confirme um domínio da raça; uma segunda escolha deve ser recusada enquanto não houver reset.
+5. Complete quests e derrote mobs. Um mob de nível 1 concede 3 XP de personagem. Após escolher domínio, também concede 1,5 XP de domínio; antes disso não deve acumular reserva de domínio.
+6. Confira o Shunpo em todas as raças: bloqueado antes do nível 20 de personagem. As duas aplicações devem respeitar obstáculos e as regras de alvo, alcance e esquiva do protótipo.
+7. Use WASD para mover, Espaço para atacar, F para interagir, I para inventário, J para diário, M para mapa e F5 para salvar. Verifique os atalhos na própria interface.
+8. Converse com a Anciã, aceite a quest inicial e avance por vila, bosque e santuário. Valide objetivos, recompensas, portais, coleta, combate e recuperação após derrota.
+9. Teste inventário, equipamento e comércio: equipar/desequipar, mover pilhas, usar poção e rejeitar compra sem saldo ou espaço, sem perder itens ou moedas.
+10. Salve, volte à seleção e continue o mesmo personagem. Confirme raça, domínio, XP fracionária de domínio, inventário, equipamentos e quests. Saves pessoais permanecem fora do pacote.
+11. O reset deve exigir 35 Spirit Coins, quest cumprida e um mês desde o anterior, preservando a base e zerando apenas o domínio. A validação local dessa política não representa uma compra real; o fluxo comercial depende do futuro serviço autoritativo.
+12. Mantenha a regra de controle em aliados, inclusive mesma party, no contrato de alvo. A homologação real exige ambiente com múltiplos participantes; uma sessão offline não comprova esse comportamento em rede.
+13. Abra `world-studio.cmd` e use `testar-mapa-rpg.cmd "pasta-exportada"` para confirmar que o editor e seus mapas continuam compatíveis.
 
-Os testes automatizados executam a campanha para os dois arquetipos. Capturas de componentes Swing documentam a janela real em execucao; o desktop deste ambiente pode produzir captura preta. Isso nao e homologacao humana nem teste em outro Windows.
-
-Limitacoes intencionais: arte geometrica provisoria, tres regioes compactas, duas missoes, um chefe e dois arquetipos. Inventario de 20 slots. A arena e o RPG offline nao usam multiplayer. Tons sao sintetizados localmente; sem dispositivo, o jogo fica silencioso.
+As curvas finais, requisitos de técnicas, preços de itens e números de combate ainda são provisórios. As regras aprovadas e as pendências estão em `RACAS-E-DOMINIOS.md` no pacote e em `docs/SISTEMA-DE-RACAS-E-DOMINIOS.md` no repositório. Não há troca gratuita entre domínios nem equipamentos vinculados ao domínio.

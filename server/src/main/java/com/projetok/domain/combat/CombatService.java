@@ -9,7 +9,7 @@ import com.projetok.domain.event.events.EntityDeathEvent;
 import java.util.Objects;
 
 /**
- * Único caminho de dano do jogo. Substitui Entity.currentDefense() + CombatCalculator +
+ * Caminho de dano das entidades de domínio usadas pela arena. Substitui Entity.currentDefense() + CombatCalculator +
  * DefenseCalculator (que existiam soltos e desconectados no código original — nenhum dos
  * três realmente aplicava dano a um alvo) por um só lugar. Player ataca Mob, Mob ataca
  * Player, e futuramente Mob pode atacar Mob — todos passam por aqui, porque Player e Mob
@@ -24,6 +24,9 @@ public final class CombatService {
     }
 
     public <T extends GameEntity & Damageable> int attack(Attacker attacker, T target) {
+        Objects.requireNonNull(attacker, "attacker");
+        Objects.requireNonNull(target, "target");
+        if (target.isDead()) return 0;
         int rawDamage = attacker.computeOutgoingDamage();
         double affinity = target.race().affinityFor(attacker.outgoingDamageType());
         int finalDamage = (int) Math.round(rawDamage * affinity);

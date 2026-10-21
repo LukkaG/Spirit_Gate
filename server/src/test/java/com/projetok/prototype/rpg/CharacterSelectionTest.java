@@ -11,11 +11,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class CharacterSelectionTest {
     @TempDir Path folder;
     @Test void loadingEmptyValidCorruptAndKeyboardActions() throws Exception {
-        var repo=new CharacterSaves(folder);var state=new RpgWorld(CharacterIdentity.create("Viajante","mystic","amber")).save();new LocalSaveStore(repo.newFile(state.identity())).save(state);Files.writeString(folder.resolve("broken.properties"),"broken");var slots=repo.list();
+        var repo=new CharacterSaves(folder);var state=new RpgWorld(CharacterIdentity.create("Viajante","human","amber")).save();new LocalSaveStore(repo.newFile(state.identity())).save(state);Files.writeString(folder.resolve("broken.properties"),"broken");var slots=repo.list();
         SwingUtilities.invokeAndWait(()->{
             var view=new CharacterSelection();assertFalse(view.play.isEnabled());assertFalse(view.create.isEnabled());
             view.loaded(java.util.List.of());assertTrue(view.create.isEnabled());assertTrue(view.status.getText().contains("Nenhum"));
-            view.loaded(slots);int valid=slots.get(0).state()!=null?0:1;view.list.setSelectedIndex(valid);assertTrue(view.play.isEnabled());assertTrue(CharacterSelection.describe(slots.get(valid)).contains("Nível 1"));assertTrue(CharacterSelection.describe(slots.get(valid)).contains("Místico"));
+            view.loaded(slots);int valid=slots.get(0).state()!=null?0:1;view.list.setSelectedIndex(valid);assertTrue(view.play.isEnabled());assertTrue(CharacterSelection.describe(slots.get(valid)).contains("Nível 1"));assertTrue(CharacterSelection.describe(slots.get(valid)).contains("Human"));
             AtomicInteger played=new AtomicInteger(),back=new AtomicInteger();view.play.addActionListener(e->played.incrementAndGet());view.back.addActionListener(e->back.incrementAndGet());view.list.getActionMap().get("play").actionPerformed(null);view.getActionMap().get("back").actionPerformed(null);assertEquals(1,played.get());assertEquals(1,back.get());
             view.list.setSelectedIndex(1-valid);assertFalse(view.play.isEnabled());view.list.getActionMap().get("play").actionPerformed(null);assertEquals(1,played.get());
             view.preview.setSize(300,320);view.preview.paint(new java.awt.image.BufferedImage(300,320,2).getGraphics());

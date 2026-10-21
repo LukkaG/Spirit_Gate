@@ -22,7 +22,7 @@ public final class RpgPlayerSprites implements DebugPanel.ActorRenderer {
     private final RpgPlayerAnimation animation;
     private final double scale;
     private final RpgVisualState visual=new RpgVisualState();
-    private boolean mystic;
+    private boolean spirit;
     private RpgPlayerSprites(Map<String,Frame> frames,int frameMillis,double scale) {
         this.frames=Map.copyOf(frames);animation=new RpgPlayerAnimation(frameMillis);this.scale=scale;
     }
@@ -80,7 +80,7 @@ public final class RpgPlayerSprites implements DebugPanel.ActorRenderer {
         return new RpgPlayerSprites(frames,frameMillis,scale);
     }
     public double scale() { return scale; }
-    public RpgPlayerAnimation.Pose update(com.projetok.rpg.RpgWorld.View view) { mystic=view.identity().archetype().equals("mystic");var pose=animation.update(view);visual.update(view,pose.walking());return pose; }
+    public RpgPlayerAnimation.Pose update(com.projetok.rpg.RpgWorld.View view) { spirit=view.identity().race().equals("spirit");var pose=animation.update(view);visual.update(view,pose.walking());return pose; }
     /** Estado visual sem influencia nas regras do mundo. */
     public RpgVisualState.State visualState(){return visual.state();}
     public RpgPlayerAnimation.Pose pose() { return animation.pose(); }
@@ -113,9 +113,9 @@ public final class RpgPlayerSprites implements DebugPanel.ActorRenderer {
         try {
             int x=Math.round(actor.x()),y=Math.round(actor.y());
             if(visual.state()==RpgVisualState.State.ATTACK) {
-                effect.setColor(mystic?new Color(165,125,255):new Color(255,220,110));effect.setStroke(new BasicStroke(3));
+                effect.setColor(spirit?new Color(165,125,255):new Color(255,220,110));effect.setStroke(new BasicStroke(3));
                 int angle=switch(animation.pose().direction()){case FRONT->210;case BACK->30;case LEFT->120;case RIGHT->300;};
-                if(mystic)effect.drawOval(x-32,y-45,64,64);else effect.drawArc(x-32,y-45,64,64,angle,120);
+                if(spirit)effect.drawOval(x-32,y-45,64,64);else effect.drawArc(x-32,y-45,64,64,angle,120);
             } else if(visual.state()==RpgVisualState.State.HIT) {
                 effect.setColor(new Color(255,100,100,190));effect.setStroke(new BasicStroke(2));
                 effect.drawOval(x-24,y-24,48,30);

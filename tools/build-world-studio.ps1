@@ -3,15 +3,18 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
 if($Version -notmatch '^0[.]\d+[.]\d+-rc\d+$'){throw 'Versao invalida'}
 $project=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
-$jdk=Split-Path (Get-Command java.exe).Source
+$compiled = & (Join-Path $PSScriptRoot 'compile-local.ps1') -PassThru
+$jdk=$compiled.JdkBin
 $buildId=$Version+'-'+[DateTime]::UtcNow.ToString('yyyyMMddTHHmmssZ')+'-'+[Guid]::NewGuid().ToString('N').Substring(0,8)
 $build=Join-Path $project ('server/target/studio-'+$buildId)
 $inputDir=Join-Path $build 'input'; $output=Join-Path $build 'output'; $runtime=Join-Path $build 'runtime'
 New-Item -ItemType Directory -Path $inputDir,$output | Out-Null
 function Checked([string]$tool,[string[]]$parameters){& (Join-Path $jdk $tool) @parameters;if($LASTEXITCODE -ne 0){throw "$tool falhou"}}
-$classes=Join-Path $project 'server/target/classes'
+$classes=$compiled.Classes
 Checked 'jar.exe' @('--create','--file',(Join-Path $inputDir 'world-studio.jar'),'--main-class','com.projetok.studio.WorldStudio','-C',$classes,'com/projetok/studio','-C',$classes,'com/projetok/domain','-C',$classes,'com/projetok/prototype','-C',$classes,'com/projetok/rpg','-C',$classes,'rpg')
-Checked 'jlink.exe' @('--add-modules','java.base,java.desktop,java.logging,jdk.random','--strip-debug','--no-man-pages','--no-header-files','--compress=2','--output',$runtime)
+$modules = 'java.base,java.desktop,java.logging'
+if (@(& (Join-Path $jdk 'java.exe') --list-modules) -match '^jdk[.]random@') { $modules += ',jdk.random' }
+Checked 'jlink.exe' @('--add-modules',$modules,'--strip-debug','--no-man-pages','--no-header-files','--compress=2','--output',$runtime)
 Checked 'jpackage.exe' @('--type','app-image','--dest',$output,'--name','SpiritGateWorldStudio','--input',$inputDir,'--main-jar','world-studio.jar','--main-class','com.projetok.studio.WorldStudio','--runtime-image',$runtime,'--app-version',($Version -split '-')[0],'--vendor','Spirit Gate')
 $image=Join-Path $output 'SpiritGateWorldStudio'
 foreach($file in Get-ChildItem -LiteralPath $build -Recurse -File){if($file.IsReadOnly){$file.IsReadOnly=$false}}
@@ -29,6 +32,7 @@ foreach($name in @('WORLD-STUDIO-TUTORIAL.md','WORLD-STUDIO-FUNCIONALIDADES.md',
 [IO.File]::WriteAllText((Join-Path $image 'LEIA-ME.txt'),"Spirit Gate World Studio $Version`r`nExtraia todo o ZIP e abra SpiritGateWorldStudio.exe. Java integrado, sem PostgreSQL ou multiplayer.`r`nAssets de trabalho experimentais; nenhuma aprovacao artistica presumida. Projetos novos em studio-projects. Manual em MANUAL.md. Exemplo em assets/maps/studio_tutorial.sgmap.",[Text.Encoding]::UTF8)
 $manifest=@(Get-ChildItem -LiteralPath $image -Recurse -File | Sort-Object FullName | ForEach-Object {[ordered]@{path=$_.FullName.Substring($image.Length+1).Replace('\','/');bytes=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}})
 $zip=Join-Path $project ('dist/SpiritGate-WorldStudio-'+$buildId+'.zip')
+New-Item -ItemType Directory -Path (Split-Path -Parent $zip) -Force | Out-Null
 Compress-Archive -LiteralPath $image -DestinationPath $zip -CompressionLevel Optimal
 $manifest | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath ($zip+'.manifest.json') -Encoding UTF8
 (Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant() | Set-Content -LiteralPath ($zip+'.sha256') -Encoding ASCII

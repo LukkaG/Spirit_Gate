@@ -19,7 +19,7 @@ class LocalSaveStoreTest {
     @Test void rejectsCorruptionVersionAndDuplicateFields() throws Exception {
         byte[] good=LocalSaveStore.encode(new RpgWorld().save());
         String text=new String(good,java.nio.charset.StandardCharsets.ISO_8859_1);
-        for(String invalid:new String[]{"garbage",text.replace("schema=1","schema=2"),text+"\nx=NaN\n",text.replace("x=140.0","x=NaN")})
+        for(String invalid:new String[]{"garbage",text.replace("schema=2","schema=99"),text+"\nx=NaN\n",text.replace("x=140.0","x=NaN")})
             assertThrows(IllegalArgumentException.class,()->LocalSaveStore.decode(invalid.getBytes(java.nio.charset.StandardCharsets.ISO_8859_1)));
     }
 }

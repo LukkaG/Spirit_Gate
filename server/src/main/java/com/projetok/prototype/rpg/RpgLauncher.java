@@ -9,6 +9,9 @@ import java.util.List;
 public final class RpgLauncher {
     private RpgLauncher() { }
     public static void main(String[] args) {
+        if(args.length==2&&args[0].equals("--verify-install")) {
+            LauncherSelfCheck.write(java.nio.file.Path.of(args[1]));return;
+        }
         if(args.length>0 && args[0].equals("--experimental-player-sprites")) {
             System.setProperty(RpgPlayerSprites.ENABLED,"true");args=java.util.Arrays.copyOfRange(args,1,args.length);
         }
@@ -21,7 +24,7 @@ public final class RpgLauncher {
         if(name==null)name=JOptionPane.showInputDialog(null, "Nome do personagem (3 a 24 caracteres)", "Criar personagem", JOptionPane.QUESTION_MESSAGE);
         if (name == null) return;
         com.projetok.rpg.CharacterIdentity identity;
-        try { identity = com.projetok.rpg.CharacterIdentity.create(name, "guardian", "azure"); }
+        try { identity = com.projetok.rpg.CharacterIdentity.create(name, "reaper", "azure"); }
         catch (IllegalArgumentException error) { JOptionPane.showMessageDialog(null, error.getMessage()); open(); return; }
         play(new com.projetok.rpg.RpgWorld(identity),new com.projetok.rpg.LocalSaveStore(RpgMenu.dataHome().resolve("saves/characters/"+identity.id()+".properties")));
     }
@@ -63,8 +66,21 @@ public final class RpgLauncher {
         for(String action:new String[]{"attack","ability","potion","inventory","journal","map"}){JButton button=new JButton(actionLabel(action)+" ["+controls[0].key(action)+"]");button.addActionListener(e->{audio.play(RpgAudio.Cue.UI);actions.get(action).run();});toolbar.add(button);hotbar.put(action,button);}
         var secondary=com.projetok.rpg.RpgSecondaryAbility.forArchetype(world.snapshot().identity().archetype());
         JButton secondaryButton=new JButton(secondary.name());
-        secondaryButton.setToolTipText("Custo "+secondary.cost()+" vigor; recarga compartilhada "+RpgCombatStatus.cooldown(secondary.cooldown()));
+        secondaryButton.setToolTipText("Requer nivel 20. Custo "+secondary.cost()+" vigor; recarga compartilhada "+RpgCombatStatus.cooldown(secondary.cooldown()));
+        hotbar.get("ability").setToolTipText("Shunpo ofensivo: requer nivel 20 e alvo visivel; recarga compartilhada com a esquiva.");
         secondaryButton.addActionListener(e->runtime.command(w->w.activate("rpg.secondary")));toolbar.add(secondaryButton);
+        JButton punchButton=new JButton("Soco desarmado");
+        punchButton.addActionListener(e->runtime.command(w->w.activate("rpg.unarmed")));toolbar.add(punchButton);
+        JButton domainsButton=new JButton("Dominios e tecnicas");
+        domainsButton.addActionListener(e->{runtime.input(0,0);var v=runtime.snapshot();
+            DomainPreview.open(frame,v.identity().race(),v.level(),com.projetok.rpg.DomainProgression.read(v.state().flags()).domain(),
+                selected->runtime.action(w->w.chooseDomain(selected)).thenAccept(ok->SwingUtilities.invokeLater(()->{
+                    if(!ok)JOptionPane.showMessageDialog(frame,"Escolha recusada. Confira nivel, raca e dominio atual.");
+                    else runtime.save(store).whenComplete((unused,error)->SwingUtilities.invokeLater(()->JOptionPane.showMessageDialog(frame,
+                        error==null?"Dominio escolhido e salvo.":"Dominio escolhido. Falha ao salvar: "+error.getMessage())));
+                })));});toolbar.add(domainsButton);
+        JButton resetButton=new JButton("Reset de dominio");
+        resetButton.addActionListener(e->JOptionPane.showMessageDialog(frame,world.resetRequirements(),"Reset de dominio",JOptionPane.INFORMATION_MESSAGE));toolbar.add(resetButton);
         JButton configure=new JButton("Atalhos");configure.addActionListener(e->ControlsDialog.open(frame,controls[0],controlsFile,next->{for(String key:controls[0].keys().values())for(boolean down:new boolean[]{true,false}){panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(KeyStroke.getKeyStroke((down?"pressed ":"released ")+key));panel.getActionMap().remove(key+down);}resetHeld(panel);controls[0]=next;bindActions.run();hotbar.forEach((id,button)->button.setText(actionLabel(id)+" ["+next.key(id)+"]"));}));toolbar.add(configure);
         JButton settings=new CharacterSelection.SpiritButton("Opções",false);settings.addActionListener(e->PreferencesDialog.open(frame,preferences[0],preferencesFile,next->{preferences[0]=next;audio.preferences(next);audio.play(RpgAudio.Cue.UI);}));toolbar.add(settings);
         JButton help=new CharacterSelection.SpiritButton("Ajuda",false);help.addActionListener(e->GettingStarted.open(frame,controls[0]));toolbar.add(help);
@@ -104,14 +120,17 @@ public final class RpgLauncher {
             if(view.state().region().equals(before.state().region())&&view.enemies().stream().mapToInt(com.projetok.rpg.EnemyService.View::hp).sum()<before.enemies().stream().mapToInt(com.projetok.rpg.EnemyService.View::hp).sum())audio.play(RpgAudio.Cue.HIT);
             if(view.ticks()/900>before.ticks()/900)audio.play(RpgAudio.Cue.AMBIENT);previous[0]=view;
             var keysNow=controls[0];
-            panel.setCustomHud(java.util.List.of("SPIRIT GATE | RPG OFFLINE",view.identity().name(),"Nivel "+view.level()+" | XP "+view.state().xp(),"HP "+view.state().hp()+" / "+view.maxHp(),"Ataque "+view.attack()+" | Defesa "+view.defense(),"Moedas "+view.state().coins(),"Regiao: "+view.state().region(),"["+keysNow.key("interact")+"] NPC / portal / objeto","["+keysNow.key("attack")+"] Ataque basico","["+keysNow.key("ability")+"] Habilidade do arquetipo","["+keysNow.key("potion")+"] Pocao de vida","["+keysNow.key("inventory")+"] Inventario / equipamentos","["+keysNow.key("journal")+"] Diario | ["+keysNow.key("map")+"] Mapa","["+keysNow.key("save")+"] Salvar progresso","["+keysNow.key("revive")+"] Recuperar se morto"));
+            secondaryButton.setEnabled(RpgCombatStatus.from(view).abilityReady());
+            hotbar.get("ability").setEnabled(RpgCombatStatus.from(view).abilityReady());
+            var domain=com.projetok.rpg.DomainProgression.read(view.state().flags());
+            panel.setCustomHud(java.util.List.of("SPIRIT GATE",view.identity().name()+" | "+com.projetok.rpg.CharacterRaces.get(view.identity().race()).name(),"Nivel "+view.level()+" | XP "+view.state().xp(),"Dominio: "+(domain.chosen()?com.projetok.rpg.Domains.get(domain.domain()).name()+" | XP "+domain.xpText():"Aprendiz - escolha no nivel 15"),"HP "+view.state().hp()+" / "+view.maxHp(),"Ataque "+view.attack()+" | Defesa "+view.defense(),"Moedas "+view.state().coins(),"Regiao: "+view.state().region(),"["+keysNow.key("interact")+"] NPC / portal / objeto","["+keysNow.key("attack")+"] Ataque basico","["+keysNow.key("ability")+"] Shunpo (nivel 20)","["+keysNow.key("potion")+"] Pocao de vida","["+keysNow.key("inventory")+"] Inventario / equipamentos","["+keysNow.key("journal")+"] Diario | ["+keysNow.key("map")+"] Mapa","["+keysNow.key("save")+"] Salvar progresso","["+keysNow.key("revive")+"] Recuperar se morto"));
             panel.setAmbientLight(com.projetok.rpg.EnvironmentCycle.light(view.ticks(),preferences[0].environment()));
             if(!displayedRegion[0].equals(view.state().region())){displayedRegion[0]=view.state().region();panel.setLocalMap(RpgMaps.region(displayedRegion[0]),false);}
             panel.repaint();hud.update(view);navigation.repaint();
         });
         frame.addWindowListener(new WindowAdapter() { public void windowClosed(WindowEvent e) { timer.stop(); runtime.close();audio.close();java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager().removePropertyChangeListener("activeWindow",audioFocus);if(System.getProperty("spiritgate.smoke.output")==null)RpgMenu.open(); } });
         frame.addWindowFocusListener(new WindowAdapter() { public void windowLostFocus(WindowEvent e) {java.util.Arrays.fill(held, false);resetHeld(panel); runtime.input(0, 0); } });
-        for(java.awt.Component control:toolbar.getComponents())if(control instanceof JButton button)button.setToolTipText(button.getText());
+        for(java.awt.Component control:toolbar.getComponents())if(control instanceof JButton button&&button.getToolTipText()==null)button.setToolTipText(button.getText());
         runtime.start(); timer.start(); frame.setVisible(true);
         if(introduction)GettingStarted.open(frame,controls[0]);
         if(System.getProperty("spiritgate.smoke.output")!=null){Timer capture=new Timer(2000,e->{
@@ -149,5 +168,5 @@ public final class RpgLauncher {
     }
     /** Limpa teclas mantidas ao perder foco. */
     public static void resetHeld(JComponent component){Object held=component.getClientProperty("rpg.held");if(held instanceof java.util.Set<?> keys)keys.clear();}
-    static String actionLabel(String action){return switch(action){case "attack"->"Golpe";case "ability"->"Habilidade";case "potion"->"Pocao";case "inventory"->"Inventario";case "journal"->"Diario";case "map"->"Mapa";case "interact"->"Interagir";case "save"->"Salvar";case "revive"->"Recuperar";default->action;};}
+    static String actionLabel(String action){return switch(action){case "attack"->"Ataque basico";case "ability"->"Shunpo ofensivo";case "potion"->"Pocao";case "inventory"->"Inventario";case "journal"->"Diario";case "map"->"Mapa";case "interact"->"Interagir";case "save"->"Salvar";case "revive"->"Recuperar";default->action;};}
 }

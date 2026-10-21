@@ -14,7 +14,6 @@ final class RpgMenu {
         var list=root.list;var status=root.status;
         CharacterSaves repository=new CharacterSaves(dataHome().resolve("saves/characters"));
         JButton create=root.create,resume=root.play;
-        root.arena.addActionListener(e->com.projetok.prototype.DebugLauncher.main(new String[0]));
         root.back.addActionListener(e->{frame.dispose();SpiritGateEntry.open();});
         root.delete.addActionListener(e->{
             var slot=list.getSelectedValue();if(slot==null||slot.backup())return;

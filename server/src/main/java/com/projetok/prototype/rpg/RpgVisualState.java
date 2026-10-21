@@ -21,7 +21,7 @@ public final class RpgVisualState {
         for(var event:view.events())if(event.sequence()>sequence) {
             sequence=event.sequence();
             if(event.kind()==RpgCombatEvent.Kind.HIT&&event.target()==1){state=State.HIT;until=event.tick()+6;}
-            else if(event.kind()==RpgCombatEvent.Kind.ATTACK&&state!=State.HIT){state=State.ATTACK;until=event.tick()+9;}
+            else if((event.kind()==RpgCombatEvent.Kind.ATTACK||event.kind()==RpgCombatEvent.Kind.PUNCH)&&state!=State.HIT){state=State.ATTACK;until=event.tick()+9;}
         }
         if(view.ticks()>=until&&state!=State.KO)state=moving?State.WALK:State.IDLE;
         return state;

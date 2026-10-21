@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AmbientFeedbackTest {
     @Test void repeatedSnapshotDoesNotReplayItemOrRejectedAbility(){
         var sounds=new java.util.ArrayList<RpgAudio.Cue>();var feedback=new AmbientFeedback(sounds::add);
-        var world=new RpgWorld(CharacterIdentity.create("Místico","mystic","azure"));feedback.update(world.snapshot());assertTrue(sounds.isEmpty());
+        var world=new RpgWorld(CharacterIdentity.create("Humano","human","azure"));feedback.update(world.snapshot());assertTrue(sounds.isEmpty());
         world.inventory().add("sword",1);feedback.update(world.snapshot());assertEquals(1,sounds.size());for(int i=0;i<30;i++)feedback.update(world.snapshot());assertEquals(1,sounds.size());
         assertFalse(world.activate("rpg.ability"));feedback.update(world.snapshot());assertEquals(2,sounds.size());feedback.update(world.snapshot());assertEquals(2,sounds.size());
     }

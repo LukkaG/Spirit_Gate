@@ -1,3 +1,5 @@
+Registro histórico — experimento retirado do acesso público via Sites em 21/10/2026. O laboratório permanece restrito ao proprietário, sem acesso externo nas listas de permissão; o conector não oferece exclusão definitiva. A cópia local browser-preview não existe neste checkout. O cliente vigente é o launcher desktop descrito em README-RPG.md.
+
 # Spirit Gate — teste público de sprites no navegador
 
 Publicado por solicitação explícita do responsável, em adaptação isolada para ampliar os testes visuais.

@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "status": "passed",
+  "verifiedAtUtc": "2026-10-21T23:02:46.933604+00:00",
+  "version": "1.0.0-rc1",
+  "exe": "C:\\Users\\lucas.guimaraes\\Documents\\GitHub\\Spirit_Gate\\server\\target\\rpg-portable-1.0.0-rc1-20261021T225822Z-007dfbe9\\output\\SpiritGateRPG\\SpiritGateRPG.exe",
+  "exeRelative": "server/target/rpg-portable-1.0.0-rc1-20261021T225822Z-007dfbe9/output/SpiritGateRPG/SpiritGateRPG.exe",
+  "zip": "C:\\Users\\lucas.guimaraes\\Documents\\GitHub\\Spirit_Gate\\dist\\SpiritGate-RPG-1.0.0-rc1-20261021T225822Z-007dfbe9.zip",
+  "zipRelative": "dist/SpiritGate-RPG-1.0.0-rc1-20261021T225822Z-007dfbe9.zip",
+  "zipBytes": 44502513,
+  "zipSha256": "861011a5499054610c2204a745bc05780e065913680d9a5709b9e448207cd8a8",
+  "exeSha256": "40bbdbc2c7d9fd3fda24cb63fc480fe83f40a1682aa0edf1ba24b7eb9a5d4e58",
+  "sourceFingerprint": "79a019136f78d54406e60bc03a90a4dae87457eccdbe97439628dee7235f9f6d",
+  "sourceFiles": 191,
+  "compileRelease": 17,
+  "compiler": "javac 24.0.2",
+  "archiveInventory": {
+    "verifiedFiles": 148,
+    "allSizesAndSha256Verified": true,
+    "fullRuntimeExtracted": true,
+    "freshExtractionWithSpaces": "C:\\Users\\lucas.guimaraes\\Documents\\GitHub\\Spirit_Gate\\server\\target\\launcher-verification\\Spirit Gate RC\\SpiritGateRPG"
+  },
+  "runtime": {
+    "bundled": true,
+    "sourceJdk": "24.0.2",
+    "javaExeAndJvmDllMatchJdk": true,
+    "resolvedModulesMatch": true,
+    "reusedVerifiedRuntime": true
+  },
+  "cli": {
+    "command": "SpiritGateRPG.exe --verify-install <absolute-report.json>",
+    "hidden": true,
+    "exitCode": 0,
+    "result": {
+      "ok": true,
+      "races": 4,
+      "domains": 10,
+      "saveSchema": 2,
+      "paymentEnabled": false
+    },
+    "report": "docs/VALIDACAO-LAUNCHER-RACAS-CLI.json"
+  },
+  "environment": {
+    "executionOutsideSandbox": true,
+    "sandboxRestriction": "Inside sandbox JDK24 cannot resolve its local java.security file; approved verification outside sandbox passed."
+  },
+  "documentation": {
+    "markdownIncluded": true,
+    "pdfIncluded": true,
+    "matchesRepository": true,
+    "pdfPages": 6,
+    "pdfSha256": "7052322f2c24192a08c186b9ef6ce1b13755ace85f1890bbb8d30bceadcfbf44"
+  },
+  "checks": {
+    "powerShellSyntax": true,
+    "sourceCompilation": true,
+    "cmdBuildOnly": true
+  },
+  "limits": [
+    "Local release candidate; no real checkout or payment wallet.",
+    "No multiplayer friendly-control homologation or manual visual approval."
+  ]
+}

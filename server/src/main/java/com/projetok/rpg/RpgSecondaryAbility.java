@@ -1,13 +1,10 @@
 package com.projetok.rpg;
 
-/** Habilidade adicional experimental; compartilha recarga persistente com a habilidade primaria. */
+/** Metadados da tecnica livre defensiva, compartilhada por todas as racas. */
 public record RpgSecondaryAbility(String name,int range,int bonus,int cost,int cooldown) {
-    /** Parametros conservadores dos dois arquetipos; custos em pontos de vigor. */
+    /** Compatibilidade de apresentacao; nao concede habilidades de dominio ao nascer. */
     public static RpgSecondaryAbility forArchetype(String id) {
-        return switch(id) {
-            case "guardian"->new RpgSecondaryAbility("Golpe de Impacto",82,6,20,120);
-            case "mystic"->new RpgSecondaryAbility("Pulso Arcano",110,4,25,150);
-            default->throw new IllegalArgumentException("Arquetipo desconhecido");
-        };
+        CharacterRaces.get(CharacterRaces.normalizeLegacy(id));
+        return new RpgSecondaryAbility("Shunpo defensivo",70,0,RpgWorld.SHUNPO_COST,RpgWorld.SHUNPO_COOLDOWN);
     }
 }

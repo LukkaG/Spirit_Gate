@@ -11,7 +11,7 @@ class OfflineCycleTest {
         fail("Nao chegou ao ponto "+x+","+y);
     }
     @Test void createQuestFightLootTradeEquipSaveAndResume() throws Exception {
-        var w=new RpgWorld(CharacterIdentity.create("Aurora Teste","guardian","azure"));assertTrue(w.interact());assertTrue(w.acceptQuest("first_steps"));
+        var w=new RpgWorld(CharacterIdentity.create("Aurora Teste","reaper","azure"));assertTrue(w.interact());assertTrue(w.acceptQuest("first_steps"));
         move(w,855,320);assertTrue(w.interact());assertEquals("forest",w.save().region());
         for(int i=0;i<800&&w.save().quests().get("first_steps")<2;i++){w.attack();w.tick(0,0);}
         assertEquals(2,w.save().quests().get("first_steps"));assertTrue(w.inventory().count("crystal")>=2);assertTrue(w.save().hp()>0);

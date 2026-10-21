@@ -29,26 +29,62 @@ public final class RpgWorld {
     private boolean transitioning;
     private int stamina=1000;
     private long abilityReadyTick;
+    private long evadeUntilTick;
+    private DomainProgression domain = DomainProgression.initial();
+    public static final int SHUNPO_LEVEL = 20;
+    public static final int SHUNPO_COST = 25, SHUNPO_COOLDOWN = 90;
     private float facingX=1,facingY;
+    public DomainProgression domainProgression() { return domain; }
+    public boolean chooseDomain(String id) {
+        if(hp==0||transitioning)return false;
+        try { domain=domain.choose(identity.race(),level(),id); }
+        catch(IllegalArgumentException|IllegalStateException rejected) { message=rejected.getMessage();return false; }
+        message="Dominio escolhido: "+Domains.get(id).name();return true;
+    }
+    /** Dados de pagamento nao sao inventados pelo cliente offline. A regra pura de reset
+     * fica em DomainProgression; a execucao paga depende do servico de carteira. */
+    public String resetRequirements() {
+        return "Reset: 35 Spirit Coins (R$ 35), missao de reset e intervalo de um mes. "
+            +"Pagamento e missao ainda indisponiveis; nivel, itens e equipamentos serao preservados.";
+    }
+    public boolean canShunpo() { return level()>=SHUNPO_LEVEL; }
+    /** Shunpo ofensivo: aproxima de alvo visivel sem atravessar geometria. */
     public boolean castAbility() {
-        int beforeHp=hp;
-        var ability=Archetypes.get(identity.archetype());
-        if(hp==0||transitioning||ticks<abilityReadyTick||stamina<ability.cost()*10||ability.ability().equals("mend")&&hp==maxHp())return false;
-        if(ability.ability().equals("dash")) movement.moveContinuous(body,facingX*ability.effect(),facingY*ability.effect(),18,space);
-        else hp=Math.min(maxHp(),hp+ability.effect());
-        stamina-=ability.cost()*10;abilityReadyTick=ticks+ability.cooldown();
+        if(!shunpoReady())return false;
+        var position=body.getPosition();
+        var target=enemies.current(region).stream().filter(e->e.hp>0
+            &&(!e.definition.id().equals("warden")||bossUnlocked())
+            &&distance(position,e.getPosition())<=240&&lineClear(position,e.getPosition()))
+            .min(java.util.Comparator.comparingDouble(e->distance(position,e.getPosition()))).orElse(null);
+        if(target==null){message="Shunpo ofensivo exige um alvo visivel no alcance";return false;}
+        var direction=movement.direction(position.x()-target.getPosition().x(),position.y()-target.getPosition().y());
+        if(direction.x()==0&&direction.y()==0)direction=new Position(-facingX,-facingY);
+        float x=target.getPosition().x()+direction.x()*42, y=target.getPosition().y()+direction.y()*42;
+        if(!new CollisionService().isFree(body,x,y,18,space)
+                ||!lineClear(position,new Position(x,y))){message="Destino do Shunpo bloqueado";return false;}
+        body.setPosition(new Position(x,y));facingX=-direction.x();facingY=-direction.y();
+        consumeShunpo();message="Shunpo ofensivo";return true;
+    }
+    private boolean shunpoReady() {
+        if(!canShunpo()){message="Shunpo exige nivel 20 de personagem";return false;}
+        return hp>0&&!transitioning&&ticks>=abilityReadyTick&&stamina>=SHUNPO_COST*10;
+    }
+    private void consumeShunpo() {
+        stamina-=SHUNPO_COST*10;abilityReadyTick=ticks+SHUNPO_COOLDOWN;
         flags.removeIf(f->f.startsWith("ability-until:"));flags.add("ability-until:"+abilityReadyTick);
-        if(hp>beforeHp)event(RpgCombatEvent.Kind.HEAL,1,body.getPosition().x(),body.getPosition().y(),hp-beforeHp);
-        message=ability.ability().equals("dash")?"Investida!":"Restauracao!";return true;
     }
     private String message="Bem-vindo a Aurora";
     public int level() { return progression.level(xp); }
     public int maxHp() { return identity.baseHp()+(level()-1)*progression.hpPerLevel(); }
     public void awardExperience(long amount) {
-        int previous=maxHp(); xp=progression.award(xp,amount);
+        int previous=maxHp();long nextXp=progression.award(xp,amount);
+        DomainProgression nextDomain=domain.award(amount);
+        xp=nextXp;domain=nextDomain;
         if(hp>0) hp+=maxHp()-previous;
     }
-    public void receiveDamage(int amount) { if(amount<0||amount>10000) throw new IllegalArgumentException("Dano invalido"); int before=hp;hp=Math.max(0,hp-amount);
+    public void receiveDamage(int amount) { if(amount<0||amount>10000) throw new IllegalArgumentException("Dano invalido");
+        if(amount>0&&hp>0&&ticks<evadeUntilTick){message="Shunpo: esquiva!";return;}
+        int before=hp;hp=Math.max(0,hp-amount);
         if(before>hp)event(RpgCombatEvent.Kind.HIT,1,body.getPosition().x(),body.getPosition().y(),before-hp);
         if(before>0&&hp==0)event(RpgCombatEvent.Kind.KO,1,body.getPosition().x(),body.getPosition().y(),0); }
     public boolean use(String id) {
@@ -60,7 +96,7 @@ public final class RpgWorld {
         message=item.name()+": vida recuperada"; return true;
     }
     public InventoryService inventory() { return inventory; }
-    public boolean activate(String action){boolean accepted=switch(action){case "rpg.attack"->attack();case "rpg.ability"->castAbility();case "rpg.secondary"->castSecondaryAbility();case "item.potion"->use("potion");default->throw new IllegalArgumentException("Acao de hotbar desconhecida");};if(!accepted)event(RpgCombatEvent.Kind.REJECT,1,body.getPosition().x(),body.getPosition().y(),0);return accepted;}
+    public boolean activate(String action){boolean accepted=switch(action){case "rpg.attack"->attack();case "rpg.unarmed"->punch();case "rpg.ability"->castAbility();case "rpg.secondary"->castSecondaryAbility();case "item.potion"->use("potion");default->throw new IllegalArgumentException("Acao de hotbar desconhecida");};if(!accepted)event(RpgCombatEvent.Kind.REJECT,1,body.getPosition().x(),body.getPosition().y(),0);return accepted;}
     public int attackPower() { return identity.baseAttack()+(level()-1)*progression.attackPerLevel()+equipmentPower("weapon"); }
     public int defense() { return equipmentPower("torso")+equipmentPower("legs")+equipmentPower("accessory"); }
     private int equipmentPower(String slot) { return equipment.containsKey(slot)?items.get(equipment.get(slot)).power():0; }
@@ -77,7 +113,7 @@ public final class RpgWorld {
         inventory.replace(copy); equipment.remove(slot); return true;
     }
     private final GameEntity body;
-    public RpgWorld() { this(CharacterIdentity.create("Viajante", "guardian", "azure")); }
+    public RpgWorld() { this(CharacterIdentity.create("Viajante", "reaper", "azure")); }
     public RpgWorld(CharacterIdentity identity) {this(identity,(RpgSceneSet)null);}
     /** Configuracao exclusiva de sessao sintetica; construtor padrao conserva a campanha. */
     public RpgWorld(CharacterIdentity identity,RpgSceneSet scenes) {
@@ -92,6 +128,7 @@ public final class RpgWorld {
         portals=scenes==null?new PortalService(content):new PortalService(content,scenes.portals());
         objects=scenes==null?new WorldObjects(content,items):new WorldObjects(content,items,scenes.objects());
         hp=identity.baseHp(); inventory.add("potion",3);
+        if(identity.race().equals("reaper"))equipment.put("weapon","small_sword");
         flags.add("visited:"+region);
     }
     private final MovementService movement = new MovementService(new CollisionService());
@@ -167,20 +204,31 @@ public final class RpgWorld {
         activeNpc=npc.get().id();questService.event("talk",activeNpc,activeNpc,ticks+1,quests,flags);questService.refresh(quests,flags,inventory,region);dialogueNode=npc.get().dialogue();message=npc.get().name()+": seja bem-vindo!";return true;
     }
     public RpgWorld(CharacterIdentity identity,java.util.random.RandomGenerator random) { this(identity);this.random=java.util.Objects.requireNonNull(random); }
-    /** Ataque basico conserva alcance, dano e recarga anteriores. */
-    public boolean attack() { return strike(identity.archetype().equals("mystic")?145:82,attackPower()); }
-    /** Acao adicional com custo e recarga compartilhada; nenhuma mudanca de formato de save. */
+    /** Ataque racial inicial; feixe de Spirit nao concede o dominio Luz. */
+    public int basicAttackRange() {
+        if(domain.domain().equals("bow_long"))return 280;
+        if(domain.domain().equals("bow_short"))return 140;
+        return switch(identity.race()){case "spirit"->180;case "reaper"->82;default->60;};
+    }
+    /** Qualquer raca pode optar por socos sem receber especializacao Marcial. */
+    public boolean punch() { return strike(60,identity.baseAttack()+(level()-1)*progression.attackPerLevel(),true); }
+    public boolean attack() { return strike(basicAttackRange(),attackPower()); }
+    /** Shunpo defensivo com janela curta e recarga compartilhada. */
     public boolean castSecondaryAbility() {
-        var ability=RpgSecondaryAbility.forArchetype(identity.archetype());
-        if(hp==0||transitioning||ticks<abilityReadyTick||stamina<ability.cost()*10)return false;
-        if(!strike(ability.range(),attackPower()+ability.bonus()))return false;
-        stamina-=ability.cost()*10;abilityReadyTick=ticks+ability.cooldown();
-        flags.removeIf(f->f.startsWith("ability-until:"));flags.add("ability-until:"+abilityReadyTick);
-        message=ability.name()+"!";return true;
+        if(!shunpoReady())return false;
+        var position=body.getPosition();
+        movement.moveContinuous(body,-facingX*70,-facingY*70,18,space);
+        if(distance(position,body.getPosition())<1){message="Esquiva bloqueada";return false;}
+        consumeShunpo();evadeUntilTick=ticks+6;
+        flags.removeIf(f->f.startsWith("evade-until:"));flags.add("evade-until:"+evadeUntilTick);
+        message="Shunpo defensivo";return true;
     }
     private boolean strike(int range,int power) {
+        return strike(range,power,false);
+    }
+    private boolean strike(int range,int power,boolean unarmed) {
         if(hp==0||transitioning||ticks<attackReadyTick)return false;
-        EnemyService.Enemy target=enemies.current(region).stream().filter(e->e.hp>0&&(!e.definition.id().equals("warden")||bossUnlocked())&&distance(body.getPosition(),e.getPosition())<= range)
+        EnemyService.Enemy target=enemies.current(region).stream().filter(e->e.hp>0&&(!e.definition.id().equals("warden")||bossUnlocked())&&distance(body.getPosition(),e.getPosition())<= range&&lineClear(body.getPosition(),e.getPosition()))
             .min(java.util.Comparator.comparingDouble(e->distance(body.getPosition(),e.getPosition()))).orElse(null);
         if(target==null||!lineClear(body.getPosition(),target.getPosition()))return false;
         attackReadyTick=ticks+12;int previousHp=target.hp;target.hp=Math.max(0,target.hp-power);
@@ -190,12 +238,12 @@ public final class RpgWorld {
             if(loot.award(target.spawn,target.generation,target.definition.id(),inventory,flags,random==null?new java.util.Random(741L^((long)target.spawn.hashCode()<<16)^target.generation):random)) {
                 questService.event("kill",target.definition.id(),target.spawn,target.generation,quests,flags);
                 questService.refresh(quests,flags,inventory,region);
-                awardExperience(content.get("enemy",target.definition.id()).value());coins=Math.min(1_000_000,coins+5);
+                awardExperience(3);coins=Math.min(1_000_000,coins+5);
                 message="Derrotado: +XP, loot e moedas";
                 if(target.definition.id().equals("warden")){flags.add("boss-defeated");flags.add("dungeon-completed");message="Santuario concluido! Volte a Ancia com a reliquia.";}
             }else{target.hp=1;target.readyTick=0;message="Libere espaco nas recompensas pendentes antes da derrota";}
         }
-        event(RpgCombatEvent.Kind.ATTACK,target.getId(),target.getPosition().x(),target.getPosition().y(),0);
+        event(unarmed?RpgCombatEvent.Kind.PUNCH:RpgCombatEvent.Kind.ATTACK,target.getId(),target.getPosition().x(),target.getPosition().y(),0);
         if(previousHp>target.hp)event(RpgCombatEvent.Kind.HIT,target.getId(),target.getPosition().x(),target.getPosition().y(),previousHp-target.hp);
         if(target.hp==0)event(RpgCombatEvent.Kind.KO,target.getId(),target.getPosition().x(),target.getPosition().y(),0);
         return true;
@@ -207,6 +255,7 @@ public final class RpgWorld {
     public void collectLoot() { loot.collect(inventory,flags);message="Recompensas pendentes recolhidas quando houver espaco"; }
     private long ticks;
     public RpgSave save() {
+        domain.writeTo(flags);
         var persistent=new java.util.TreeSet<>(flags);persistent.removeIf(f->f.startsWith("stamina:")||f.startsWith("mob:")||f.startsWith("attack-until:")||f.startsWith("portal-until:")||f.startsWith("facing:"));persistent.add("stamina:"+stamina);persistent.add("facing:"+facingX+":"+facingY);persistent.add("attack-until:"+attackReadyTick);persistent.add("portal-until:"+portalReadyTick);persistent.addAll(enemies.saveFlags());
         return new RpgSave(identity,region,body.getPosition().x(),body.getPosition().y(),hp,xp,coins,inventory.snapshot(),equipment,quests,persistent,ticks);
     }
@@ -217,10 +266,14 @@ public final class RpgWorld {
         world.inventory.replace(InventoryService.restore(world.items,20,state.inventory()));
         world.hp=state.hp(); world.xp=state.xp(); world.coins=state.coins(); world.region=state.region();
         for(var entry:state.equipment().entrySet()) if(!world.items.get(entry.getValue()).slot().equals(entry.getKey())) throw new IllegalArgumentException("Equipamento incompativel no save");
-        world.equipment.putAll(state.equipment()); world.quests.putAll(state.quests()); world.flags.addAll(state.flags());
+        world.equipment.clear();world.equipment.putAll(state.equipment()); world.quests.putAll(state.quests()); world.flags.addAll(state.flags());
+        world.domain=DomainProgression.read(state.flags());
+        if(!world.domain.domain().equals("none")&&!Domains.get(world.domain.domain()).race().equals(world.identity.race()))throw new IllegalArgumentException("Dominio incompativel com a raca");
+        if(!world.domain.domain().equals("none")&&world.level()<15)throw new IllegalArgumentException("Dominio antes do nivel 15");
         for(String flag:world.flags) if(flag.startsWith("potion-until:")) world.potionReadyTick=Long.parseLong(flag.substring(13));
         for(String flag:world.flags) {
             if(flag.startsWith("ability-until:"))world.abilityReadyTick=Long.parseLong(flag.substring(14));
+            if(flag.startsWith("evade-until:"))world.evadeUntilTick=Long.parseLong(flag.substring(12));
             if(flag.startsWith("stamina:"))world.stamina=Integer.parseInt(flag.substring(8));
             if(flag.startsWith("attack-until:"))world.attackReadyTick=Long.parseLong(flag.substring(13));
             if(flag.startsWith("portal-until:"))world.portalReadyTick=Long.parseLong(flag.substring(13));
@@ -236,7 +289,9 @@ public final class RpgWorld {
         for(String flag:source) {
             String[] p=flag.split(":");String key=p[0];
             switch(p[0]) {
-                case "stamina","potion-until","ability-until","attack-until","portal-until"->{if(p.length!=2||Long.parseLong(p[1])<0||Long.parseLong(p[1])>1_000_009_000L)throw new IllegalArgumentException("Recurso/recarga invalido");}
+                case "stamina","potion-until","ability-until","attack-until","portal-until","evade-until"->{if(p.length!=2||Long.parseLong(p[1])<0||Long.parseLong(p[1])>1_000_009_000L)throw new IllegalArgumentException("Recurso/recarga invalido");}
+                case "domain","mastery-half","reset-last","reset-quest","domain-skill"->{if(p.length!=2)throw new IllegalArgumentException("Estado de dominio invalido");if(p[0].equals("domain-skill"))key+=":"+p[1];}
+                case "migration"->{if(p.length!=2||!java.util.Set.of("guardian-to-reaper","mystic-to-human").contains(p[1]))throw new IllegalArgumentException("Migracao invalida");}
                 case "facing"->{if(p.length!=3)throw new IllegalArgumentException("Direcao invalida");}
                 case "mob"->{if(p.length!=7&&p.length!=9)throw new IllegalArgumentException("Estado de mob invalido");key+=":"+p[1];}
                 case "pending"->{if(p.length!=3)throw new IllegalArgumentException("Loot pendente invalido");items.get(p[1]);int n=Integer.parseInt(p[2]);if(n<1||n>9999)throw new IllegalArgumentException("Loot pendente fora do limite");key+=":"+p[1];}

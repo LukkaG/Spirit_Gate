@@ -1,8 +1,4 @@
 @echo off
 setlocal
-cd /d "%~dp0"
-if not exist "server\target\classes\com\projetok\studio\WorldStudio.class" (
-  echo Compile primeiro: python tools/qualidade.py --offline --task studio-local
-  exit /b 1
-)
-java -cp "server\target\classes" com.projetok.studio.WorldStudio --project "%~dp0."
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0tools\launch-local.ps1" -Mode Studio %*
+exit /b %ERRORLEVEL%

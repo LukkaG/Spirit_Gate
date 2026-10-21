@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CharacterFactsTest {
     @Test void extremeIdentityAndMissingSelectionRemainReadOnly() throws Exception {
         SwingUtilities.invokeAndWait(() -> {
-            var identity=new CharacterIdentity(UUID.randomUUID(),"Guardião extremo","guardian","azure","village",1000,100);
+            var identity=new CharacterIdentity(UUID.randomUUID(),"Humano extremo","human","azure","village",1000,100);
             var world=new RpgWorld(identity);var before=world.save();
             var ui=new CharacterSelection();ui.updateSummary(new CharacterSaves.Slot(Path.of("synthetic.properties"),before,"",false));
             assertTrue(ui.resources.getText().contains("1000"));assertTrue(ui.style.getText().contains("Ataque 100"));

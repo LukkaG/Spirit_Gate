@@ -2,7 +2,7 @@ package com.projetok.rpg;
 
 import java.util.*;
 
-/** Snapshot persistente V1, copias profundas de colecoes e limites verificaveis. */
+/** Snapshot persistente, copias profundas e limites tecnicos; dominio e XP exata ficam nas flags. */
 public record RpgSave(CharacterIdentity identity, String region, float x, float y, int hp,
                       long xp, int coins, Map<String,Integer> inventory, Map<String,String> equipment,
                       Map<String,Integer> quests, Set<String> flags, long ticks) {
@@ -19,5 +19,6 @@ public record RpgSave(CharacterIdentity identity, String region, float x, float 
         equipment.forEach((slot,id)->{ if(!Set.of("weapon","torso","legs","accessory").contains(slot)) throw new IllegalArgumentException("Slot invalido"); content.get("item",id); });
         quests.forEach((id,q)->{ content.get("quest",id); if(q<0||q>10000) throw new IllegalArgumentException("Quest invalida"); });
         for(String flag:flags) if(!flag.matches("[a-zA-Z0-9_:.-]{1,100}")) throw new IllegalArgumentException("Flag invalida");
+        DomainProgression.read(flags).validateFor(identity, xp);
     }
 }

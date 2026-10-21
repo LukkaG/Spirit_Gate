@@ -35,7 +35,7 @@ public final class StudioExport {
         }
         var result=new RpgSceneSet(maps.get(start).region(),geometry,enemies,npcs,objects,portals);
         // Construtores reais recusam referencias/posicoes incompatíveis antes de qualquer exportacao.
-        new RpgWorld(CharacterIdentity.create("Validador","guardian","azure"),result);return result;
+        new RpgWorld(CharacterIdentity.create("Validador","reaper","azure"),result);return result;
     }
     /** Cria diretorio novo e publica manifesto por ultimo; nunca sobrescreve projeto existente. */
     public static Path write(Path output,String start,Map<String,WorldDocument> all,AssetCatalog.Result catalog)throws IOException {

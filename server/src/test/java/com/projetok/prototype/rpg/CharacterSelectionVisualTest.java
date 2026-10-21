@@ -15,14 +15,15 @@ class CharacterSelectionVisualTest {
 
     @Test void cardsSummaryBackupAndActionsPreserveTheCatalogContract() throws Exception {
         var repo=new CharacterSaves(folder);
-        var state=new RpgWorld(CharacterIdentity.create("Sentinela","guardian","azure")).save();
+        var state=new RpgWorld(CharacterIdentity.create("Sentinela","reaper","azure")).save();
         Path file=repo.newFile(state.identity());var store=new LocalSaveStore(file);
         store.save(state);store.save(state);Files.writeString(file,"corrupt");
         var slots=repo.list();var backup=slots.stream().filter(CharacterSaves.Slot::backup).findFirst().orElseThrow();
         SwingUtilities.invokeAndWait(()->{
             var view=new CharacterSelection();view.loaded(slots);view.list.setSelectedValue(backup,true);
             assertTrue(view.play.isEnabled());assertFalse(view.delete.isEnabled());
-            assertEquals("Sentinela",view.name.getText());assertTrue(view.details.getText().contains("Guardião"));
+            assertEquals("Sentinela",view.name.getText());assertTrue(view.details.getText().contains("Reaper"));
+            assertTrue(view.style.getText().contains("Domínio no nível 15"));
             var combat=RpgCombatStatus.from(RpgWorld.restore(state).snapshot());
             assertEquals("HP "+combat.hp()+" / "+combat.maxHp()+"   •   Vigor "+combat.stamina()/10+" / 100",view.resources.getText());
             var renderer=view.list.getCellRenderer();
@@ -33,7 +34,7 @@ class CharacterSelectionVisualTest {
             BufferedImage selectedImage=paint(selected,270,80);
             Component focused=renderer.getListCellRendererComponent(view.list,backup,1,true,true);
             assertNotEquals(selectedImage.getRGB(0,0),paint(focused,270,80).getRGB(0,0));
-            for(JButton button:new JButton[]{view.play,view.create,view.back,view.arena}){
+            for(JButton button:new JButton[]{view.play,view.create,view.back}){
                 AtomicInteger calls=new AtomicInteger();button.addActionListener(e->calls.incrementAndGet());button.doClick();assertEquals(1,calls.get());
             }
             view.list.setSelectedValue(slots.stream().filter(s->s.state()==null).findFirst().orElseThrow(),true);
@@ -55,7 +56,7 @@ class CharacterSelectionVisualTest {
             for(int[] size:new int[][]{{1000,620},{640,480},{800,600}}){
                 for(var skin:new RpgPlayerSprites[]{null,sprites}){
                     view.preview.sprites=skin;paint(view,size[0],size[1]);
-                    for(JComponent c:new JComponent[]{view.play,view.create,view.delete,view.arena,view.back,view.preview,view.resources}){
+                    for(JComponent c:new JComponent[]{view.play,view.create,view.delete,view.techniques,view.back,view.preview,view.resources}){
                         Rectangle bounds=SwingUtilities.convertRectangle(c.getParent(),c.getBounds(),view);
                         assertTrue(bounds.width>0&&bounds.height>0,bounds.toString());
                         assertTrue(new Rectangle(0,0,size[0],size[1]).contains(bounds),bounds.toString());

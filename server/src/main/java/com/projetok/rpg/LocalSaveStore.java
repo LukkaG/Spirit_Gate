@@ -37,8 +37,8 @@ public final class LocalSaveStore {
     public static byte[] encode(RpgSave state) throws IOException {
         Properties p=new Properties();
         var i=state.identity();
-        p.setProperty("schema","1"); p.setProperty("id",i.id().toString()); p.setProperty("name",i.name());
-        p.setProperty("archetype",i.archetype()); p.setProperty("appearance",i.appearance());
+        p.setProperty("schema","2"); p.setProperty("id",i.id().toString()); p.setProperty("name",i.name());
+        p.setProperty("race",i.race()); p.setProperty("appearance",i.appearance());
         p.setProperty("baseHp",""+i.baseHp()); p.setProperty("baseAttack",""+i.baseAttack());
         p.setProperty("region",state.region()); p.setProperty("x",""+state.x()); p.setProperty("y",""+state.y());
         p.setProperty("hp",""+state.hp()); p.setProperty("xp",""+state.xp()); p.setProperty("coins",""+state.coins()); p.setProperty("ticks",""+state.ticks());
@@ -46,7 +46,7 @@ public final class LocalSaveStore {
         state.equipment().forEach((k,v)->p.setProperty("equipment."+k,v));
         state.quests().forEach((k,v)->p.setProperty("quest."+k,""+v));
         state.flags().forEach(k->p.setProperty("flag."+k,"true"));
-        ByteArrayOutputStream out=new ByteArrayOutputStream(); p.store(out,"Spirit Gate offline V1"); return out.toByteArray();
+        ByteArrayOutputStream out=new ByteArrayOutputStream(); p.store(out,"Spirit Gate offline V2 - race and domain"); return out.toByteArray();
     }
     public static RpgSave decode(byte[] bytes) throws IOException {
         if(bytes.length>262144) throw new IOException("Save excessivo");
@@ -57,8 +57,11 @@ public final class LocalSaveStore {
         };
         p.load(new ByteArrayInputStream(bytes));
         try {
-            if(!"1".equals(take(p,"schema"))) throw new IllegalArgumentException("Schema de save incompativel");
-            CharacterIdentity identity=new CharacterIdentity(UUID.fromString(take(p,"id")),take(p,"name"),take(p,"archetype"),take(p,"appearance"),"village",Integer.parseInt(take(p,"baseHp")),Integer.parseInt(take(p,"baseAttack")));
+            String schema=take(p,"schema");
+            if(!Set.of("1","2").contains(schema)) throw new IllegalArgumentException("Schema de save incompativel");
+            String previousRace=take(p,schema.equals("1")?"archetype":"race");
+            if(schema.equals("2"))CharacterRaces.get(previousRace);
+            CharacterIdentity identity=new CharacterIdentity(UUID.fromString(take(p,"id")),take(p,"name"),previousRace,take(p,"appearance"),"village",Integer.parseInt(take(p,"baseHp")),Integer.parseInt(take(p,"baseAttack")));
             String region=take(p,"region"); float x=Float.parseFloat(take(p,"x")),y=Float.parseFloat(take(p,"y"));
             int hp=Integer.parseInt(take(p,"hp")),coins=Integer.parseInt(take(p,"coins")); long xp=Long.parseLong(take(p,"xp")),ticks=Long.parseLong(take(p,"ticks"));
             Map<String,Integer> inventory=new TreeMap<>(),quests=new TreeMap<>(); Map<String,String> equipment=new TreeMap<>(); Set<String> flags=new TreeSet<>();
@@ -70,6 +73,7 @@ public final class LocalSaveStore {
                 else if(key.startsWith("flag.") && "true".equals(v)) flags.add(key.substring(5));
                 else throw new IllegalArgumentException("Campo desconhecido: "+key);
             }
+            if(schema.equals("1")&&!previousRace.equals(identity.race()))flags.add("migration:"+previousRace+"-to-"+identity.race());
             return new RpgSave(identity,region,x,y,hp,xp,coins,inventory,equipment,quests,flags,ticks);
         } catch(NullPointerException | NumberFormatException e) { throw new IllegalArgumentException("Save incompleto/corrompido",e); }
     }

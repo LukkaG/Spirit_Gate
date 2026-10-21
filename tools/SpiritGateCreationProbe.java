@@ -31,7 +31,7 @@ public final class SpiritGateCreationProbe {
             var form=(CharacterCreation)target.getContentPane();
             form.name.setText("!");form.create.doClick();
             if(form.error.getText().isBlank()||accepted.get()!=null)throw new AssertionError("Validação");
-            form.mystic.doClick();form.appearance.setSelectedItem("amber");
+            form.races.get("aetheri").doClick();form.appearance.setSelectedItem("amber");
         });
         for(var size:new int[][]{{820,540},{800,600},{640,480}}) {
             SwingUtilities.invokeAndWait(() -> {
@@ -44,8 +44,8 @@ public final class SpiritGateCreationProbe {
         SwingUtilities.invokeAndWait(() -> {
             var form=(CharacterCreation)target.getContentPane();form.name.setText("Heroi sintético");form.create.doClick();
         });
-        if(accepted.get()==null||!accepted.get().archetype().equals("mystic"))throw new AssertionError("Criação");
-        Files.writeString(output.resolve("probe.txt"),"PASS: diálogo modal real, nome inválido preserva formulário, Mystic/amber, fallback e criação válida. Capturas printAll; não homologam monitor físico. Nenhum save escrito.\n");
+        if(accepted.get()==null||!accepted.get().race().equals("aetheri"))throw new AssertionError("Criação");
+        Files.writeString(output.resolve("probe.txt"),"PASS: diálogo modal real, nome inválido preserva formulário, Aetheri/amber, fallback e criação válida sem domínio. Capturas printAll; não homologam monitor físico. Nenhum save escrito.\n");
         SwingUtilities.invokeAndWait(() -> {for(Window window:Window.getWindows())window.dispose();});
     }
 }

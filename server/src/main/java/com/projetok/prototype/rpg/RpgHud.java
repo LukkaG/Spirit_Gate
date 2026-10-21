@@ -37,7 +37,8 @@ public final class RpgHud extends JPanel {
         previousXp=view.state().xp();combat.setText(values.text()+(view.ticks()<xpUntil?xpNotice:"")+" | "+view.message());
         combat.setToolTipText(combat.getText());
         journal.setText(view.journal().stream().map(q->q.state()==QuestService.State.UNAVAILABLE?"Missão indisponível":q.name()+" | "+q.state()+" | "+q.progress()+"/"+q.required()+" - "+q.objective()).collect(java.util.stream.Collectors.joining("\n")));
-        status.setText("<html>"+view.identity().name()+" | Nível "+view.level()+" | XP "+view.state().xp()+" | Moedas "+view.state().coins()+"<br>Ataque "+view.attack()+" | Defesa "+view.defense()+" | "+view.state().region()+" | Atalhos na barra superior</html>");
+        var domain=DomainProgression.read(view.state().flags());
+        status.setText("<html>"+view.identity().name()+" | "+CharacterRaces.get(view.identity().race()).name()+" | Nivel "+view.level()+" | XP "+view.state().xp()+" | Moedas "+view.state().coins()+"<br>"+(domain.chosen()?Domains.get(domain.domain()).name()+" | XP de dominio "+domain.xpText():"Aprendiz sem dominio - iniciacao no nivel 15")+" | Ataque "+view.attack()+" | Defesa "+view.defense()+"</html>");
         if(!java.util.Objects.equals(last,view.dialogue())||!lastNpc.equals(view.activeNpc())) {
             last=view.dialogue();lastNpc=view.activeNpc();dialogue.removeAll();
             journal.getParent().getParent().setVisible(last==null);
