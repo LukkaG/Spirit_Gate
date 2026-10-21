@@ -1,0 +1,660 @@
+{
+  "commit": "07accf07e0a301207bf4ff253a222b65ac4095b9",
+  "parent": "f9b5de1eedb4c6f745d4767e0e75eb3413600149",
+  "date": "2026-10-21",
+  "totalChangedFiles": 91,
+  "codeFiles": 81,
+  "categories": {
+    "Documentacao e evidencias": 10,
+    "Inicializadores Windows": 5,
+    "Dependencias Maven": 1,
+    "Java de producao": 34,
+    "Recursos e regras": 4,
+    "Testes Java": 26,
+    "Ferramentas e empacotamento": 11
+  },
+  "files": [
+    {
+      "path": "README-PROTOTIPO.md",
+      "status": "M",
+      "group": "Documentacao e evidencias",
+      "added": "4",
+      "removed": "358"
+    },
+    {
+      "path": "README-RPG.md",
+      "status": "M",
+      "group": "Documentacao e evidencias",
+      "added": "12",
+      "removed": "4"
+    },
+    {
+      "path": "docs/AUDITORIA-PRE-CLASSES.md",
+      "status": "A",
+      "group": "Documentacao e evidencias",
+      "added": "170",
+      "removed": "0"
+    },
+    {
+      "path": "docs/ENTREGA-RACAS-LAUNCHER.md",
+      "status": "A",
+      "group": "Documentacao e evidencias",
+      "added": "97",
+      "removed": "0"
+    },
+    {
+      "path": "docs/EXPERIMENTO-NAVEGADOR.md",
+      "status": "M",
+      "group": "Documentacao e evidencias",
+      "added": "2",
+      "removed": "0"
+    },
+    {
+      "path": "docs/ROTEIRO-RPG-OFFLINE.md",
+      "status": "M",
+      "group": "Documentacao e evidencias",
+      "added": "16",
+      "removed": "19"
+    },
+    {
+      "path": "docs/SISTEMA-DE-RACAS-E-DOMINIOS.md",
+      "status": "A",
+      "group": "Documentacao e evidencias",
+      "added": "195",
+      "removed": "0"
+    },
+    {
+      "path": "docs/Spirit_Gate_Racas_e_Dominios.pdf",
+      "status": "A",
+      "group": "Documentacao e evidencias",
+      "added": "169",
+      "removed": "0"
+    },
+    {
+      "path": "docs/VALIDACAO-LAUNCHER-RACAS-CLI.json",
+      "status": "A",
+      "group": "Documentacao e evidencias",
+      "added": "1",
+      "removed": "0"
+    },
+    {
+      "path": "docs/VALIDACAO-LAUNCHER-RACAS.json",
+      "status": "A",
+      "group": "Documentacao e evidencias",
+      "added": "63",
+      "removed": "0"
+    },
+    {
+      "path": "jogar-rpg-offline.cmd",
+      "status": "M",
+      "group": "Inicializadores Windows",
+      "added": "3",
+      "removed": "7"
+    },
+    {
+      "path": "rodar-prototipo.cmd",
+      "status": "M",
+      "group": "Inicializadores Windows",
+      "added": "5",
+      "removed": "32"
+    },
+    {
+      "path": "server/pom.xml",
+      "status": "M",
+      "group": "Dependencias Maven",
+      "added": "1",
+      "removed": "12"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/DatabaseManager.java",
+      "status": "D",
+      "group": "Java de producao",
+      "added": "0",
+      "removed": "30"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/KServer.java",
+      "status": "D",
+      "group": "Java de producao",
+      "added": "0",
+      "removed": "71"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/Kclient.java",
+      "status": "D",
+      "group": "Java de producao",
+      "added": "0",
+      "removed": "29"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/Main.java",
+      "status": "D",
+      "group": "Java de producao",
+      "added": "0",
+      "removed": "11"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/Network.java",
+      "status": "D",
+      "group": "Java de producao",
+      "added": "0",
+      "removed": "46"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/domain/combat/CombatService.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "4",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/CharacterCreation.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "51",
+      "removed": "34"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/CharacterSelection.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "13",
+      "removed": "11"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/DomainPreview.java",
+      "status": "A",
+      "group": "Java de producao",
+      "added": "169",
+      "removed": "0"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/GettingStarted.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "1",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/LauncherSelfCheck.java",
+      "status": "A",
+      "group": "Java de producao",
+      "added": "28",
+      "removed": "0"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/RpgCombatFeedback.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "18",
+      "removed": "3"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/RpgCombatStatus.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "3",
+      "removed": "3"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/RpgHud.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "2",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/RpgLauncher.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "24",
+      "removed": "5"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/RpgMenu.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "0",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/RpgPlayerSprites.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "4",
+      "removed": "4"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/prototype/rpg/RpgVisualState.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "1",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/Archetypes.java",
+      "status": "D",
+      "group": "Java de producao",
+      "added": "0",
+      "removed": "21"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/CharacterIdentity.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "6",
+      "removed": "4"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/CharacterRaces.java",
+      "status": "A",
+      "group": "Java de producao",
+      "added": "34",
+      "removed": "0"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/CharacterSaves.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "1",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/DomainProgression.java",
+      "status": "A",
+      "group": "Java de producao",
+      "added": "83",
+      "removed": "0"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/DomainResetPolicy.java",
+      "status": "A",
+      "group": "Java de producao",
+      "added": "14",
+      "removed": "0"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/Domains.java",
+      "status": "A",
+      "group": "Java de producao",
+      "added": "43",
+      "removed": "0"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/EnemyService.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "6",
+      "removed": "3"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/LocalSaveStore.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "9",
+      "removed": "5"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/RpgCombatEvent.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "1",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/RpgProgression.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "9",
+      "removed": "5"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/RpgSave.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "2",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/RpgSecondaryAbility.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "4",
+      "removed": "7"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/rpg/RpgWorld.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "81",
+      "removed": "26"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/studio/StudioExport.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "1",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/main/java/com/projetok/studio/StudioPlaytest.java",
+      "status": "M",
+      "group": "Java de producao",
+      "added": "3",
+      "removed": "3"
+    },
+    {
+      "path": "server/src/main/resources/rpg/archetypes.properties",
+      "status": "D",
+      "group": "Recursos e regras",
+      "added": "0",
+      "removed": "2"
+    },
+    {
+      "path": "server/src/main/resources/rpg/content.properties",
+      "status": "M",
+      "group": "Recursos e regras",
+      "added": "1",
+      "removed": "0"
+    },
+    {
+      "path": "server/src/main/resources/rpg/items.properties",
+      "status": "M",
+      "group": "Recursos e regras",
+      "added": "1",
+      "removed": "0"
+    },
+    {
+      "path": "server/src/main/resources/rpg/progression.properties",
+      "status": "M",
+      "group": "Recursos e regras",
+      "added": "1",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/domain/combat/CombatServiceDeathTest.java",
+      "status": "A",
+      "group": "Testes Java",
+      "added": "31",
+      "removed": "0"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/prototype/rpg/AmbientFeedbackTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "1",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/prototype/rpg/CharacterCreationTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "11",
+      "removed": "5"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/prototype/rpg/CharacterFactsTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "1",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/prototype/rpg/CharacterSelectionTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "2",
+      "removed": "2"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/prototype/rpg/CharacterSelectionVisualTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "5",
+      "removed": "4"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/prototype/rpg/CorujaoHudTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "14",
+      "removed": "6"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/prototype/rpg/DomainPreviewTest.java",
+      "status": "A",
+      "group": "Testes Java",
+      "added": "43",
+      "removed": "0"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/prototype/rpg/GettingStartedTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "2",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/ArchetypesTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "12",
+      "removed": "4"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/CharacterIdentityTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "2",
+      "removed": "2"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/CorujaoAbilitiesTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "29",
+      "removed": "18"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/CorujaoCombatRegressionTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "8",
+      "removed": "8"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/DomainProgressionTest.java",
+      "status": "A",
+      "group": "Testes Java",
+      "added": "83",
+      "removed": "0"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/DungeonCycleTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "1",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/EnemyRpgTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "2",
+      "removed": "2"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/EquipmentRpgTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "1",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/ItemCatalogTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "1",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/LegacyRaceMigrationTest.java",
+      "status": "A",
+      "group": "Testes Java",
+      "added": "30",
+      "removed": "0"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/LocalSaveStoreTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "1",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/OfflineCycleTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "1",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/RpgProgressionTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "8",
+      "removed": "2"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/rpg/RpgRaceRuntimeTest.java",
+      "status": "A",
+      "group": "Testes Java",
+      "added": "76",
+      "removed": "0"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/studio/StudioFinalRegressionTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "1",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/studio/StudioIntegrationTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "1",
+      "removed": "1"
+    },
+    {
+      "path": "server/src/test/java/com/projetok/studio/StudioRuntimePlaytestTest.java",
+      "status": "M",
+      "group": "Testes Java",
+      "added": "1",
+      "removed": "1"
+    },
+    {
+      "path": "testar-mapa-rpg.cmd",
+      "status": "M",
+      "group": "Inicializadores Windows",
+      "added": "3",
+      "removed": "3"
+    },
+    {
+      "path": "testar-rpg-sprites.cmd",
+      "status": "M",
+      "group": "Inicializadores Windows",
+      "added": "3",
+      "removed": "9"
+    },
+    {
+      "path": "tools/SpiritGateCreationProbe.java",
+      "status": "M",
+      "group": "Ferramentas e empacotamento",
+      "added": "3",
+      "removed": "3"
+    },
+    {
+      "path": "tools/SpiritGateFinalJourneyProbe.java",
+      "status": "M",
+      "group": "Ferramentas e empacotamento",
+      "added": "8",
+      "removed": "6"
+    },
+    {
+      "path": "tools/SpiritGateSelectionProbe.java",
+      "status": "M",
+      "group": "Ferramentas e empacotamento",
+      "added": "1",
+      "removed": "1"
+    },
+    {
+      "path": "tools/SpiritGateSelectionVisualProbe.java",
+      "status": "M",
+      "group": "Ferramentas e empacotamento",
+      "added": "1",
+      "removed": "1"
+    },
+    {
+      "path": "tools/build-rpg-portable.ps1",
+      "status": "M",
+      "group": "Ferramentas e empacotamento",
+      "added": "33",
+      "removed": "6"
+    },
+    {
+      "path": "tools/build-rpg-sprites-portable.ps1",
+      "status": "M",
+      "group": "Ferramentas e empacotamento",
+      "added": "9",
+      "removed": "5"
+    },
+    {
+      "path": "tools/build-world-studio.ps1",
+      "status": "M",
+      "group": "Ferramentas e empacotamento",
+      "added": "7",
+      "removed": "3"
+    },
+    {
+      "path": "tools/compile-local.ps1",
+      "status": "A",
+      "group": "Ferramentas e empacotamento",
+      "added": "112",
+      "removed": "0"
+    },
+    {
+      "path": "tools/gerar_pdf_dominios.py",
+      "status": "A",
+      "group": "Ferramentas e empacotamento",
+      "added": "100",
+      "removed": "0"
+    },
+    {
+      "path": "tools/launch-local.ps1",
+      "status": "A",
+      "group": "Ferramentas e empacotamento",
+      "added": "40",
+      "removed": "0"
+    },
+    {
+      "path": "tools/run-local-tests.py",
+      "status": "A",
+      "group": "Ferramentas e empacotamento",
+      "added": "137",
+      "removed": "0"
+    },
+    {
+      "path": "world-studio.cmd",
+      "status": "M",
+      "group": "Inicializadores Windows",
+      "added": "2",
+      "removed": "6"
+    }
+  ],
+  "patchSha256": "fc11c2fc599c99f3de750de751e6f3d1977585b9df8f233ae8cfe6ce1978b978",
+  "pdfPages": 69,
+  "pdfSha256": "705c1cc0b22e6c15ca5489235c79997ea0a91f3eef91cb6aaeb289a5f210f2ba",
+  "testsRerun": false,
+  "validationSource": "docs/ENTREGA-RACAS-LAUNCHER.md; docs/VALIDACAO-LAUNCHER-RACAS.json"
+}
