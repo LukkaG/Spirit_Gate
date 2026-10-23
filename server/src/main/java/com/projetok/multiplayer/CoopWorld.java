@@ -17,7 +17,7 @@ import com.projetok.domain.item.LootTable;
 import com.projetok.domain.ai.PassiveBehavior;
 import java.util.*;
 /** Simulacao experimental transitoria. Nunca importa ou escreve saves offline. */
-public final class CoopWorld {
+public final class CoopWorld implements SessionSimulation {
     public static final int BOSS_ID=900_000_001;
     final class Session {
         final Player player;long sequence,inputTick,commandTick=-1,attackReady;int commands,coins,damage;float dx,dy,fx=1,fy;

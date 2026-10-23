@@ -28,6 +28,9 @@ public final class DebugPanel extends JPanel {
     private boolean showHelp;
     private float ambientLight=1f;
     private java.util.List<String> customHud=java.util.List.of();
+    private java.util.List<String> customFooter=java.util.List.of();
+    /** Mensagens opcionais de modo experimental; não altera HUDs históricos por padrão. */
+    public void setCustomFooter(String first,String second){customFooter=java.util.List.of(first,second);}
     private java.util.function.IntFunction<Color> actorPalette;
     public void setCustomHud(java.util.List<String> lines){customHud=java.util.List.copyOf(lines);}
     public void setActorPalette(java.util.function.IntFunction<Color> palette){actorPalette=palette;}
@@ -172,8 +175,8 @@ public final class DebugPanel extends JPanel {
             canvas.setColor(new Color(12,19,35));canvas.fillRect(960,0,300,750);canvas.fillRect(0,640,960,110);
             canvas.setFont(new Font("SansSerif",Font.BOLD,15));canvas.setColor(TEXT);int lineY=32;
             for(String line:customHud){canvas.drawString(line,978,lineY);lineY+=26;}
-            canvas.setColor(ACCENT);canvas.drawString(s.lastEvent(),20,674);canvas.setColor(TEXT);canvas.drawString("WASD explorar | Use a hotbar e os atalhos configurados na barra superior.",20,704);
-            canvas.drawString(s.gameOver()?"Voce caiu. Pressione R para recuperar na vila.":"Explore, converse com a Ancia e prepare-se para o Santuario.",20,730);
+            canvas.setColor(ACCENT);canvas.drawString(s.lastEvent(),20,674);canvas.setColor(TEXT);canvas.drawString(customFooter.isEmpty()?"WASD explorar | Use a hotbar e os atalhos configurados na barra superior.":customFooter.get(0),20,704);
+            canvas.drawString(customFooter.isEmpty()?(s.gameOver()?"Voce caiu. Pressione R para recuperar na vila.":"Explore, converse com a Ancia e prepare-se para o Santuario."):customFooter.get(1),20,730);
         }
         if(showHelp) {
             canvas.setColor(new Color(8,15,28,240));canvas.fillRoundRect(20,20,920,330,20,20);

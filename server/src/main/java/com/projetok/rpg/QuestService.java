@@ -8,8 +8,26 @@ public final class QuestService {
     public record Definition(List<Objective> objectives,int xp,int coins,String item,int quantity) { public Definition { objectives=List.copyOf(objectives); } }
     private final RpgContent content;
     private final Map<String,Definition> definitions=new TreeMap<>();
+    private final Map<String,String> names=new TreeMap<>();
+    private final Map<String,List<String>> prerequisites=new TreeMap<>();
+    /** Instância isolada de autoria; não substitui o catálogo da campanha nem o save. */
+    public QuestService(RpgContent content,QuestBook book){
+        this.content=content;book.requireValid();
+        for(var q:book.quests()){definitions.put(q.id(),q.definition());names.put(q.id(),q.name());prerequisites.put(q.id(),q.prerequisites());}
+    }
+    /** Valida o mesmo contrato para campanha, autoria e plano de recompensa. */
+    public static void validateDefinition(RpgContent content,Definition d){
+        content.get("item",d.item());
+        if(d.objectives().isEmpty()||d.objectives().size()>8||d.xp()<0||d.xp()>10000||d.coins()<0||d.coins()>10000||d.quantity()<1||d.quantity()>99)throw new IllegalArgumentException("Recompensa/objetivos fora dos limites");
+        Set<String> unique=new HashSet<>();for(var o:d.objectives()){
+            String kind=switch(o.type()){case "kill"->"enemy";case "collect"->"item";case "talk"->"npc";case "visit"->"region";default->throw new IllegalArgumentException("Objetivo sem suporte: "+o.type());};
+            content.get(kind,o.target());if(o.count()<1||o.count()>100||o.type().equals("visit")&&o.count()!=1)throw new IllegalArgumentException("Quantidade de objetivo inválida");
+            if(!unique.add(o.type()+":"+o.target()))throw new IllegalArgumentException("Objetivo repetido");
+        }
+    }
     public QuestService(RpgContent content){
         this.content=content;
+        content.all("quest").forEach(q->names.put(q.id(),q.name()));prerequisites.put("sanctuary",List.of("first_steps"));
         try(var in=QuestService.class.getResourceAsStream("/rpg/quests.properties")) {
             if(in==null)throw new java.io.IOException("Quests ausentes");Properties p=new Properties();p.load(in);
             for(String id:p.stringPropertyNames()) {
@@ -25,9 +43,9 @@ public final class QuestService {
     public Definition definition(String id){var d=definitions.get(id);if(d==null)throw new IllegalArgumentException("Quest ausente");return d;}
     public int required(String id){return definition(id).objectives().stream().mapToInt(Objective::count).sum();}
     public State state(String id,Map<String,Integer> progress,Set<String> flags) {
-        content.get("quest",id);
+        definition(id);
         if(flags.contains("quest-done:"+id))return State.COMPLETED;
-        if(id.equals("sanctuary")&&!flags.contains("quest-done:first_steps"))return State.UNAVAILABLE;
+        if(prerequisites.getOrDefault(id,List.of()).stream().anyMatch(previous->!flags.contains("quest-done:"+previous)))return State.UNAVAILABLE;
         if(!progress.containsKey(id))return State.AVAILABLE;
         return progress.get(id)>=required(id)?State.READY:State.ACTIVE;
     }
@@ -55,5 +73,5 @@ public final class QuestService {
         }
     }
     private void refreshOne(String id,Map<String,Integer> progress,Set<String> flags,InventoryService inventory){int total=0;var objectives=definition(id).objectives();for(int i=0;i<objectives.size();i++){var o=objectives.get(i);total+=o.type().equals("collect")&&inventory!=null?Math.min(o.count(),inventory.count(o.target())):counter(flags,"qo:"+id+":"+i+":");}progress.put(id,total);}
-    public List<View> views(Map<String,Integer> progress,Set<String> flags){return content.all("quest").stream().sorted(Comparator.comparing(RpgContent.Definition::id)).map(q->new View(q.id(),q.name(),state(q.id(),progress,flags),progress.getOrDefault(q.id(),0),required(q.id()),definition(q.id()).objectives().stream().map(o->switch(o.type()){case "kill"->"Derrotar ";case "collect"->"Entregar ";case "talk"->"Conversar com ";default->"Visitar ";}+content.get(switch(o.type()){case "kill"->"enemy";case "collect"->"item";case "talk"->"npc";default->"region";},o.target()).name()+" x"+o.count()).collect(java.util.stream.Collectors.joining("; ")))).toList();}
+    public List<View> views(Map<String,Integer> progress,Set<String> flags){return definitions.keySet().stream().map(id->new View(id,names.get(id),state(id,progress,flags),progress.getOrDefault(id,0),required(id),definition(id).objectives().stream().map(o->o.type()+": "+content.get(switch(o.type()){case "kill"->"enemy";case "collect"->"item";case "talk"->"npc";default->"region";},o.target()).name()+" x"+o.count()).collect(java.util.stream.Collectors.joining("; ")))).toList();}
 }

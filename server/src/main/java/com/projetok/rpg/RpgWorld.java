@@ -31,6 +31,28 @@ public final class RpgWorld {
     private long abilityReadyTick;
     private long evadeUntilTick;
     private DomainProgression domain = DomainProgression.initial();
+    private AuthoredQuestSession authoredQuests;
+    /** Sessão autorada somente em memória, construída sem carregar um save pessoal. */
+    public RpgWorld(CharacterIdentity identity,RpgSceneSet scenes,QuestBook book){this(identity,scenes);authoredQuests=new AuthoredQuestSession(book);}
+    public boolean isSynthetic(){return scenes!=null||authoredQuests!=null;}
+    /** Corpos externos de uma sessão sintética; nunca habilitado em personagem offline comum. */
+    public void setSyntheticBodies(List<CollisionService.Body> bodies){if(!isSynthetic()||bodies.size()>2)throw new IllegalStateException("Corpos de sessão indisponíveis");space=new CollisionService.Space(space.width(),space.height(),space.obstacles(),bodies);}
+    /** Checkpoint efêmero de autoria em mapa padrão; não escreve arquivos nem muda schema. */
+    public RpgWorld forkSynthetic(){if(authoredQuests==null||scenes!=null)throw new IllegalStateException("Retomada em memória disponível apenas na sessão de quests com mapa padrão");var copy=restore(save());copy.authoredQuests=authoredQuests.copy();return copy;}
+    public List<QuestService.View> authoredQuestViews(){return authoredQuests==null?List.of():authoredQuests.views();}
+    private boolean authoredNpc(String id){return authoredQuests!=null&&hp>0&&!transitioning&&npcs.nearest(region,body.getPosition()).filter(n->n.id().equals(authoredQuests.draft(id).npc())&&lineClear(body.getPosition(),new Position(n.x(),n.y()))).isPresent();}
+    public boolean acceptAuthoredQuest(String id){
+        if(!authoredNpc(id)||!authoredQuests.eligible(id,identity,xp,domain)||!authoredQuests.accept(id))return false;
+        authoredQuests.event("talk",authoredQuests.draft(id).npc(),"authored_accept",ticks+1);authoredQuests.refresh(inventory,region);message="Missão autorada aceita (sintética)";return true;
+    }
+    /** Pré-valida o plano inteiro antes de publicar a conclusão única. */
+    public boolean completeAuthoredQuest(String id){
+        if(!authoredNpc(id)||!authoredQuests.eligible(id,identity,xp,domain))return false;
+        authoredQuests.refresh(inventory,region);if(authoredQuests.state(id)!=QuestService.State.READY)return false;
+        QuestRewards.Plan plan;try{plan=QuestRewards.prepare(inventory,coins,xp,domain,authoredQuests.draft(id).definition());}
+        catch(IllegalArgumentException|IllegalStateException|ArithmeticException e){message=e.getMessage();return false;}
+        if(!authoredQuests.complete(id))return false;int oldMax=maxHp();inventory.replace(plan.inventory());coins=plan.coins();xp=plan.xp();domain=plan.domain();hp+=maxHp()-oldMax;message="Missão autorada concluída (sem persistência V2)";return true;
+    }
     public static final int SHUNPO_LEVEL = 20;
     public static final int SHUNPO_COST = 25, SHUNPO_COOLDOWN = 90;
     private float facingX=1,facingY;
@@ -61,14 +83,19 @@ public final class RpgWorld {
         if(direction.x()==0&&direction.y()==0)direction=new Position(-facingX,-facingY);
         float x=target.getPosition().x()+direction.x()*42, y=target.getPosition().y()+direction.y()*42;
         if(!new CollisionService().isFree(body,x,y,18,space)
-                ||!lineClear(position,new Position(x,y))){message="Destino do Shunpo bloqueado";return false;}
+                ||!lineClear(position,new Position(x,y))||!safeShunpoPath(position,new Position(x,y))){message="Destino do Shunpo bloqueado";return false;}
         body.setPosition(new Position(x,y));facingX=-direction.x();facingY=-direction.y();
         consumeShunpo();message="Shunpo ofensivo";return true;
     }
     private boolean shunpoReady() {
         if(!canShunpo()){message="Shunpo exige nivel 20 de personagem";return false;}
-        return hp>0&&!transitioning&&ticks>=abilityReadyTick&&stamina>=SHUNPO_COST*10;
+        if(hp<=0||transitioning){message="Shunpo indisponível neste estado";return false;}
+        if(ticks<abilityReadyTick){message="Shunpo em recarga compartilhada";return false;}
+        if(stamina<SHUNPO_COST*10){message="Vigor insuficiente para Shunpo";return false;}
+        return true;
     }
+    /** Valida o corpo inteiro ao longo da aproximação, usando o raio físico já existente. */
+    private boolean safeShunpoPath(Position start,Position end){int samples=Math.max(1,(int)Math.ceil(distance(start,end)/3));var collisions=new CollisionService();for(int i=1;i<=samples;i++)if(!collisions.isFree(body,start.x()+(end.x()-start.x())*i/samples,start.y()+(end.y()-start.y())*i/samples,18,space))return false;return true;}
     private void consumeShunpo() {
         stamina-=SHUNPO_COST*10;abilityReadyTick=ticks+SHUNPO_COOLDOWN;
         flags.removeIf(f->f.startsWith("ability-until:"));flags.add("ability-until:"+abilityReadyTick);
@@ -146,7 +173,7 @@ public final class RpgWorld {
         var object=objects.views(region,ticks,flags).stream().filter(o->o.id().equals(id)&&o.available()&&distance(body.getPosition(),new Position(o.x(),o.y()))<=65).findFirst();
         if(object.isEmpty())return false;var o=object.get();if(!inventory.add(o.item(),o.amount())){message="Inventario cheio; objeto preservado";return false;}
         if(o.respawn()==0)flags.add("opened:"+o.id());else{flags.removeIf(f->f.startsWith("object-until:"+o.id()+":"));flags.add("object-until:"+o.id()+":"+(ticks+o.respawn()));}
-        questService.refresh(quests,flags,inventory,region);message="Coletado: "+items.get(o.item()).name()+" x"+o.amount();return true;
+        questService.refresh(quests,flags,inventory,region);if(authoredQuests!=null)authoredQuests.refresh(inventory,region);message="Coletado: "+items.get(o.item()).name()+" x"+o.amount();return true;
     }
     private long portalReadyTick;
     public boolean travel(String id) {
@@ -157,7 +184,7 @@ public final class RpgWorld {
         CollisionService.Space destination=scenes==null?space:scenes.maps().get(portal.destination()).space();
         if(!new CollisionService().isFree(body,portal.arrivalX(),portal.arrivalY(),18,destination))return false;
         transitioning=true;
-        try{space=destination;region=portal.destination();flags.add("visited:"+region);body.setPosition(new Position(portal.arrivalX(),portal.arrivalY()));closeDialogue();portalReadyTick=ticks+30;if(region.equals("ruins"))flags.add("dungeon-started");questService.refresh(quests,flags,inventory,region);message="Chegou a "+content.get("region",region).name();return true;}finally{transitioning=false;}
+        try{space=destination;region=portal.destination();flags.add("visited:"+region);body.setPosition(new Position(portal.arrivalX(),portal.arrivalY()));closeDialogue();portalReadyTick=ticks+30;if(region.equals("ruins"))flags.add("dungeon-started");questService.refresh(quests,flags,inventory,region);if(authoredQuests!=null)authoredQuests.refresh(inventory,region);message="Chegou a "+content.get("region",region).name();return true;}finally{transitioning=false;}
     }
     private boolean bossUnlocked(){return enemies.current("ruins").stream().filter(e->!e.definition.id().equals("warden")).allMatch(e->e.hp==0);}
     public boolean returnHome(){if(hp>0)return false;region=scenes==null?"village":scenes.initialRegion();if(scenes!=null)space=scenes.maps().get(region).space();body.setPosition(scenes==null?new Position(140,320):scenes.maps().get(region).spawn());hp=maxHp();stamina=1000;closeDialogue();message="Recuperado em Aurora. Progresso preservado.";return true;}
@@ -176,12 +203,14 @@ public final class RpgWorld {
     }
     private final DialogueService dialogues=new DialogueService();
     private final QuestService questService=new QuestService(content);
-    public boolean acceptQuest(String id){if(!canTalkElder()||!questService.accept(id,quests,flags))return false;questService.event("talk","elder","accept_"+id,ticks+1,quests,flags);questService.refresh(quests,flags,inventory,region);message="Missao aceita";return true;}
+    public boolean acceptQuest(String id){if(!canTalkElder()||!questService.accept(id,quests,flags))return false;questService.event("talk","elder","accept_"+id,ticks+1,quests,flags);questService.refresh(quests,flags,inventory,region);if(authoredQuests!=null)authoredQuests.refresh(inventory,region);message="Missao aceita";return true;}
     public boolean completeQuest(String id){
-        if(!canTalkElder())return false;questService.refresh(quests,flags,inventory,region);if(questService.state(id,quests,flags)!=QuestService.State.READY)return false;
-        var d=questService.definition(id);var copy=inventory.copy();for(var o:d.objectives())if(o.type().equals("collect")&&!copy.remove(o.target(),o.count()))return false;
-        if(coins>1_000_000-d.coins()||!copy.add(d.item(),d.quantity())){message="Libere espaco para a recompensa";return false;}
-        inventory.replace(copy);coins+=d.coins();awardExperience(d.xp());questService.complete(id,quests,flags);message="Missao concluida: XP, moedas e itens";return true;
+        if(!canTalkElder())return false;questService.refresh(quests,flags,inventory,region);if(authoredQuests!=null)authoredQuests.refresh(inventory,region);if(questService.state(id,quests,flags)!=QuestService.State.READY)return false;
+        QuestRewards.Plan plan;
+        try{plan=QuestRewards.prepare(inventory,coins,xp,domain,questService.definition(id));}
+        catch(IllegalArgumentException|IllegalStateException|ArithmeticException rejected){message=rejected.getMessage();return false;}
+        int previousMax=maxHp();inventory.replace(plan.inventory());coins=plan.coins();xp=plan.xp();domain=plan.domain();hp+=maxHp()-previousMax;
+        questService.complete(id,quests,flags);message="Missao concluida: XP, moedas e itens";return true;
     }
     private boolean canTalkElder(){return hp>0&&activeNpc.equals("elder")&&npcs.nearest(region,body.getPosition()).filter(n->n.id().equals("elder")).isPresent();}
     private boolean dialogueCondition(String condition){return switch(condition){case "always"->true;case "first_ready"->questService.state("first_steps",quests,flags)==QuestService.State.READY;case "first_done"->flags.contains("quest-done:first_steps");case "boss_ready"->questService.state("sanctuary",quests,flags)==QuestService.State.READY;default->false;};}
@@ -201,7 +230,7 @@ public final class RpgWorld {
         var portal=portals.nearest(region,body.getPosition());if(portal.isPresent())return travel(portal.get().id());
         var npc=npcs.nearest(region,body.getPosition());
         if(npc.isEmpty()||!lineClear(body.getPosition(),new Position(npc.get().x(),npc.get().y()))){closeDialogue();var object=objects.views(region,ticks,flags).stream().filter(o->o.available()&&distance(body.getPosition(),new Position(o.x(),o.y()))<=65).findFirst();if(object.isPresent())return harvest(object.get().id());message="Aproxime-se de NPC, portal ou objeto e pressione F";return false;}
-        activeNpc=npc.get().id();questService.event("talk",activeNpc,activeNpc,ticks+1,quests,flags);questService.refresh(quests,flags,inventory,region);dialogueNode=npc.get().dialogue();message=npc.get().name()+": seja bem-vindo!";return true;
+        activeNpc=npc.get().id();if(authoredQuests!=null)authoredQuests.event("talk",activeNpc,activeNpc,ticks+1);questService.event("talk",activeNpc,activeNpc,ticks+1,quests,flags);questService.refresh(quests,flags,inventory,region);if(authoredQuests!=null)authoredQuests.refresh(inventory,region);dialogueNode=npc.get().dialogue();message=npc.get().name()+": seja bem-vindo!";return true;
     }
     public RpgWorld(CharacterIdentity identity,java.util.random.RandomGenerator random) { this(identity);this.random=java.util.Objects.requireNonNull(random); }
     /** Ataque racial inicial; feixe de Spirit nao concede o dominio Luz. */
@@ -236,8 +265,8 @@ public final class RpgWorld {
         if(target.hp==0) {
             target.readyTick=ticks+target.definition.respawn();
             if(loot.award(target.spawn,target.generation,target.definition.id(),inventory,flags,random==null?new java.util.Random(741L^((long)target.spawn.hashCode()<<16)^target.generation):random)) {
-                questService.event("kill",target.definition.id(),target.spawn,target.generation,quests,flags);
-                questService.refresh(quests,flags,inventory,region);
+                questService.event("kill",target.definition.id(),target.spawn,target.generation,quests,flags);if(authoredQuests!=null)authoredQuests.event("kill",target.definition.id(),target.spawn,target.generation);
+                questService.refresh(quests,flags,inventory,region);if(authoredQuests!=null)authoredQuests.refresh(inventory,region);
                 awardExperience(3);coins=Math.min(1_000_000,coins+5);
                 message="Derrotado: +XP, loot e moedas";
                 if(target.definition.id().equals("warden")){flags.add("boss-defeated");flags.add("dungeon-completed");message="Santuario concluido! Volte a Ancia com a reliquia.";}
@@ -317,7 +346,7 @@ public final class RpgWorld {
         }
         ticks++;
         enemies.respawn(ticks,region);
-        questService.refresh(quests,flags,inventory,region);
+        questService.refresh(quests,flags,inventory,region);if(authoredQuests!=null)authoredQuests.refresh(inventory,region);
         enemies.update(region,ticks,body.getPosition(),hp>0,movement,space,n->receiveDamage(Math.max(1,n-defense())),p->lineClear(body.getPosition(),p),bossUnlocked());
     }
     public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message,maxHp(),level(),enemies.views(region,ticks),npcs.views(region),activeNpc,dialogue(),questService.views(quests,flags),portals.views(region),objects.views(region,ticks,flags),List.copyOf(events)); }

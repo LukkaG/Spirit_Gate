@@ -45,13 +45,13 @@ public final class LocalJunitRunner {
         };
         var engine = new JupiterTestEngine();
         var descriptor = engine.discover(request, UniqueId.forEngine(engine.getId()));
-        int[] results = new int[4];
+        int[] results = new int[5];
         var listener = new EngineExecutionListener() {
             public void executionFinished(TestDescriptor test, TestExecutionResult result) {
                 if (test.isTest()) results[0]++;
                 switch (result.getStatus()) {
                     case SUCCESSFUL -> { if(test.isTest()) results[1]++; }
-                    case ABORTED -> { if(test.isTest()) results[2]++; }
+                    case ABORTED -> { if(test.isTest()) { results[2]++; System.out.println("ABORTED: " + test.getUniqueId() + " " + result.getThrowable().map(Throwable::toString).orElse("")); } }
                     case FAILED -> {
                         results[3]++;
                         System.err.println("FAILED: " + test.getUniqueId());
@@ -65,12 +65,13 @@ public final class LocalJunitRunner {
                 }
             }
             public void executionSkipped(TestDescriptor test, String reason) {
-                if(test.isTest()) results[2]++;
+                if(test.isTest()) results[4]++;
+                System.out.println("SKIPPED: " + test.getUniqueId() + " " + reason);
             }
         };
         engine.execute(new ExecutionRequest(descriptor, listener, configuration));
-        System.out.printf("JUnit: %d executed, %d passed, %d skipped/aborted, %d failures%n",
-            results[0], results[1], results[2], results[3]);
+        System.out.printf("JUnit: %d executed, %d passed, %d aborted, %d failures, %d skipped%n",
+            results[0], results[1], results[2], results[3], results[4]);
         System.exit(results[3] == 0 && results[0] > 0 ? 0 : 1);
     }
 }

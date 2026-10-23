@@ -15,6 +15,16 @@ final class PaintTools {
         this.ui=ui;JComboBox<String> tools=new JComboBox<>(new String[]{"Selecionar","Mover","Lapis","Borracha","Retangulo","Balde","Conta-gotas","Colisao"});tools.addActionListener(e->tool=(String)tools.getSelectedItem());ui.toolbar.add(tools);
         JComboBox<String> mode=new JComboBox<>(new String[]{"Objeto real","Tile na grade"});mode.addActionListener(e->tile=mode.getSelectedIndex()==1);ui.toolbar.add(mode);
         ui.toolbar.add(assignments);
+        ui.canvas.brushPreview=()->{
+            if(!Set.of("Lapis","Retangulo","Balde").contains(tool))return null;
+            try{var b=brush();int grid=ui.document.grid(),x=ui.canvas.cursor.x,y=ui.canvas.cursor.y;
+                if(brushTile()){x=Math.floorDiv(x,grid)*grid;y=Math.floorDiv(y,grid)*grid;}
+                return new WorldDocument.Element("preview",b.kind(),b.asset(),b.sha(),b.crop(),x,y,b.width(),b.height(),b.layer(),true,false,b.reference(),b.direction(),b.properties());
+            }catch(IllegalArgumentException e){return null;}
+        };
+        ui.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"),"Cancelar gesto");
+        ui.getRootPane().getActionMap().put("Cancelar gesto",new AbstractAction(){public void actionPerformed(ActionEvent e){cancelGesture();}});
+        ui.addWindowFocusListener(new WindowAdapter(){@Override public void windowLostFocus(WindowEvent e){cancelGesture();}});
         ui.tilePalette.choose=(c,right)->{
             var asset=ui.tilePalette.asset;if(asset==null)return;copyFromPalette=true;
             ui.brushCrop=c;assign(asset,c,c.width()<=(Integer)ui.tilePalette.tileWidth.getValue()&&c.height()<=(Integer)ui.tilePalette.tileHeight.getValue(),right);
@@ -44,6 +54,8 @@ final class PaintTools {
         }catch(Exception error){ui.document=ui.history.current();ui.error(error);}finally{ui.canvas.selectionBox=null;moving=false;gestureBase=null;start=null;rightPainting=false;lastPaint=null;ui.canvas.repaint();}};
     }
     static Rectangle selectionBox(Point a,Point b){return new Rectangle(Math.min(a.x,b.x),Math.min(a.y,b.y),Math.abs(a.x-b.x)+1,Math.abs(a.y-b.y)+1);}
+    /** Reverte apenas o gesto ainda não confirmado; não acrescenta uma entrada ao histórico. */
+    void cancelGesture(){if(start!=null)ui.document=ui.history.current();start=null;gestureBase=null;moving=false;rightPainting=false;lastPaint=null;ui.canvas.selectionBox=null;ui.canvas.repaint();}
     void moveSelection(Point end){
         int dx=end.x-start.x,dy=end.y-start.y;
         if(ui.snap){int grid=ui.document.grid();dx=Math.round((float)dx/grid)*grid;dy=Math.round((float)dy/grid)*grid;}

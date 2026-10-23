@@ -19,11 +19,13 @@ public final class StudioExport {
     public static String key(String prefix,String value){try{return prefix+HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256").digest(value.getBytes(java.nio.charset.StandardCharsets.UTF_8))).substring(0,20);}catch(java.security.NoSuchAlgorithmException impossible){throw new IllegalStateException(impossible);}}
     /** Monta configuracoes por injecao, conservando regras dos servicos de dominio. */
     public static RpgSceneSet scenes(String start,Map<String,WorldDocument> maps) {
+        var limits=StudioRuntimeLimits.diagnostics(maps.values());if(!limits.isEmpty())throw new IllegalArgumentException(String.join("\n",limits));
         Map<String,RpgSceneSet.Geometry> geometry=new LinkedHashMap<>();Map<String,String> enemies=new TreeMap<>(),npcs=new TreeMap<>(),objects=new TreeMap<>(),portals=new TreeMap<>();
         var builtinObjects=new WorldObjects(RpgContent.builtin(),new ItemCatalog(RpgContent.builtin()));var prototypes=new ArrayList<WorldObjects.ObjectView>();for(String region:List.of("village","forest","ruins"))prototypes.addAll(builtinObjects.views(region,0,Set.of()));
         for(var d:maps.values()) {
             StudioEvents.validate(d);
             var spawn=d.elements().stream().filter(e->e.kind()==WorldDocument.Kind.PLAYER).findFirst().orElseThrow(()->new IllegalArgumentException("Spawn ausente: "+d.id()));
+            if(!StudioGeometry.free(d,spawn.x(),spawn.y(),18))throw new IllegalArgumentException("Spawn obstruído ou fora dos limites: "+d.id());
             if(geometry.put(d.region(),new RpgSceneSet.Geometry(StudioGeometry.space(d),new Position(spawn.x(),spawn.y())))!=null)throw new IllegalArgumentException("Regiao repetida");
             for(var e:d.elements())switch(e.kind()) {
                 case ENEMY->{var points=SpawnAreas.points(d,e);for(int i=0;i<points.size();i++){var p=points.get(i);String id=SpawnAreas.key(d,e,i);if(enemies.put(id,e.reference()+"|"+d.region()+"|"+p.x+"|"+p.y)!=null||enemies.size()>64)throw new IllegalArgumentException("Spawn duplicado ou populacao acima de 64");}}

@@ -1,0 +1,355 @@
+{
+  "branch": "beco",
+  "initialHead": "52b1e5651821fe9e4960a104caf7f116c51725d6",
+  "tasks": {
+    "TASK-134": {
+      "status": "VALIDADA COM RESSALVAS"
+    },
+    "TASK-135": {
+      "status": "implementada e testada",
+      "limitations": "Capturas por printAll de janela Swing visivel; nao constituem homologacao fisica nem aprovacao artistica. Decoracoes nativas dependem do Windows.",
+      "testRun": "run-91n09fc6",
+      "java": {
+        "executed": 419,
+        "passed": 413,
+        "aborted": 6,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-136": {
+      "status": "implementada e testada",
+      "limitations": "Nenhuma associação automática a raça ou domínio. Preview usa cache residente limitado de 64 MiB. Aprovação de revisão continua manual.",
+      "testRun": "run-hf62czac",
+      "java": {
+        "executed": 422,
+        "passed": 416,
+        "aborted": 6,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-137": {
+      "status": "implementada e testada",
+      "limitations": "Sete abortados em headless: os seis históricos e o novo teste de gesto; todos passaram em ambiente gráfico, 49 testes Studio aprovados. Prévia de autoria não representa animação de combate.",
+      "testRun": "run-mcg7uodb",
+      "java": {
+        "executed": 423,
+        "passed": 416,
+        "aborted": 7,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-138": {
+      "status": "implementada e testada",
+      "limitations": "Contrato de reset somente declarativo, sem execução financeira. Objetivos suportados: kill, collect, talk e visit. Recompensa única de item, XP e moedas conforme QuestService atual. Persistência de personagem continua V2 sem mudanças.",
+      "testRun": "run-mnzjisv8",
+      "java": {
+        "executed": 427,
+        "passed": 420,
+        "aborted": 7,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-139": {
+      "status": "implementada e testada",
+      "limitations": "Exportação produz documento para playtest sintético; execução no runtime será integrada na TASK-141. UI experimental; capturas Swing não equivalem a homologação física. Oito testes gráficos abortam em headless e passam no ambiente gráfico.",
+      "testRun": "run-vzshmooa",
+      "java": {
+        "executed": 428,
+        "passed": 420,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-140": {
+      "status": "implementada e testada",
+      "limitations": "Reset permanece somente contrato e teste puro; sem carteira, compra ou acionamento por evento visual. Save V2 preservado.",
+      "testRun": "run-kpq4bhfy",
+      "java": {
+        "executed": 431,
+        "passed": 423,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-141": {
+      "status": "implementada e testada",
+      "limitations": "Ledger autorado somente em memória; não persiste no save V2. Demonstração em .task-checkpoints/TASK-141/corujao-iv/demo, incluindo sgquest, resultado JSON e captura. Sem reset real, pagamento ou técnica conceitual.",
+      "testRun": "run-dq7efihh",
+      "java": {
+        "executed": 435,
+        "passed": 427,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-142": {
+      "status": "implementada e testada",
+      "limitations": "Execução limitada a 960x640 e até três regiões de produção; mapa maior testado como recusa explícita, permanece editável. Expansão incompatível de persistência não foi implementada. Trabalho independente de câmera e minimapa prossegue somente nos mapas compatíveis.",
+      "testRun": "run-jbmwoku_",
+      "java": {
+        "executed": 438,
+        "passed": 430,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-143": {
+      "status": "implementada e testada",
+      "limitations": "Escopo: mapas compatíveis 960x640. Câmera existente acompanha posição lógica; nenhuma técnica conceitual foi integrada. Culling e minimapa não alteram colisões nem saves.",
+      "testRun": "run-dqgtp8k1",
+      "java": {
+        "executed": 440,
+        "passed": 432,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-144": {
+      "status": "implementada e testada",
+      "limitations": "Velocidade 215, raio, alcance, custo, recarga, escala 0.5 e walk 250 ms preservados. Parâmetros de balanceamento continuam provisórios.",
+      "testRun": "run-cv85sujl",
+      "java": {
+        "executed": 443,
+        "passed": 435,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-145": {
+      "status": "implementada e testada",
+      "limitations": "Resultados locais, caches e atividade de máquina não isolados. Salvamentos aquecidos, abertura, pintura, memória e transformações não receberam promessa de ganho. Metodologia e dados brutos em CORUJAO-IV-OTIMIZACOES.md.",
+      "testRun": "run-dw64az5x",
+      "java": {
+        "executed": 444,
+        "passed": 436,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-146": {
+      "status": "implementada e testada",
+      "limitations": "Retomada em memória disponível no mapa padrão de quests; não é persistência de missão autorada no V2. Mapas customizados permanecem sem gravação de personagem. Diagnóstico desligado por padrão.",
+      "testRun": "run-c31ds_2q",
+      "java": {
+        "executed": 446,
+        "passed": 438,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-147": {
+      "status": "implementada e testada",
+      "limitations": "Capturas Swing em duas dimensões não substituem teste físico de contraste/foco. Reset financeiro e técnicas conceituais continuam indisponíveis. Recuperação sempre preserva arquivo original.",
+      "testRun": "run-nek6zdja",
+      "java": {
+        "executed": 446,
+        "passed": 438,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-148": {
+      "status": "implementada e testada",
+      "limitations": "Capturas não medem FPS físico nem aprovação artística. Benchmark detalhado na TASK-145. Mapas maiores permanecem fora do runtime compatível. Comando inicial --self-check foi recusado; foi corrigido para a opção suportada --verify-install e esta passou.",
+      "testRun": "run-7pks06j6",
+      "java": {
+        "executed": 447,
+        "passed": 439,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-149": {
+      "status": "implementada e testada",
+      "limitations": "Não constitui encerramento da expansão autorizada até TASK-159. Sem homologação física/artística. Mapas maiores e persistência autorada V2 permanecem limitados. Smoke inicial não acompanhou processo filho; tentativa WMI foi negada pelo ambiente e substituída por consulta local de processos, com smoke final aprovado.",
+      "testRun": "run-27cuhepp",
+      "java": {
+        "executed": 447,
+        "passed": 439,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-150": {
+      "status": "implementada e testada",
+      "limitations": "Sem mudança de protocolo nesta tarefa. Backend RPG será implementado na TASK-151. Nomes não autenticam contas; LAN física não homologada. Segurança de produção fora do protótipo.",
+      "testRun": "run-v3lau_yu",
+      "java": {
+        "executed": 447,
+        "passed": 439,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-151": {
+      "status": "implementada e testada",
+      "limitations": "Backend RPG inicial implementa movimento; combate e habilidades de arena são recusados. Sem saves, contas ou servidor público. Raças padrão atribuídas pelo servidor: Reaper e Human; outros pares são configuração técnica do backend.",
+      "testRun": "run-5ls4rw13",
+      "java": {
+        "executed": 449,
+        "passed": 441,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-152": {
+      "status": "implementada e testada",
+      "limitations": "Sem autenticação comercial nem alteração incompatível de bytes V1. Confirmação de envio não significa ação aceita. Extensões cosméticas futuras exigem negociação por peer.",
+      "testRun": "run-1u1fnbbi",
+      "java": {
+        "executed": 451,
+        "passed": 443,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-153": {
+      "status": "implementada e testada",
+      "limitations": "Probe gráfico usa dois clientes na mesma JVM; TCP é real. Não homologa LAN física. Corpo base comum às raças permanece original; nenhuma sprite racial inventada. Combate RPG de rede ainda indisponível.",
+      "testRun": "run-e90kmp4v",
+      "java": {
+        "executed": 452,
+        "passed": 444,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-154": {
+      "status": "implementada e testada",
+      "limitations": "Combate RPG de rede parcial: não implementado, conforme alternativa expressa da tarefa. Ataque, Shunpo e habilidades de arena são recusados no backend RPG; Coop histórico e RPG offline preservados. Nenhum PvP habilitado.",
+      "testRun": "run-0ipa_zyn",
+      "java": {
+        "executed": 455,
+        "passed": 447,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      },
+      "networkCombat": "partial: rejected by experimental backend; offline and historical Coop preserved"
+    },
+    "TASK-155": {
+      "status": "implementada e testada",
+      "limitations": "Reconexão não restaura personagem online nem importa saves offline. LAN entre dois computadores não homologada. Sem firewall, port forwarding, contas ou exposição pública.",
+      "testRun": "run-dqb5oe_8",
+      "java": {
+        "executed": 457,
+        "passed": 449,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-156": {
+      "status": "implementada e testada",
+      "limitations": "Placeholders pixelados simples, sem aprovação artística e sem atributos de combate. Gerador por código expressamente autorizado no anexo. Não foram usadas dependências gráficas adicionais ou substituídos assets originais.",
+      "testRun": "run-md_tti10",
+      "java": {
+        "executed": 458,
+        "passed": 450,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-157": {
+      "status": "implementada e testada",
+      "limitations": "Placeholders temporários, sem aprovação artística. Fallback por camada para recurso ausente. Checkpoints 156/157 tiveram fronteira corrigida após sobreposição do snapshot, com arquivos originais e justificativa preservados; nenhum fonte foi revertido.",
+      "testRun": "run-kczft9_7",
+      "java": {
+        "executed": 460,
+        "passed": 452,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-158": {
+      "status": "implementada e testada",
+      "limitations": "Sem atributos cosméticos de combate, alteração de raça/domínio, caminhos arbitrários ou persistência online. Peer V1 e peer cosmético coexistem em teste real. LAN física e segurança de produção não homologadas.",
+      "testRun": "run-3iz9br8d",
+      "java": {
+        "executed": 463,
+        "passed": 455,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    "TASK-159": {
+      "status": "implementada e testada",
+      "limitations": "Combate RPG compartilhado indisponivel; LAN fisica e seguranca de producao pendentes; sprites temporarias; quests autoradas em memoria; mapas runtime limitados a 960x640. Sem contas ou persistencia online.",
+      "testRun": "run-_otplo06",
+      "java": {
+        "executed": 465,
+        "passed": 457,
+        "aborted": 8,
+        "failed": 0,
+        "skipped": 0
+      }
+    }
+  },
+  "java": {
+    "executed": 465,
+    "passed": 457,
+    "aborted": 8,
+    "failed": 0,
+    "skipped": 0
+  },
+  "studioGui": {
+    "passed": 45,
+    "aborted": 0,
+    "skipped": 0,
+    "failed": 0
+  },
+  "python": {
+    "passed": 30,
+    "failed": 0
+  },
+  "complete": true,
+  "baseline134": {
+    "java": {
+      "passed": 413,
+      "aborted": 6,
+      "skipped": 0,
+      "failed": 0
+    },
+    "studioGui": {
+      "passed": 45,
+      "aborted": 0,
+      "skipped": 0,
+      "failed": 0
+    },
+    "python": {
+      "passed": 30
+    }
+  },
+  "fullGui": {
+    "executed": 465,
+    "passed": 465,
+    "aborted": 0,
+    "failed": 0,
+    "skipped": 0
+  },
+  "finalPackage": "dist/SpiritGate-CorujaoIV-studio-0.159.0-rc2-20261023T033925Z-1d5d45ef.zip",
+  "endTask": 159,
+  "finalStatus": "encerrada tecnicamente com limitacoes experimentais documentadas"
+}

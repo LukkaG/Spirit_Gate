@@ -80,6 +80,11 @@ public final class RpgPlayerSprites implements DebugPanel.ActorRenderer {
         return new RpgPlayerSprites(frames,frameMillis,scale);
     }
     public double scale() { return scale; }
+    /** Desenha frame residente para apresentação remota, sem alterar estado lógico ou gerar cópias. */
+    public boolean drawFrame(Graphics2D original,com.projetok.prototype.DirectionalAnimation.Direction direction,int walkFrame,boolean walking,float x,float y){
+        if(walkFrame<0||walkFrame>3)throw new IllegalArgumentException("Frame Walk inválido");Frame frame=frames.get(direction+"."+(walking?walkFrame+1:0));if(frame==null)return false;
+        var g=(Graphics2D)original.create();try{g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);g.translate(Math.round(x-frame.pivotX()*scale),Math.round(y-frame.pivotY()*scale));g.scale(scale,scale);g.drawImage(frame.image(),0,0,null);return true;}finally{g.dispose();}
+    }
     public RpgPlayerAnimation.Pose update(com.projetok.rpg.RpgWorld.View view) { spirit=view.identity().race().equals("spirit");var pose=animation.update(view);visual.update(view,pose.walking());return pose; }
     /** Estado visual sem influencia nas regras do mundo. */
     public RpgVisualState.State visualState(){return visual.state();}

@@ -1,4 +1,4 @@
-param([string]$Version='0.114.0-rc1')
+param([string]$Version='0.114.0-rc1',[switch]$Multiplayer)
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
 if($Version -notmatch '^0[.]\d+[.]\d+-rc\d+$'){throw 'Versao invalida'}
@@ -11,15 +11,29 @@ $inputDir=Join-Path $build 'input'; $output=Join-Path $build 'output'; $runtime=
 New-Item -ItemType Directory -Path $inputDir,$output | Out-Null
 function Checked([string]$tool,[string[]]$parameters){& (Join-Path $jdk $tool) @parameters;if($LASTEXITCODE -ne 0){throw "$tool falhou"}}
 $classes=$compiled.Classes
-Checked 'jar.exe' @('--create','--file',(Join-Path $inputDir 'world-studio.jar'),'--main-class','com.projetok.studio.WorldStudio','-C',$classes,'com/projetok/studio','-C',$classes,'com/projetok/domain','-C',$classes,'com/projetok/prototype','-C',$classes,'com/projetok/rpg','-C',$classes,'rpg')
+Checked 'jar.exe' @('--create','--file',(Join-Path $inputDir 'world-studio.jar'),'--main-class','com.projetok.studio.WorldStudio','-C',$classes,'com/projetok','-C',$classes,'rpg')
 $modules = 'java.base,java.desktop,java.logging'
 if (@(& (Join-Path $jdk 'java.exe') --list-modules) -match '^jdk[.]random@') { $modules += ',jdk.random' }
 Checked 'jlink.exe' @('--add-modules',$modules,'--strip-debug','--no-man-pages','--no-header-files','--compress=2','--output',$runtime)
-Checked 'jpackage.exe' @('--type','app-image','--dest',$output,'--name','SpiritGateWorldStudio','--input',$inputDir,'--main-jar','world-studio.jar','--main-class','com.projetok.studio.WorldStudio','--runtime-image',$runtime,'--app-version',($Version -split '-')[0],'--vendor','Spirit Gate')
+$packageArguments=@('--type','app-image','--dest',$output,'--name','SpiritGateWorldStudio','--input',$inputDir,'--main-jar','world-studio.jar','--main-class','com.projetok.studio.WorldStudio','--runtime-image',$runtime,'--app-version',($Version -split '-')[0],'--vendor','Spirit Gate')
+if($Multiplayer){
+    $launchers=@(
+        @('SpiritGateRpgServer','com.projetok.multiplayer.LocalSimulationServer','--rpg --cosmetics --bind 127.0.0.1 --port 54557'),
+        @('SpiritGateRpgClientA','com.projetok.multiplayer.RpgNetworkClientLauncher','127.0.0.1 54557 JogadorA --cosmetics --hair hair_short --clothing tunic'),
+        @('SpiritGateRpgClientB','com.projetok.multiplayer.RpgNetworkClientLauncher','127.0.0.1 54557 JogadorB --cosmetics --hair hair_spiky --clothing jacket'))
+    foreach($launcher in $launchers){
+        $config=Join-Path $build ($launcher[0]+'.properties')
+        $properties=@('main-jar=world-studio.jar',('main-class='+$launcher[1]),('arguments='+$launcher[2]))
+        if($launcher[0] -eq 'SpiritGateRpgServer'){$properties+='win-console=true'}
+        [IO.File]::WriteAllLines($config,$properties,[Text.Encoding]::ASCII)
+        $packageArguments+=@('--add-launcher',($launcher[0]+'='+$config))
+    }
+}
+Checked 'jpackage.exe' $packageArguments
 $image=Join-Path $output 'SpiritGateWorldStudio'
 foreach($file in Get-ChildItem -LiteralPath $build -Recurse -File){if($file.IsReadOnly){$file.IsReadOnly=$false}}
 $assets=Join-Path $project 'assets'
-foreach($file in Get-ChildItem -LiteralPath $assets -Recurse -File | Where-Object {$_.Extension -eq '.png' -or $_.Name -eq 'studio_tutorial.sgmap'}){
+foreach($file in Get-ChildItem -LiteralPath $assets -Recurse -File | Where-Object {$_.Extension -in @('.png','.properties') -or $_.Name -in @('studio_tutorial.sgmap','README.txt')}){
     $relative=$file.FullName.Substring($assets.Length+1);$destination=Join-Path (Join-Path $image 'assets') $relative
     New-Item -ItemType Directory -Path (Split-Path $destination) -Force | Out-Null
     Copy-Item -LiteralPath $file.FullName -Destination $destination

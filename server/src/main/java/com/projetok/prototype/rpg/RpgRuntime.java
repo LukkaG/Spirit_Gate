@@ -59,7 +59,7 @@ public final class RpgRuntime implements AutoCloseable {
     public CompletableFuture<Void> saveAndPause(com.projetok.rpg.LocalSaveStore store){return save(store,true);}
     private CompletableFuture<Void> save(com.projetok.rpg.LocalSaveStore store,boolean pause){
         var capture=new CompletableFuture<com.projetok.rpg.RpgSave>();
-        if(!enqueue(w->{try{var state=w.save();paused=pause;if(pause)input=new Input(0,0);capture.complete(state);}catch(RuntimeException error){capture.completeExceptionally(error);throw error;}},
+        if(!enqueue(w->{try{if(w.isSynthetic()){capture.completeExceptionally(new IllegalStateException("Sessão sintética não grava save de personagem"));return;}var state=w.save();paused=pause;if(pause)input=new Input(0,0);capture.complete(state);}catch(RuntimeException error){capture.completeExceptionally(error);throw error;}},
                 ()->capture.completeExceptionally(new IllegalStateException("Captura cancelada: simulacao indisponivel"))))capture.completeExceptionally(new IllegalStateException("Simulacao pausada, encerrada ou fila cheia"));
         return capture.thenAcceptAsync(state->{try{store.save(state);}catch(java.io.IOException e){throw new CompletionException(e);}},io).whenComplete((unused,error)->{if(error!=null&&pause&&!closed&&failure==null)paused=false;});
     }

@@ -21,6 +21,7 @@ public final class WorldStudio extends JFrame {
     final JTextArea details=new JTextArea();final JLabel status=new JLabel("Indexe os assets do projeto para comecar.");
     final JToolBar toolbar=new WrapToolbar();final JButton refresh=new JButton("Atualizar biblioteca");
     LayerTools layerTools;FileTools fileTools;
+    AssetLibraryTools libraryTools;
     CollisionTools collisionTools;
     boolean snap=true;
     final Map<String,WorldDocument> knownMaps=new LinkedHashMap<>();
@@ -31,14 +32,16 @@ public final class WorldStudio extends JFrame {
     java.util.List<WorldDocument.Crop> tilesetCrops=java.util.List.of();String activeTerrain="";
     /** Abre projeto local; indexacao e carregamento ocorrem em workers. */
     public WorldStudio(Path project) {
-        super("Spirit Gate | World Studio");this.project=project.toAbsolutePath();
+        super("Spirit Gate | World Studio 2.0");this.project=project.toAbsolutePath();
+        StudioTheme.dialogs();
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(1400,900);setMinimumSize(new Dimension(900,600));setLocationRelativeTo(null);
         toolbar.setFloatable(false);toolbar.add(refresh);refresh.addActionListener(e->rescan());
         JButton minus=new JButton("Zoom -"),plus=new JButton("Zoom +");toolbar.add(minus);toolbar.add(plus);minus.addActionListener(e->canvas.zoom(canvas.viewport.zoom()/1.2));plus.addActionListener(e->canvas.zoom(canvas.viewport.zoom()*1.2));
         JCheckBox grid=new JCheckBox("Grade",true);grid.addActionListener(e->{canvas.grid=grid.isSelected();canvas.repaint();});toolbar.add(grid);
         JPanel left=new JPanel(new BorderLayout(4,4)),filters=new JPanel(new GridLayout(0,1,4,4));filters.add(search);filters.add(categories);left.add(filters,BorderLayout.NORTH);left.add(new JScrollPane(library));
-        library.setFixedCellHeight(70);library.setCellRenderer((list,value,index,selected,focus)->{JLabel label=new JLabel(Path.of(value.path()).getFileName().toString(),new ImageIcon(value.thumbnail()),SwingConstants.LEFT);label.setOpaque(true);label.setBackground(selected?new Color(180,210,225):Color.WHITE);label.setToolTipText(value.path());return label;});
+        libraryTools=new AssetLibraryTools(this,filters);
+        library.setFixedCellHeight(70);library.setCellRenderer((list,value,index,selected,focus)->{JLabel label=new JLabel(Path.of(value.path()).getFileName().toString(),libraryTools.icon(value),SwingConstants.LEFT);label.setOpaque(true);label.setForeground(StudioTheme.TEXT);label.setBackground(selected?StudioTheme.SELECTED:StudioTheme.FIELD);label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(focus?StudioTheme.ACCENT:StudioTheme.FIELD),BorderFactory.createEmptyBorder(4,6,4,6)));label.setToolTipText(value.path()+" | "+value.width()+" x "+value.height());return label;});
         search.getDocument().addDocumentListener(new DocumentListener(){public void insertUpdate(DocumentEvent e){filter();}public void removeUpdate(DocumentEvent e){filter();}public void changedUpdate(DocumentEvent e){filter();}});categories.addActionListener(e->filter());
         library.addListSelectionListener(e->{if(!e.getValueIsAdjusting()){brush=library.getSelectedValue();if(brush!=null){tilesetCrops=java.util.List.of();activeTerrain="";brushCrop=new WorldDocument.Crop(0,0,brush.width(),brush.height());details.setText(brush.path()+"\n"+brush.width()+" x "+brush.height()+"\nCanal alfa: "+brush.alpha()+"\nCategoria: "+brush.category()+"\nSHA-256: "+brush.sha()+"\nIndexado: "+brush.indexedAt());tilePalette.showAsset(brush);inspectorTabs.setSelectedComponent(tilePalette);warmImages();}}});
         JButton category=new JButton("Definir categoria (F2)");category.addActionListener(e->defineCategory());left.add(category,BorderLayout.SOUTH);
@@ -68,12 +71,25 @@ public final class WorldStudio extends JFrame {
         new FinalTools(this);
         new MapTools(this);
         new StudioHelp(this);
+        action("Missões","Abrir Quest Builder",()->new QuestBuilder(project).setVisible(true));
+        action("Personagem","Aparência temporária (perfil sintético)",()->AppearancePreview.launch(project));
+        search.setToolTipText("Buscar recursos pelo caminho ou nome");
+        search.getAccessibleContext().setAccessibleName("Buscar recursos");
+        categories.getAccessibleContext().setAccessibleName("Categoria de recursos");
+        library.getAccessibleContext().setAccessibleName("Biblioteca de recursos");
+        details.getAccessibleContext().setAccessibleName("Propriedades e diagnóstico");
+        left.setBorder(BorderFactory.createTitledBorder("Biblioteca de recursos"));
+        status.setBorder(BorderFactory.createEmptyBorder(7,10,7,10));
+        toolbar.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        StudioTheme.apply(getContentPane());
+        if(getJMenuBar()!=null) StudioTheme.apply(getJMenuBar());
+        getContentPane().setBackground(StudioTheme.BACKGROUND);
     }
     void change(WorldDocument next){document=history.commit(Autotiling.refresh(next));if(layerTools!=null)layerTools.refresh();canvas.repaint();}
     void inspectSelection(){details.setText(document.elements().stream().filter(e->canvas.selected.contains(e.id())).map(Object::toString).collect(java.util.stream.Collectors.joining("\n")));}
     Map<String,WorldDocument> maps(){var maps=new LinkedHashMap<>(knownMaps);maps.put(document.id(),document);return Map.copyOf(maps);}
     void action(String group,String name,Runnable action){JMenuBar bar=getJMenuBar();if(bar==null){bar=new JMenuBar();setJMenuBar(bar);}JMenu menu=null;for(int i=0;i<bar.getMenuCount();i++)if(bar.getMenu(i).getText().equals(group))menu=bar.getMenu(i);if(menu==null){menu=new JMenu(group);bar.add(menu);}JMenuItem item=new JMenuItem(name);item.addActionListener(e->{try{action.run();}catch(Exception error){error(error);}});menu.add(item);}
-    void filter(){assets.clear();String term=search.getText().toLowerCase(Locale.ROOT);catalog.assets().stream().filter(a->(a.path().toLowerCase(Locale.ROOT).contains(term))&&(categories.getSelectedItem().equals("Todas")||a.category().equals(categories.getSelectedItem()))).forEach(assets::addElement);}
+    void filter(){assets.clear();var found=AssetCatalog.search(catalog,search.getText(),(String)categories.getSelectedItem());if(libraryTools!=null)found=libraryTools.filter(found);found.forEach(assets::addElement);}
     void defineCategory(){
         var asset=library.getSelectedValue();if(asset==null)return;
         JComboBox<String> choice=new JComboBox<>(new String[]{"Terrenos","Arvores","Construcoes","Decoracao","Personagens","NPCs","Inimigos","Interativos","Efeitos","Tilesets","Sem categoria"});choice.setSelectedItem(asset.category());

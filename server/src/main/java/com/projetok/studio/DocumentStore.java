@@ -8,6 +8,7 @@ import java.util.*;
 /** Formato SG World Studio V1: Properties UTF-8, registros delimitados e textos Base64URL. */
 public final class DocumentStore {
     private static final int LIMIT=32_000_000;
+    private static final java.util.concurrent.atomic.AtomicLong TEMP_SEQUENCE=new java.util.concurrent.atomic.AtomicLong();
     private DocumentStore(){}
     private static String text(String s){return Base64.getUrlEncoder().withoutPadding().encodeToString(s.getBytes(StandardCharsets.UTF_8));}
     private static String unt(String s){try{return StandardCharsets.UTF_8.newDecoder().decode(ByteBuffer.wrap(Base64.getUrlDecoder().decode(s))).toString();}catch(CharacterCodingException ex){throw new IllegalArgumentException("Texto Base64 nao UTF-8",ex);}}
@@ -50,7 +51,15 @@ public final class DocumentStore {
     /** Grava temporario validado e backup somente de uma versao anterior integra. */
     public static void save(Path file,WorldDocument d)throws IOException {
         byte[] bytes=encode(d);decode(bytes);Path path=file.toAbsolutePath();Files.createDirectories(path.getParent());if(Files.exists(path))load(path);
-        Path temp=Files.createTempFile(path.getParent(),"studio-",".tmp");try{Files.write(temp,bytes);load(temp);if(Files.exists(path)){Path backup=Files.createTempFile(path.getParent(),"studio-backup-",".tmp");try{Files.copy(path,backup,StandardCopyOption.REPLACE_EXISTING);move(backup,Path.of(path+".bak"));}finally{Files.deleteIfExists(backup);}}move(temp,path);}finally{Files.deleteIfExists(temp);}
+        Path temp=temporary(path.getParent(),"studio-");try{Files.write(temp,bytes);load(temp);if(Files.exists(path)){Path backup=temporary(path.getParent(),"studio-backup-");try{Files.copy(path,backup,StandardCopyOption.REPLACE_EXISTING);move(backup,Path.of(path+".bak"));}finally{Files.deleteIfExists(backup);}}move(temp,path);}finally{Files.deleteIfExists(temp);}
+    }
+    /** CREATE_NEW evita colisão/sobrescrita sem inicializar o gerador criptográfico do JDK. */
+    private static Path temporary(Path folder,String prefix)throws IOException {
+        for(int attempt=0;attempt<256;attempt++){
+            Path candidate=folder.resolve(prefix+ProcessHandle.current().pid()+"-"+Long.toUnsignedString(System.nanoTime(),36)+"-"+TEMP_SEQUENCE.incrementAndGet()+".tmp");
+            try{return Files.createFile(candidate);}catch(FileAlreadyExistsException collision){/* Tenta outro nome, sem tocar no arquivo existente. */}
+        }
+        throw new IOException("Não foi possível reservar temporário exclusivo");
     }
     private static void move(Path from,Path to)throws IOException {try{Files.move(from,to,StandardCopyOption.ATOMIC_MOVE,StandardCopyOption.REPLACE_EXISTING);}catch(AtomicMoveNotSupportedException error){Files.move(from,to,StandardCopyOption.REPLACE_EXISTING);}}
 }

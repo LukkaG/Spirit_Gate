@@ -18,6 +18,7 @@ public final class WorldCanvas extends JPanel {
     final Set<String> selected=new LinkedHashSet<>();
     Consumer<Point> pointer=p->{};
     Consumer<MouseEvent> pressed=e->{},dragged=e->{},released=e->{};
+    Supplier<WorldDocument.Element> brushPreview=()->null;
     Point panStart;double startX,startY;
     final long animationStart=System.nanoTime();
     WorldDocument indexedDocument;CanvasIndex index;com.projetok.domain.movement.CollisionService.Space physics;
@@ -32,7 +33,7 @@ public final class WorldCanvas extends JPanel {
             @Override public void mousePressed(MouseEvent e){requestFocusInWindow();if(SwingUtilities.isMiddleMouseButton(e)){panStart=e.getPoint();startX=viewport.panX();startY=viewport.panY();}else pressed.accept(e);}
             @Override public void mouseDragged(MouseEvent e){if(panStart!=null){viewport=new StudioViewport(viewport.zoom(),startX+e.getX()-panStart.x,startY+e.getY()-panStart.y);repaint();}else dragged.accept(e);mouseMoved(e);}
             @Override public void mouseReleased(MouseEvent e){if(panStart!=null)panStart=null;else released.accept(e);}
-            @Override public void mouseMoved(MouseEvent e){cursor=worldPoint(e);pointer.accept(cursor);if(playerPreview)repaint();}
+            @Override public void mouseMoved(MouseEvent e){cursor=worldPoint(e);pointer.accept(cursor);repaint();}
             @Override public void mouseWheelMoved(MouseWheelEvent e){viewport=viewport.zoomAt(viewport.zoom()*Math.pow(1.12,-e.getWheelRotation()),e.getX(),e.getY());repaint();}
         };addMouseListener(mouse);addMouseMotionListener(mouse);addMouseWheelListener(mouse);
     }
@@ -57,6 +58,10 @@ public final class WorldCanvas extends JPanel {
             if(grid&&d.grid()*viewport.zoom()>=8){g.setColor(new Color(255,255,255,30));g.setStroke(new BasicStroke((float)(1/viewport.zoom())));int cell=d.grid();for(int x=Math.max(0,visible.x/cell*cell);x<=Math.min(d.width(),visible.x+visible.width);x+=cell)g.drawLine(x,visible.y,x,visible.y+visible.height);for(int y=Math.max(0,visible.y/cell*cell);y<=Math.min(d.height(),visible.y+visible.height);y+=cell)g.drawLine(visible.x,y,visible.x+visible.width,y);}
             if(collisions)for(var h:d.hitboxes()) {g.setColor(h.solid()?new Color(255,85,70,80):new Color(65,220,160,60));g.fillRect(h.x(),h.y(),h.width(),h.height());g.setColor(selected.contains(h.id())?Color.YELLOW:h.solid()?Color.RED:Color.GREEN);g.drawRect(h.x(),h.y(),h.width(),h.height());}
             if(playerPreview){g.setColor(StudioGeometry.free(physics,cursor.x,cursor.y,18)?Color.GREEN:Color.RED);g.drawOval(cursor.x-18,cursor.y-18,36,36);}
+            var ghost=brushPreview.get();
+            if(ghost!=null){var resident=images.peek(ghost.asset());var crop=ghost.crop();var composite=g.getComposite();g.setComposite(AlphaComposite.SrcOver.derive(.45f));
+                if(resident!=null&&crop.x()+crop.width()<=resident.getWidth()&&crop.y()+crop.height()<=resident.getHeight())g.drawImage(resident,ghost.x(),ghost.y(),ghost.x()+ghost.width(),ghost.y()+ghost.height(),crop.x(),crop.y(),crop.x()+crop.width(),crop.y()+crop.height(),null);
+                g.setComposite(composite);g.setColor(new Color(88,204,200));g.drawRect(ghost.x(),ghost.y(),ghost.width(),ghost.height());}
             for(var p:d.portals()){g.setColor(Color.MAGENTA);g.drawOval(p.x()-12,p.y()-12,24,24);g.drawString(p.destination(),p.x()+14,p.y());}
             if(selectionBox!=null){g.setColor(new Color(80,190,255,50));g.fill(selectionBox);g.setColor(Color.CYAN);g.setStroke(new BasicStroke((float)(1/viewport.zoom())));g.draw(selectionBox);}
             EnvironmentPreview.draw(g,visible,EnvironmentPreview.mode(d),System.nanoTime()-animationStart);

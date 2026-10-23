@@ -5,7 +5,13 @@ import java.util.*;
 /** Protocolo experimental V1: frames limitados e DTOs explicitos, sem serializacao Java. */
 public final class Protocol {
     public static final int VERSION=1,MAX_FRAME=4096,MAX_ACTORS=8;
-    public sealed interface Message permits Hello,Welcome,Intent,State,Bye,Error { }
+    public static final int COSMETIC_APPLICATION=2;
+    public sealed interface Message permits Hello,Welcome,Intent,State,Bye,Error,AppearanceRequest,SessionState { }
+    /** Pedido sem ID de outro jogador, raça, domínio ou caminho de arquivo. */
+    public record AppearanceRequest(long sequence,String hair,String clothing)implements Message {public AppearanceRequest{if(sequence<1||sequence>1_000_000_000_000L)throw new IllegalArgumentException("Sequência inválida");new com.projetok.prototype.rpg.CosmeticCatalog.Selection(hair,clothing);}}
+    public record Appearance(int id,String race,String hair,String clothing){public Appearance{if(id<1)throw new IllegalArgumentException("Sessão inválida");com.projetok.rpg.CharacterRaces.get(race);new com.projetok.prototype.rpg.CosmeticCatalog.Selection(hair,clothing);}}
+    /** Extensão negociada; nunca enviada a um peer de aplicação V1. */
+    public record SessionState(State world,List<Appearance> appearances)implements Message {public SessionState{appearances=List.copyOf(appearances);if(appearances.size()>2||appearances.stream().map(Appearance::id).distinct().count()!=appearances.size()||appearances.stream().anyMatch(a->world.actors().stream().noneMatch(actor->actor.id()==a.id()&&!actor.boss())))throw new IllegalArgumentException("Aparências de sessão inválidas");}}
     public enum Action { MOVE,ATTACK,LIGHTNING_STEP,CRYOSTASIS }
     public record Hello(int version,String name)implements Message{public Hello{if(version<0||version>65535)throw new IllegalArgumentException("Versao invalida");Protocol.name(name);}}
     public record Welcome(int id)implements Message{public Welcome{if(id<1)throw new IllegalArgumentException("ID invalido");}}
@@ -29,10 +35,15 @@ public final class Protocol {
         else if(message instanceof State m){out.writeByte(4);out.writeLong(m.tick());out.writeByte(m.actors().size());for(Actor a:m.actors()){out.writeInt(a.id());text(out,a.name());out.writeFloat(a.x());out.writeFloat(a.y());out.writeInt(a.hp());out.writeInt(a.maxHp());out.writeFloat(a.stamina());out.writeInt(a.coins());out.writeBoolean(a.boss());out.writeFloat(a.facingX());out.writeFloat(a.facingY());out.writeByte(a.flags());}}
         else if(message instanceof Bye){out.writeByte(5);}
         else if(message instanceof Error m){out.writeByte(6);text(out,m.reason());}
+        else if(message instanceof AppearanceRequest m){out.writeByte(7);out.writeLong(m.sequence());text(out,m.hair());text(out,m.clothing());}
+        else if(message instanceof SessionState m){out.writeByte(8);write(out,m.world());out.writeByte(m.appearances().size());for(var a:m.appearances()){out.writeInt(a.id());text(out,a.race());text(out,a.hair());text(out,a.clothing());}}
         else throw new IOException("Mensagem desconhecida");
         byte[] bytes=buffer.toByteArray();if(bytes.length>MAX_FRAME)throw new IOException("Frame excessivo");var target=new DataOutputStream(stream);target.writeInt(bytes.length);target.write(bytes);target.flush();
     }
     public static Message read(InputStream stream)throws IOException{
+        return read(stream,true);
+    }
+    private static Message read(InputStream stream,boolean allowExtended)throws IOException{
         var source=new DataInputStream(stream);int size=source.readInt();if(size<2||size>MAX_FRAME)throw new IOException("Tamanho de frame invalido");byte[] bytes=source.readNBytes(size);if(bytes.length!=size)throw new EOFException("Frame interrompido");
         var in=new DataInputStream(new ByteArrayInputStream(bytes));if(in.readUnsignedByte()!=VERSION)throw new IOException("Versao de envelope incompativel");
         try{
@@ -40,10 +51,13 @@ public final class Protocol {
                 case 1->new Hello(in.readInt(),text(in));case 2->new Welcome(in.readInt());
                 case 3->{long sequence=in.readLong();int action=in.readUnsignedByte();if(action<1||action>4)throw new IOException("Acao desconhecida");yield new Intent(sequence,Action.values()[action-1],in.readFloat(),in.readFloat());}
                 case 4->{long tick=in.readLong();int count=in.readUnsignedByte();if(count>MAX_ACTORS)throw new IOException("Atores excessivos");List<Actor> actors=new ArrayList<>();for(int i=0;i<count;i++)actors.add(new Actor(in.readInt(),text(in),in.readFloat(),in.readFloat(),in.readInt(),in.readInt(),in.readFloat(),in.readInt(),in.readBoolean(),in.readFloat(),in.readFloat(),in.readUnsignedByte()));yield new State(tick,actors);}
-                case 5->new Bye();case 6->new Error(text(in));default->throw new IOException("Tipo desconhecido");};
+                case 5->new Bye();case 6->new Error(text(in));
+                case 7->new AppearanceRequest(in.readLong(),text(in),text(in));
+                case 8->{if(!allowExtended)throw new IOException("Extensão aninhada recusada");var nested=read(in,false);if(!(nested instanceof State state))throw new IOException("Snapshot aninhado inválido");int count=in.readUnsignedByte();if(count>2)throw new IOException("Aparências excessivas");var appearances=new ArrayList<Appearance>();for(int i=0;i<count;i++)appearances.add(new Appearance(in.readInt(),text(in),text(in),text(in)));yield new SessionState(state,appearances);}
+                default->throw new IOException("Tipo desconhecido");};
             if(in.available()!=0)throw new IOException("Dados excedentes");return message;
         }catch(IllegalArgumentException error){throw new IOException("Mensagem malformada",error);}
     }
     private static void text(DataOutputStream out,String text)throws IOException{byte[] bytes=text.getBytes(StandardCharsets.UTF_8);if(bytes.length>240)throw new IOException("Texto excessivo");out.writeByte(bytes.length);out.write(bytes);}
-    private static String text(DataInputStream in)throws IOException{int length=in.readUnsignedByte();if(length>240)throw new IOException("Texto excessivo");byte[] bytes=in.readNBytes(length);if(bytes.length!=length)throw new EOFException();return new String(bytes,StandardCharsets.UTF_8);}
+    private static String text(DataInputStream in)throws IOException{int length=in.readUnsignedByte();if(length>240)throw new IOException("Texto excessivo");byte[] bytes=in.readNBytes(length);if(bytes.length!=length)throw new EOFException();return StandardCharsets.UTF_8.newDecoder().decode(java.nio.ByteBuffer.wrap(bytes)).toString();}
 }
