@@ -4,6 +4,7 @@ Checkout `beco`, inicialmente limpo; referência recuperável em `.task-checkpoi
 
 ```mermaid
 flowchart LR
+  A[Cliente TCP A] --> Q[Fila limitada de comandos]
   B[Cliente TCP B] --> Q
   Q --> O[Thread proprietária 30 Hz]
   O --> S[RpgSessionWorld]
