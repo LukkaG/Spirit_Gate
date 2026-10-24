@@ -425,7 +425,7 @@ public final class DebugPanel extends JPanel {
         g.setColor(TEXT);
         center(g, customHud.isEmpty()?(a.player() ? "GUARDIAO" : "ESPIRITO " + (a.id() - 99)):a.name(),
                 Math.round(x), Math.round(y - r - 19));
-        if(customHud.isEmpty()||a.id()<500)drawBar(g, Math.round(x - 24), Math.round(y - r - 13), 48, 5,
+        if(customHud.isEmpty()||a.id()<500||a.id()>1_000_000&&a.id()<2_000_000)drawBar(g, Math.round(x - 24), Math.round(y - r - 13), 48, 5,
                 a.maxHp() == 0 ? 0 : (float) a.hp() / a.maxHp(),
                 a.player() ? ACCENT : new Color(243, 99, 109));
     }

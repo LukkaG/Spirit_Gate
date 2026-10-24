@@ -161,7 +161,17 @@ public final class RpgWorld {
     private final MovementService movement = new MovementService(new CollisionService());
     private final RpgSceneSet scenes;
     private CollisionService.Space space;
-    private final EnemyService enemies;
+    private EnemyService enemies;
+    private SharedRpgEncounter sharedEncounter;
+    /** Opt-in exclusivo de personagens sintéticos; o encontro controla IA e recompensas. */
+    void attachEncounter(SharedRpgEncounter encounter,EnemyService population) {
+        if(!isSynthetic()||sharedEncounter!=null||ticks!=0)throw new IllegalStateException("Encontro indisponivel");
+        sharedEncounter=encounter;enemies=population;
+    }
+    void sharedKill(EnemyService.Enemy enemy){
+        if(sharedEncounter==null)throw new IllegalStateException("Encontro ausente");
+        if(authoredQuests!=null){authoredQuests.event("kill",enemy.definition.id(),enemy.spawn,enemy.generation);authoredQuests.refresh(inventory,region);}
+    }
     private final LootService loot=new LootService(content,items);
     private java.util.random.RandomGenerator random;
     private long attackReadyTick;
@@ -225,9 +235,11 @@ public final class RpgWorld {
         if(!accepted){message="Missao indisponivel ou ja registrada";return false;}
         if(selected.target().equals("close"))closeDialogue();else dialogueNode=selected.target();return true;
     }
-    public boolean interact() {
+    public boolean interact() {return interact(true);}
+    public boolean interactSyntheticNpc(){if(sharedEncounter==null)throw new IllegalStateException("Encontro ausente");return interact(false);}
+    private boolean interact(boolean usePortals) {
         if(hp==0||transitioning)return false;
-        var portal=portals.nearest(region,body.getPosition());if(portal.isPresent())return travel(portal.get().id());
+        var portal=portals.nearest(region,body.getPosition());if(usePortals&&portal.isPresent())return travel(portal.get().id());
         var npc=npcs.nearest(region,body.getPosition());
         if(npc.isEmpty()||!lineClear(body.getPosition(),new Position(npc.get().x(),npc.get().y()))){closeDialogue();var object=objects.views(region,ticks,flags).stream().filter(o->o.available()&&distance(body.getPosition(),new Position(o.x(),o.y()))<=65).findFirst();if(object.isPresent())return harvest(object.get().id());message="Aproxime-se de NPC, portal ou objeto e pressione F";return false;}
         activeNpc=npc.get().id();if(authoredQuests!=null)authoredQuests.event("talk",activeNpc,activeNpc,ticks+1);questService.event("talk",activeNpc,activeNpc,ticks+1,quests,flags);questService.refresh(quests,flags,inventory,region);if(authoredQuests!=null)authoredQuests.refresh(inventory,region);dialogueNode=npc.get().dialogue();message=npc.get().name()+": seja bem-vindo!";return true;
@@ -262,7 +274,9 @@ public final class RpgWorld {
         if(target==null||!lineClear(body.getPosition(),target.getPosition()))return false;
         attackReadyTick=ticks+12;int previousHp=target.hp;target.hp=Math.max(0,target.hp-power);
         message="Golpe em "+target.getName()+": "+(previousHp-target.hp);
-        if(target.hp==0) {
+        if(sharedEncounter!=null) {
+            sharedEncounter.hit(this,target,previousHp-target.hp,ticks);
+        } else if(target.hp==0) {
             target.readyTick=ticks+target.definition.respawn();
             if(loot.award(target.spawn,target.generation,target.definition.id(),inventory,flags,random==null?new java.util.Random(741L^((long)target.spawn.hashCode()<<16)^target.generation):random)) {
                 questService.event("kill",target.definition.id(),target.spawn,target.generation,quests,flags);if(authoredQuests!=null)authoredQuests.event("kill",target.definition.id(),target.spawn,target.generation);
@@ -279,7 +293,7 @@ public final class RpgWorld {
     }
     private static double distance(Position a,Position b) { return Math.hypot(a.x()-b.x(),a.y()-b.y()); }
     private boolean lineClear(Position a,Position b) {
-        return RpgSight.clear(a,b,space);
+        return RpgSight.clear(a,b,sharedEncounter==null?space:new CollisionService.Space(space.width(),space.height(),space.obstacles(),List.of()));
     }
     public void collectLoot() { loot.collect(inventory,flags);message="Recompensas pendentes recolhidas quando houver espaco"; }
     private long ticks;
@@ -345,9 +359,9 @@ public final class RpgWorld {
             stamina=Math.min(1000,stamina+5);
         }
         ticks++;
-        enemies.respawn(ticks,region);
+        if(sharedEncounter==null)enemies.respawn(ticks,region);
         questService.refresh(quests,flags,inventory,region);if(authoredQuests!=null)authoredQuests.refresh(inventory,region);
-        enemies.update(region,ticks,body.getPosition(),hp>0,movement,space,n->receiveDamage(Math.max(1,n-defense())),p->lineClear(body.getPosition(),p),bossUnlocked());
+        if(sharedEncounter==null)enemies.update(region,ticks,body.getPosition(),hp>0,movement,space,n->receiveDamage(Math.max(1,n-defense())),p->lineClear(body.getPosition(),p),bossUnlocked());
     }
     public View snapshot() { return new View(body.getPosition().x(), body.getPosition().y(), ticks, identity,save(),attackPower(),defense(),message,maxHp(),level(),enemies.views(region,ticks),npcs.views(region),activeNpc,dialogue(),questService.views(quests,flags),portals.views(region),objects.views(region,ticks,flags),List.copyOf(events)); }
 }
