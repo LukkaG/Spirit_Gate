@@ -1,0 +1,10 @@
+# Corujão VI — pendências reais
+
+1. **Radmin físico: MANUAL PENDENTE.** Não houve dois computadores/operadores em VPN. Os testes TCP locais, processos separados, janelas e pacotes não substituem essa prova. Usar TASK-184-RADMIN-ROTEIRO.md e CORUJAO-VI-HOMOLOGACAO.md, registrando logs A/B e hashes dos pacotes pareados.
+2. **Atualizador PowerShell: ABORTADO AMBIENTAL.** A TASK-200 voltou a invocar o teste sem bypass; política vigente recusou .ps1, exit 1, zero checks. Mesmo impedimento da baseline 182. Política preservada; não houve nova falha funcional medida nem alegação de 32 checks aprovados. Evidência: checkpoint 200/updater.environment.json e updater-environment.log. Execução futura requer ambiente autorizado pelo operador.
+3. **Maven offline/cache e análises opcionais.** Baseline registrou cache C:\.m2 inacessível; compilação/regressão usaram o runner existente e dependências já disponíveis, sem download. SpotBugs/Dependency-Check continuam proposta opt-in não instalada; nenhuma auditoria de vulnerabilidades desses produtos foi alegada.
+4. **Revisão humana da TASK-181.** Inventário/permissões e propostas do agente mantêm as ressalvas originais. Nenhum novo MCP, escopo, token, instalação ou alteração global foi autorizado por inferência.
+5. **Persistência: somente laboratório.** ADR-193 aprovado para 194–196 e comprovado nos cenários sintéticos documentados. Launcher, contas públicas, TLS, sessões distribuídas e saves pessoais continuam fora da implementação. Aprovação de ADR não foi confundida com homologação antecipada. Qualquer integração exige decisão própria.
+6. **Durabilidade física e performance.** Interrupções de processos foram testadas; falta de energia/host comprometido não. Soak de 300,09s, amostras móveis e heap sem normalização de GC não provam ausência de vazamento ou ganho de performance. Assets temporários existentes continuam sem aprovação artística.
+
+Falhas iniciais e tentativas de fixture/allowlist foram preservadas, com correções e limites em cada relatório. Nenhum teste foi desabilitado para obter verde. Não há autorização para commit, push, release, feed, publicação ou TASK-201.

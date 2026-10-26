@@ -40,7 +40,7 @@ public final class RpgLauncher {
         SpiritTheme.reducedMotion=!preferences[0].environment();AmbientFeedback ambientFeedback=new AmbientFeedback(audio::play);ambientFeedback.update(runtime.snapshot());
         DebugSnapshot template = DebugWorld.demo().snapshot();
         DebugPanel panel = new DebugPanel(() -> adapt(runtime.snapshot(), template));
-        RpgPlayerSprites playerSprites=RpgPlayerSprites.configured();
+        RpgPlayerSprites playerSprites=RpgPlayerSprites.configured(world.snapshot().identity().race());
         if(playerSprites!=null) { playerSprites.update(runtime.snapshot());panel.setActorRenderer(playerSprites); }
         RpgCombatFeedback feedback=new RpgCombatFeedback();feedback.update(runtime.snapshot());RpgBossOverlay bossOverlay=new RpgBossOverlay();bossOverlay.update(runtime.snapshot());panel.setWorldOverlay(g->{bossOverlay.draw(g);feedback.draw(g);});
         panel.setLocalMap(RpgMaps.region("village"),false);

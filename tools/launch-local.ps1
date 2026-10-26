@@ -26,11 +26,12 @@ try {
             $entry = 'com.projetok.prototype.rpg.RpgLauncher'
             $clientArguments = @()
             if ($Mode -eq 'Sprites' -and -not $Geometric) {
-                $scale = if ($env:SPIRIT_GATE_SPRITE_SCALE) { $env:SPIRIT_GATE_SPRITE_SCALE } else { '0.5' }
-                $frame = if ($env:SPIRIT_GATE_FRAME_MS) { $env:SPIRIT_GATE_FRAME_MS } else { '250' }
+                $scale = if ($env:SPIRIT_GATE_SPRITE_SCALE) { $env:SPIRIT_GATE_SPRITE_SCALE } else { '1.0' }
+                $frame = if ($env:SPIRIT_GATE_FRAME_MS) { $env:SPIRIT_GATE_FRAME_MS } else { '125' }
                 $javaArguments += @("-Dspiritgate.rpg.spriteScale=$scale", "-Dspiritgate.rpg.spriteFrameMillis=$frame")
                 $clientArguments = @('--experimental-player-sprites')
             }
+            if ($Geometric) { $javaArguments += '-Dspiritgate.rpg.experimentalSprites=false' }
         }
     }
     Write-Host '[Spirit Gate] Abrindo cliente...'

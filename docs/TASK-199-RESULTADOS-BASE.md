@@ -1,0 +1,9 @@
+# TASK-199 — prova integrada do jogo e publicação
+
+VALIDADA COM RESSALVAS locais. Probe novo compilado contra jar/runtime da 198, com correspondência integral de hashes dos fontes atuais. Projeto descartável novo, duas janelas reais RpgNetworkClientLauncher, Game Server RpgSessionWorld/LocalSimulationServer real, WorldStudio e Preview separado. Cinco capturas por composição printAll das janelas reais; publicada inspecionada visualmente, sem inferir aprovação artística/humana.
+
+PASS: edição e gravação DRAFT não ativam; mudança de geometria/perfil 12/26 e asset preinstalado aplicada somente após publish; hash igual nos dois clientes/servidor; movimento, hit PvE e portal para village após publicação; rollback confirmado em ponteiro e ambos os clientes; fechamento real do segundo cliente, ingresso de nova conexão/janela e retomada do mesmo hash confirmado. Portas reais: Game Server 53807 e Preview 53810.
+
+Hash base/final/reconexão: f28219a01beec50ae8e37e31935eb658da93822a3d3c15e05be95dd0545aa246. Candidata confirmada: d86f77ff50676ac8dfc788aa68c2aacc36f67c7f7b2f0cd2adbeebe0286051a3. Descritor 2108 bytes; PNG transferido 0; payload aos clientes 4216 e wire de conteúdo 5032 bytes. Publicação 257,664ms; rollback 552,432ms. Paint p95 das janelas 7,526/11,273ms; tick p95 5,917ms. São amostras desta execução e janelas móveis existentes, sem comparação controlada ou alegação de ganho. Heap sem GC controlado.
+
+Falha AFTER_ACTIVATION com recuperação e tentativa administrativa do convidado já exercitadas nos três processos dos pacotes da 198; falhas de rede/barreiras na regressão completa e testes 183/185/186. Nesta prova, desconexão/reconexão ocorre após rollback, não durante barreira; recoveryMs=0 significa ausência de recuperação por falha neste ensaio bem-sucedido. Radmin físico segue pendente. Não foram usados mocks como servidor/renderizador, saves ou projeto pessoal. Logs, hashes, métricas JSON e capturas reais no checkpoint.

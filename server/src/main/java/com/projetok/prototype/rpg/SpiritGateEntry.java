@@ -17,18 +17,25 @@ public final class SpiritGateEntry extends JPanel {
     private final BufferedImage background;
     SpiritGateEntry(BufferedImage background,Runnable onEnter){
         super(new GridBagLayout());this.background=background;setPreferredSize(new Dimension(1280,720));setBackground(new Color(5,12,24));
-        JPanel content=new JPanel();content.setLayout(new BoxLayout(content,BoxLayout.Y_AXIS));content.setOpaque(false);content.setPreferredSize(new Dimension(360,430));
-        JComponent emblem=new JComponent(){@Override protected void paintComponent(Graphics original){Graphics2D g=(Graphics2D)original.create();try{g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);g.setColor(new Color(110,230,245));g.setStroke(new BasicStroke(2));int cx=getWidth()/2;g.drawPolygon(new int[]{cx,cx+19,cx,cx-19},new int[]{4,29,54,29},4);g.drawArc(cx-11,15,22,29,0,180);g.drawLine(cx-11,29,cx-11,40);g.drawLine(cx+11,29,cx+11,40);g.drawLine(cx-14,40,cx+14,40);}finally{g.dispose();}}};emblem.setPreferredSize(new Dimension(64,60));emblem.setMaximumSize(new Dimension(400,60));emblem.setAlignmentX(.5f);content.add(emblem);
+        JPanel content=new JPanel();content.setLayout(new BoxLayout(content,BoxLayout.Y_AXIS));content.setOpaque(false);content.setMinimumSize(new Dimension(360,0));content.setPreferredSize(new Dimension(360,480));
+        JComponent emblem=new JComponent(){@Override protected void paintComponent(Graphics original){Graphics2D g=(Graphics2D)original.create();try{g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);g.setColor(new Color(110,230,245));g.setStroke(new BasicStroke(2));int cx=getWidth()/2;g.drawPolygon(new int[]{cx,cx+19,cx,cx-19},new int[]{4,29,54,29},4);g.drawArc(cx-11,15,22,29,0,180);g.drawLine(cx-11,29,cx-11,40);g.drawLine(cx+11,29,cx+11,40);g.drawLine(cx-14,40,cx+14,40);}finally{g.dispose();}}};emblem.setPreferredSize(new Dimension(64,40));emblem.setMaximumSize(new Dimension(400,40));emblem.setAlignmentX(.5f);content.add(emblem);
         JLabel title=new JLabel("SPIRIT GATE",SwingConstants.CENTER);title.setFont(new Font("Serif",Font.BOLD,40));title.setForeground(new Color(225,248,255));title.setAlignmentX(.5f);content.add(title);
-        JLabel subtitle=new JLabel("O LIMIAR ENTRE DOIS MUNDOS");subtitle.setFont(new Font("SansSerif",Font.PLAIN,10));subtitle.setForeground(new Color(137,207,222));subtitle.setAlignmentX(.5f);content.add(subtitle);content.add(Box.createVerticalStrut(26));
+        JLabel subtitle=new JLabel("O LIMIAR ENTRE DOIS MUNDOS");subtitle.setFont(new Font("SansSerif",Font.PLAIN,10));subtitle.setForeground(new Color(137,207,222));subtitle.setAlignmentX(.5f);content.add(subtitle);content.add(Box.createVerticalStrut(8));
         JPanel card=new JPanel(new GridBagLayout()){@Override protected void paintComponent(Graphics original){Graphics2D g=(Graphics2D)original.create();try{g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);g.setPaint(new GradientPaint(0,0,new Color(8,26,44,235),0,getHeight(),new Color(3,12,25,215)));g.fillRoundRect(0,0,getWidth()-1,getHeight()-1,12,12);g.setColor(new Color(65,157,185));g.drawRoundRect(0,0,getWidth()-1,getHeight()-1,12,12);g.setColor(new Color(112,225,244));int cx=getWidth()/2;g.drawLine(cx-46,0,cx-8,0);g.drawLine(cx+8,0,cx+46,0);g.drawPolygon(new int[]{cx,cx+4,cx,cx-4},new int[]{0,4,8,4},4);}finally{g.dispose();}}};
-        card.setOpaque(false);card.setBorder(BorderFactory.createEmptyBorder(20,22,18,22));
-        GridBagConstraints c=new GridBagConstraints();c.gridx=0;c.weightx=1;c.fill=GridBagConstraints.HORIZONTAL;c.insets=new Insets(5,0,5,0);
+        card.setOpaque(false);card.setMinimumSize(new Dimension(360,0));card.setBorder(BorderFactory.createEmptyBorder(20,22,18,22));
+        GridBagConstraints c=new GridBagConstraints();c.gridx=0;c.weightx=1;c.fill=GridBagConstraints.HORIZONTAL;c.insets=new Insets(3,0,3,0);
         JLabel welcome=label("ATRAVESSE O PORTAL");welcome.setHorizontalAlignment(SwingConstants.CENTER);welcome.setFont(new Font("Serif",Font.BOLD,16));addRow(card,c,welcome);
         addRow(card,c,label("Nome do viajante"));styleField(username);username.setToolTipText("Identificador p\u00fablico local; n\u00e3o \u00e9 uma conta online.");addRow(card,c,username);
         username.getAccessibleContext().setAccessibleName("Identificador do perfil local");remember.setMnemonic('L');enter.setMnemonic('E');
         remember.setOpaque(false);remember.setForeground(new Color(187,220,233));remember.setFont(new Font("SansSerif",Font.PLAIN,12));addRow(card,c,remember);
         enter.addActionListener(e->onEnter.run());addRow(card,c,enter);
+        addRow(card,c,label("JOGAR OFFLINE - personagens locais"));
+        boolean guest=Boolean.getBoolean("spiritgate.guest");
+        if(guest){enter.setEnabled(false);username.setEnabled(false);remember.setEnabled(false);}
+        JButton host=new CharacterSelection.SpiritButton("Hospedar via Radmin VPN",false);
+        host.setEnabled(!guest);host.addActionListener(e->RadminSessionPanel.open(true));addRow(card,c,host);
+        JButton join=new CharacterSelection.SpiritButton("Entrar em partida",false);
+        join.addActionListener(e->RadminSessionPanel.open(false));addRow(card,c,join);
         status.setForeground(new Color(160,201,219));status.setFont(new Font("SansSerif",Font.PLAIN,11));addRow(card,c,status);card.setMaximumSize(new Dimension(360,card.getPreferredSize().height));content.add(card);add(content);
     }
     static JLabel label(String text){JLabel label=new JLabel(text);label.setForeground(new Color(200,229,239));label.setFont(new Font("SansSerif",Font.PLAIN,12));return label;}
@@ -41,7 +48,7 @@ public final class SpiritGateEntry extends JPanel {
     static BufferedImage loadArt() throws java.io.IOException{SpiritFlameButton.loadArtwork();try(var in=SpiritGateEntry.class.getResourceAsStream(ART)){if(in==null)throw new java.io.IOException("Arte de entrada ausente: "+ART);return ImageIO.read(in);}}
     static void open(){
         new SwingWorker<BufferedImage,Void>(){protected BufferedImage doInBackground()throws Exception{return loadArt();}protected void done(){
-            BufferedImage image;try{image=get();}catch(Exception error){JOptionPane.showMessageDialog(null,"Nao foi possivel carregar a arte. Abrindo personagens locais.");RpgMenu.open();return;}
+            BufferedImage image;try{image=get();}catch(Exception error){image=null;}
             JFrame frame=new JFrame("Spirit Gate | Portal de entrada");final SpiritGateEntry[] view=new SpiritGateEntry[1];Path settings=RpgMenu.dataHome().resolve("saves/entry.properties");
             view[0]=new SpiritGateEntry(image,()->{
                 String name=view[0].username.getText().strip();if(name.length()>24){view[0].status.setText("Use ate 24 caracteres no nome.");return;}

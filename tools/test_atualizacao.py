@@ -68,3 +68,43 @@ class UpdateDistributionTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 prepare(self.package, target, version, url)
             self.assertFalse(target.exists())
+
+    def test_radmin_payload_is_normalized_for_old_updaters(self):
+        with zipfile.ZipFile(self.package, "w") as archive:
+            for name, content in {
+                "runtime/bin/java.exe": b"runtime",
+                "app/spiritgate.jar": b"radmin-game",
+                "app/SpiritGate.cfg": b"app.classpath=$APPDIR\\spiritgate.jar\n",
+                "SpiritGate.cmd": b'java -cp "app\\spiritgate.jar" Launcher',
+                "manifest-sha256.json": b"old paths and hashes",
+            }.items():
+                archive.writestr("SpiritGateCorujaoV-Anfitriao/" + name, content)
+        target = self.root / "modern"
+        prepare(self.package, target, "0.177.0", role="convidado")
+        manifest = json.loads((target / "canal/latest.json").read_text())
+        release = target / "canal" / manifest["basePath"]
+        self.assertEqual(b"radmin-game", (release / "app/spirit-gate-rpg.jar").read_bytes())
+        self.assertFalse((release / "app/spiritgate.jar").exists())
+        self.assertFalse((release / "manifest-sha256.json").exists())
+        self.assertIn("spirit-gate-rpg.jar", (release / "app/SpiritGate.cfg").read_text())
+        self.assertIn("spirit-gate-rpg.jar", (release / "SpiritGate.cmd").read_text())
+        self.assertEqual("convidado", json.loads((target / "SpiritGate-Atualizavel/atualizacoes.json").read_text())["role"])
+        for item in manifest["files"]:
+            content = (release / item["path"]).read_bytes()
+            self.assertEqual(hashlib.sha256(content).hexdigest(), item["sha256"])
+
+    def test_both_roles_share_exactly_the_same_manifest(self):
+        self.fixture()
+        for role in ("anfitriao", "convidado"):
+            prepare(self.package, self.root / role, "1", role=role)
+        self.assertEqual((self.root / "anfitriao/canal/latest.json").read_bytes(),
+                         (self.root / "convidado/canal/latest.json").read_bytes())
+
+    def test_guest_only_payload_and_invalid_role_cannot_replace_common_channel(self):
+        with zipfile.ZipFile(self.package, "w") as archive:
+            archive.writestr("SpiritGateCorujaoV-Convidado/app/spiritgate.jar", b"guest")
+        with self.assertRaises(ValueError):
+            prepare(self.package, self.root / "guest-source", "1")
+        with self.assertRaises(ValueError):
+            prepare(self.package, self.root / "bad-role", "1", role="invalid")
+        self.assertFalse((self.root / "bad-role").exists())

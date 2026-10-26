@@ -17,16 +17,30 @@ public final class RpgPlayerSprites implements DebugPanel.ActorRenderer {
     public static final String SCALE="spiritgate.rpg.spriteScale";
     public static final int DEFAULT_FRAME_MILLIS=250;
     public static final double DEFAULT_SCALE=0.5;
-    private record Frame(BufferedImage image,int pivotX,int pivotY) { }
+    private record Frame(BufferedImage image,int pivotX,int pivotY,Rectangle alpha) { }
+    private static Rectangle alphaBounds(BufferedImage image){int l=image.getWidth(),t=image.getHeight(),r=0,b=0;for(int y=0;y<image.getHeight();y++)for(int x=0;x<image.getWidth();x++)if((image.getRGB(x,y)>>>24)!=0){l=Math.min(l,x);t=Math.min(t,y);r=Math.max(r,x+1);b=Math.max(b,y+1);}return new Rectangle(l,t,r-l,b-t);}
+    public java.awt.geom.Rectangle2D visualBounds(com.projetok.prototype.DirectionalAnimation.Direction direction,int walkFrame,boolean walking,float x,float y){var f=frames.get(direction+"."+(walking?walkFrame+1:0));return new java.awt.geom.Rectangle2D.Double(Math.round(x-f.pivotX()*scale)+f.alpha().x*scale,Math.round(y-f.pivotY()*scale)+f.alpha().y*scale,f.alpha().width*scale,f.alpha().height*scale);}
     private final Map<String,Frame> frames;
     private final RpgPlayerAnimation animation;
     private final double scale;
+    private final int walkFrames;
     private final RpgVisualState visual=new RpgVisualState();
     private boolean spirit;
     private RpgPlayerSprites(Map<String,Frame> frames,int frameMillis,double scale) {
-        this.frames=Map.copyOf(frames);animation=new RpgPlayerAnimation(frameMillis);this.scale=scale;
+        this.frames=Map.copyOf(frames);walkFrames=frames.size()/4-1;animation=new RpgPlayerAnimation(frameMillis,walkFrames);this.scale=scale;
     }
     public static Path defaultFolder() { return RpgMenu.home().resolve("assets/dev/player-base"); }
+    public static Path reaperFolder() { return RpgMenu.home().resolve("assets/dev/reaper"); }
+    /** Use the Reaper sprites by default for the offline Reaper character. */
+    public static RpgPlayerSprites configured(String race) {
+        if(!"reaper".equals(race)) return configured();
+        if(!Boolean.parseBoolean(System.getProperty(ENABLED,"true"))) return null;
+        try { return loadOptional(reaperFolder(),Integer.parseInt(System.getProperty(FRAME_MILLIS,"125")),
+                Double.parseDouble(System.getProperty(SCALE,"1.0"))); }
+        catch(IllegalArgumentException error) {
+            System.err.println("[Spirit Gate] Configuracao Reaper invalida: "+error.getMessage());return null;
+        }
+    }
     public static RpgPlayerSprites loadOptional(Path folder,int frameMillis) {
         return loadOptional(folder,frameMillis,DEFAULT_SCALE);
     }
@@ -51,13 +65,16 @@ public final class RpgPlayerSprites implements DebugPanel.ActorRenderer {
     public static RpgPlayerSprites load(Path folder,int frameMillis,double scale) throws IOException {
         if(!Double.isFinite(scale)||scale<0.1||scale>1.0) throw new IllegalArgumentException("spriteScale: 0.1..1.0");
         Properties metadata=new Properties();
-        try(var input=RpgPlayerSprites.class.getResourceAsStream("/rpg/experimental-player.properties")) {
+        boolean reaper=Files.isRegularFile(folder.resolve("Reaper_IDLE_Frente.png"));
+        try(var input=RpgPlayerSprites.class.getResourceAsStream(reaper?"/rpg/reaper-player.properties":"/rpg/experimental-player.properties")) {
             if(input==null) throw new IOException("Metadados experimentais ausentes");metadata.load(input);
         }
         Set<String> actual=new HashSet<>();
         try(var files=Files.list(folder)) { files.forEach(p->actual.add(p.getFileName().toString())); }
         Map<String,Frame> frames=new HashMap<>();
-        for(var direction:com.projetok.prototype.DirectionalAnimation.Direction.values()) for(int index=0;index<5;index++) {
+        int count=Integer.parseInt(metadata.getProperty("walkFrames","4"));
+        if(count<1||count>32) throw new IOException("Quantidade de frames invalida");
+        for(var direction:com.projetok.prototype.DirectionalAnimation.Direction.values()) for(int index=0;index<=count;index++) {
             String key=direction+"."+index;
             String[] fields=metadata.getProperty(key,"").split(",");
             if(fields.length!=6) throw new IOException("Metadados incompletos: "+key);
@@ -75,14 +92,15 @@ public final class RpgPlayerSprites implements DebugPanel.ActorRenderer {
             int width=Integer.parseInt(fields[2]),height=Integer.parseInt(fields[3]);
             if(image==null || image.getWidth()!=width || image.getHeight()!=height || !image.getColorModel().hasAlpha())
                 throw new IOException("Dimensoes/alfa invalidos: "+name);
-            frames.put(key,new Frame(image,Integer.parseInt(fields[4]),Integer.parseInt(fields[5])));
+            frames.put(key,new Frame(image,Integer.parseInt(fields[4]),Integer.parseInt(fields[5]),alphaBounds(image)));
         }
         return new RpgPlayerSprites(frames,frameMillis,scale);
     }
     public double scale() { return scale; }
+    public int walkFrames() { return walkFrames; }
     /** Desenha frame residente para apresentação remota, sem alterar estado lógico ou gerar cópias. */
     public boolean drawFrame(Graphics2D original,com.projetok.prototype.DirectionalAnimation.Direction direction,int walkFrame,boolean walking,float x,float y){
-        if(walkFrame<0||walkFrame>3)throw new IllegalArgumentException("Frame Walk inválido");Frame frame=frames.get(direction+"."+(walking?walkFrame+1:0));if(frame==null)return false;
+        if(walkFrame<0||walkFrame>=walkFrames)throw new IllegalArgumentException("Frame Walk inválido");Frame frame=frames.get(direction+"."+(walking?walkFrame+1:0));if(frame==null)return false;
         var g=(Graphics2D)original.create();try{g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);g.translate(Math.round(x-frame.pivotX()*scale),Math.round(y-frame.pivotY()*scale));g.scale(scale,scale);g.drawImage(frame.image(),0,0,null);return true;}finally{g.dispose();}
     }
     public RpgPlayerAnimation.Pose update(com.projetok.rpg.RpgWorld.View view) { spirit=view.identity().race().equals("spirit");var pose=animation.update(view);visual.update(view,pose.walking());return pose; }

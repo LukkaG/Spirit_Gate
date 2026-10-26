@@ -70,5 +70,20 @@ try {
     Assert-True ($LASTEXITCODE -ne 0) 'Concurrent updater rejected'
 } finally {$lock.Dispose()}
 Assert-True ((Hash-File $save) -eq $saveHash) 'All failure scenarios preserve saves'
+$legacyLaunch=Get-GameLaunch $root $current.folder
+Assert-True ($legacyLaunch.role -eq 'anfitriao' -and $legacyLaunch.arguments -contains 'com.projetok.prototype.rpg.RpgLauncher') 'Legacy install opens the shared launcher by default'
+$configPath=Join-Path $root 'atualizacoes.json'
+[IO.File]::WriteAllText($configPath,'{"feedUrl":"","role":"convidado"}')
+$guestLaunch=Get-GameLaunch $root $current.folder
+Assert-True ($guestLaunch.arguments -contains '-Dspiritgate.guest=true') 'Guest role is passed explicitly to Java'
+Assert-True ($guestLaunch.arguments -contains "-Dspiritgate.rpg.dataDir=$(Join-Path $root 'data')") 'Persistent data stays outside the active version'
+Assert-True ($guestLaunch.arguments -contains (Join-Path $current.folder 'app/spirit-gate-rpg.jar')) 'Historical JAR path stays compatible'
+Make-Feed 'v4' 'role-preserved'
+$current=Update-Installed $root $feed $true $current
+Assert-True ((Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json).role -eq 'convidado') 'Game updates preserve installation role'
+[IO.File]::WriteAllText($configPath,'{"feedUrl":"","role":"invalid"}')
+Must-Reject {Get-GameLaunch $root $current.folder} 'Invalid installation role rejected'
+[IO.File]::WriteAllText($configPath,'{"feedUrl":"","role":"anfitriao"}')
+Assert-True ((Get-GameLaunch $root $current.folder).arguments -notcontains '-Dspiritgate.guest=true') 'Host retains offline and hosting options'
 @{passed=$checks.Count;checks=@($checks)} | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $EvidenceDir 'results.json') -Encoding UTF8
 Write-Host "PASS: $($checks.Count) checks"

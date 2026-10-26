@@ -204,6 +204,11 @@ public final class CollisionService {
     }
 
     /** Valida o segmento inteiro da assistência, incluindo terceiros corpos e cantos arredondados. */
+    public boolean canTraverseSegment(GameEntity entity,Position start,Position end,float radius,Space space){
+        Objects.requireNonNull(start);Objects.requireNonNull(end);Objects.requireNonNull(space);
+        MovementValidation.finite(start.x(),start.y(),end.x(),end.y());MovementValidation.positive(radius);
+        return isFree(entity,start.x(),start.y(),radius,space)&&pathIsFree(entity,start,end,radius,space);
+    }
     private boolean pathIsFree(GameEntity entity, Position start, Position end, float radius, Space space) {
         if (!isFree(entity, end.x(), end.y(), radius, space)) return false;
         for (Obstacle o : space.obstacles()) {

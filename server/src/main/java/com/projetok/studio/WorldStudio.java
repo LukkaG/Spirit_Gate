@@ -23,6 +23,7 @@ public final class WorldStudio extends JFrame {
     LayerTools layerTools;FileTools fileTools;
     AssetLibraryTools libraryTools;
     CollisionTools collisionTools;
+    StudioLiveTools liveTools;
     boolean snap=true;
     final Map<String,WorldDocument> knownMaps=new LinkedHashMap<>();
     final JPanel inspector=new JPanel(new BorderLayout());
@@ -71,6 +72,7 @@ public final class WorldStudio extends JFrame {
         new FinalTools(this);
         new MapTools(this);
         new StudioHelp(this);
+        liveTools=new StudioLiveTools(this);
         action("Missões","Abrir Quest Builder",()->new QuestBuilder(project).setVisible(true));
         action("Personagem","Aparência temporária (perfil sintético)",()->AppearancePreview.launch(project));
         search.setToolTipText("Buscar recursos pelo caminho ou nome");
@@ -107,5 +109,6 @@ public final class WorldStudio extends JFrame {
     }.execute();}
     void error(Exception error){status.setText("Operacao recusada: "+(error.getCause()==null?error.getMessage():error.getCause().getMessage()));}
     /** Inicializa a ferramenta sem iniciar banco, servidor ou personagem. */
+    public void authorizePublication(com.projetok.multiplayer.RevisionCoordinator target,LivePublishing store){if(Boolean.getBoolean("spiritgate.guest"))throw new IllegalStateException("Convidado nao publica");liveTools.authorize(target,store);}
     public static void main(String[] args){String exe=System.getProperty("jpackage.app-path");Path root=args.length==2&&args[0].equals("--project")?Path.of(args[1]):exe==null?Path.of(""):Path.of(exe).toAbsolutePath().getParent();SwingUtilities.invokeLater(()->{var studio=new WorldStudio(root);studio.setVisible(true);studio.rescan();});}
 }

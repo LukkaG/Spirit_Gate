@@ -121,6 +121,22 @@ function Update-Installed([string]$Root,[string]$Feed,[bool]$Local,$Current) {
         if(Test-Path -LiteralPath $resolved){Remove-Item -LiteralPath $resolved -Recurse -Force}
     }
 }
+function Get-GameLaunch([string]$Root,[string]$VersionFolder) {
+    $role='anfitriao'
+    $configPath=Join-Path $Root 'atualizacoes.json'
+    if(Test-Path -LiteralPath $configPath){
+        $config=Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json
+        if($config.PSObject.Properties.Name -contains 'role'){$role=[string]$config.role}
+    }
+    if($role -notin @('anfitriao','convidado')){throw 'Papel da instalacao invalido'}
+    $app=Join-Path $VersionFolder 'SpiritGate.exe'
+    if(!(Test-Path -LiteralPath $app)){$app=Join-Path $VersionFolder 'SpiritGateRPG.exe'}
+    $data=Join-Path $Root 'data'
+    $arguments=@('-Dspiritgate.rpg.experimentalSprites=true',"-Dspiritgate.rpg.dataDir=$data","-Djpackage.app-path=$app")
+    if($role -eq 'convidado'){$arguments+='-Dspiritgate.guest=true'}
+    $arguments+=@('-cp',(Join-Path $VersionFolder 'app/spirit-gate-rpg.jar'),'com.projetok.prototype.rpg.RpgLauncher')
+    return @{java=(Join-Path $VersionFolder 'runtime/bin/java.exe');arguments=$arguments;data=$data;role=$role}
+}
 if($FunctionsOnly){return}
 $root=[IO.Path]::GetFullPath($InstallDir)
 New-Item -ItemType Directory -Path $root -Force | Out-Null
@@ -143,11 +159,11 @@ try {
     }
     if(!$current){throw 'Nenhuma versao valida instalada. Extraia novamente o pacote inicial.'}
     if(!$NoLaunch){
-        $java=Join-Path $current.folder 'runtime/bin/java.exe'
-        $app=Join-Path $current.folder 'SpiritGateRPG.exe'
-        $data=Join-Path $root 'data';New-Item -ItemType Directory -Path $data -Force | Out-Null
+        $launch=Get-GameLaunch $root $current.folder
+        New-Item -ItemType Directory -Path $launch.data -Force | Out-Null
         Write-Host "Abrindo Spirit Gate $($current.manifest.version)..."
-        & $java '-Dspiritgate.rpg.experimentalSprites=true' "-Dspiritgate.rpg.dataDir=$data" "-Djpackage.app-path=$app" '-cp' (Join-Path $current.folder 'app/spirit-gate-rpg.jar') 'com.projetok.prototype.rpg.RpgLauncher'
+        $arguments=$launch.arguments
+        & $launch.java @arguments
         if($LASTEXITCODE -ne 0){throw 'O jogo encerrou com erro; arquivos e saves foram preservados'}
     }
 } finally {if($lock){$lock.Dispose()}}

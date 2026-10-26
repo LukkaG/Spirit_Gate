@@ -1,0 +1,15 @@
+# TASK-189 — diagnóstico local opt-in
+
+Ative `-Dspiritgate.network.debug=true` apenas no processo de laboratório desejado. O servidor emite eventos JSON `kind=network` a cada 300 ticks de gameplay; gameplay congelado não é relógio de parede e esse intervalo não deve ser tratado como amostragem periódica garantida durante uma barreira. Sem opt-in, não há emissão periódica nova. O HUD F2 e o resumo textual anterior continuam disponíveis.
+
+Os eventos contêm tick/paint/RTT e intervalo de snapshots em milissegundos, filas, bytes/frames e contadores. `null` significa ausência de amostras, sem NaN/Infinity. O servidor amostra filas agregadas de até dois peers: saída <=2, comandos <=64, controles <=8. No cliente, saída é sua fila própria de até 32 mensagens. São observações concorrentes, não um snapshot transacional das filas. `transport_failures` conta falhas de leitura/handshake enquanto a conexão/servidor ainda não estavam encerrados; inclui desconexões, não é contador de ataques autenticados. `rejected_messages` no cliente mede falhas de enqueue.
+
+`RevisionCoordinator.metricsJson()` fornece evento local `kind=publication`, fase e métricas já existentes: payload, bytes enfileirados, preparo, espera dos clientes, ativação, transição e recuperação. Durações desse evento estão em nanossegundos. Não há hash, nome, token, path pessoal ou endpoint de coleta. Bytes enfileirados não equivalem a todo tráfego de rede, nem comprovam recepção sozinhos.
+
+Cada distribuição de duração usa janela circular das últimas 256 amostras; p95 não é percentil de toda a sessão. O índice também permanece entre 0 e 255, evitando crescimento/overflow do contador. Não compare janelas com cargas, fases ou cadências diferentes.
+
+Reprodução de laboratório: o checkpoint TASK-189 registra a compilação nova, os comandos exatos e os logs do teste `Task189DiagnosticsTest`, que usa dois clientes TCP e renderer de mapas real. `specific.command.json` e `jfr-probe.command.json` identificam os classpaths e cwd isolados. Crie outro checkpoint antes de repetir; não use caminhos antigos como destino de escrita.
+
+O JFR coletado durou nove segundos, limitado a 16 MiB. A configuração local `local-safe.jfc` deriva do JDK instalado e desabilita `jdk.InitialEnvironmentVariable`, `jdk.InitialSystemProperty`, `jdk.JVMInformation` e `jdk.SystemProcess`; o resumo confirmou zero eventos desses tipos. Para leitura, use `jfr summary ARQUIVO.jfr` ou JDK Mission Control já disponível, sem instalar ferramentas por conta desta documentação. Não substitua a configuração por `default` para coletar dados do usuário sem revisão.
+
+O microensaio alternou cinco pares de 5.000 frames após warmup de 2.000, para sink nulo, com e sem contadores. Os tempos reais estão nos logs e quantificam apenas esse caminho sintético; não demonstram impacto perceptível no jogo, ganho de desempenho, custo de render remoto ou comportamento Radmin. A coleta JFR perturba a execução e seus tempos não são comparação controlada com a execução sem JFR.

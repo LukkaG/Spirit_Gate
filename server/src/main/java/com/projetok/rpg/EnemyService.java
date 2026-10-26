@@ -55,6 +55,13 @@ public final class EnemyService {
     void respawn(long tick,String region) {
         for(Enemy e:current(region))if(e.hp==0&&e.definition.respawn()>0&&tick>=e.readyTick){e.hp=e.definition.hp();e.generation++;e.setPosition(e.home);e.behavior="PATROL";}
     }
+    /** Multiplayer respawn waits for an unoccupied home rather than overlapping a player. */
+    void respawn(long tick,String region,CollisionService.Space occupied) {
+        for(Enemy e:current(region))if(e.hp==0&&e.definition.respawn()>0&&tick>=e.readyTick
+                &&new CollisionService().isFree(e,e.home.x(),e.home.y(),19,occupied)){
+            e.hp=e.definition.hp();e.generation++;e.setPosition(e.home);e.behavior="PATROL";
+        }
+    }
     void update(String region,long tick,Position player,boolean alive,MovementService movement,CollisionService.Space space,java.util.function.IntConsumer damage,java.util.function.Predicate<Position> visible,boolean bossUnlocked) {
         viewTick=tick;
         for(Enemy e:current(region)) {

@@ -6,6 +6,17 @@ import java.util.*;
 /** Autorização opt-in de um endereço atribuído ao adaptador Radmin, nunca wildcard. */
 public final class RadminAccess {
     private RadminAccess() { }
+    public record Adapter(String name, boolean active, java.util.List<InetAddress> addresses) {
+        @Override public String toString(){return name+(active?" | ativo":" | inativo")+" | "+addresses;}
+    }
+    public static java.util.List<Adapter> inspect() throws SocketException {
+        var found=new ArrayList<Adapter>();
+        for(var nic:Collections.list(NetworkInterface.getNetworkInterfaces())) {
+            String name=nic.getName()+" "+nic.getDisplayName();
+            if(name.toLowerCase(Locale.ROOT).contains("radmin"))found.add(new Adapter(name,nic.isUp(),Collections.list(nic.getInetAddresses()).stream().filter(RadminAccess::address).toList()));
+        }
+        return java.util.List.copyOf(found);
+    }
     public static boolean address(InetAddress address){return address instanceof Inet4Address&&(address.getAddress()[0]&255)==26;}
     static boolean adapter(String name,boolean up,InetAddress address){return up&&name!=null&&name.toLowerCase(Locale.ROOT).contains("radmin")&&address(address);}
     public static InetAddress requireLocal(InetAddress selected){

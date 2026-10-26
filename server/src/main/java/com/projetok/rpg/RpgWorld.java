@@ -8,6 +8,33 @@ import java.util.List;
 
 /** Mundo offline: uma thread proprietaria, geometria compartilhada com a arena. */
 public final class RpgWorld {
+    private float physicalRadius=18;
+    private com.projetok.domain.movement.SessionCollisionProfile sessionProfile;
+    private boolean contentFork;
+    /** Explicit session-only geometry; historical offline/save contract remains 18. */
+    public void useNetworkFootprint(){configureSyntheticCollision(com.projetok.domain.movement.SessionCollisionProfile.DEFAULT);}
+    public void configureSyntheticCollision(com.projetok.domain.movement.SessionCollisionProfile profile){if(!isSynthetic()||ticks!=0||sessionProfile!=null)throw new IllegalStateException("Session geometry only before simulation");java.util.Objects.requireNonNull(profile);var candidate=com.projetok.domain.movement.RpgCollisionProfile.scenery(space,profile);var position=body.getPosition();if(!new CollisionService().isFree(body,position.x(),position.y(),profile.actorRadius(),candidate))throw new IllegalArgumentException("Perfil obstruiria o spawn");sessionProfile=profile;physicalRadius=profile.actorRadius();space=candidate;}
+    public float physicalRadius(){return physicalRadius;}
+    /** Preserve historical protocol coordinate bounds (18..942 / 18..622).
+     * The smaller ground body must not expand the wire format's valid map area. */
+    private CollisionService.Space networkBounds(CollisionService.Space source){
+        return sessionProfile==null?source:com.projetok.domain.movement.RpgCollisionProfile.boundaries(source,physicalRadius);
+    }
+    private CollisionService.Space networkScenery(CollisionService.Space raw){return sessionProfile==null?raw:com.projetok.domain.movement.RpgCollisionProfile.scenery(raw,sessionProfile);}
+    /** Owner-thread content swap candidate. Caller validates all participants before activating.
+     * No disk IO, personal save restore, or mutation of the old world. */
+    public RpgWorld forkSyntheticRevision(RpgSceneSet next,com.projetok.domain.movement.SessionCollisionProfile profile){
+        if(!isSynthetic()||scenes==null||!next.maps().containsKey(region))throw new IllegalStateException("Regiao ocupada removida ou sessao nao sintetica");
+        var copy=new RpgWorld(identity,next);copy.configureSyntheticCollision(profile);copy.region=region;copy.space=copy.networkScenery(next.maps().get(region).space());copy.body.setPosition(body.getPosition());
+        copy.hp=hp;copy.xp=xp;copy.coins=coins;copy.ticks=ticks;copy.domain=domain;copy.stamina=stamina;copy.facingX=facingX;copy.facingY=facingY;
+        copy.inventory.replace(InventoryService.restore(copy.items,20,inventory.snapshot()));copy.equipment.clear();copy.equipment.putAll(equipment);copy.quests.putAll(quests);copy.flags.clear();copy.flags.addAll(flags);
+        copy.abilityReadyTick=abilityReadyTick;copy.evadeUntilTick=evadeUntilTick;copy.attackReadyTick=attackReadyTick;copy.portalReadyTick=portalReadyTick;copy.potionReadyTick=potionReadyTick;
+        copy.eventSequence=eventSequence;copy.events.addAll(events);if(authoredQuests!=null)copy.authoredQuests=authoredQuests.copy();copy.contentFork=true;
+        if(!new CollisionService().isFree(copy.body,copy.body.getPosition().x(),copy.body.getPosition().y(),profile.actorRadius(),copy.space))throw new IllegalArgumentException("Revisao ocuparia um jogador");
+        return copy;
+    }
+    public boolean syntheticPositionFree(List<CollisionService.Body> bodies){if(!isSynthetic())throw new IllegalStateException();var p=body.getPosition();return new CollisionService().isFree(body,p.x(),p.y(),physicalRadius,new CollisionService.Space(space.width(),space.height(),space.obstacles(),bodies));}
+    public void restoreSyntheticSpawn(){if(!isSynthetic()||scenes==null)throw new IllegalStateException();var target=scenes.maps().get(region).spawn();if(!new CollisionService().isFree(body,target.x(),target.y(),physicalRadius,space))throw new IllegalArgumentException("Spawn ocupado");body.setPosition(target);}
     private final CharacterIdentity identity;
     private final java.util.ArrayDeque<RpgCombatEvent> events=new java.util.ArrayDeque<>();
     private long eventSequence;
@@ -36,7 +63,7 @@ public final class RpgWorld {
     public RpgWorld(CharacterIdentity identity,RpgSceneSet scenes,QuestBook book){this(identity,scenes);authoredQuests=new AuthoredQuestSession(book);}
     public boolean isSynthetic(){return scenes!=null||authoredQuests!=null;}
     /** Corpos externos de uma sessão sintética; nunca habilitado em personagem offline comum. */
-    public void setSyntheticBodies(List<CollisionService.Body> bodies){if(!isSynthetic()||bodies.size()>2)throw new IllegalStateException("Corpos de sessão indisponíveis");space=new CollisionService.Space(space.width(),space.height(),space.obstacles(),bodies);}
+    public void setSyntheticBodies(List<CollisionService.Body> bodies){if(!isSynthetic()||bodies.size()>65)throw new IllegalStateException("Corpos de sessão indisponíveis");space=networkBounds(new CollisionService.Space(space.width(),space.height(),space.obstacles(),bodies));}
     /** Checkpoint efêmero de autoria em mapa padrão; não escreve arquivos nem muda schema. */
     public RpgWorld forkSynthetic(){if(authoredQuests==null||scenes!=null)throw new IllegalStateException("Retomada em memória disponível apenas na sessão de quests com mapa padrão");var copy=restore(save());copy.authoredQuests=authoredQuests.copy();return copy;}
     public List<QuestService.View> authoredQuestViews(){return authoredQuests==null?List.of():authoredQuests.views();}
@@ -82,7 +109,7 @@ public final class RpgWorld {
         var direction=movement.direction(position.x()-target.getPosition().x(),position.y()-target.getPosition().y());
         if(direction.x()==0&&direction.y()==0)direction=new Position(-facingX,-facingY);
         float x=target.getPosition().x()+direction.x()*42, y=target.getPosition().y()+direction.y()*42;
-        if(!new CollisionService().isFree(body,x,y,18,space)
+        if(!new CollisionService().isFree(body,x,y,physicalRadius,space)
                 ||!lineClear(position,new Position(x,y))||!safeShunpoPath(position,new Position(x,y))){message="Destino do Shunpo bloqueado";return false;}
         body.setPosition(new Position(x,y));facingX=-direction.x();facingY=-direction.y();
         consumeShunpo();message="Shunpo ofensivo";return true;
@@ -95,7 +122,7 @@ public final class RpgWorld {
         return true;
     }
     /** Valida o corpo inteiro ao longo da aproximação, usando o raio físico já existente. */
-    private boolean safeShunpoPath(Position start,Position end){int samples=Math.max(1,(int)Math.ceil(distance(start,end)/3));var collisions=new CollisionService();for(int i=1;i<=samples;i++)if(!collisions.isFree(body,start.x()+(end.x()-start.x())*i/samples,start.y()+(end.y()-start.y())*i/samples,18,space))return false;return true;}
+    private boolean safeShunpoPath(Position start,Position end){var collisions=new CollisionService();if(sessionProfile!=null)return collisions.canTraverseSegment(body,start,end,physicalRadius,space);int samples=Math.max(1,(int)Math.ceil(distance(start,end)/3));for(int i=1;i<=samples;i++)if(!collisions.isFree(body,start.x()+(end.x()-start.x())*i/samples,start.y()+(end.y()-start.y())*i/samples,physicalRadius,space))return false;return true;}
     private void consumeShunpo() {
         stamina-=SHUNPO_COST*10;abilityReadyTick=ticks+SHUNPO_COOLDOWN;
         flags.removeIf(f->f.startsWith("ability-until:"));flags.add("ability-until:"+abilityReadyTick);
@@ -165,7 +192,8 @@ public final class RpgWorld {
     private SharedRpgEncounter sharedEncounter;
     /** Opt-in exclusivo de personagens sintéticos; o encontro controla IA e recompensas. */
     void attachEncounter(SharedRpgEncounter encounter,EnemyService population) {
-        if(!isSynthetic()||sharedEncounter!=null||ticks!=0)throw new IllegalStateException("Encontro indisponivel");
+        if(!isSynthetic()||sharedEncounter!=null||ticks!=0&&!contentFork)throw new IllegalStateException("Encontro indisponivel");
+        contentFork=false;
         sharedEncounter=encounter;enemies=population;
     }
     void sharedKill(EnemyService.Enemy enemy){
@@ -191,13 +219,13 @@ public final class RpgWorld {
         if(hp==0||transitioning||ticks<portalReadyTick||!portal.region().equals(region)||distance(body.getPosition(),new Position(portal.x(),portal.y()))>65)return false;
         if(portal.destination().equals("ruins")&&!quests.containsKey("sanctuary")){message="Conclua Ecos no bosque e aceite a missao do Santuario com a Ancia";return false;}
         if(!portal.quest().isEmpty()&&!quests.containsKey(portal.quest()))return false;
-        CollisionService.Space destination=scenes==null?space:scenes.maps().get(portal.destination()).space();
-        if(!new CollisionService().isFree(body,portal.arrivalX(),portal.arrivalY(),18,destination))return false;
+        CollisionService.Space destination=scenes==null?space:networkScenery(scenes.maps().get(portal.destination()).space());
+        if(!new CollisionService().isFree(body,portal.arrivalX(),portal.arrivalY(),physicalRadius,destination))return false;
         transitioning=true;
         try{space=destination;region=portal.destination();flags.add("visited:"+region);body.setPosition(new Position(portal.arrivalX(),portal.arrivalY()));closeDialogue();portalReadyTick=ticks+30;if(region.equals("ruins"))flags.add("dungeon-started");questService.refresh(quests,flags,inventory,region);if(authoredQuests!=null)authoredQuests.refresh(inventory,region);message="Chegou a "+content.get("region",region).name();return true;}finally{transitioning=false;}
     }
     private boolean bossUnlocked(){return enemies.current("ruins").stream().filter(e->!e.definition.id().equals("warden")).allMatch(e->e.hp==0);}
-    public boolean returnHome(){if(hp>0)return false;region=scenes==null?"village":scenes.initialRegion();if(scenes!=null)space=scenes.maps().get(region).space();body.setPosition(scenes==null?new Position(140,320):scenes.maps().get(region).spawn());hp=maxHp();stamina=1000;closeDialogue();message="Recuperado em Aurora. Progresso preservado.";return true;}
+    public boolean returnHome(){if(hp>0)return false;region=scenes==null?"village":scenes.initialRegion();if(scenes!=null)space=networkScenery(scenes.maps().get(region).space());body.setPosition(scenes==null?new Position(140,320):scenes.maps().get(region).spawn());hp=maxHp();stamina=1000;closeDialogue();message="Recuperado em Aurora. Progresso preservado.";return true;}
     private String activeNpc="";
     /** Mercadorias oferecidas pelo comerciante local, sem estoque persistente. */
     public static java.util.Set<String> merchantItems(){return java.util.Set.of("potion","sword","robe");}
@@ -258,7 +286,7 @@ public final class RpgWorld {
     public boolean castSecondaryAbility() {
         if(!shunpoReady())return false;
         var position=body.getPosition();
-        movement.moveContinuous(body,-facingX*70,-facingY*70,18,space);
+        movement.moveContinuous(body,-facingX*70,-facingY*70,physicalRadius,space);
         if(distance(position,body.getPosition())<1){message="Esquiva bloqueada";return false;}
         consumeShunpo();evadeUntilTick=ticks+6;
         flags.removeIf(f->f.startsWith("evade-until:"));flags.add("evade-until:"+evadeUntilTick);
@@ -293,6 +321,7 @@ public final class RpgWorld {
     }
     private static double distance(Position a,Position b) { return Math.hypot(a.x()-b.x(),a.y()-b.y()); }
     private boolean lineClear(Position a,Position b) {
+        if(sessionProfile!=null){var raw=scenes==null?com.projetok.domain.movement.RpgSessionGeometry.raw().obstacles():scenes.maps().get(region).space().obstacles();return RpgSight.clear(a,b,new CollisionService.Space(space.width(),space.height(),raw,sharedEncounter==null?space.bodies():List.of()));}
         return RpgSight.clear(a,b,sharedEncounter==null?space:new CollisionService.Space(space.width(),space.height(),space.obstacles(),List.of()));
     }
     public void collectLoot() { loot.collect(inventory,flags);message="Recompensas pendentes recolhidas quando houver espaco"; }
@@ -304,7 +333,7 @@ public final class RpgWorld {
     }
     public static RpgWorld restore(RpgSave state) {
         RpgWorld world=new RpgWorld(state.identity());
-        if(!new CollisionService().isFree(world.body,state.x(),state.y(),18,world.space)) throw new IllegalArgumentException("Posicao de save obstruida");
+        if(!new CollisionService().isFree(world.body,state.x(),state.y(),world.physicalRadius,world.space)) throw new IllegalArgumentException("Posicao de save obstruida");
         world.body.setPosition(new Position(state.x(),state.y())); world.ticks=state.ticks();
         world.inventory.replace(InventoryService.restore(world.items,20,state.inventory()));
         world.hp=state.hp(); world.xp=state.xp(); world.coins=state.coins(); world.region=state.region();
@@ -354,7 +383,8 @@ public final class RpgWorld {
     public void tick(float x, float y) {
         Position direction=movement.direction(x,y);
         if(hp>0) {
-            movement.moveDirected(body,direction,215,1f/30,18,space);
+            if(sessionProfile==null)movement.moveDirected(body,direction,215,1f/30,physicalRadius,space);
+            else movement.moveContinuous(body,direction.x()*215/30,direction.y()*215/30,physicalRadius,space);
             if(x!=0||y!=0){facingX=direction.x();facingY=direction.y();}
             stamina=Math.min(1000,stamina+5);
         }

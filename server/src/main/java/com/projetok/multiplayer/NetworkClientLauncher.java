@@ -38,8 +38,11 @@ public final class NetworkClientLauncher {
         return adapt(state,local,template,"Coop experimental - servidor autoritativo",100);
     }
     static DebugSnapshot adapt(Protocol.State state,int local,DebugSnapshot template,String description,float maxVigor){
-        var actors=state.actors().stream().map(a->new DebugSnapshot.ActorView(a.id(),a.name(),a.x(),a.y(),a.boss()?24:18,a.hp(),a.maxHp(),a.id()==local,a.hp()>0)).toList();var self=state.actors().stream().filter(a->a.id()==local).findFirst();int hp=self.map(Protocol.Actor::hp).orElse(0),max=self.map(Protocol.Actor::maxHp).orElse(1);
+        return adapt(state,local,template,description,maxVigor,null,"forest");
+    }
+    static DebugSnapshot adapt(Protocol.State state,int local,DebugSnapshot template,String description,float maxVigor,com.projetok.studio.WorldContent.Prepared content,String region){
+        var actors=state.actors().stream().map(a->new DebugSnapshot.ActorView(a.id(),a.name(),a.x(),a.y(),a.boss()?24:content==null?18:content.revision().profile().actorRadius(),a.hp(),a.maxHp(),a.id()==local,a.hp()>0)).toList();var self=state.actors().stream().filter(a->a.id()==local).findFirst();int hp=self.map(Protocol.Actor::hp).orElse(0),max=self.map(Protocol.Actor::maxHp).orElse(1);
         var statuses=state.actors().stream().filter(a->(a.flags()&4)!=0).map(a->new DebugSnapshot.StatusView(a.id(),1)).toList();
-        return new DebugSnapshot(actors,java.util.List.of(new DebugSnapshot.Obstacle(380,180,120,120)),java.util.List.of(),hp,max,0,false,state.tick(),description,self.map(Protocol.Actor::facingX).orElse(1f),self.map(Protocol.Actor::facingY).orElse(0f),0,null,self.map(Protocol.Actor::stamina).orElse(0f),maxVigor,0,java.util.List.of(),statuses,self.map(a->(a.flags()&1)!=0).orElse(false),0,0,java.util.List.of(),self.map(a->(a.flags()&2)!=0).orElse(false),java.util.List.of(),template.cryostasisHud(),template.lightningStepHud());
+        return new DebugSnapshot(actors,content==null?java.util.List.of(new DebugSnapshot.Obstacle(380,180,120,120)):content.revision().geometry().get(region).obstacles().stream().map(o->new DebugSnapshot.Obstacle(o.x(),o.y(),o.width(),o.height())).toList(),java.util.List.of(),hp,max,0,false,state.tick(),description,self.map(Protocol.Actor::facingX).orElse(1f),self.map(Protocol.Actor::facingY).orElse(0f),0,null,self.map(Protocol.Actor::stamina).orElse(0f),maxVigor,0,java.util.List.of(),statuses,self.map(a->(a.flags()&1)!=0).orElse(false),0,0,java.util.List.of(),self.map(a->(a.flags()&2)!=0).orElse(false),java.util.List.of(),template.cryostasisHud(),template.lightningStepHud());
     }
 }

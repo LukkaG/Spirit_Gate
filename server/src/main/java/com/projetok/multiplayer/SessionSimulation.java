@@ -4,6 +4,14 @@ package com.projetok.multiplayer;
 public interface SessionSimulation {
     boolean join(int id,String name);
     void leave(int id);
+    default boolean join(int id,String name,int application){return join(id,name);}
+    default String admissionFailure(){return "Servidor cheio";}
+    default void closed(){}
+    default boolean supportsContent(){return false;}
+    default String contentHash(){return "";}
+    default void contentAck(int id,Protocol.Content content){}
+    default Protocol.Content nextContent(int id){return null;}
+    default boolean disconnectRequested(int id){return false;}
     boolean accept(int id,Protocol.Intent intent);
     void step();
     Protocol.State snapshot();

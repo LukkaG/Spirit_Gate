@@ -18,7 +18,7 @@ public final class StudioPlaytest {
         SwingUtilities.invokeLater(()->open(bundle,images,player,bundlePath));
     }
     static void open(StudioExport.Bundle bundle,AssetImages images,RpgPlayerSprites player,Path output) {
-        RpgRuntime runtime=new RpgRuntime(new RpgWorld(CharacterIdentity.create("Playtest","reaper","azure"),bundle.scenes()));
+        var world=new RpgWorld(CharacterIdentity.create("Playtest","reaper","azure"),bundle.scenes());if(bundle.maps().get(bundle.start()).metadata().containsKey("collision.radius"))world.configureSyntheticCollision(com.projetok.domain.movement.SessionCollisionProfile.read(bundle.maps().get(bundle.start()).metadata()));RpgRuntime runtime=new RpgRuntime(world);
         var template=DebugWorld.demo(new java.util.Random(91)).snapshot();
         DebugPanel panel=new DebugPanel(()->{var v=runtime.snapshot();var space=bundle.scenes().maps().get(v.state().region()).space();return RpgLauncher.adapt(v,template,space.obstacles().stream().map(o->new DebugSnapshot.Obstacle(o.x(),o.y(),o.width(),o.height())).toList());});panel.setPhysicalGeometryVisible(false);
         var render=new StudioMapRenderer(bundle,images,runtime::snapshot,player);var feedback=new RpgCombatFeedback();var boss=new RpgBossOverlay();panel.setActorRenderer(render);panel.setWorldUnderlay(g->render.layers(g,false));panel.setWorldOverlay(g->{render.layers(g,true);boss.draw(g);feedback.draw(g);});

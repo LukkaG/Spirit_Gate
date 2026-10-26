@@ -7,11 +7,13 @@ import shutil
 import zipfile
 
 
-def prepare(package, destination, version, feed_url=""):
+def prepare(package, destination, version, feed_url="", role="anfitriao"):
     import re
     from urllib.parse import urlsplit
     if not re.fullmatch(r"[A-Za-z0-9._-]{1,80}", version):
         raise ValueError("Versao invalida")
+    if role not in ("anfitriao", "convidado"):
+        raise ValueError("Papel invalido")
     if feed_url:
         parsed = urlsplit(feed_url)
         if parsed.scheme != "https" or not parsed.netloc or parsed.username or parsed.password:
@@ -26,13 +28,23 @@ def prepare(package, destination, version, feed_url=""):
     files, names = [], set()
     with zipfile.ZipFile(package) as archive:
         entries = [entry for entry in archive.infolist() if not entry.is_dir()]
+        roots = {PurePosixPath(entry.filename).parts[0] for entry in entries}
+        # One common payload/channel for both roles. Guest-only source packages
+        # cannot silently restrict the host's next update.
+        if len(roots) != 1 or not roots <= {"SpiritGateRPG", "SpiritGateCorujaoV-Anfitriao"}:
+            raise ValueError("Use pacote legado RPG ou Anfitriao completo")
+        modern = roots == {"SpiritGateCorujaoV-Anfitriao"}
         if len(entries) > 2000 or sum(e.file_size for e in entries) > 512 * 1024**2:
             raise ValueError("Pacote excessivo")
         for entry in entries:
             path = PurePosixPath(entry.filename)
-            if path.parts[0] != "SpiritGateRPG" or len(path.parts) < 2:
+            if len(path.parts) < 2:
                 raise ValueError("Raiz inesperada")
             name = "/".join(path.parts[1:])
+            if modern and name == "manifest-sha256.json":
+                continue  # The normalized files get the updater's verified manifest.
+            if modern and name == "app/spiritgate.jar":
+                name = "app/spirit-gate-rpg.jar"
             if (not re.fullmatch(r"[A-Za-z0-9_. /-]+", name)
                     or any(p in ("", ".", "..") or p.rstrip(" .") != p
                            or re.match(r"^(CON|PRN|AUX|NUL|COM[0-9]|LPT[0-9])([.]|$)", p, re.I)
@@ -45,6 +57,8 @@ def prepare(package, destination, version, feed_url=""):
                 raise ValueError("Caminho/arquivo inseguro: " + name)
             names.add(name.lower())
             data = archive.read(entry)
+            if modern and path.suffix.lower() in (".cmd", ".ps1", ".cfg"):
+                data = data.replace(b"spiritgate.jar", b"spirit-gate-rpg.jar")
             output = release / name
             output.parent.mkdir(parents=True, exist_ok=True)
             output.write_bytes(data)
@@ -61,12 +75,14 @@ def prepare(package, destination, version, feed_url=""):
     shutil.copytree(release, initial)
     (initial / "installed-manifest.json").write_bytes(manifest_bytes)
     (launcher / "active.txt").write_text(identity, encoding="ascii")
-    (launcher / "atualizacoes.json").write_text(json.dumps(dict(feedUrl=feed_url), indent=2), encoding="utf-8")
+    (launcher / "atualizacoes.json").write_text(json.dumps(dict(feedUrl=feed_url, role=role), indent=2), encoding="utf-8")
     for name in ("Atualizar-SpiritGate.ps1", "Jogar-SpiritGate.cmd"):
         shutil.copy2(Path(__file__).parent / "updater" / name, launcher / name)
     (launcher / "LEIA-ME.txt").write_text(
         "SPIRIT GATE - INICIADOR COM ATUALIZACAO\n"
         "Extraia tudo e abra Jogar-SpiritGate.cmd. Windows 64 bits; Java integrado.\n"
+        f"Papel desta instalacao: {role}. O canal do jogo e comum aos dois papeis.\n"
+        "O launcher inclui os botoes Radmin da versao instalada; o iniciador atualiza antes de abri-lo.\n"
         "Saves e preferencias ficam em data/saves, fora das versoes.\n" +
         ("Canal HTTPS configurado; atualizacoes sao verificadas ao abrir o iniciador.\n" if feed_url else
          "Canal localmente preparado; sem hospedagem configurada nao ha download automatico.\n") +
@@ -75,7 +91,8 @@ def prepare(package, destination, version, feed_url=""):
         "copie a pasta saves para data/saves e mantenha backup da origem.\n"
         "Nao abra o EXE dentro de versions: use o iniciador para manter os saves em data.\n",
         encoding="utf-8")
-    output_zip = destination / f"SpiritGate-Atualizavel-{version}-Windows64.zip"
+    suffix = "-Convidado" if role == "convidado" else ""
+    output_zip = destination / f"SpiritGate-Atualizavel-{version}{suffix}-Windows64.zip"
     with zipfile.ZipFile(output_zip, "x", zipfile.ZIP_DEFLATED) as archive:
         for path in sorted(launcher.rglob("*")):
             if path.is_file():
@@ -90,5 +107,6 @@ if __name__ == "__main__":
     parser.add_argument("destination", type=Path)
     parser.add_argument("--version", required=True)
     parser.add_argument("--feed-url", default="")
+    parser.add_argument("--role", choices=("anfitriao", "convidado"), default="anfitriao")
     args = parser.parse_args()
-    print(prepare(args.package, args.destination, args.version, args.feed_url))
+    print(prepare(args.package, args.destination, args.version, args.feed_url, args.role))

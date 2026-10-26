@@ -1,0 +1,18 @@
+# TASK-196 — retomada sintética em processos separados
+
+Estado sujeito ao fechamento do checkpoint: VALIDADA COM RESSALVAS no laboratório aprovado. Harness Task196ResumeHarness é fonte de teste, não distribuído no jar e não chamado pelo launcher. Processo seed cria personagem spirit novo, aceita first_steps, prepara explicitamente a fixture de objetivo pronto, aplica recompensa pelo RpgWorld real, colhe starter_chest uma vez, confirma revisão 2 e desconecta. Outro processo resume em novo registro/grant, valida fingerprint do catálogo e geometria conhecida, restaura o snapshot inteiro e verifica XP 80, moedas 45, poções 5 e espada 1. A fixture não afirma executar dois kills reais para preparar a quest.
+
+Após restart, vinte retries do mesmo snapshot mantêm bytes e revisão 2. Repetir a conclusão da quest perto do NPC ou colher o mesmo baú não muda os recursos. Testes negativos recusam conteúdo com fingerprint diferente, região fora do contrato village deste harness, posição sobre obstáculo, handle revogado e retry divergente; documento confirmado permanece inalterado. Hash do conteúdo efetivamente usado aparece em specific.log. Não há suporte presumido a quests autoradas nem persistência de conteúdo Live Publishing arbitrário no payload V2.
+
+Primeira tentativa run-20261026T001136Z-94129681 preservada: um teste passou e dois falharam por NPE na leitura incorreta da fixture (inventário usa slot:item, não ID simples). Corrigida apenas a contagem via InventoryService, sem reduzir valores ou desabilitar testes; nova compilação integral em checkpoint distinto aprovou três testes, incluindo ambos os processos reais.
+
+Regressão final completa Java headless e com gráficos, Python e rehash integral dos arquivos protegidos nos logs deste checkpoint. Fontes recompilados da árvore real; nenhum uso de classes da proposta. Schema SGO1 e codecs pessoais, protocolos, progressão e combate preservados. Somente SyntheticOnlineRepository e novo SyntheticSessionLaboratory constituem mudanças de produção do bloco 194–196; o harness é teste.
+
+Gate D: persistência exclusivamente sintética, identidade/posse local, CAS/lock/retry e retomada comprovados nos cenários descritos. Não representa homologação de contas públicas, gameplay/launcher integrado, exclusão distribuída, falta de energia ou Radmin físico. Nenhuma nova dependência, commit, publicação ou migração pessoal.
+
+
+Evidências: `.task-checkpoints/TASK-196/corujao-vi/run-20261026T001253Z-112c1f50`.
+
+Integridade: 31629 entradas verificadas; rehash nesta etapa: 0; divergências: 0. Método e hashes em protected-before/after.json.
+
+Fontes alterados nesta execução (before/after): nenhum.

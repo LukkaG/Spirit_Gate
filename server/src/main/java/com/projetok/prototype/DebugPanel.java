@@ -24,6 +24,9 @@ public final class DebugPanel extends JPanel {
     private static final Color TEXT = new Color(229, 239, 248);
     private static final Color ACCENT = new Color(70, 219, 235);
     private final Supplier<DebugSnapshot> source;
+    private com.projetok.multiplayer.NetworkDiagnostics networkDiagnostics;
+    private long lastPaint;
+    public void setNetworkDiagnostics(com.projetok.multiplayer.NetworkDiagnostics value){networkDiagnostics=value;}
     private boolean showHitboxes;
     private boolean showHelp;
     private float ambientLight=1f;
@@ -64,6 +67,9 @@ public final class DebugPanel extends JPanel {
     private java.util.function.Consumer<Graphics2D> worldOverlay;
     private java.util.function.Consumer<Graphics2D> worldUnderlay;
     private boolean physicalGeometry=true;
+    private java.util.List<com.projetok.domain.movement.RpgSessionGeometry.Structure> depthStructures=java.util.List.of();
+    /** Session-only volume metadata; empty retains historical obstacle drawing. */
+    public void setDepthStructures(java.util.List<com.projetok.domain.movement.RpgSessionGeometry.Structure> value){depthStructures=java.util.List.copyOf(value);}
     /** Camada opcional de autoria, desativada nas entradas historicas. */
     public void setWorldUnderlay(java.util.function.Consumer<Graphics2D> underlay){worldUnderlay=underlay;}
     /** Oculta apenas o desenho diagnostico, nunca a colisao da simulacao. */
@@ -133,6 +139,8 @@ public final class DebugPanel extends JPanel {
 
     @Override
     protected void paintComponent(Graphics original) {
+        long paintStart=System.nanoTime();
+        if(networkDiagnostics!=null&&networkDiagnostics.enabled){if(lastPaint!=0)networkDiagnostics.paintIntervals.add(paintStart-lastPaint);lastPaint=paintStart;}
         super.paintComponent(original);
         Graphics2D g = (Graphics2D) original.create();
         try {
@@ -142,6 +150,7 @@ public final class DebugPanel extends JPanel {
             else render(g, presentationSource.get());
         } finally {
             g.dispose();
+            if(networkDiagnostics!=null&&networkDiagnostics.enabled)networkDiagnostics.paints.add(System.nanoTime()-paintStart);
         }
     }
 
@@ -190,21 +199,23 @@ public final class DebugPanel extends JPanel {
         drawWorld(g);
         if (mapRenderer != null) mapRenderer.drawLayers(g,0,4);
         if(worldUnderlay!=null)worldUnderlay.accept(g);
-        if(physicalGeometry){drawObstacles(g, s);drawSoftObstacles(g, s);}
+        if(physicalGeometry){if(depthStructures.isEmpty())drawObstacles(g, s);drawSoftObstacles(g, s);}
         drawIceZones(g, s);
         drawLightningTrails(g, s);
-        for (DebugSnapshot.ActorView actor : s.actors()) {
-            // Margem inclui nome, barras, alcance, sprite/pivot e marca de Freeze.
-            if(spriteAtlas==null && !visible(g,actor.x()-100,actor.y()-100,200,200)) continue;
-            DirectionalAnimation.View visual = null;
-            for (var candidate : animations) if (candidate.actorId() == actor.id()) { visual=candidate; break; }
-            if (actorRenderer != null && actorRenderer.draw(g, actor)) continue;
-            if (spriteAtlas == null || visual == null || !spriteAtlas.draw(g, actor, visual)) drawActor(g, actor, s);
-        }
+        if(physicalGeometry&&!depthStructures.isEmpty())StructureRenderer.draw(g,depthStructures,s.actors(),actor->drawPresentedActor(g,actor,s,animations));
+        else for(var actor:s.actors())drawPresentedActor(g,actor,s,animations);
         if (mapRenderer != null) mapRenderer.drawLayers(g,5,10);
         drawAttack(g, s.attack());
         drawEffects(g, s);
         if(worldOverlay!=null)worldOverlay.accept(g);
+    }
+
+    private void drawPresentedActor(Graphics2D g,DebugSnapshot.ActorView actor,DebugSnapshot s,java.util.List<DirectionalAnimation.View> animations){
+        if(spriteAtlas==null&&!visible(g,actor.x()-100,actor.y()-100,200,200))return;
+        DirectionalAnimation.View visual=null;
+        for(var candidate:animations)if(candidate.actorId()==actor.id()){visual=candidate;break;}
+        if(actorRenderer!=null&&actorRenderer.draw(g,actor))return;
+        if(spriteAtlas==null||visual==null||!spriteAtlas.draw(g,actor,visual))drawActor(g,actor,s);
     }
 
     // --- Cenário ---

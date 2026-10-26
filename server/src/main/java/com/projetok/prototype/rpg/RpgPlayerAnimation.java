@@ -8,13 +8,19 @@ import com.projetok.rpg.RpgWorld;
 public final class RpgPlayerAnimation {
     public record Pose(Direction direction, boolean walking, int frame) { }
     private final int frameMillis;
+    private final int frameCount;
     private RpgWorld.View previous;
     private Pose pose=new Pose(Direction.FRONT,false,0);
     private long stateTick;
 
     public RpgPlayerAnimation(int frameMillis) {
+        this(frameMillis,4);
+    }
+    public RpgPlayerAnimation(int frameMillis,int frameCount) {
         if(frameMillis<30 || frameMillis>2000) throw new IllegalArgumentException("frameMillis: 30..2000");
+        if(frameCount<1 || frameCount>32) throw new IllegalArgumentException("frameCount: 1..32");
         this.frameMillis=frameMillis;
+        this.frameCount=frameCount;
     }
     public Pose pose() { return pose; }
     public Pose update(RpgWorld.View next) {
@@ -25,7 +31,7 @@ public final class RpgPlayerAnimation {
         boolean walking=next.state().hp()>0 && dx*dx+dy*dy>0.000001;
         Direction direction=walking?DirectionalAnimation.facing(dx,dy,pose.direction()):pose.direction();
         if(reset || walking!=pose.walking() || direction!=pose.direction()) stateTick=next.ticks();
-        int frame=walking?(int)(((next.ticks()-stateTick)*1000L/(30L*frameMillis))%4):0;
+        int frame=walking?(int)(((next.ticks()-stateTick)*1000L/(30L*frameMillis))%frameCount):0;
         pose=new Pose(direction,walking,frame);previous=next;return pose;
     }
 }

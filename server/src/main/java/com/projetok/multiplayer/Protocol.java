@@ -7,7 +7,15 @@ public final class Protocol {
     public static final int VERSION=1,MAX_FRAME=4096,MAX_ACTORS=8;
     public static final int COSMETIC_APPLICATION=2;
     public static final int COMBAT_APPLICATION=3;
-    public sealed interface Message permits Hello,Welcome,Intent,State,Bye,Error,AppearanceRequest,SessionState,CombatState,WorldRequest,Ping,Pong { }
+    public static final int CONTENT_APPLICATION=4;
+    public sealed interface Message permits Hello,Welcome,Intent,State,Bye,Error,AppearanceRequest,SessionState,CombatState,WorldRequest,Ping,Pong,Content,RevisionState,RevisionCommand { }
+    public enum ContentKind { BEGIN,CHUNK,END,READY,ACTIVATE,ACTIVE,ABORT,RESUME,REJECT }
+    public record Content(ContentKind kind,long transaction,String hash,int index,byte[] data) implements Message {
+        public Content {Objects.requireNonNull(kind);if(transaction<1||!hash.matches("[a-f0-9]{64}")||index<0||index>4*1024*1024||data==null||data.length>2800)throw new IllegalArgumentException("Conteudo invalido");data=data.clone();}
+        @Override public byte[] data(){return data.clone();}
+    }
+    public record RevisionCommand(String hash,Message command) implements Message {public RevisionCommand{if(!hash.matches("[a-f0-9]{64}")||!(command instanceof Intent||command instanceof WorldRequest||command instanceof AppearanceRequest))throw new IllegalArgumentException("Comando sem revisao valida");}}
+    public record RevisionState(String hash,CombatState state) implements Message {public RevisionState{if(!hash.matches("[a-f0-9]{64}"))throw new IllegalArgumentException("Hash invalido");Objects.requireNonNull(state);}}
     public record Ping(long nonce)implements Message{public Ping{if(nonce<1)throw new IllegalArgumentException("Nonce invalido");}}
     public record Pong(long nonce)implements Message{public Pong{if(nonce<1)throw new IllegalArgumentException("Nonce invalido");}}
     public enum WorldAction { RESPAWN, INTERACT, ACCEPT_QUEST, COMPLETE_QUEST, TRAVEL }
@@ -57,11 +65,14 @@ public final class Protocol {
         else if(message instanceof WorldRequest m){out.writeByte(10);out.writeLong(m.sequence());out.writeByte(m.action().ordinal());text(out,m.target());}
         else if(message instanceof Ping m){out.writeByte(11);out.writeLong(m.nonce());}
         else if(message instanceof Pong m){out.writeByte(12);out.writeLong(m.nonce());}
+        else if(message instanceof Content m){out.writeByte(13);out.writeByte(m.kind().ordinal());out.writeLong(m.transaction());text(out,m.hash());out.writeInt(m.index());out.writeShort(m.data().length);out.write(m.data());}
+        else if(message instanceof RevisionState m){out.writeByte(14);text(out,m.hash());write(out,m.state());}
+        else if(message instanceof RevisionCommand m){out.writeByte(15);text(out,m.hash());write(out,m.command());}
         else throw new IOException("Mensagem desconhecida");
         byte[] bytes=buffer.toByteArray();if(bytes.length>MAX_FRAME)throw new IOException("Frame excessivo");var target=new DataOutputStream(stream);target.writeInt(bytes.length);target.write(bytes);target.flush();
     }
     public static Message read(InputStream stream)throws IOException{
-        return read(stream,2);
+        return read(stream,3);
     }
     private static Message read(InputStream stream,int depth)throws IOException{
         var source=new DataInputStream(stream);int size=source.readInt();if(size<2||size>MAX_FRAME)throw new IOException("Tamanho de frame invalido");byte[] bytes=source.readNBytes(size);if(bytes.length!=size)throw new EOFException("Frame interrompido");
@@ -77,6 +88,9 @@ public final class Protocol {
                 case 9->{if(depth<2)throw new IOException("Extensao aninhada recusada");var nested=read(in,1);if(!(nested instanceof SessionState session))throw new IOException("Snapshot de combate invalido");int count=in.readUnsignedByte();if(count>16)throw new IOException("Eventos excessivos");var events=new ArrayList<CombatEvent>();for(int i=0;i<count;i++)events.add(new CombatEvent(in.readLong(),in.readLong(),text(in),in.readInt(),in.readInt(),in.readLong(),in.readInt()));String region=text(in);int n=in.readUnsignedByte();if(n>8)throw new IOException("Missoes excessivas");var quests=new ArrayList<QuestProgress>();for(int i=0;i<n;i++)quests.add(new QuestProgress(text(in),text(in),in.readInt(),in.readInt()));yield new CombatState(session,events,region,quests);}
                 case 10->{long seq=in.readLong();int action=in.readUnsignedByte();if(action>=WorldAction.values().length)throw new IOException("Pedido desconhecido");yield new WorldRequest(seq,WorldAction.values()[action],text(in));}
                 case 11->new Ping(in.readLong());case 12->new Pong(in.readLong());
+                case 13->{int k=in.readUnsignedByte();if(k>=ContentKind.values().length)throw new IOException("Tipo de conteudo invalido");long t=in.readLong();String h=text(in);int index=in.readInt(),n=in.readUnsignedShort();if(n>2800)throw new IOException("Bloco excessivo");byte[] data=in.readNBytes(n);if(data.length!=n)throw new EOFException();yield new Content(ContentKind.values()[k],t,h,index,data);}
+                case 14->{if(depth<3)throw new IOException("Extensao recursiva");String hash=text(in);var nested=read(in,2);if(!(nested instanceof CombatState c))throw new IOException("Snapshot de revisao invalido");yield new RevisionState(hash,c);}
+                case 15->{if(depth<1)throw new IOException("Comando recursivo");String hash=text(in);yield new RevisionCommand(hash,read(in,0));}
                 default->throw new IOException("Tipo desconhecido");};
             if(in.available()!=0)throw new IOException("Dados excedentes");return message;
         }catch(IllegalArgumentException error){throw new IOException("Mensagem malformada",error);}

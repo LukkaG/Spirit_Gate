@@ -2,6 +2,7 @@ package com.projetok.rpg;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
+import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.*;
 import java.security.*;
 import java.util.*;
@@ -30,20 +31,42 @@ public final class SyntheticOnlineRepository {
         write(grant,0,new RpgWorld(identity).save());return grant;
     }
     public Document load(UUID id)throws IOException{var doc=decode(read(path(id)));if(!doc.id().equals(id))throw new IOException("Identidade divergente");return doc;}
-    public Document recoverBackup(UUID id)throws IOException{return decode(read(root.resolve(id+".online.bak")));}
+    /** Somente o controlador confiável do laboratório concede autoridade após validar o documento. */
+    Grant resumeForLocalLaboratory(UUID id)throws IOException{load(id);return new Grant(id,authority);}
+    Document loadForLocalLaboratory(Grant grant)throws IOException{
+        if(grant==null||grant.authority!=authority)throw new SecurityException("Grant sintetico invalido");
+        return load(grant.id);
+    }
+    public Document recoverBackup(UUID id)throws IOException{
+        var document=decode(read(root.resolve(Objects.requireNonNull(id)+".online.bak")));
+        if(!document.id().equals(id))throw new IOException("Identidade divergente no backup");
+        return document;
+    }
     public void write(Grant grant,long expectedRevision,RpgSave state)throws IOException{
+        store(grant,expectedRevision,state,false);
+    }
+    /** Reconcilia apenas o mesmo snapshot inteiro confirmado em base+1, sob o mesmo lock do CAS. */
+    public Document writeIdenticalRetry(Grant grant,long expectedRevision,RpgSave state)throws IOException{
+        return store(grant,expectedRevision,state,true);
+    }
+    private Document store(Grant grant,long expectedRevision,RpgSave state,boolean identicalRetry)throws IOException{
         if(grant==null||grant.authority!=authority||!grant.id.equals(state.identity().id()))throw new SecurityException("Gravacao sintetica nao autorizada");
         if(expectedRevision<0||expectedRevision==Long.MAX_VALUE)throw new IllegalArgumentException("Revisao invalida");
         RpgWorld.restore(state);Path target=path(grant.id),lock=root.resolve(grant.id+".lock");
         if(Files.isSymbolicLink(lock)||Files.isSymbolicLink(target)||Files.isSymbolicLink(root.resolve(grant.id+".online.bak")))throw new IOException("Links nao autorizados");
         try(var channel=FileChannel.open(lock,StandardOpenOption.CREATE,StandardOpenOption.WRITE);var held=channel.lock()){
-            long revision=Files.exists(target)?load(grant.id).revision():0;
+            Document current=Files.exists(target)?load(grant.id):null;
+            long revision=current==null?0:current.revision();
+            if(identicalRetry&&revision==expectedRevision+1&&current.state().equals(state))return current;
             if(revision!=expectedRevision)throw new IOException("Conflito de revisao");
             byte[] bytes=encode(new Document(grant.id,revision+1,state));Path temp=Files.createTempFile(root,"snapshot-",".tmp");
             try{Files.write(temp,bytes);decode(read(temp));try(var output=FileChannel.open(temp,StandardOpenOption.WRITE)){output.force(true);}
                 if(Files.exists(target))Files.copy(target,root.resolve(grant.id+".online.bak"),StandardCopyOption.REPLACE_EXISTING);
                 Files.move(temp,target,StandardCopyOption.ATOMIC_MOVE,StandardCopyOption.REPLACE_EXISTING);
             }finally{Files.deleteIfExists(temp);}
+            return new Document(grant.id,revision+1,state);
+        }catch(OverlappingFileLockException conflict){
+            throw new IOException("Conflito de lock sintetico",conflict);
         }
     }
     private Path path(UUID id){return root.resolve(Objects.requireNonNull(id)+".online");}

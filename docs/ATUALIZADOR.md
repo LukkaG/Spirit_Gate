@@ -1,5 +1,7 @@
 # Spirit Gate — Atualização automática
 
+Integracao local do launcher Radmin TASK-177: veja [LAUNCHER-RADMIN-ATUALIZAVEL.md](LAUNCHER-RADMIN-ATUALIZAVEL.md). Essa entrega ainda nao foi publicada no canal.
+
 Implementado por solicitação do responsável. Inicialmente preparado localmente; após nova autorização, o canal foi publicado na branch `updates` do repositório público atual `LukkaG/Spirit_Gate`. A branch de trabalho do jogo não foi alterada pela publicação.
 
 ## Pacote para instalar uma vez
