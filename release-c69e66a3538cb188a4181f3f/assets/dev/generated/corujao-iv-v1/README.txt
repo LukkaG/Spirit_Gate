@@ -1,0 +1,1 @@
+TEMPORARIO: placeholders deterministas em Java2D. Quatro direcoes, frames reais e pivos originais. Sem antialiasing, atributos de combate ou alteracao do corpo base. Substituicao futura depende do responsavel no Aseprite.

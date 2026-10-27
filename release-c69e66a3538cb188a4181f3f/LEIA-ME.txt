@@ -1,0 +1,5 @@
+Spirit Gate Corujao VI — privado experimental, Anfitriao
+Extraia tudo e abra SpiritGate.exe. Java 17 integrado. Atualize ambos os papeis juntos.
+Studio autorizado apenas no anfitriao local. Leia docs/TASK-180-LIVE-PUBLISHING.md.
+Radmin fisico PENDENTE: seguir docs/TASK-184-RADMIN-ROTEIRO.md.
+Sem contas publicas ou persistencia sintetica integrada ao launcher. Nenhum save pessoal incluido.

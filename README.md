@@ -1,9 +1,14 @@
-# Spirit Gate - canal de testes
+# Spirit Gate - atualizacoes
 
-Baixe [SpiritGate-Instalar-Windows64.zip](https://raw.githubusercontent.com/LukkaG/Spirit_Gate/updates/SpiritGate-Instalar-Windows64.zip), extraia tudo e abra `Jogar-SpiritGate.cmd`. Java integrado.
+Repositorio: https://github.com/LukkaG/Spirit_Gate; branch `updates`.
+
+[Instalar anfitriao](https://raw.githubusercontent.com/LukkaG/Spirit_Gate/updates/SpiritGate-Instalar-Windows64.zip). Extraia tudo e abra `SpiritGate-Launcher.exe`. Java integrado.
+
+[Instalar convidado](https://raw.githubusercontent.com/LukkaG/Spirit_Gate/updates/SpiritGate-Convidado-Windows64.zip).
+
+[Ativar instalacao existente](https://raw.githubusercontent.com/LukkaG/Spirit_Gate/updates/SpiritGate-Ativar-GitHub.zip).
+
+Versao atual: `0.201.0`. Canal: https://raw.githubusercontent.com/LukkaG/Spirit_Gate/updates/latest.json.
 
 O iniciador verifica novas versoes ao abrir. Saves ficam em `data/saves`.
-
-Versao atual: `0.78.1-rc1`. Sprites experimentais; teste privado entre participantes.
-
-Esta branch contem somente distribuicao: nenhum save pessoal ou credencial foi incluido.
+Esta branch contem somente os arquivos de distribuicao auditados.

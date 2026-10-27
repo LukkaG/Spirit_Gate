@@ -1,42 +1,942 @@
 {
   "schemaVersion": 1,
-  "version": "0.78.1-rc1",
-  "basePath": "release-a64e2768ef93c0cceb202ca4",
+  "version": "0.201.0",
+  "basePath": "release-c69e66a3538cb188a4181f3f",
   "files": [
     {
-      "path": "Abrir-Geometrico.cmd",
-      "bytes": 217,
-      "sha256": "b2f82d60c5fb182eab3a04bab41254d5d2f6fb8d054f65382d5e157b79a5831c"
-    },
-    {
       "path": "LEIA-ME.txt",
-      "bytes": 528,
-      "sha256": "45566a055012cca313311da7c168764817289c283ce375eb344200a1d424519c"
+      "bytes": 399,
+      "sha256": "a107f4a3b449b1c077eca37dda67b8aa84f30f0dfddab7fe0a150f9fdad8308d"
     },
     {
-      "path": "ROTEIRO-RPG-OFFLINE.md",
-      "bytes": 3427,
-      "sha256": "a9171e7f82d79cbb298e6123f801ba46bd371c4abbf40dbe2a70c96167c1bbdb"
-    },
-    {
-      "path": "SpiritGateRPG.exe",
+      "path": "SpiritGate.exe",
       "bytes": 449024,
-      "sha256": "b95cbef5ad1417602bc184c4868f2f0d85d88eafcbe211d67d57624dde86df27"
+      "sha256": "59ad111d82a276277d2d13133a1f255b45fb69ec4ba10a4a60e381997e023914"
     },
     {
       "path": "app/.jpackage.xml",
-      "bytes": 203,
-      "sha256": "a4cf220d87f115e9fe649e6da8699a7dec7f4488ad033f34e6d25633a4efcf41"
+      "bytes": 201,
+      "sha256": "9230f0d4c935bdf98f7d97d6aa14da785b0d3b241352ddb9532a3e49e2a15ffb"
     },
     {
-      "path": "app/SpiritGateRPG.cfg",
-      "bytes": 228,
-      "sha256": "a5dc90b44accf310f85aef8de6c3d40f481b37ec4570c8283855e5c5f4b71b3f"
+      "path": "app/SpiritGate.cfg",
+      "bytes": 173,
+      "sha256": "b5820834ee170165af6ee20ef3ddb9b207ac5f6335a8588f6b55e62db7a1a0d9"
     },
     {
       "path": "app/spirit-gate-rpg.jar",
-      "bytes": 389992,
-      "sha256": "0471e87bd4b54d1482c76a3f6d2c3c646d8bf47d7154fc17d8ee2e8da42bf38d"
+      "bytes": 13274549,
+      "sha256": "28df6e72ea7f963340a55bccb62c1c6f918201510a6ce1c4f612ec41ffee901f"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/README.txt",
+      "bytes": 222,
+      "sha256": "741549be894bc85505e9785986e91e19ec539cb9f871906c5f4c7b19dc89177d"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-BACK.0.png",
+      "bytes": 462,
+      "sha256": "396bde1bc3bb1a5ff113bbe53d14742ccbc992831d0a56681a25aa60c7bf0d6e"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-BACK.1.png",
+      "bytes": 461,
+      "sha256": "d0f5c3027f11e1ef3c8ac57636f0844b3524aac7428f3977ce6d8b0d7ad27f9d"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-BACK.2.png",
+      "bytes": 450,
+      "sha256": "94d4435bf6a782f54cc82459705e7d4a9060ba69ba16a6986d8d8050633a6379"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-BACK.3.png",
+      "bytes": 461,
+      "sha256": "fbbc03bde4d94f0328643bb5e833e27515ecbe8674b1e84966f18c93eaeb8ec8"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-BACK.4.png",
+      "bytes": 449,
+      "sha256": "7176c7494df1679e2aaa1d3ce0bdf86f4aac2dd739f6d09caa8eea2efd724bee"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-FRONT.0.png",
+      "bytes": 611,
+      "sha256": "58fac5648e0938c691b40fa6adce49aa615b09d550026e63c71fd69301c7cae9"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-FRONT.1.png",
+      "bytes": 680,
+      "sha256": "b8a66b15aa3ef6500288336750876edb07ba5f66568a2b6496a89ed23310a28f"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-FRONT.2.png",
+      "bytes": 690,
+      "sha256": "5e9bb107462254f500f3642d33d7d237e77cfdacf7101d16e839e3e05ffb90d3"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-FRONT.3.png",
+      "bytes": 680,
+      "sha256": "c7fce95a2b75dd481128118ddff80849c2d28c776f01d50be01558a01d42d373"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-FRONT.4.png",
+      "bytes": 690,
+      "sha256": "ff1b9723f60822068397af5ccc32189f2d513f7b64a153f94855c542d5d1bdc0"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-LEFT.0.png",
+      "bytes": 579,
+      "sha256": "292e4b66ccecd225dca4f620291243f226d29cf7796ea8c6085af1342c16d919"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-LEFT.1.png",
+      "bytes": 585,
+      "sha256": "222d776217d29b89fafc89e6a9d705e33819c60eb3d0ea179316f3b846b13724"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-LEFT.2.png",
+      "bytes": 583,
+      "sha256": "38b97f952390284adea131ea66d00031c17fbc5444a278804c36701a3779e67e"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-LEFT.3.png",
+      "bytes": 576,
+      "sha256": "9cdb21cf1fb06d9b3a7db324078033f3d6a4c1f0c7f6186b70406ddba3cd09bc"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-LEFT.4.png",
+      "bytes": 576,
+      "sha256": "2dce569535f795ea8bf040dccfa81ebbe4c7211041ccec69f2e81c60f3f19556"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-RIGHT.0.png",
+      "bytes": 586,
+      "sha256": "0b789cc4e3a67e2c0049f284f7af442bc23394e8acddfae4c34a84456039fa82"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-RIGHT.1.png",
+      "bytes": 585,
+      "sha256": "c606becbed9d8063f09af849e68964561050cb7bed77d970f1a64f71897109c9"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-RIGHT.2.png",
+      "bytes": 584,
+      "sha256": "45720aeaaeafdb20cd87a124c3c4e96f530aa9c31b1810855e8d2fe2e0a72ee5"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-RIGHT.3.png",
+      "bytes": 584,
+      "sha256": "6c98a66d46f69c532a7e549b22c51bf3e44c20cf2e1abcba1133b73176ff0731"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-RIGHT.4.png",
+      "bytes": 584,
+      "sha256": "f9894436f8f322ec804d1cd9e9233ae000ffab26c95935bc67e6fcd1e740e59d"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-BACK.0.png",
+      "bytes": 495,
+      "sha256": "0e05425b1f5223d6e4e6de5b8ef0530783278594b43ceafb445b325c73dd8456"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-BACK.1.png",
+      "bytes": 503,
+      "sha256": "34e4374bdd6d50ee750c0a30a230c80b1c97a1b437c447e699adeee83ce80dfd"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-BACK.2.png",
+      "bytes": 492,
+      "sha256": "95e4b1674135bfcec72266649a5fe25f3ca173305ec841a78c083f11e1b6ffe3"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-BACK.3.png",
+      "bytes": 504,
+      "sha256": "4dcab73b1ce29258b88b6122247474af7021b155f0da261105a3c3fceea958d4"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-BACK.4.png",
+      "bytes": 496,
+      "sha256": "5e43c64d4a3b9bfaa37d690994ed5f2e3564c448ef0f08c3eac472bcbb55b3b6"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-FRONT.0.png",
+      "bytes": 463,
+      "sha256": "a6b8fbd4307968bb29b0c99cd152008d2e5f41e1fc621213752b8158384379e6"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-FRONT.1.png",
+      "bytes": 496,
+      "sha256": "aaf1f7aa502344fc8f25202cf8b90718397fa2e375aa8bf6d04a71c8498b2159"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-FRONT.2.png",
+      "bytes": 508,
+      "sha256": "b93c60c61a91f538bdd5eac3a247eaafeae2a98aa9877dbe653af59dc1d7e3b5"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-FRONT.3.png",
+      "bytes": 500,
+      "sha256": "2d41abe7eea547e09aac4acd288319ddc043e1651f5dd325d6ed48fb8c5a5c93"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-FRONT.4.png",
+      "bytes": 501,
+      "sha256": "765a0bc12857f32e77dce916c483aad97f050ce73c2f8bd749869c87d82b00db"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-LEFT.0.png",
+      "bytes": 446,
+      "sha256": "a929140ef8a7df427914265ba39856de82c5f920333975f7d3d8160285100250"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-LEFT.1.png",
+      "bytes": 443,
+      "sha256": "9cb3cf3bd89894c39b937d73d70b0a3c47c408ef5abb5a2c8f087b785ce017d2"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-LEFT.2.png",
+      "bytes": 434,
+      "sha256": "694926148277c86a9c73867724d76f488642e5f18e4a998c635cf3ae9f760612"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-LEFT.3.png",
+      "bytes": 448,
+      "sha256": "459ad53c51640f85f4c747b0bfe0ad0f82d0fbc07ddda3aba02c8cc4d80dd837"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-LEFT.4.png",
+      "bytes": 448,
+      "sha256": "be57c4c713c44a45a98dd50519cb430489f8200c6122f1a89d5de82790bc1e2c"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-RIGHT.0.png",
+      "bytes": 458,
+      "sha256": "1ff5c4c2aebb94d0023ec1d5c1d08306b175c19c1c5090b3f7978efbb0dc6d20"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-RIGHT.1.png",
+      "bytes": 458,
+      "sha256": "32e8a8e90561e8d942a9100de5a159eb709cc53142a744d0001b7d81b7ed9494"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-RIGHT.2.png",
+      "bytes": 446,
+      "sha256": "7c20834493a9b38a903b0d42ae60a83d507ebf194b9e0f30b36b256aae870b6e"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-RIGHT.3.png",
+      "bytes": 459,
+      "sha256": "2f65acc6bce5ab167c84a71f7c2bf8049b84b3faf1e4cc224437bb0b7827dfa3"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-RIGHT.4.png",
+      "bytes": 459,
+      "sha256": "498b4ec7e6b725ca9ddedfd0cae80676c810cbe94b69a2638b5021cac9b00468"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-BACK.0.png",
+      "bytes": 518,
+      "sha256": "3c47bc1584fddce77381b652da059e0c5f930e8de13155221707c02873a5015c"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-BACK.1.png",
+      "bytes": 516,
+      "sha256": "cb2c444f6f28b17bcbb2801cc1522a4611dfcc1a3f4cfaa878c7adcf074d69b7"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-BACK.2.png",
+      "bytes": 503,
+      "sha256": "e82cb0ab0fab3f62b4a0c71876561d81924aa1449ca2e669d42bd8d8473bde09"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-BACK.3.png",
+      "bytes": 520,
+      "sha256": "d1e91a2ddee3595d021f6b8e13640d6d6fb9b328a50a8e0a1910b8156943dbcc"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-BACK.4.png",
+      "bytes": 503,
+      "sha256": "c00c4e4f05ac39717914bc746dd325f4c0289a92ac89439ffcbc37c51aeda99d"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-FRONT.0.png",
+      "bytes": 532,
+      "sha256": "d6bb1aa80b4b6c7da1aa48d9117a133df541045a15ccdd279ae1934dc53a7079"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-FRONT.1.png",
+      "bytes": 504,
+      "sha256": "192b3a9f9f29c023d52ccc6b4b0d8311e9014a82bda0ddbf2d02b125e86508e8"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-FRONT.2.png",
+      "bytes": 510,
+      "sha256": "fc3c2c7c1447f35eac95b45430eb31a66ef0acf79b501b489c84507308451c78"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-FRONT.3.png",
+      "bytes": 505,
+      "sha256": "4f20bacd47717675ac0f29460d263aedcdf7bafffb7d4f6a022b7c236c50e28b"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-FRONT.4.png",
+      "bytes": 510,
+      "sha256": "f5b2ef268fda3ef4ae283bfc42de61a62dd5c208914cd78ca63360b673aecc36"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-LEFT.0.png",
+      "bytes": 458,
+      "sha256": "6ee42f06c53642f38637bd9cd71c3ea2a52d2d8f2859ba6c46f2cfd4bf69f9ef"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-LEFT.1.png",
+      "bytes": 497,
+      "sha256": "7522fe66d100d8769149409d3c21d7bcb301a99f23650ba2147632792fc5016b"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-LEFT.2.png",
+      "bytes": 495,
+      "sha256": "aef93d100a444901f51102fd5ccab98764dd1336426c00ce5a7714c27037766b"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-LEFT.3.png",
+      "bytes": 529,
+      "sha256": "0f7bfb01405edf7fe997b5561950f33221b220b8c5210fd7e98f52b81e37f5de"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-LEFT.4.png",
+      "bytes": 532,
+      "sha256": "b67d3c42c03a92c84bc4d6eb0fd63d40db24f4714ae57631214d5957a49eee1c"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-RIGHT.0.png",
+      "bytes": 467,
+      "sha256": "1d0d3b2a58a63260f33ca0ab3cc8c4213e7e1e5028ab758ebad6564e1c31920e"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-RIGHT.1.png",
+      "bytes": 490,
+      "sha256": "af09951097d5b03deff42e30e0221a2dea259d7ccda70aa1e6020752a763a1bf"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-RIGHT.2.png",
+      "bytes": 502,
+      "sha256": "6dfe88edbe40ce1bf69f311c9a1266fe0308c999606a66c0a7878434a1a19b2f"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-RIGHT.3.png",
+      "bytes": 533,
+      "sha256": "5c6bb0166f498b4e216547a15dd8fcbe1f50ad76780f0a11bf429ed63c7c0469"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-RIGHT.4.png",
+      "bytes": 535,
+      "sha256": "a0a88933477cbd076ee374b80fab9783c5589113548b6ddcf075f483b9a59bfc"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-BACK.0.png",
+      "bytes": 532,
+      "sha256": "50393a8b933b8e9256721d310eaf77337200153bd399c44ca49db422e850ad1a"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-BACK.1.png",
+      "bytes": 519,
+      "sha256": "06eac799d387ac9f8436d2f6a4ca0afbfa18b601af0995086c29d75fc413ceae"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-BACK.2.png",
+      "bytes": 514,
+      "sha256": "e8f3bce2074574f983c6ea01a30dcd7059d0cf9c83ee5c7ef3195ab95026be59"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-BACK.3.png",
+      "bytes": 519,
+      "sha256": "c759d85b2f11ab6405acfd1b9d015df54dd8092cf0ac67d3a930f4d5d6d86cbe"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-BACK.4.png",
+      "bytes": 514,
+      "sha256": "e62c51f9c8ecf26553ee64b5e0498b74761b6223d678aaafa0378bb615e0135b"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-FRONT.0.png",
+      "bytes": 547,
+      "sha256": "83b2748bd9d559bd723b41be8b76dd89c115a1ea64073ae4383242a184652369"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-FRONT.1.png",
+      "bytes": 493,
+      "sha256": "21be4fbe46697d42f986955c18bdcffb914f2d551c68157d1af525b076fc2d3b"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-FRONT.2.png",
+      "bytes": 493,
+      "sha256": "4fd595a7b32de45075f9339f46280dbe03b095b3149f720b815cc179a6741a62"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-FRONT.3.png",
+      "bytes": 498,
+      "sha256": "979bdbeb47e7829223039113d8a81290107fdb5d6e172fbbf0dbd1e3b1fe74f5"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-FRONT.4.png",
+      "bytes": 492,
+      "sha256": "5a1d29f37c01e87aa5313acfa872a28094274e5e7e7d0fa8f1a5a52f6647be8f"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-LEFT.0.png",
+      "bytes": 572,
+      "sha256": "ae5da0fe5571f702cdedf2ade91553d781ee96701d13408fb583bdc8920acc47"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-LEFT.1.png",
+      "bytes": 601,
+      "sha256": "f52cc7ed0979d492db3d438538e0866d01442a8b2d3cf4806df135e92a416629"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-LEFT.2.png",
+      "bytes": 601,
+      "sha256": "a7baa884c924bef1283d1c793abf680bd021519acc4bf5b20176b8b9007be6e7"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-LEFT.3.png",
+      "bytes": 601,
+      "sha256": "9e240c85163cb753d94a85232460629ca747d7de390cddb53875d2b8a6607ad5"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-LEFT.4.png",
+      "bytes": 601,
+      "sha256": "2024ae844c26a08488312bca614e86d124d08f45fa91049e70c18d065c3c2d9f"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-RIGHT.0.png",
+      "bytes": 573,
+      "sha256": "d0d833215f2fb82d7792f9e408461c0c89b5ce42054cd547b633a3872b440d08"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-RIGHT.1.png",
+      "bytes": 573,
+      "sha256": "d3447f03381d810472044a2e52a493d83117578d1fb307c2a529b7bc1b7d429d"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-RIGHT.2.png",
+      "bytes": 593,
+      "sha256": "c70274432c4f29e46b9dc764ada80cf7cd92448f73723fbec23cdfd95338ef05"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-RIGHT.3.png",
+      "bytes": 592,
+      "sha256": "e2797382eac1c897fce5663da23f0e3d8e61ce92453f0d8b89278b3d29d048d5"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-RIGHT.4.png",
+      "bytes": 592,
+      "sha256": "3a25a1c883da489ca878de0eb82cc351eb8a3262df429a39464d726571e39383"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-BACK.0.png",
+      "bytes": 612,
+      "sha256": "be43aed0e2c2fcabdc3e84a81172a7e5b408f5b6594719b86110d6d95791e5d2"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-BACK.1.png",
+      "bytes": 588,
+      "sha256": "c92ae379f15e650b0988566af083064fa9c8ed64064c1950400bbef55ab8ba35"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-BACK.2.png",
+      "bytes": 583,
+      "sha256": "dc759cab6408cb3dfd3c3e26484e72a1b59fa5958d9e474a349d1b3094a4f455"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-BACK.3.png",
+      "bytes": 588,
+      "sha256": "77ee6c8839a3973fc8767d0dfba53174fa27bb345e48486de88e7b70439d3ac8"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-BACK.4.png",
+      "bytes": 583,
+      "sha256": "153a53d6f52b9c95c656e22177755b276d5ff0c2c39936329efef8bcd8386241"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-FRONT.0.png",
+      "bytes": 732,
+      "sha256": "946bf555f93a8150f9a8c6da03ef8a9f4dda26d71e712ec5a5fcbab6da09bc0e"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-FRONT.1.png",
+      "bytes": 668,
+      "sha256": "9e7508e9154c8940ec4a322bdd77205d08eb2b543522cccf8452850bb75e5c2d"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-FRONT.2.png",
+      "bytes": 665,
+      "sha256": "f9561f5cce3df256e03c06f473bc2eff4153092eb370032b1b9a92dc9bb25f91"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-FRONT.3.png",
+      "bytes": 670,
+      "sha256": "a051aa9cd65948b3a54e7545d7709aeea75879506efa5dc9573ca3d5f0cb6a60"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-FRONT.4.png",
+      "bytes": 665,
+      "sha256": "0a05d23eaaf108fce76e79013461e9e508e5da01e0cb4e5ca306aa6432acdad6"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-LEFT.0.png",
+      "bytes": 750,
+      "sha256": "4cb57690962b5d66315dc98ab00e9f893709e83e20d10abfe98aeb4087188831"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-LEFT.1.png",
+      "bytes": 767,
+      "sha256": "f0118d8bc6a55a22004f6dd3de54474a8a9b3600897c6c228fe268ece042650d"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-LEFT.2.png",
+      "bytes": 768,
+      "sha256": "93ded3c6a8dba36fb9abeda7a5edea61db2c482d61187d76f900c6bced8253ac"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-LEFT.3.png",
+      "bytes": 773,
+      "sha256": "41fc32771d8a70f4a8df0bd1151c48217469a62bf43f3fb2620fc0f3a07ea460"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-LEFT.4.png",
+      "bytes": 774,
+      "sha256": "9a18e26427e187d973ff1eef61b95e6912ef816e1397ee7be9d870f777d404a9"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-RIGHT.0.png",
+      "bytes": 750,
+      "sha256": "3501702f049c3c85a43bdde0f21910110fdb7b63b211cfa716a7482821222529"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-RIGHT.1.png",
+      "bytes": 743,
+      "sha256": "50284ec40dbfb23a2f056a34198008a6f11468726e13b4f2117c83536c293850"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-RIGHT.2.png",
+      "bytes": 765,
+      "sha256": "2efe1f81170d71a299e05d9fd6116c2cb580fadb046b9ce2e4774d402faad3e0"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-RIGHT.3.png",
+      "bytes": 773,
+      "sha256": "701cb7cfdfd256ec336077413740a73a67d510015c43863e0413dd30484ecf35"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-RIGHT.4.png",
+      "bytes": 774,
+      "sha256": "f608de44d915e1b70c15d715c87ff82a1cd2a4e1f7ab11f844092189dd1d96a1"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-BACK.0.png",
+      "bytes": 279,
+      "sha256": "269c131eb82097a64d704a314a398edd28768b739aaf6d60c5a0e1e07d4b8ff3"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-BACK.1.png",
+      "bytes": 272,
+      "sha256": "b4f9ecc8a2045ee3eb2864026a4210251ab7f808b8d82841728bcc01fa6eb7f1"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-BACK.2.png",
+      "bytes": 272,
+      "sha256": "eef12c966fb5d82407f60b08753a76e1885cafab808ca81dc02c204858f924e9"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-BACK.3.png",
+      "bytes": 273,
+      "sha256": "285fada5fbe57570e2ca64f437f666397c6bd127ac612466ad14733c494811c6"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-BACK.4.png",
+      "bytes": 272,
+      "sha256": "8a0944d3307fc0ae945cd287a00fdc7e23fdcf0e7e41e24d575e852b40d5469f"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-FRONT.0.png",
+      "bytes": 285,
+      "sha256": "890bf9023ba368032d3ecf94ee10fa10e873df7a59ff304882c08efd1748bff6"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-FRONT.1.png",
+      "bytes": 251,
+      "sha256": "851538763f842e862aaf9f0e0fe0fd57bce93bfb508c1a5850db23290ea5ecc9"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-FRONT.2.png",
+      "bytes": 256,
+      "sha256": "3a43c13daf62a771ac645c86dcb3db3b547b68df3bbd6570496a1d64ac0ca32c"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-FRONT.3.png",
+      "bytes": 260,
+      "sha256": "c9d90a4a2a9be8e53cdd119b9c2c0f6954d6f37dd8d38f204bea15f14fa83135"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-FRONT.4.png",
+      "bytes": 255,
+      "sha256": "47739bbc5f30efae6def31c85c108e30cadebce7eb4ad3c1707f83d7c3282f73"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-LEFT.0.png",
+      "bytes": 294,
+      "sha256": "9abb635a9735f612bc1e101e7e9e4222ae7ad9553f16b1824764539314394dea"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-LEFT.1.png",
+      "bytes": 309,
+      "sha256": "bcb1cc9be8b8b35250c70c0b90ad4f84560cda6326bed5c662c17e78d5252fa0"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-LEFT.2.png",
+      "bytes": 307,
+      "sha256": "7a19a13143b13f1891ec6a02c81bf7eb73dbaba88dd3513d46fbd4cbb49fe618"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-LEFT.3.png",
+      "bytes": 307,
+      "sha256": "04b234f0c1a94b887593c9d8ff383861df79c41adea37a3c43f0b843ddcddf57"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-LEFT.4.png",
+      "bytes": 307,
+      "sha256": "ff126863fe43b2acd8b727009d06a77c0d08f6fcb8727f6d2479bcf4bfd0bd7b"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-RIGHT.0.png",
+      "bytes": 294,
+      "sha256": "4806a13a2b6ee32558d721059973aa969810770724f2d65b6896c2cd051aa412"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-RIGHT.1.png",
+      "bytes": 285,
+      "sha256": "c3dc1ce22dbd57b9e7537f87f41cf40c62c1c720a2346d285858fc56435524d4"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-RIGHT.2.png",
+      "bytes": 305,
+      "sha256": "de0078c311c8a295891490873d3912077a90616590a8e77474b64ba4c8bbd86d"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-RIGHT.3.png",
+      "bytes": 303,
+      "sha256": "6d32f0c31872416e045bf61b5c066371a521bd012e88636dbafbdec958563650"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-RIGHT.4.png",
+      "bytes": 305,
+      "sha256": "603da2b4f5b5d9b6070a8d89e320166bba7df5116024d5f3683682a9c9562fee"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-BACK.0.png",
+      "bytes": 596,
+      "sha256": "d03778b2dd2980abd7525c12bc8b088c00300481caa6a2ce84744c356a9c81b6"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-BACK.1.png",
+      "bytes": 590,
+      "sha256": "d50904ef9d97a23c0a08919f34cbb31fd41ae24ea21cefee7f0bf907e81a9d82"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-BACK.2.png",
+      "bytes": 584,
+      "sha256": "cc1ba62d13922d3f86df4e3fb7a1569b7eca55ef5c9dfcf087daaf82c5fa4a21"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-BACK.3.png",
+      "bytes": 590,
+      "sha256": "4c37beb06bdc4273eaac2f653c56e72cd9a9697f0030de2a9f77eb269a18bdcb"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-BACK.4.png",
+      "bytes": 584,
+      "sha256": "22b262fb4c3bc13c2f128d4bbb707fc6ea0ff9614b6ba0da622a6ffc961f3d6b"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-FRONT.0.png",
+      "bytes": 436,
+      "sha256": "250fb6135923a7c4f8924e8a830d385a8be7ed414d64e637b25fea9fcc06d069"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-FRONT.1.png",
+      "bytes": 398,
+      "sha256": "604780f12788ce65d669620d9413d31a68bd537d8e8e596aaab7bc636fe72183"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-FRONT.2.png",
+      "bytes": 402,
+      "sha256": "8e803924aa6199cfb6754966532162418082e2489c9e976da5412af8fed621af"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-FRONT.3.png",
+      "bytes": 409,
+      "sha256": "f9c15b3a482f12b6b2b1e5597bc81fa5267be6cb616c48d1a34124fb678dbdf5"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-FRONT.4.png",
+      "bytes": 402,
+      "sha256": "d5903bc0ef62c81939a7b79c0c2977ed385a94122b54cab6cb0e91415b07d33c"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-LEFT.0.png",
+      "bytes": 443,
+      "sha256": "f20df0944c4d2d73de8af4eaeccd4f45f532ae46727ee8fd30d25d2a1e523969"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-LEFT.1.png",
+      "bytes": 455,
+      "sha256": "6e40503a066c13896a9f7d6eb862f3ed80dba818551e144488d6bf3622b99d4b"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-LEFT.2.png",
+      "bytes": 455,
+      "sha256": "59ee92df4457c23a0f48b10076b33d3f6b83ba3da22c8ef4a0f9ba8fe791179f"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-LEFT.3.png",
+      "bytes": 451,
+      "sha256": "eea9e5effb201fc4e2f8be50d7a09a04cd95428b7c918fc9685ae0d0fa2ac05d"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-LEFT.4.png",
+      "bytes": 453,
+      "sha256": "d577d8a6385c0d0a9e37ea2e3024c8b891c056a4aa824474170175dfd3ceadce"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-RIGHT.0.png",
+      "bytes": 441,
+      "sha256": "25d6960605efdf90214868bd5ee9ac21be25b400afe67e5cedb08ef1f9c0d827"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-RIGHT.1.png",
+      "bytes": 428,
+      "sha256": "b0a70643d2eb4f4f078e9cfbfe8ed72cf072609d4ace3c312ad6c080cbe8f3a5"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-RIGHT.2.png",
+      "bytes": 452,
+      "sha256": "f9c6e2c3df8f2370785abaf32e4b0f2ce2c8ae786d567d3a7166f63fda05c201"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-RIGHT.3.png",
+      "bytes": 450,
+      "sha256": "68dd25de36c7fce8ad3be4edd29d6b8f0bab8162bdf7b9f602d61e50894603ea"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-RIGHT.4.png",
+      "bytes": 450,
+      "sha256": "5a4595682214159758ce2c5f65a6951873094dd77fba6d7f448c661882977db1"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-BACK.0.png",
+      "bytes": 279,
+      "sha256": "1f3f11473cf770e648e16c85c3579cf38d480a02093138e320682130850c0c65"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-BACK.1.png",
+      "bytes": 272,
+      "sha256": "91a565a332472214f0df6ff654c71dd2c7703dd69873d05bdafb836a8d77d5bd"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-BACK.2.png",
+      "bytes": 272,
+      "sha256": "3b0c22b377a9a5d13d547de766dfe817c7fe322caed21ed3dfec8364c507a107"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-BACK.3.png",
+      "bytes": 273,
+      "sha256": "86411b183e987ac5e1ac751d9759d46625580e6e260ce260436c48a33241850a"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-BACK.4.png",
+      "bytes": 272,
+      "sha256": "5d8743a33aec0a158201bde0d8e84f051a8c941f84f096670ef033ca97f9eed8"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-FRONT.0.png",
+      "bytes": 285,
+      "sha256": "0700c0f11078ad0b6ab17249d7cbeb625397e4ca0bf3f530e20be95769b758f4"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-FRONT.1.png",
+      "bytes": 250,
+      "sha256": "e265b77191d3d9c9cc1583355f8cb779025590fd03f2eea8aecf27e31d3a4bae"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-FRONT.2.png",
+      "bytes": 256,
+      "sha256": "59fcdb91fb28a6c8ce470e7353a3e45e33884304c6a5ccb4c9efda4e08a9ce18"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-FRONT.3.png",
+      "bytes": 260,
+      "sha256": "adea6880ae80caad1e732bdfa3e206e209642a5f2d47385c0f6afc8837c5d715"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-FRONT.4.png",
+      "bytes": 255,
+      "sha256": "c5846a9a4da3d7539efa3d9f599d2f9faa01981fca81543bfaf3ab815cf4cd65"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-LEFT.0.png",
+      "bytes": 293,
+      "sha256": "23cf0c2caef38d78ee120e8851fd127687785a6a4341970a2684eb0b9ec09268"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-LEFT.1.png",
+      "bytes": 309,
+      "sha256": "8e7d7cd3d39b7314e505bb76f588bed3cbd085bf2fc4749c71889df045b35ee5"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-LEFT.2.png",
+      "bytes": 307,
+      "sha256": "62c283fbc97f41108d704fb3dc7c3d367f8d30ee412243a87ca1d5eff9c22743"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-LEFT.3.png",
+      "bytes": 307,
+      "sha256": "9459b74fc5d64882d32b12a1f45a378711147727004fc26100317e4fa7a001af"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-LEFT.4.png",
+      "bytes": 307,
+      "sha256": "25b271e0ed8a1a677a19271b97de185c0a3ae0a0792bf6379980878517bb4e52"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-RIGHT.0.png",
+      "bytes": 294,
+      "sha256": "3617340347d7c91526705a4669ef199ac747bbbccfe3f586c060f69e53b6d583"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-RIGHT.1.png",
+      "bytes": 285,
+      "sha256": "b45d9bd18337be9d2af4ecd75222e930acb98d693ebb212e97fb24cefa2677c9"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-RIGHT.2.png",
+      "bytes": 305,
+      "sha256": "710641610b04cd5532ca1d39c397c824464d95512a99e874851dcc81c1c7d1ca"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-RIGHT.3.png",
+      "bytes": 303,
+      "sha256": "fde0ef4250ebae30ed7feb0c79362cf100f0052cba3846245e1eb3d9075b848d"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-RIGHT.4.png",
+      "bytes": 305,
+      "sha256": "77eb0747eb50d57b5f0595e4425e0bd249de0867117a65f1c599d263e2c44248"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-BACK.0.png",
+      "bytes": 612,
+      "sha256": "f4ea016db58035ec45bbb9bcdaecfd39f4573c1d5bc990374d8e784dcea552f2"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-BACK.1.png",
+      "bytes": 605,
+      "sha256": "5d3bf1e257a6a6683c1ff3bddeeb5a81154f6796bb864f836f32412c76a3152d"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-BACK.2.png",
+      "bytes": 601,
+      "sha256": "ff0e5888b736a154523a61d7843a4cf2276beec980afa4f6b491ece1f19e3e7b"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-BACK.3.png",
+      "bytes": 606,
+      "sha256": "cdd61356a7af70a63e0d17ee6536976e68173657a28e8b9e5685e3f5985c822a"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-BACK.4.png",
+      "bytes": 600,
+      "sha256": "d9fb9fb698c8635d9ba6537008d2ccf043d907c684b33f4090b8a441d55fb4fd"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-FRONT.0.png",
+      "bytes": 457,
+      "sha256": "2fa67a6de925306cba9bb4495c39cc59e8db67bbf59b537f2a2f9dbffd93babd"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-FRONT.1.png",
+      "bytes": 414,
+      "sha256": "95cafedcb57f79e34c295c08a935838187ea80682e6c496bdbbd2f580b98d5a1"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-FRONT.2.png",
+      "bytes": 418,
+      "sha256": "b6ffcc70f9e32736abb35717e03c3bca48c9c9d253dc1b377ee31295e805ead4"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-FRONT.3.png",
+      "bytes": 425,
+      "sha256": "308bf1271977404ad42c2286060821e7433b3c15aee5b55fc5224aa74ddb5ec8"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-FRONT.4.png",
+      "bytes": 418,
+      "sha256": "003b43df39834828f39f5661214912c21be33ad411782c66017770dc441aeadd"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-LEFT.0.png",
+      "bytes": 460,
+      "sha256": "002d667926d38db06631d88b8cca467cddd9c7a3f76003160fa43640f4cace6c"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-LEFT.1.png",
+      "bytes": 469,
+      "sha256": "62ad28374219d9625979ebde47ea43aff41d9ab3d5284f7343c8c140085d0bb6"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-LEFT.2.png",
+      "bytes": 469,
+      "sha256": "8957b336e8e0b66e9390d4881afd5b5a7b85966c6352236d0eb0603ed611bb96"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-LEFT.3.png",
+      "bytes": 474,
+      "sha256": "8dc397a3ffdfbc29d2d67a0fe88c2d21920320fc69715a7feb910235c8549e2e"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-LEFT.4.png",
+      "bytes": 475,
+      "sha256": "77acd57a639a6ee63640396b957fe982c59946bd20d0871669f50439d1f71153"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-RIGHT.0.png",
+      "bytes": 460,
+      "sha256": "6396a3f72f5804bff82f44f4ab4fb06dca6ab13523e6e4de6d874aa0db55b452"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-RIGHT.1.png",
+      "bytes": 437,
+      "sha256": "0823c4f94424a55483156e021bc61577b05428ae2d5b853e14e52b936457532a"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-RIGHT.2.png",
+      "bytes": 469,
+      "sha256": "6940cb625e46755175b24590157b22fb4cf8ed3f7f5a2f866621b898459b8331"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-RIGHT.3.png",
+      "bytes": 473,
+      "sha256": "93b4899caae0171f68efea1203214cdfd666ed867f63f73583cba1172762bb51"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-RIGHT.4.png",
+      "bytes": 474,
+      "sha256": "3e6384143b6a495871139c39bb1e24056f311ed3f9c1882c54376b64c353040f"
+    },
+    {
+      "path": "assets/dev/generated/corujao-iv-v1/manifest.properties",
+      "bytes": 30550,
+      "sha256": "56ee566702c7039d7592280f812590a5de3689974ad030194562fdb27a529bbd"
     },
     {
       "path": "assets/dev/player-base/Main_Character_Idle_Back.png",
@@ -65,8 +965,18 @@
     },
     {
       "path": "assets/dev/player-base/Walk_Character_Back2.png",
-      "bytes": 16215,
-      "sha256": "2932e4aa72430fdf72e243eef3136d315014de3f02741de3d7a6f0d5e4f132c3"
+      "bytes": 15745,
+      "sha256": "ea170c973d37c6af41b763af147d24dc99fb044d8630a0a4ee290d8478271d43"
+    },
+    {
+      "path": "assets/dev/player-base/Walk_Character_Back3.png",
+      "bytes": 16223,
+      "sha256": "659c0d7ab4d47a9c18ace87c18b284e1c779625b3339a0b3b7f413b7ad90d220"
+    },
+    {
+      "path": "assets/dev/player-base/Walk_Character_Back4.png",
+      "bytes": 15741,
+      "sha256": "4f32888da7c830b3146089db730c4d436050c42cea207d6d02ed9388c10727fb"
     },
     {
       "path": "assets/dev/player-base/Walk_Character_Left1.png",
@@ -75,8 +985,18 @@
     },
     {
       "path": "assets/dev/player-base/Walk_Character_Left2.png",
-      "bytes": 15893,
-      "sha256": "68369a5834cd08c9a0dd0920857b977d6bea52441b8f1b1613b2f3d15891f560"
+      "bytes": 16841,
+      "sha256": "83d152e65e116e9ad0a4639fe0e786a04a357d6112ec30673862845a48690d1c"
+    },
+    {
+      "path": "assets/dev/player-base/Walk_Character_Left3.png",
+      "bytes": 15933,
+      "sha256": "ca7f870541659c268d160ecadc03f475d6529571feaccd19ad2026a507d1f8c7"
+    },
+    {
+      "path": "assets/dev/player-base/Walk_Character_Left4.png",
+      "bytes": 15778,
+      "sha256": "6df54479d04f596e0d7f4b6574d95bd992e5756c320928a76b4e45c0f51c875e"
     },
     {
       "path": "assets/dev/player-base/Walk_character_Front1.png",
@@ -85,18 +1005,248 @@
     },
     {
       "path": "assets/dev/player-base/Walk_character_Front2.png",
+      "bytes": 17197,
+      "sha256": "e80cd02c38cbf5a2d2cdc103de4a72a36e00c34a21969a1fee05d801fb686598"
+    },
+    {
+      "path": "assets/dev/player-base/Walk_character_Front3.png",
       "bytes": 17599,
       "sha256": "8dfb422cf689a2a59e6953c20f5fae1732a23384e8bb65fa2a84733ed89a0d51"
     },
     {
+      "path": "assets/dev/player-base/Walk_character_Front4.png",
+      "bytes": 17257,
+      "sha256": "1a3c4ccb7c059f20a33dbf0ac1d63e295aaac44e3c49a8bca8526e37a57a31ee"
+    },
+    {
       "path": "assets/dev/player-base/Walk_character_Right1.png",
-      "bytes": 17078,
-      "sha256": "74e7382a3287a83eee87fc6fc2bda6b195956793865f6223b4ad0ba37ad55176"
+      "bytes": 17098,
+      "sha256": "382db872046aa56fa7b745cbfc21d5fb109f817f4fc1830b9b5177a179fa2cdc"
     },
     {
       "path": "assets/dev/player-base/Walk_character_Right2.png",
-      "bytes": 15972,
-      "sha256": "1e742253e9b75db53e37f2fbc08ad2dbf4ae934b83f78ae15b9952438c823ce9"
+      "bytes": 16796,
+      "sha256": "794b7377f57d53540a68d5dc8dce024c0e4cd60dd343fff93750e3dfd0a7e855"
+    },
+    {
+      "path": "assets/dev/player-base/Walk_character_Right3.png",
+      "bytes": 16029,
+      "sha256": "672954482868c7c5da817f8cdc55eda0ecd1026e7eef4c6afe895f2ae96ff04e"
+    },
+    {
+      "path": "assets/dev/player-base/Walk_character_Right4.png",
+      "bytes": 15873,
+      "sha256": "8b776595c5737b55db78172e9dc69c5335ffb0e89b5f6d1d660ccb6688ae9c98"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_IDLE_Costa.png",
+      "bytes": 3467,
+      "sha256": "159aa7217c69841a0273c02f4f3cb2451bcc5685b30fc3ebc51667ef40babd8a"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_IDLE_Direita.png",
+      "bytes": 2736,
+      "sha256": "1da3184fc65663ff07efd16eb64245d06a7a7a8861f26762a93a6f94d475a33c"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_IDLE_Esquerda.png",
+      "bytes": 2686,
+      "sha256": "ccffbe4aa99c07fbe6e4cf1a6e22c4163daff77cd6009bd555a152fdbbbb35c0"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_IDLE_Frente.png",
+      "bytes": 3331,
+      "sha256": "778b31e8aea088fa3754cfffab71ee45e677445d6ea7f231dc87f66756867767"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Costas1.png",
+      "bytes": 1840,
+      "sha256": "0e4c28d56bab48da39d415f7d3dbe696144ee53888722854bfd37acc8e50d5e4"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Costas2.png",
+      "bytes": 1853,
+      "sha256": "547ad94b042f509971203dbeca28024118c77f8a6b0483edd2fbbb88d4a3387f"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Costas3.png",
+      "bytes": 1800,
+      "sha256": "2e3da8b60618f4911f1754b1ced91dd0b421b0ed04cda49434431b954df4d8da"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Costas4.png",
+      "bytes": 1849,
+      "sha256": "8556e34b351a3b3f04d1e149c1cc8ed0c9a239b5857004756443bd645b0fe5d2"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Costas5.png",
+      "bytes": 1823,
+      "sha256": "ad9d56d2e5e5afb37741b1507eb5138d789168d1961495a059fc273f0a62f113"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Costas6.png",
+      "bytes": 1842,
+      "sha256": "4bcbd943c65d036735365ed87314c7b9e515efdaa49fc3993cdc99e5d12acdee"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Costas7.png",
+      "bytes": 1821,
+      "sha256": "74cb2972fe094b00ebd125d1ddf9c40ac9f6810a24bb532a183ab84368d69836"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Costas8.png",
+      "bytes": 1847,
+      "sha256": "75597accf8ec21523d6d313a113e49e9388d9fdaeae461e53d2f01f0b7e9ac07"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Direita1.png",
+      "bytes": 3256,
+      "sha256": "0b9370c3e439778c2506aaf3596b647be0432b2925848b4ecc73075fdaa7217e"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Direita2.png",
+      "bytes": 2938,
+      "sha256": "61c4ba98153b5ac1c4b99266fa58d72490a7b7ce44b2ec477cd49dd3ea38294f"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Direita3.png",
+      "bytes": 2603,
+      "sha256": "2d7e2da9ec15f556a8e187eeb0e6938dd9651b7ecb2840c80acc8501e7a38f0c"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Direita4.png",
+      "bytes": 3086,
+      "sha256": "59313e35fca1732a2ff58e46143cdd0f3c7271f82e882eb5e6f95bc62c825985"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Direita5.png",
+      "bytes": 3159,
+      "sha256": "9992795dc1a202e0e86f99c0b34d06983b99a9b81cb5e41576ed326e80bf7ba2"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Direita6.png",
+      "bytes": 2865,
+      "sha256": "df815dc21698f920ebd4d2e611f699766f93c235509c147aa4348a897c51fac6"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Direita7.png",
+      "bytes": 2613,
+      "sha256": "82d0b5e048b0bd10dee814b28e70e5a9b830591d6f0e67ce696b822a639fe018"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Direita8.png",
+      "bytes": 3170,
+      "sha256": "c6e9e12f3aed0f39f5561eca31122894c8a1035ec5eb9cc16613d42f98c5d30a"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Esquerda1.png",
+      "bytes": 3212,
+      "sha256": "12005d295d0256283cd4057b2516af0a17d23d8f1d5a224de2af5928fda1aa13"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Esquerda2.png",
+      "bytes": 2948,
+      "sha256": "45d4e649fb6def4644b63104abafa190a866948812e151cef8e3d927aa376a08"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Esquerda3.png",
+      "bytes": 2632,
+      "sha256": "9bdb965fbcfdf809846d5c3c1de388e7cf2a5fa9860802623c9500701edbd4a7"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Esquerda4.png",
+      "bytes": 3224,
+      "sha256": "18480b79f2c9bf209ce5321c2d132b53122a14c4c269a3813d8eb55cd547fadf"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Esquerda5.png",
+      "bytes": 3018,
+      "sha256": "01be2cf9a90d1b02a3b4e27ede3ecb63140a83565fed967c6193ea1d3cc026a4"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Esquerda6.png",
+      "bytes": 3188,
+      "sha256": "74164c8d0efa07a9b1cfd1048f67c297653210b4886c23b001ab817e89889a28"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Esquerda7.png",
+      "bytes": 2665,
+      "sha256": "e80eb235ecb495b0725eef1edf8a79a239e5a6be2d0de6ccd192312721346470"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Esquerda8.png",
+      "bytes": 3282,
+      "sha256": "9e7c7d86ee00f44509c2a46afce93a1dd73b98623512eb52a78d4953fc6e81f0"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Frente1.png",
+      "bytes": 3317,
+      "sha256": "c5e7693b91d83d92a4a4e5639375281348457e809d3aa4721a72fd11895b1115"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Frente2.png",
+      "bytes": 3275,
+      "sha256": "046cb1553d3e3028a8006295388c9b3e0505a7d644a588e72da34ce1fed5f41a"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Frente3.png",
+      "bytes": 3136,
+      "sha256": "acb5425422993f3b568271391890c258d86fb52781438e53cac14d0c0f7e9485"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Frente4.png",
+      "bytes": 3370,
+      "sha256": "b8bddd095badcde4cc68da5b8c01c24d1f4a50f186623dc6bf90449446c7fb6a"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Frente5.png",
+      "bytes": 3184,
+      "sha256": "68e1d74ed5bcc3086f81c8d2d14a62b429eca01b4804ac2d76951c15d94560d8"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Frente6.png",
+      "bytes": 3281,
+      "sha256": "e22137ec8afb746e867ea28a4ea10a9abcf890eadd2d37b63aad889b81014568"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Frente7.png",
+      "bytes": 3161,
+      "sha256": "2d0b1a599149e68231b1047f693701d642c3ca6421c17df970adf263c4380525"
+    },
+    {
+      "path": "assets/dev/reaper/Reaper_Walking_Frente8.png",
+      "bytes": 3274,
+      "sha256": "9eda92ea51904c1cc08195908c3c920e45ae4926bd4d437796f0094a8f127c8d"
+    },
+    {
+      "path": "docs/TASK-180-HOMOLOGACAO.md",
+      "bytes": 2652,
+      "sha256": "fe8063b53d7ffea5399d350c95343f0fc1cf6386c01348754d8c07b6eb090f9c"
+    },
+    {
+      "path": "docs/TASK-180-LIVE-PUBLISHING.md",
+      "bytes": 3295,
+      "sha256": "c9ec228448e8bf595812c5a505ad2343012ac5148c271352b6d4a95a82cdf5b6"
+    },
+    {
+      "path": "docs/TASK-184-RADMIN-ROTEIRO.md",
+      "bytes": 6223,
+      "sha256": "0bc8921367364982d29ae476df50a1ab99ff8d3876b5ff7a6ca1ed4372a43127"
+    },
+    {
+      "path": "docs/TASK-197-RELATORIO-FINAL.md",
+      "bytes": 1816,
+      "sha256": "ffc070cfe7b86519b65e4f39e5e7e356891c3a7fd8c92ff3b4ef3d7d1176c5c2"
+    },
+    {
+      "path": "launcher/Atualizar-SpiritGate.ps1",
+      "bytes": 12443,
+      "sha256": "eb454b6792c92748c694cd899fbe5596f4f13c58f7624e0dbe942062abe30fbe"
+    },
+    {
+      "path": "launcher/Launcher-SpiritGate.ps1",
+      "bytes": 6389,
+      "sha256": "ff46d5acdd82cbcdc38a17e737d4a8cd63e49d36c93b85204c3344eeacb40497"
     },
     {
       "path": "runtime/bin/api-ms-win-core-console-l1-1-0.dll",
