@@ -1,6 +1,6 @@
 # Teste portátil das 40 skills — Windows x64
 
-[Baixar ZIP (52,18 MiB)](SpiritGate-Skills-Windows64-20261113T003427Z-e989a97f.zip?raw=true) ·
+[Baixar ZIP (52,48 MiB)](SpiritGate-Skills-Windows64-20261113T003427Z-e989a97f.zip?raw=true) ·
 [SHA-256](SpiritGate-Skills-Windows64-20261113T003427Z-e989a97f.zip.sha256) ·
 [Validação local](VALIDACAO.json)
 
@@ -45,7 +45,8 @@ Sprites e gameplay ainda exigem avaliação humana; execução automática local
 não comprova homologação física em outro PC.
 
 Validação de 12/11/2026: 446 arquivos do manifest conferidos por SHA-256;
-os dois probes passaram numa extração nova usando o runtime embutido, com oito
+o `Verificar-Pacote.cmd` distribuído executou os dois probes com sucesso numa
+extração nova usando o runtime embutido, com oito
 kits e troca entre dez domínios, com/sem auxiliar. Suíte Java headless:
 1.196 aprovados, 57 excluídos, zero falhas/erros. Mais 12 testes Python de assets
 e revisão de sprites aprovados. O teste físico em outro computador está pendente.

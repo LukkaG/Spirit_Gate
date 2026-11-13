@@ -75,9 +75,9 @@ foreach ($relative in @('assets/dev/player-base','assets/dev/reaper','assets/dev
     Copy-Item -LiteralPath (Join-Path $project $relative) -Destination $target -Recurse
 }
 Copy-Item -LiteralPath (Join-Path $project 'docs/SKILLS-COMO-TESTAR.md') -Destination (Join-Path $image 'ROTEIRO-SKILLS.md')
-$open = '@echo off' + "`r`n" + 'cd /d "%~dp0"' + "`r`n" + '"%~dp0runtime\bin\java.exe" -jar "%~dp0app\spiritgate-skills.jar" "%~dp0"' + "`r`n" + 'if errorlevel 1 pause' + "`r`n"
+$open = '@echo off' + "`r`n" + 'cd /d "%~dp0."' + "`r`n" + '"%~dp0runtime\bin\java.exe" -jar "%~dp0app\spiritgate-skills.jar" "%~dp0."' + "`r`n" + 'if errorlevel 1 pause' + "`r`n"
 Write-Utf8 (Join-Path $image 'Abrir-Skills.cmd') $open
-$verify = '@echo off' + "`r`n" + 'cd /d "%~dp0"' + "`r`n" + '"%~dp0runtime\bin\java.exe" -cp "%~dp0app\spiritgate-skills.jar" SkillsLocalPreviewProbe "%~dp0"' + "`r`n" + 'if errorlevel 1 goto failed' + "`r`n" + '"%~dp0runtime\bin\java.exe" -cp "%~dp0app\spiritgate-skills.jar" SkillsLiveSwitchProbe "%~dp0"' + "`r`n" + ':failed' + "`r`n" + 'pause' + "`r`n"
+$verify = '@echo off' + "`r`n" + 'cd /d "%~dp0."' + "`r`n" + '"%~dp0runtime\bin\java.exe" -cp "%~dp0app\spiritgate-skills.jar" SkillsLocalPreviewProbe "%~dp0."' + "`r`n" + 'if errorlevel 1 goto failed' + "`r`n" + '"%~dp0runtime\bin\java.exe" -cp "%~dp0app\spiritgate-skills.jar" SkillsLiveSwitchProbe "%~dp0."' + "`r`n" + 'if errorlevel 1 goto failed' + "`r`n" + 'echo SKILLS_PACKAGE_PASS' + "`r`n" + 'pause' + "`r`n" + 'exit /b 0' + "`r`n" + ':failed' + "`r`n" + 'echo SKILLS_PACKAGE_FAILED' + "`r`n" + 'pause' + "`r`n" + 'exit /b 1' + "`r`n"
 Write-Utf8 (Join-Path $image 'Verificar-Pacote.cmd') $verify
 Write-Utf8 (Join-Path $image 'LEIA-ME.txt') @"
 SPIRIT GATE - TESTE DAS 40 SKILLS - $buildId
