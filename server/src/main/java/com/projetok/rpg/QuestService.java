@@ -2,6 +2,44 @@ package com.projetok.rpg;
 import java.util.*;
 /** Ciclo de vida persistente; flags de conclusao nunca sao removidas. */
 public final class QuestService {
+    /** Estado real do ledger; flags locais não comprovam pagamento ou revisão econômica durável. */
+    public record Ledger(Map<String,Definition> definitions, Map<String,Integer> progress,
+            Set<String> flags, Map<String,State> states, Map<String,List<ObjectiveRead>> objectives) {
+        /** Definition copia objetivos; mapas, conjuntos e seus valores são imutáveis. */
+        public Ledger {
+            definitions=Map.copyOf(definitions); progress=Map.copyOf(progress);
+            flags=Set.copyOf(flags); states=Map.copyOf(states);
+            var copy=new TreeMap<String,List<ObjectiveRead>>();
+            objectives.forEach((id,values)->copy.put(id,List.copyOf(values)));
+            objectives=Map.copyOf(copy);
+        }
+    }
+
+    /** Contador armazenado no ledger local; null significa flag ausente, inclusive para coleta derivada. */
+    public record ObjectiveRead(int index, Objective definition, Integer storedCounter) { }
+
+    /** Copia contadores e watermarks brutos, sem refresh nem reconstrução pela UI. */
+    Ledger readLedger(Map<String,Integer> progress, Set<String> flags,
+            CharacterReadContext context, RpgWorld world) {
+        context.requireWorld(world);
+        var states=new TreeMap<String,State>();
+        var objectives=new TreeMap<String,List<ObjectiveRead>>();
+        for(String id:definitions.keySet()) {
+            states.put(id,state(id,progress,flags));
+            var observed=new ArrayList<ObjectiveRead>();
+            var source=definitions.get(id).objectives();
+            for(int index=0;index<source.size();index++) {
+                String prefix="qo:"+id+":"+index+":";
+                Integer stored=flags.stream().filter(flag->flag.startsWith(prefix))
+                        .map(flag->Integer.valueOf(flag.substring(prefix.length())))
+                        .max(Integer::compareTo).orElse(null);
+                observed.add(new ObjectiveRead(index,source.get(index),stored));
+            }
+            objectives.put(id,observed);
+        }
+        return new Ledger(definitions,progress,flags,states,objectives);
+    }
+
     public enum State { UNAVAILABLE, AVAILABLE, ACTIVE, READY, COMPLETED }
     public record View(String id,String name,State state,int progress,int required,String objective) { }
     public record Objective(String type,String target,int count) { }

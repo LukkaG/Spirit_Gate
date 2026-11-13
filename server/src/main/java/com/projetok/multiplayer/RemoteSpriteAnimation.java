@@ -18,5 +18,11 @@ public final class RemoteSpriteAnimation {
         }
         tracks.keySet().retainAll(state.actors().stream().map(Protocol.Actor::id).toList());
     }
-    public Pose pose(int id,long millis){var track=tracks.get(id);if(track==null)return new Pose(DirectionalAnimation.Direction.FRONT,false,0);return new Pose(track.direction(),track.walking()&&millis-track.received()<500,(int)(Math.max(0,millis-track.started())/250%4));}
+    public Pose pose(int id,long millis){return pose(id,millis,250,4);}
+    /** Cadencia visual por atlas, independente dos ticks autoritativos. */
+    public Pose pose(int id,long millis,int frameMillis,int frames){
+        if(frameMillis<1||frames<1)throw new IllegalArgumentException("Animacao invalida");
+        var track=tracks.get(id);if(track==null)return new Pose(DirectionalAnimation.Direction.FRONT,false,0);
+        return new Pose(track.direction(),track.walking()&&millis-track.received()<500,(int)(Math.max(0,millis-track.started())/frameMillis%frames));
+    }
 }

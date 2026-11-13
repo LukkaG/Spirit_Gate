@@ -4,10 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 
 /** Paleta e acabamento comuns, sem substituir o comportamento nativo de foco. */
-final class SpiritTheme {
-    static final Color BACKGROUND = new Color(6,16,29);
-    static final Color ACCENT = new Color(112,225,244);
+public final class SpiritTheme {
+    public static final Color BACKGROUND = new Color(6,16,29);
+    public static final Color ACCENT = new Color(112,225,244);
     static volatile boolean reducedMotion;
+    public static void setReducedMotion(boolean value){reducedMotion=value;}
     private SpiritTheme() { }
 
     /** Aplica contraste aos componentes existentes sem trocar seus modelos ou ações. */

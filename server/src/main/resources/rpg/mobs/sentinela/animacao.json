@@ -1,0 +1,126 @@
+{
+  "cell_width": 64,
+  "cell_height": 64,
+  "directions": [
+    "frente",
+    "costas",
+    "esquerda",
+    "direita"
+  ],
+  "attack_frames": 5,
+  "attack_columns": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "idle_column": 0,
+  "complete_sheet": "completa_384x256.png",
+  "attack_sheet": "ataque_320x256.png",
+  "loop_attack": false,
+  "kind": "ranged",
+  "action": "RANGED CERO casting pose, BODY ONLY no beam or glow painted into sprite. Windup straightens neck and draws elbows backward, impact opens mask jaw and leans head forward to fire from mouth in row facing direction while long arms brace wide, recovery head recoils and arms lower. Preserve ivory owl skull mask and charcoal teal body; beam and charge are separate game effects.",
+  "source_scale": 0.197444089456869,
+  "art_source": "host_image",
+  "route": "built-in image_gen",
+  "source_sha256": "1494068e2a5b0a5c777dcae35a76b3e722636df10a0fbf52b7bf3c6e9cb3a3b1",
+  "states": [
+    {
+      "direction": "frente",
+      "row": 0,
+      "frames": 5,
+      "duration_ms": [
+        80,
+        240,
+        120,
+        180,
+        100
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "time_ms": 320,
+          "event": "spawn_cero"
+        }
+      ],
+      "source_neutral_offset": [
+        1.0,
+        2.3335463258785936
+      ]
+    },
+    {
+      "direction": "costas",
+      "row": 1,
+      "frames": 5,
+      "duration_ms": [
+        80,
+        240,
+        120,
+        180,
+        100
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "time_ms": 320,
+          "event": "spawn_cero"
+        }
+      ],
+      "source_neutral_offset": [
+        1.0,
+        2.5309904153354665
+      ]
+    },
+    {
+      "direction": "esquerda",
+      "row": 2,
+      "frames": 5,
+      "duration_ms": [
+        80,
+        240,
+        120,
+        180,
+        100
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "time_ms": 320,
+          "event": "spawn_cero"
+        }
+      ],
+      "source_neutral_offset": [
+        0.9948881789137403,
+        1.543769968051123
+      ]
+    },
+    {
+      "direction": "direita",
+      "row": 3,
+      "frames": 5,
+      "duration_ms": [
+        80,
+        240,
+        120,
+        180,
+        100
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "time_ms": 320,
+          "event": "spawn_cero"
+        }
+      ],
+      "source_neutral_offset": [
+        0.6987220447284344,
+        1.9386581469648547
+      ]
+    }
+  ],
+  "anchor": [
+    32,
+    59
+  ]
+}

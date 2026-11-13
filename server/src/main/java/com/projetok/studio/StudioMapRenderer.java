@@ -14,7 +14,27 @@ public final class StudioMapRenderer implements DebugPanel.ActorRenderer {
     private WorldDocument indexed;private CanvasIndex index;
     StudioMapRenderer(StudioExport.Bundle bundle,AssetImages images,Supplier<RpgWorld.View> source,RpgPlayerSprites player){this.bundle=bundle;this.images=images;this.source=source;this.player=player;}
     public WorldDocument document(){String current=region==null?source.get().state().region():region.get();return bundle.maps().values().stream().filter(d->d.region().equals(current)).findFirst().orElseThrow();}
-    public void layers(Graphics2D original,boolean above){Graphics2D g=(Graphics2D)original.create();try{var d=document();g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);if(!above){g.setColor(new Color(43,70,59));g.fillRect(0,0,d.width(),d.height());}if(indexed!=d){index=new CanvasIndex(d);indexed=d;}Rectangle visible=g.getClipBounds();if(visible==null)visible=new Rectangle(0,0,d.width(),d.height());var elements=index.query(visible);for(var l:d.orderedLayers())if(l.visible()&&(l.role()==WorldDocument.Role.ABOVE||l.role()==WorldDocument.Role.ROOF)==above)for(var e:elements.getOrDefault(l.id(),java.util.List.of()))if(e.visible()&&e.layer().equals(l.id())&&(e.kind()==WorldDocument.Kind.TILE||e.kind()==WorldDocument.Kind.OBJECT))drawImage(g,e,e.x(),e.y());}finally{g.dispose();}}
+    public void layers(Graphics2D original,boolean above){Graphics2D g=(Graphics2D)original.create();try{var d=document();g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);if(!above){g.setColor(new Color(43,70,59));g.fillRect(0,0,d.width(),d.height());}if(indexed!=d){index=new CanvasIndex(d);indexed=d;}Rectangle visible=g.getClipBounds();if(visible==null)visible=new Rectangle(0,0,d.width(),d.height());var elements=index.query(visible);for(var l:d.orderedLayers())if(l.visible()&&(l.role()==WorldDocument.Role.ABOVE||l.role()==WorldDocument.Role.ROOF)==above)for(var e:elements.getOrDefault(l.id(),java.util.List.of()))if(l.role()!=WorldDocument.Role.OBJECTS&&e.visible()&&e.layer().equals(l.id())&&(e.kind()==WorldDocument.Kind.TILE||e.kind()==WorldDocument.Kind.OBJECT))drawImage(g,e,e.x(),e.y());}finally{g.dispose();}}
+    /** Intercala objetos e personagens pela base visual, sem usar hitboxes como arte. */
+    public void actors(Graphics2D g,java.util.List<DebugSnapshot.ActorView> actors,java.util.function.Consumer<DebugSnapshot.ActorView> drawActor){
+        record Entry(double y,int order,String id,Runnable draw){}
+        var entries=new ArrayList<Entry>();var d=document();
+        if(indexed!=d){index=new CanvasIndex(d);indexed=d;}var clip=g.getClipBounds();if(clip==null)clip=new Rectangle(0,0,d.width(),d.height());var visible=index.query(clip);
+        for(var layer:d.orderedLayers())if(layer.visible()&&layer.role()==WorldDocument.Role.OBJECTS)
+            for(var e:visible.getOrDefault(layer.id(),java.util.List.of()))if(e.visible()&&e.layer().equals(layer.id())&&(e.kind()==WorldDocument.Kind.TILE||e.kind()==WorldDocument.Kind.OBJECT))
+                entries.add(new Entry(depth(e),layer.order(),e.id(),()->drawImage(g,e,e.x(),e.y())));
+        for(var actor:actors)entries.add(new Entry(actor.y(),100,"actor_"+actor.id(),()->drawActor.accept(actor)));
+        entries.sort(Comparator.comparingDouble(Entry::y).thenComparingInt(Entry::order).thenComparing(Entry::id));
+        entries.forEach(e->e.draw().run());
+    }
+    /** Pivo opcional em pixels relativos ao topo; padrao: base inferior do objeto. */
+    static double depth(WorldDocument.Element e){
+        String value=e.properties().get("depth.pivot");if(value==null)return (double)e.y()+e.height();
+        try{int offset=Integer.parseInt(value);if(offset<0||offset>e.height())throw new NumberFormatException();return (double)e.y()+offset;}
+        catch(NumberFormatException invalid){throw new IllegalArgumentException("Pivo de profundidade invalido: "+e.id(),invalid);}
+    }
+    /** Indicadores de interação são UI sobre os documentos, sem criar arte de cenário. */
+    public void portalHints(Graphics2D original){var g=(Graphics2D)original.create();try{g.setColor(new Color(100,220,245));g.setStroke(new BasicStroke(2));for(var p:document().portals()){g.drawOval(p.x()-20,p.y()-10,40,20);g.drawString("P: "+p.destination(),p.x()-28,p.y()-16);}}finally{g.dispose();}}
     boolean drawImage(Graphics2D g,WorldDocument.Element e,int x,int y){var image=images.peek(e.asset());if(image==null)return false;var c=e.crop();g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);g.drawImage(image,x,y,x+e.width(),y+e.height(),c.x(),c.y(),c.x()+c.width(),c.y()+c.height(),null);return true;}
     public boolean drawNetwork(Graphics2D g,DebugSnapshot.ActorView actor){
         if(!actor.alive()||actor.id()<1_000_000)return false;String reference=null;

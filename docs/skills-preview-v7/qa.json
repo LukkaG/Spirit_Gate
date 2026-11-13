@@ -1,0 +1,34 @@
+{
+  "clips": 1,
+  "frames": 16,
+  "empty_frames": 0,
+  "edge_pixels": 0,
+  "upscaled_frames": 0,
+  "warnings": [],
+  "visible_alpha_threshold": 16,
+  "area": [
+    473,
+    1555,
+    3316,
+    5664,
+    9177,
+    10695,
+    10000,
+    10103,
+    9143,
+    8339,
+    7375,
+    6191,
+    3286,
+    1472,
+    597,
+    147
+  ],
+  "first_peak_ratio": 0.0442,
+  "last_peak_ratio": 0.0137,
+  "display": [
+    240,
+    180
+  ],
+  "duration_millis": 896
+}

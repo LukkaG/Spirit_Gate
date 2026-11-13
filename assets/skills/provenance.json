@@ -1,0 +1,3802 @@
+{
+  "generator": "prepare_skill_assets.py:v1",
+  "art_source": "mixed",
+  "art_sources": [
+    "existing",
+    "host_image"
+  ],
+  "transformations": "Python packaging: grid crop; one common crop per sequence; uniform nearest-neighbour scale; composition; rotation; no repaint or recolor. Art variants: image_gen edits documented per source.",
+  "sources": {
+    "water_cut": {
+      "file": "water-slash-turquoise-v1.png",
+      "original_file": "251.png",
+      "sha256": "9d99e41279d737d44d0b1e2f60215ce87f667995065a29ab34138f6deb93ae0b",
+      "original_sha256": "8cc7722b56f3b61e11507ed71f84661c0c8d38b07aa5e3ef17fe1420ee211b1c",
+      "art_source": "host_image",
+      "source_size": [
+        1774,
+        887
+      ],
+      "source_grid": [
+        3,
+        3
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          591,
+          296
+        ],
+        [
+          591,
+          0,
+          1183,
+          296
+        ],
+        [
+          1183,
+          0,
+          1774,
+          296
+        ],
+        [
+          0,
+          296,
+          591,
+          591
+        ],
+        [
+          591,
+          296,
+          1183,
+          591
+        ],
+        [
+          1183,
+          296,
+          1774,
+          591
+        ],
+        [
+          0,
+          591,
+          591,
+          887
+        ],
+        [
+          591,
+          591,
+          1183,
+          887
+        ],
+        [
+          1183,
+          591,
+          1774,
+          887
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "original_grid": [
+        3,
+        3
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null,
+        "prompt": "water-slash-prompt.txt",
+        "notes": "Model and cost were not returned by the built-in tool."
+      },
+      "common_crop_in_cell": [
+        0,
+        0,
+        592,
+        296
+      ]
+    },
+    "water_prison": {
+      "file": "187.png",
+      "original_file": "187.png",
+      "sha256": "1828f2bd8808a75e2105a37b7323bacb0be279b039584d17747442364033abc8",
+      "original_sha256": "1828f2bd8808a75e2105a37b7323bacb0be279b039584d17747442364033abc8",
+      "art_source": "existing",
+      "source_size": [
+        660,
+        606
+      ],
+      "source_grid": [
+        3,
+        3
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          220,
+          202
+        ],
+        [
+          220,
+          0,
+          440,
+          202
+        ],
+        [
+          440,
+          0,
+          660,
+          202
+        ],
+        [
+          0,
+          202,
+          220,
+          404
+        ],
+        [
+          220,
+          202,
+          440,
+          404
+        ],
+        [
+          440,
+          202,
+          660,
+          404
+        ],
+        [
+          0,
+          404,
+          220,
+          606
+        ],
+        [
+          220,
+          404,
+          440,
+          606
+        ],
+        [
+          440,
+          404,
+          660,
+          606
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "original_grid": [
+        3,
+        3
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "generation": null,
+      "common_crop_in_cell": [
+        2,
+        4,
+        217,
+        195
+      ]
+    },
+    "water_vortex": {
+      "file": "134.png",
+      "original_file": "134.png",
+      "sha256": "92d07e35c4c928b215af681176cfbcdc11f7d379de5cf62a0fccb25251f6f549",
+      "original_sha256": "92d07e35c4c928b215af681176cfbcdc11f7d379de5cf62a0fccb25251f6f549",
+      "art_source": "existing",
+      "source_size": [
+        480,
+        192
+      ],
+      "source_grid": [
+        3,
+        1
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          160,
+          192
+        ],
+        [
+          160,
+          0,
+          320,
+          192
+        ],
+        [
+          320,
+          0,
+          480,
+          192
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2
+      ],
+      "original_grid": [
+        3,
+        1
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2
+      ],
+      "generation": null,
+      "common_crop_in_cell": [
+        6,
+        12,
+        153,
+        192
+      ]
+    },
+    "wind_cut": {
+      "file": "wind-variant-v1.png",
+      "original_file": "253.png",
+      "sha256": "af7100934ed8b31fd637d7c1722eacc00e8d0b4b407f23198a4067a2e6fbdf43",
+      "original_sha256": "86544f7b27928d692d9d4d84b798c97d1d81a751687f26341d73aca33c9fe6f0",
+      "art_source": "host_image",
+      "source_size": [
+        1774,
+        887
+      ],
+      "source_grid": [
+        3,
+        3
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          591,
+          296
+        ],
+        [
+          591,
+          0,
+          1183,
+          296
+        ],
+        [
+          1183,
+          0,
+          1774,
+          296
+        ],
+        [
+          0,
+          296,
+          591,
+          591
+        ],
+        [
+          591,
+          296,
+          1183,
+          591
+        ],
+        [
+          1183,
+          296,
+          1774,
+          591
+        ],
+        [
+          0,
+          591,
+          591,
+          887
+        ],
+        [
+          591,
+          591,
+          1183,
+          887
+        ],
+        [
+          1183,
+          591,
+          1774,
+          887
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "original_grid": [
+        3,
+        3
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null,
+        "prompt": "variant-prompts.json#wind",
+        "notes": "Model and cost were not returned by the built-in tool."
+      },
+      "common_crop_in_cell": [
+        0,
+        0,
+        592,
+        296
+      ]
+    },
+    "wind_push": {
+      "file": "235.png",
+      "original_file": "235.png",
+      "sha256": "ac226af5abf60aeea49e2aeacc8be5f1496b67cf15c6d5514fd132379c8d3261",
+      "original_sha256": "ac226af5abf60aeea49e2aeacc8be5f1496b67cf15c6d5514fd132379c8d3261",
+      "art_source": "existing",
+      "source_size": [
+        480,
+        224
+      ],
+      "source_grid": [
+        3,
+        1
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          160,
+          224
+        ],
+        [
+          160,
+          0,
+          320,
+          224
+        ],
+        [
+          320,
+          0,
+          480,
+          224
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2
+      ],
+      "original_grid": [
+        3,
+        1
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2
+      ],
+      "generation": null,
+      "common_crop_in_cell": [
+        2,
+        0,
+        156,
+        223
+      ]
+    },
+    "wind_pull": {
+      "file": "238.png",
+      "original_file": "238.png",
+      "sha256": "a5fad192ff2261599f04b8955e4e8ca47772350ba40d874b8e8c0bcc94cb7803",
+      "original_sha256": "a5fad192ff2261599f04b8955e4e8ca47772350ba40d874b8e8c0bcc94cb7803",
+      "art_source": "existing",
+      "source_size": [
+        224,
+        480
+      ],
+      "source_grid": [
+        1,
+        3
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          224,
+          160
+        ],
+        [
+          0,
+          160,
+          224,
+          320
+        ],
+        [
+          0,
+          320,
+          224,
+          480
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2
+      ],
+      "original_grid": [
+        1,
+        3
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2
+      ],
+      "generation": null,
+      "common_crop_in_cell": [
+        1,
+        1,
+        223,
+        156
+      ]
+    },
+    "lightning": {
+      "file": "thunder-variant-v1.png",
+      "original_file": "96.png",
+      "sha256": "b451c227d2566ba9153885924bb866555c0f9888e0c3258b7a891d7415557113",
+      "original_sha256": "7e7c6694f218ed65a2203b47470d5a3d038dcdbc265c2556239d27e1ae6b8122",
+      "art_source": "host_image",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "source_grid": [
+        6,
+        1
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          209,
+          1254
+        ],
+        [
+          209,
+          0,
+          418,
+          1254
+        ],
+        [
+          418,
+          0,
+          627,
+          1254
+        ],
+        [
+          627,
+          0,
+          836,
+          1254
+        ],
+        [
+          836,
+          0,
+          1045,
+          1254
+        ],
+        [
+          1045,
+          0,
+          1254,
+          1254
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "original_grid": [
+        6,
+        1
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null,
+        "prompt": "variant-prompts.json#thunder",
+        "notes": "Model and cost were not returned by the built-in tool."
+      },
+      "common_crop_in_cell": [
+        0,
+        18,
+        209,
+        1254
+      ]
+    },
+    "lightning_lance": {
+      "file": "34.png",
+      "original_file": "34.png",
+      "sha256": "41a2987b65160e37fd3ef34d9e9c1e285c653565abfbb049d0c0090a61d18ba2",
+      "original_sha256": "41a2987b65160e37fd3ef34d9e9c1e285c653565abfbb049d0c0090a61d18ba2",
+      "art_source": "existing",
+      "source_size": [
+        576,
+        320
+      ],
+      "source_grid": [
+        2,
+        5
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          288,
+          64
+        ],
+        [
+          288,
+          0,
+          576,
+          64
+        ],
+        [
+          0,
+          64,
+          288,
+          128
+        ],
+        [
+          288,
+          64,
+          576,
+          128
+        ],
+        [
+          0,
+          128,
+          288,
+          192
+        ],
+        [
+          288,
+          128,
+          576,
+          192
+        ],
+        [
+          0,
+          192,
+          288,
+          256
+        ],
+        [
+          288,
+          192,
+          576,
+          256
+        ],
+        [
+          0,
+          256,
+          288,
+          320
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "original_grid": [
+        2,
+        5
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "generation": null,
+      "common_crop_in_cell": [
+        6,
+        0,
+        286,
+        64
+      ]
+    },
+    "lightning_dash": {
+      "file": "307.png",
+      "original_file": "307.png",
+      "sha256": "98b8c48ae3306d0777cccbfe33144ee3af0488711a210aab0c897ac4678994b0",
+      "original_sha256": "98b8c48ae3306d0777cccbfe33144ee3af0488711a210aab0c897ac4678994b0",
+      "art_source": "existing",
+      "source_size": [
+        1152,
+        256
+      ],
+      "source_grid": [
+        9,
+        1
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          128,
+          256
+        ],
+        [
+          128,
+          0,
+          256,
+          256
+        ],
+        [
+          256,
+          0,
+          384,
+          256
+        ],
+        [
+          384,
+          0,
+          512,
+          256
+        ],
+        [
+          512,
+          0,
+          640,
+          256
+        ],
+        [
+          640,
+          0,
+          768,
+          256
+        ],
+        [
+          768,
+          0,
+          896,
+          256
+        ],
+        [
+          896,
+          0,
+          1024,
+          256
+        ],
+        [
+          1024,
+          0,
+          1152,
+          256
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "original_grid": [
+        9,
+        1
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "generation": null,
+      "common_crop_in_cell": [
+        0,
+        0,
+        128,
+        255
+      ]
+    },
+    "fire_cut": {
+      "file": "fire-variant-v1.png",
+      "original_file": "252.png",
+      "sha256": "f1cbb40f4acf5c84ffd412231ce58fa00efdddb2dd643f2310068ea1f412d726",
+      "original_sha256": "9825a3cde7771579d5438f12c1708f48d40d2bce7ce1e667c33fbf1d3fe8a70b",
+      "art_source": "host_image",
+      "source_size": [
+        1774,
+        887
+      ],
+      "source_grid": [
+        3,
+        3
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          591,
+          296
+        ],
+        [
+          591,
+          0,
+          1183,
+          296
+        ],
+        [
+          1183,
+          0,
+          1774,
+          296
+        ],
+        [
+          0,
+          296,
+          591,
+          591
+        ],
+        [
+          591,
+          296,
+          1183,
+          591
+        ],
+        [
+          1183,
+          296,
+          1774,
+          591
+        ],
+        [
+          0,
+          591,
+          591,
+          887
+        ],
+        [
+          591,
+          591,
+          1183,
+          887
+        ],
+        [
+          1183,
+          591,
+          1774,
+          887
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "original_grid": [
+        3,
+        3
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null,
+        "prompt": "variant-prompts.json#fire",
+        "notes": "Model and cost were not returned by the built-in tool."
+      },
+      "common_crop_in_cell": [
+        0,
+        0,
+        592,
+        296
+      ]
+    },
+    "fire_line": {
+      "file": "343.png",
+      "original_file": "343.png",
+      "sha256": "6e9b1d393e3d9c1893b6172765906c0e524989168d453f726b8f91512cb03d9e",
+      "original_sha256": "6e9b1d393e3d9c1893b6172765906c0e524989168d453f726b8f91512cb03d9e",
+      "art_source": "existing",
+      "source_size": [
+        1280,
+        128
+      ],
+      "source_grid": [
+        10,
+        1
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          128,
+          128
+        ],
+        [
+          128,
+          0,
+          256,
+          128
+        ],
+        [
+          256,
+          0,
+          384,
+          128
+        ],
+        [
+          384,
+          0,
+          512,
+          128
+        ],
+        [
+          512,
+          0,
+          640,
+          128
+        ],
+        [
+          640,
+          0,
+          768,
+          128
+        ],
+        [
+          768,
+          0,
+          896,
+          128
+        ],
+        [
+          896,
+          0,
+          1024,
+          128
+        ],
+        [
+          1024,
+          0,
+          1152,
+          128
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "original_grid": [
+        10,
+        1
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "generation": null,
+      "common_crop_in_cell": [
+        33,
+        0,
+        94,
+        104
+      ]
+    },
+    "fire_vortex": {
+      "file": "249.png",
+      "original_file": "249.png",
+      "sha256": "791bdb3ae329c4f0318c42b6fa146ce36a3ca7eb46b4f44c7e8df7e324e761a8",
+      "original_sha256": "791bdb3ae329c4f0318c42b6fa146ce36a3ca7eb46b4f44c7e8df7e324e761a8",
+      "art_source": "existing",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_grid": [
+        4,
+        4
+      ],
+      "source_rects": [
+        [
+          0,
+          256,
+          256,
+          512
+        ],
+        [
+          256,
+          256,
+          512,
+          512
+        ],
+        [
+          512,
+          256,
+          768,
+          512
+        ],
+        [
+          768,
+          256,
+          1024,
+          512
+        ],
+        [
+          0,
+          512,
+          256,
+          768
+        ],
+        [
+          256,
+          512,
+          512,
+          768
+        ],
+        [
+          512,
+          512,
+          768,
+          768
+        ],
+        [
+          768,
+          512,
+          1024,
+          768
+        ]
+      ],
+      "source_indices": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "original_grid": [
+        4,
+        4
+      ],
+      "original_source_indices": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "generation": null,
+      "common_crop_in_cell": [
+        9,
+        62,
+        250,
+        241
+      ]
+    },
+    "fire_eruption": {
+      "file": "249.png",
+      "original_file": "249.png",
+      "sha256": "791bdb3ae329c4f0318c42b6fa146ce36a3ca7eb46b4f44c7e8df7e324e761a8",
+      "original_sha256": "791bdb3ae329c4f0318c42b6fa146ce36a3ca7eb46b4f44c7e8df7e324e761a8",
+      "art_source": "existing",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_grid": [
+        4,
+        4
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          256,
+          256
+        ],
+        [
+          256,
+          0,
+          512,
+          256
+        ],
+        [
+          512,
+          0,
+          768,
+          256
+        ],
+        [
+          768,
+          0,
+          1024,
+          256
+        ],
+        [
+          0,
+          256,
+          256,
+          512
+        ],
+        [
+          256,
+          256,
+          512,
+          512
+        ],
+        [
+          512,
+          256,
+          768,
+          512
+        ],
+        [
+          768,
+          256,
+          1024,
+          512
+        ],
+        [
+          0,
+          512,
+          256,
+          768
+        ],
+        [
+          256,
+          512,
+          512,
+          768
+        ],
+        [
+          512,
+          512,
+          768,
+          768
+        ],
+        [
+          768,
+          512,
+          1024,
+          768
+        ],
+        [
+          0,
+          768,
+          256,
+          1024
+        ],
+        [
+          256,
+          768,
+          512,
+          1024
+        ],
+        [
+          512,
+          768,
+          768,
+          1024
+        ],
+        [
+          768,
+          768,
+          1024,
+          1024
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "original_grid": [
+        4,
+        4
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "generation": null,
+      "common_crop_in_cell": [
+        0,
+        1,
+        256,
+        256
+      ]
+    },
+    "pool": {
+      "file": "349.png",
+      "original_file": "349.png",
+      "sha256": "5216949bc674ebc71dc59b172df319d48014349e0c36dc4241816c7f5ed358d0",
+      "original_sha256": "5216949bc674ebc71dc59b172df319d48014349e0c36dc4241816c7f5ed358d0",
+      "art_source": "existing",
+      "source_size": [
+        256,
+        64
+      ],
+      "source_grid": [
+        4,
+        1
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          64,
+          64
+        ],
+        [
+          64,
+          0,
+          128,
+          64
+        ],
+        [
+          128,
+          0,
+          192,
+          64
+        ],
+        [
+          192,
+          0,
+          256,
+          64
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "original_grid": [
+        4,
+        1
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "generation": null,
+      "common_crop_in_cell": [
+        14,
+        50,
+        53,
+        64
+      ]
+    },
+    "web": {
+      "file": "spirit-variant-v1.png",
+      "original_file": "175.png",
+      "sha256": "8e0daae465943e8786a75be53d8ac8fbfaf437d82fb2b856c6f1baf13e7dcf26",
+      "original_sha256": "f7b0281cd7afdcbbb2222c5dfb25a32a4d547875167418e3e892dc1748b24d52",
+      "art_source": "host_image",
+      "source_size": [
+        1448,
+        1086
+      ],
+      "source_grid": [
+        4,
+        3
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          362,
+          362
+        ],
+        [
+          362,
+          0,
+          724,
+          362
+        ],
+        [
+          724,
+          0,
+          1086,
+          362
+        ],
+        [
+          1086,
+          0,
+          1448,
+          362
+        ],
+        [
+          0,
+          362,
+          362,
+          724
+        ],
+        [
+          362,
+          362,
+          724,
+          724
+        ],
+        [
+          724,
+          362,
+          1086,
+          724
+        ],
+        [
+          1086,
+          362,
+          1448,
+          724
+        ],
+        [
+          0,
+          724,
+          362,
+          1086
+        ],
+        [
+          362,
+          724,
+          724,
+          1086
+        ],
+        [
+          724,
+          724,
+          1086,
+          1086
+        ],
+        [
+          1086,
+          724,
+          1448,
+          1086
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "original_grid": [
+        4,
+        3
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null,
+        "prompt": "variant-prompts.json#spirit",
+        "notes": "Model and cost were not returned by the built-in tool."
+      },
+      "common_crop_in_cell": [
+        0,
+        0,
+        362,
+        362
+      ]
+    },
+    "beam": {
+      "file": "light-variant-v1.png",
+      "original_file": "109.png",
+      "sha256": "0a101dd72484e5e3a281c0846fe9a7e60ef68dbb3d00f2e2aa5df0a7395bfa6b",
+      "original_sha256": "32ad8043960422c196e061a2ca19bc802c0215ce322875606ef3d55cb72d2e7d",
+      "art_source": "host_image",
+      "source_size": [
+        1024,
+        1536
+      ],
+      "source_grid": [
+        4,
+        4
+      ],
+      "source_rects": [
+        [
+          0,
+          1152,
+          256,
+          1536
+        ],
+        [
+          256,
+          1152,
+          512,
+          1536
+        ],
+        [
+          512,
+          1152,
+          768,
+          1536
+        ],
+        [
+          768,
+          1152,
+          1024,
+          1536
+        ]
+      ],
+      "source_indices": [
+        12,
+        13,
+        14,
+        15
+      ],
+      "original_grid": [
+        4,
+        4
+      ],
+      "original_source_indices": [
+        12,
+        13,
+        14,
+        15
+      ],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null,
+        "prompt": "variant-prompts.json#light",
+        "notes": "Model and cost were not returned by the built-in tool."
+      },
+      "common_crop_in_cell": [
+        0,
+        0,
+        256,
+        384
+      ]
+    },
+    "prison": {
+      "file": "64.png",
+      "original_file": "64.png",
+      "sha256": "9436f9c2c3bef8670d3503ae487c50cd79b2c8ee9ab891282d525646bd3974dc",
+      "original_sha256": "9436f9c2c3bef8670d3503ae487c50cd79b2c8ee9ab891282d525646bd3974dc",
+      "art_source": "existing",
+      "source_size": [
+        640,
+        512
+      ],
+      "source_grid": [
+        5,
+        4
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          128,
+          128
+        ],
+        [
+          128,
+          0,
+          256,
+          128
+        ],
+        [
+          256,
+          0,
+          384,
+          128
+        ],
+        [
+          384,
+          0,
+          512,
+          128
+        ],
+        [
+          512,
+          0,
+          640,
+          128
+        ],
+        [
+          0,
+          128,
+          128,
+          256
+        ],
+        [
+          128,
+          128,
+          256,
+          256
+        ],
+        [
+          256,
+          128,
+          384,
+          256
+        ],
+        [
+          384,
+          128,
+          512,
+          256
+        ],
+        [
+          512,
+          128,
+          640,
+          256
+        ],
+        [
+          0,
+          256,
+          128,
+          384
+        ],
+        [
+          128,
+          256,
+          256,
+          384
+        ],
+        [
+          256,
+          256,
+          384,
+          384
+        ],
+        [
+          384,
+          256,
+          512,
+          384
+        ],
+        [
+          512,
+          256,
+          640,
+          384
+        ],
+        [
+          0,
+          384,
+          128,
+          512
+        ],
+        [
+          128,
+          384,
+          256,
+          512
+        ],
+        [
+          256,
+          384,
+          384,
+          512
+        ],
+        [
+          384,
+          384,
+          512,
+          512
+        ],
+        [
+          512,
+          384,
+          640,
+          512
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "original_grid": [
+        5,
+        4
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "generation": null,
+      "common_crop_in_cell": [
+        14,
+        26,
+        114,
+        124
+      ]
+    },
+    "quicksand": {
+      "file": "102.png",
+      "original_file": "102.png",
+      "sha256": "73c8750a3fee1705b55e8451760a42db0ea41dd47e5aebfc373bb96f73b72971",
+      "original_sha256": "73c8750a3fee1705b55e8451760a42db0ea41dd47e5aebfc373bb96f73b72971",
+      "art_source": "existing",
+      "source_size": [
+        384,
+        384
+      ],
+      "source_grid": [
+        4,
+        4
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          96,
+          96
+        ],
+        [
+          96,
+          0,
+          192,
+          96
+        ],
+        [
+          192,
+          0,
+          288,
+          96
+        ],
+        [
+          288,
+          0,
+          384,
+          96
+        ],
+        [
+          0,
+          96,
+          96,
+          192
+        ],
+        [
+          96,
+          96,
+          192,
+          192
+        ],
+        [
+          192,
+          96,
+          288,
+          192
+        ],
+        [
+          288,
+          96,
+          384,
+          192
+        ],
+        [
+          0,
+          192,
+          96,
+          288
+        ],
+        [
+          96,
+          192,
+          192,
+          288
+        ],
+        [
+          192,
+          192,
+          288,
+          288
+        ],
+        [
+          288,
+          192,
+          384,
+          288
+        ],
+        [
+          0,
+          288,
+          96,
+          384
+        ],
+        [
+          96,
+          288,
+          192,
+          384
+        ],
+        [
+          192,
+          288,
+          288,
+          384
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "original_grid": [
+        4,
+        4
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "generation": null,
+      "common_crop_in_cell": [
+        0,
+        13,
+        96,
+        90
+      ]
+    },
+    "arrow": {
+      "file": "aetheri-variant-v1.png",
+      "original_file": "341.png",
+      "sha256": "3bb2d2be1d0a96b0c728b60619c9390cc5c9f99ac7f3d8806f356113e59d216d",
+      "original_sha256": "2bbb058a6b23b5ead397b37e5e560c22872d86435b6d9a15712d7a38783982ae",
+      "art_source": "host_image",
+      "source_size": [
+        1774,
+        887
+      ],
+      "source_grid": [
+        2,
+        3
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          887,
+          296
+        ],
+        [
+          887,
+          0,
+          1774,
+          296
+        ],
+        [
+          0,
+          296,
+          887,
+          591
+        ],
+        [
+          887,
+          296,
+          1774,
+          591
+        ],
+        [
+          0,
+          591,
+          887,
+          887
+        ],
+        [
+          887,
+          591,
+          1774,
+          887
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "original_grid": [
+        16,
+        1
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null,
+        "prompt": "variant-prompts.json#aetheri",
+        "notes": "Model and cost were not returned by the built-in tool."
+      },
+      "common_crop_in_cell": [
+        3,
+        0,
+        887,
+        296
+      ]
+    },
+    "arrow_rain": {
+      "file": "339.png",
+      "original_file": "339.png",
+      "sha256": "3cc5cfa2758ab1283a4886b628fa7c0a6aba66ba24c13e97b2d9be6a5d53597d",
+      "original_sha256": "3cc5cfa2758ab1283a4886b628fa7c0a6aba66ba24c13e97b2d9be6a5d53597d",
+      "art_source": "existing",
+      "source_size": [
+        512,
+        320
+      ],
+      "source_grid": [
+        16,
+        1
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          32,
+          320
+        ],
+        [
+          32,
+          0,
+          64,
+          320
+        ],
+        [
+          64,
+          0,
+          96,
+          320
+        ],
+        [
+          96,
+          0,
+          128,
+          320
+        ],
+        [
+          128,
+          0,
+          160,
+          320
+        ],
+        [
+          160,
+          0,
+          192,
+          320
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "original_grid": [
+        16,
+        1
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "generation": null,
+      "common_crop_in_cell": [
+        7,
+        0,
+        22,
+        150
+      ]
+    },
+    "heal": {
+      "file": "131.png",
+      "original_file": "131.png",
+      "sha256": "04dd6e6376d163f3f75b54abfdd5d50672ba9c65175eac29eff37112f3849b75",
+      "original_sha256": "04dd6e6376d163f3f75b54abfdd5d50672ba9c65175eac29eff37112f3849b75",
+      "art_source": "existing",
+      "source_size": [
+        2048,
+        192
+      ],
+      "source_grid": [
+        16,
+        1
+      ],
+      "source_rects": [
+        [
+          128,
+          0,
+          256,
+          192
+        ],
+        [
+          256,
+          0,
+          384,
+          192
+        ],
+        [
+          384,
+          0,
+          512,
+          192
+        ],
+        [
+          512,
+          0,
+          640,
+          192
+        ],
+        [
+          640,
+          0,
+          768,
+          192
+        ],
+        [
+          768,
+          0,
+          896,
+          192
+        ],
+        [
+          896,
+          0,
+          1024,
+          192
+        ],
+        [
+          1024,
+          0,
+          1152,
+          192
+        ],
+        [
+          1152,
+          0,
+          1280,
+          192
+        ],
+        [
+          1280,
+          0,
+          1408,
+          192
+        ],
+        [
+          1408,
+          0,
+          1536,
+          192
+        ],
+        [
+          1536,
+          0,
+          1664,
+          192
+        ],
+        [
+          1664,
+          0,
+          1792,
+          192
+        ],
+        [
+          1792,
+          0,
+          1920,
+          192
+        ],
+        [
+          1920,
+          0,
+          2048,
+          192
+        ]
+      ],
+      "source_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "original_grid": [
+        16,
+        1
+      ],
+      "original_source_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "generation": null,
+      "common_crop_in_cell": [
+        10,
+        10,
+        128,
+        180
+      ]
+    },
+    "heal_area": {
+      "file": "399.png",
+      "original_file": "399.png",
+      "sha256": "71301ab9bce602778d93bfd00b9c417a93951f762f800c5ac17de50916ab49bd",
+      "original_sha256": "71301ab9bce602778d93bfd00b9c417a93951f762f800c5ac17de50916ab49bd",
+      "art_source": "existing",
+      "source_size": [
+        640,
+        512
+      ],
+      "source_grid": [
+        5,
+        4
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          128,
+          128
+        ],
+        [
+          128,
+          0,
+          256,
+          128
+        ],
+        [
+          256,
+          0,
+          384,
+          128
+        ],
+        [
+          384,
+          0,
+          512,
+          128
+        ],
+        [
+          512,
+          0,
+          640,
+          128
+        ],
+        [
+          0,
+          128,
+          128,
+          256
+        ],
+        [
+          128,
+          128,
+          256,
+          256
+        ],
+        [
+          256,
+          128,
+          384,
+          256
+        ],
+        [
+          384,
+          128,
+          512,
+          256
+        ],
+        [
+          512,
+          128,
+          640,
+          256
+        ],
+        [
+          0,
+          256,
+          128,
+          384
+        ],
+        [
+          128,
+          256,
+          256,
+          384
+        ],
+        [
+          256,
+          256,
+          384,
+          384
+        ],
+        [
+          384,
+          256,
+          512,
+          384
+        ],
+        [
+          512,
+          256,
+          640,
+          384
+        ],
+        [
+          0,
+          384,
+          128,
+          512
+        ],
+        [
+          128,
+          384,
+          256,
+          512
+        ],
+        [
+          256,
+          384,
+          384,
+          512
+        ],
+        [
+          384,
+          384,
+          512,
+          512
+        ],
+        [
+          512,
+          384,
+          640,
+          512
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "original_grid": [
+        5,
+        4
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "generation": null,
+      "common_crop_in_cell": [
+        14,
+        26,
+        114,
+        124
+      ]
+    },
+    "punch": {
+      "file": "41.png",
+      "original_file": "41.png",
+      "sha256": "3d5966b3df899c957fb644115c78a54040baa6f1166728ca9f76dc828385922a",
+      "original_sha256": "3d5966b3df899c957fb644115c78a54040baa6f1166728ca9f76dc828385922a",
+      "art_source": "existing",
+      "source_size": [
+        192,
+        64
+      ],
+      "source_grid": [
+        3,
+        1
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          64,
+          64
+        ],
+        [
+          64,
+          0,
+          128,
+          64
+        ],
+        [
+          128,
+          0,
+          192,
+          64
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2
+      ],
+      "original_grid": [
+        3,
+        1
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2
+      ],
+      "generation": null,
+      "common_crop_in_cell": [
+        8,
+        8,
+        54,
+        56
+      ]
+    },
+    "impact": {
+      "file": "martial-variant-v1.png",
+      "original_file": "6.png",
+      "sha256": "a8618d1b82c647e6a26e5cced414e126639c5a8742d39eb328b592429ad01b99",
+      "original_sha256": "3dfe63f7db3331aecf53c9a01835bcdd4c6e6058b9fb02ec1f13a3c1c6b2ba40",
+      "art_source": "host_image",
+      "source_size": [
+        2170,
+        725
+      ],
+      "source_grid": [
+        3,
+        1
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          723,
+          725
+        ],
+        [
+          723,
+          0,
+          1447,
+          725
+        ],
+        [
+          1447,
+          0,
+          2170,
+          725
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2
+      ],
+      "original_grid": [
+        3,
+        1
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2
+      ],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null,
+        "prompt": "variant-prompts.json#martial",
+        "notes": "Model and cost were not returned by the built-in tool."
+      },
+      "common_crop_in_cell": [
+        0,
+        0,
+        724,
+        725
+      ]
+    },
+    "cut": {
+      "file": "5.png",
+      "original_file": "5.png",
+      "sha256": "689f83ae49e6d9105a1684ce567b0341605ba230d7a6fcbbb1db5659d4c875a1",
+      "original_sha256": "689f83ae49e6d9105a1684ce567b0341605ba230d7a6fcbbb1db5659d4c875a1",
+      "art_source": "existing",
+      "source_size": [
+        288,
+        96
+      ],
+      "source_grid": [
+        3,
+        1
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          96,
+          96
+        ],
+        [
+          96,
+          0,
+          192,
+          96
+        ],
+        [
+          192,
+          0,
+          288,
+          96
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2
+      ],
+      "original_grid": [
+        3,
+        1
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2
+      ],
+      "generation": null,
+      "common_crop_in_cell": [
+        13,
+        6,
+        75,
+        65
+      ]
+    },
+    "fissure": {
+      "file": "53.png",
+      "original_file": "53.png",
+      "sha256": "a9096b939cd0b2b30f5576a30f44482b0dde3fe3cbbdeebaaf70ba74e0021069",
+      "original_sha256": "a9096b939cd0b2b30f5576a30f44482b0dde3fe3cbbdeebaaf70ba74e0021069",
+      "art_source": "existing",
+      "source_size": [
+        1440,
+        224
+      ],
+      "source_grid": [
+        15,
+        1
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          96,
+          224
+        ],
+        [
+          96,
+          0,
+          192,
+          224
+        ],
+        [
+          192,
+          0,
+          288,
+          224
+        ],
+        [
+          288,
+          0,
+          384,
+          224
+        ],
+        [
+          384,
+          0,
+          480,
+          224
+        ],
+        [
+          480,
+          0,
+          576,
+          224
+        ],
+        [
+          576,
+          0,
+          672,
+          224
+        ],
+        [
+          672,
+          0,
+          768,
+          224
+        ],
+        [
+          768,
+          0,
+          864,
+          224
+        ],
+        [
+          864,
+          0,
+          960,
+          224
+        ],
+        [
+          960,
+          0,
+          1056,
+          224
+        ],
+        [
+          1056,
+          0,
+          1152,
+          224
+        ],
+        [
+          1152,
+          0,
+          1248,
+          224
+        ],
+        [
+          1248,
+          0,
+          1344,
+          224
+        ],
+        [
+          1344,
+          0,
+          1440,
+          224
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "original_grid": [
+        15,
+        1
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "generation": null,
+      "common_crop_in_cell": [
+        10,
+        23,
+        84,
+        223
+      ]
+    },
+    "earth": {
+      "file": "256.png",
+      "original_file": "256.png",
+      "sha256": "feff4ef15cb9179f10594719f95e612f46e6b44f8393f246fe41cd25cffff4c2",
+      "original_sha256": "feff4ef15cb9179f10594719f95e612f46e6b44f8393f246fe41cd25cffff4c2",
+      "art_source": "existing",
+      "source_size": [
+        512,
+        256
+      ],
+      "source_grid": [
+        8,
+        2
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          64,
+          128
+        ],
+        [
+          64,
+          0,
+          128,
+          128
+        ],
+        [
+          128,
+          0,
+          192,
+          128
+        ],
+        [
+          192,
+          0,
+          256,
+          128
+        ],
+        [
+          256,
+          0,
+          320,
+          128
+        ],
+        [
+          320,
+          0,
+          384,
+          128
+        ],
+        [
+          384,
+          0,
+          448,
+          128
+        ],
+        [
+          448,
+          0,
+          512,
+          128
+        ],
+        [
+          0,
+          128,
+          64,
+          256
+        ],
+        [
+          64,
+          128,
+          128,
+          256
+        ],
+        [
+          128,
+          128,
+          192,
+          256
+        ],
+        [
+          192,
+          128,
+          256,
+          256
+        ],
+        [
+          256,
+          128,
+          320,
+          256
+        ],
+        [
+          320,
+          128,
+          384,
+          256
+        ],
+        [
+          384,
+          128,
+          448,
+          256
+        ],
+        [
+          448,
+          128,
+          512,
+          256
+        ]
+      ],
+      "source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "original_grid": [
+        8,
+        2
+      ],
+      "original_source_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "generation": null,
+      "common_crop_in_cell": [
+        0,
+        24,
+        64,
+        111
+      ]
+    }
+  },
+  "clips": [
+    {
+      "id": "water_1",
+      "image": "water_1.png",
+      "source_keys": [
+        "water_cut"
+      ],
+      "mode": "single",
+      "output_sha256": "697e9b20e52e53a3eb3122e19cd67e10711dda33e169d8578b0adfdb2f632e5f",
+      "metadata": {
+        "path": "assets/skills/water_1.png",
+        "image": "assets/skills/water_1.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 80,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "water_2",
+      "image": "water_2.png",
+      "source_keys": [
+        "water_cut"
+      ],
+      "mode": "triple",
+      "output_sha256": "b02a0ffff7b447e890fc5b4f7c72b43919a1700b6d53d3a4841d02b107b7bd64",
+      "metadata": {
+        "path": "assets/skills/water_2.png",
+        "image": "assets/skills/water_2.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 80,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "water_3",
+      "image": "water_3.png",
+      "source_keys": [
+        "water_prison"
+      ],
+      "mode": "single",
+      "output_sha256": "5d3d282a99cfa92b56622956f2f335ed39b88c868bb7eaf6221406c8862049d6",
+      "metadata": {
+        "path": "assets/skills/water_3.png",
+        "image": "assets/skills/water_3.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 110,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "true"
+      }
+    },
+    {
+      "id": "water_4",
+      "image": "water_4.png",
+      "source_keys": [
+        "water_vortex"
+      ],
+      "mode": "single",
+      "output_sha256": "be9b356f49ac75b06e9d90c0d7f0920c97efd42502497533d25189cfa3d87892",
+      "metadata": {
+        "path": "assets/skills/water_4.png",
+        "image": "assets/skills/water_4.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 3,
+        "frames": 3,
+        "frameMillis": 110,
+        "drawWidth": 160,
+        "drawHeight": 160,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "true"
+      }
+    },
+    {
+      "id": "water_5",
+      "image": "water_5.png",
+      "source_keys": [
+        "water_cut"
+      ],
+      "mode": "triple",
+      "output_sha256": "b02a0ffff7b447e890fc5b4f7c72b43919a1700b6d53d3a4841d02b107b7bd64",
+      "metadata": {
+        "path": "assets/skills/water_5.png",
+        "image": "assets/skills/water_5.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 60,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "wind_1",
+      "image": "wind_1.png",
+      "source_keys": [
+        "wind_cut"
+      ],
+      "mode": "single",
+      "output_sha256": "21d3896862e981e2cc5139f48d86b45fb36333d81636e1a30d8bc7defcbf5f9e",
+      "metadata": {
+        "path": "assets/skills/wind_1.png",
+        "image": "assets/skills/wind_1.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 80,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "wind_2",
+      "image": "wind_2.png",
+      "source_keys": [
+        "wind_cut"
+      ],
+      "mode": "triple",
+      "output_sha256": "64d38d4a64ad240c401f162646e0c3a461f0ed285e5b04c2ba9e9ebc201e526f",
+      "metadata": {
+        "path": "assets/skills/wind_2.png",
+        "image": "assets/skills/wind_2.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 60,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "wind_3",
+      "image": "wind_3.png",
+      "source_keys": [
+        "wind_cut"
+      ],
+      "mode": "single",
+      "output_sha256": "21d3896862e981e2cc5139f48d86b45fb36333d81636e1a30d8bc7defcbf5f9e",
+      "metadata": {
+        "path": "assets/skills/wind_3.png",
+        "image": "assets/skills/wind_3.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 55,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "wind_4",
+      "image": "wind_4.png",
+      "source_keys": [
+        "wind_push"
+      ],
+      "mode": "single",
+      "output_sha256": "adfe9ab63973af2216e39d0fdca61eaf0cda4daa01e58d53bff9a48d20853d0f",
+      "metadata": {
+        "path": "assets/skills/wind_4.png",
+        "image": "assets/skills/wind_4.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 3,
+        "frames": 3,
+        "frameMillis": 110,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "wind_5",
+      "image": "wind_5.png",
+      "source_keys": [
+        "wind_pull"
+      ],
+      "mode": "single",
+      "output_sha256": "bda2d8d7d0eb57bafc9f252bed1b2fc1dc48315f66e3c548ec2b86614722238d",
+      "metadata": {
+        "path": "assets/skills/wind_5.png",
+        "image": "assets/skills/wind_5.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 3,
+        "frames": 3,
+        "frameMillis": 110,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "thunder_1",
+      "image": "thunder_1.png",
+      "source_keys": [
+        "lightning"
+      ],
+      "mode": "horizontal",
+      "output_sha256": "6340a586de83b4af9bbd999c9fab3b6f33ab5e64ac0ac7da977839cc334dad5f",
+      "metadata": {
+        "path": "assets/skills/thunder_1.png",
+        "image": "assets/skills/thunder_1.png",
+        "frameWidth": 192,
+        "frameHeight": 64,
+        "columns": 6,
+        "frames": 6,
+        "frameMillis": 80,
+        "drawWidth": 144,
+        "drawHeight": 48,
+        "pivotX": 96,
+        "pivotY": 32,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "thunder_2",
+      "image": "thunder_2.png",
+      "source_keys": [
+        "lightning_lance"
+      ],
+      "mode": "single",
+      "output_sha256": "7f5c360e9e0316d6bdfdf481a11f9e13b6d6b85800df44e5f49b94769b720a90",
+      "metadata": {
+        "path": "assets/skills/thunder_2.png",
+        "image": "assets/skills/thunder_2.png",
+        "frameWidth": 192,
+        "frameHeight": 64,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 65,
+        "drawWidth": 192,
+        "drawHeight": 64,
+        "pivotX": 96,
+        "pivotY": 32,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "thunder_3",
+      "image": "thunder_3.png",
+      "source_keys": [
+        "lightning"
+      ],
+      "mode": "triple",
+      "output_sha256": "2502418bc08bcf8dab5808c1dd326515b3a01dd7e3296808eb6e1fd44ca93f05",
+      "metadata": {
+        "path": "assets/skills/thunder_3.png",
+        "image": "assets/skills/thunder_3.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 6,
+        "frames": 6,
+        "frameMillis": 90,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "thunder_4",
+      "image": "thunder_4.png",
+      "source_keys": [
+        "lightning_dash"
+      ],
+      "mode": "single",
+      "output_sha256": "67abb0790442518c2db0f25eefe88a041a91d457832fff82406cd9422d159a83",
+      "metadata": {
+        "path": "assets/skills/thunder_4.png",
+        "image": "assets/skills/thunder_4.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 55,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "thunder_5",
+      "image": "thunder_5.png",
+      "source_keys": [
+        "lightning"
+      ],
+      "mode": "ring",
+      "output_sha256": "bcee7402503e3e86a498b073501f1db273afa79b1de104fe5d2285a832c530d3",
+      "metadata": {
+        "path": "assets/skills/thunder_5.png",
+        "image": "assets/skills/thunder_5.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 6,
+        "frames": 6,
+        "frameMillis": 65,
+        "drawWidth": 192,
+        "drawHeight": 192,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "fire_1",
+      "image": "fire_1.png",
+      "source_keys": [
+        "fire_cut"
+      ],
+      "mode": "single",
+      "output_sha256": "b8bb68f73a865f87158f3ac8be079a16a78f60b94b0ceae40fb13a783261ed0c",
+      "metadata": {
+        "path": "assets/skills/fire_1.png",
+        "image": "assets/skills/fire_1.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 80,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "fire_2",
+      "image": "fire_2.png",
+      "source_keys": [
+        "fire_line"
+      ],
+      "mode": "line",
+      "output_sha256": "dd0aa41d262fedd677fed0f3d48be3a6f93f11275260191730a740b95177ecb1",
+      "metadata": {
+        "path": "assets/skills/fire_2.png",
+        "image": "assets/skills/fire_2.png",
+        "frameWidth": 192,
+        "frameHeight": 96,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 100,
+        "drawWidth": 192,
+        "drawHeight": 96,
+        "pivotX": 96,
+        "pivotY": 48,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "fire_3",
+      "image": "fire_3.png",
+      "source_keys": [
+        "fire_vortex"
+      ],
+      "mode": "single",
+      "output_sha256": "976cb07815ca0e8c3c6c12b68e8796e84a08c2fd4177d798b4351b3134fd0166",
+      "metadata": {
+        "path": "assets/skills/fire_3.png",
+        "image": "assets/skills/fire_3.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 8,
+        "frames": 8,
+        "frameMillis": 80,
+        "drawWidth": 160,
+        "drawHeight": 160,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "true"
+      }
+    },
+    {
+      "id": "fire_4",
+      "image": "fire_4.png",
+      "source_keys": [
+        "fire_line",
+        "fire_eruption"
+      ],
+      "mode": "eruption",
+      "output_sha256": "c432f096a972393a3b047fbd4f6ac2faddb135deaf2d90918e50bcd24e20a650",
+      "metadata": {
+        "path": "assets/skills/fire_4.png",
+        "image": "assets/skills/fire_4.png",
+        "frameWidth": 192,
+        "frameHeight": 128,
+        "columns": 16,
+        "frames": 16,
+        "frameMillis": 80,
+        "drawWidth": 192,
+        "drawHeight": 128,
+        "pivotX": 96,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "fire_5",
+      "image": "fire_5.png",
+      "source_keys": [
+        "fire_cut"
+      ],
+      "mode": "triple",
+      "output_sha256": "fe1afe810ed29e1400cc96f27b3e75ea9794b0500220372f4d21c2fc06e07299",
+      "metadata": {
+        "path": "assets/skills/fire_5.png",
+        "image": "assets/skills/fire_5.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 90,
+        "drawWidth": 192,
+        "drawHeight": 192,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "spirit_1",
+      "image": "spirit_1.png",
+      "source_keys": [
+        "pool",
+        "web"
+      ],
+      "mode": "pool_web",
+      "output_sha256": "4d78920ffb844b93e99d89c90bca25336f51ab2f60ae97a78e32417257da5630",
+      "metadata": {
+        "path": "assets/skills/spirit_1.png",
+        "image": "assets/skills/spirit_1.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 12,
+        "frames": 12,
+        "frameMillis": 110,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "true"
+      }
+    },
+    {
+      "id": "spirit_2",
+      "image": "spirit_2.png",
+      "source_keys": [
+        "web"
+      ],
+      "mode": "single",
+      "output_sha256": "3bd40f22aea04bb1ac7a1fec7d272b318a64c905a99297509bde4b1659c4df54",
+      "metadata": {
+        "path": "assets/skills/spirit_2.png",
+        "image": "assets/skills/spirit_2.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 12,
+        "frames": 12,
+        "frameMillis": 80,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "spirit_3",
+      "image": "spirit_3.png",
+      "source_keys": [
+        "beam"
+      ],
+      "mode": "single",
+      "output_sha256": "b1320f8911711272c64b408445f1718eb6b32bb1338ce1fcca4d801f98a4d2d6",
+      "metadata": {
+        "path": "assets/skills/spirit_3.png",
+        "image": "assets/skills/spirit_3.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 4,
+        "frames": 4,
+        "frameMillis": 100,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "spirit_4",
+      "image": "spirit_4.png",
+      "source_keys": [
+        "prison"
+      ],
+      "mode": "single",
+      "output_sha256": "fd322738c5641824dd5c9a28bc04b400793ae28896de08137d33952726d87bf8",
+      "metadata": {
+        "path": "assets/skills/spirit_4.png",
+        "image": "assets/skills/spirit_4.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 20,
+        "frames": 20,
+        "frameMillis": 95,
+        "drawWidth": 160,
+        "drawHeight": 160,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "true"
+      }
+    },
+    {
+      "id": "spirit_5",
+      "image": "spirit_5.png",
+      "source_keys": [
+        "quicksand"
+      ],
+      "mode": "single",
+      "output_sha256": "d7baccdd27825a71b9320468137db9b817757b9c50a7cf7cafffa7571c6117c2",
+      "metadata": {
+        "path": "assets/skills/spirit_5.png",
+        "image": "assets/skills/spirit_5.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 15,
+        "frames": 15,
+        "frameMillis": 120,
+        "drawWidth": 160,
+        "drawHeight": 160,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "true"
+      }
+    },
+    {
+      "id": "aetheri_1",
+      "image": "aetheri_1.png",
+      "source_keys": [
+        "arrow"
+      ],
+      "mode": "single",
+      "output_sha256": "0ad475b661880b570f37577f4629fdd5e0dea2e7f4700f0df16371a64b2ec9b6",
+      "metadata": {
+        "path": "assets/skills/aetheri_1.png",
+        "image": "assets/skills/aetheri_1.png",
+        "frameWidth": 192,
+        "frameHeight": 64,
+        "columns": 6,
+        "frames": 6,
+        "frameMillis": 65,
+        "drawWidth": 144,
+        "drawHeight": 48,
+        "pivotX": 96,
+        "pivotY": 32,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "aetheri_2",
+      "image": "aetheri_2.png",
+      "source_keys": [
+        "arrow"
+      ],
+      "mode": "triple",
+      "output_sha256": "01da3ef7f29ce8bcaf63f66029180c252a03acc5789444323965fc066b72d0bf",
+      "metadata": {
+        "path": "assets/skills/aetheri_2.png",
+        "image": "assets/skills/aetheri_2.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 6,
+        "frames": 6,
+        "frameMillis": 45,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "aetheri_3",
+      "image": "aetheri_3.png",
+      "source_keys": [
+        "arrow_rain"
+      ],
+      "mode": "rain",
+      "output_sha256": "d4081292b0b7338e9b9ead39318576437498af1fac0fbbb8fff316d25780b7d6",
+      "metadata": {
+        "path": "assets/skills/aetheri_3.png",
+        "image": "assets/skills/aetheri_3.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 6,
+        "frames": 6,
+        "frameMillis": 75,
+        "drawWidth": 192,
+        "drawHeight": 192,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "aetheri_4",
+      "image": "aetheri_4.png",
+      "source_keys": [
+        "arrow"
+      ],
+      "mode": "single",
+      "output_sha256": "0ad475b661880b570f37577f4629fdd5e0dea2e7f4700f0df16371a64b2ec9b6",
+      "metadata": {
+        "path": "assets/skills/aetheri_4.png",
+        "image": "assets/skills/aetheri_4.png",
+        "frameWidth": 192,
+        "frameHeight": 64,
+        "columns": 6,
+        "frames": 6,
+        "frameMillis": 60,
+        "drawWidth": 240,
+        "drawHeight": 80,
+        "pivotX": 96,
+        "pivotY": 32,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "aetheri_5",
+      "image": "aetheri_5.png",
+      "source_keys": [
+        "arrow"
+      ],
+      "mode": "cone",
+      "output_sha256": "573a648673204339cd55a74f99264dd216d7094de09183a36a590535c8c551cd",
+      "metadata": {
+        "path": "assets/skills/aetheri_5.png",
+        "image": "assets/skills/aetheri_5.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 6,
+        "frames": 6,
+        "frameMillis": 60,
+        "drawWidth": 192,
+        "drawHeight": 192,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "light_1",
+      "image": "light_1.png",
+      "source_keys": [
+        "heal"
+      ],
+      "mode": "single",
+      "output_sha256": "5c3efd66e8741f0a94e10dbb1407dce229fc9d9615302a2bc775478dd3d64ba2",
+      "metadata": {
+        "path": "assets/skills/light_1.png",
+        "image": "assets/skills/light_1.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 15,
+        "frames": 15,
+        "frameMillis": 85,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "light_2",
+      "image": "light_2.png",
+      "source_keys": [
+        "heal_area"
+      ],
+      "mode": "single",
+      "output_sha256": "11305c20795f5ca825f027adf8cade639a6a9e92ef03fa50702c51d0e3ab8b40",
+      "metadata": {
+        "path": "assets/skills/light_2.png",
+        "image": "assets/skills/light_2.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 20,
+        "frames": 20,
+        "frameMillis": 95,
+        "drawWidth": 192,
+        "drawHeight": 192,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "light_3",
+      "image": "light_3.png",
+      "source_keys": [
+        "heal",
+        "heal_area"
+      ],
+      "mode": "revive",
+      "output_sha256": "63966ea1f801883527eb6afcd305d21ae101afb87a11d48e33b7eb283927205a",
+      "metadata": {
+        "path": "assets/skills/light_3.png",
+        "image": "assets/skills/light_3.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 20,
+        "frames": 20,
+        "frameMillis": 110,
+        "drawWidth": 160,
+        "drawHeight": 160,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "light_4",
+      "image": "light_4.png",
+      "source_keys": [
+        "beam"
+      ],
+      "mode": "single",
+      "output_sha256": "b1320f8911711272c64b408445f1718eb6b32bb1338ce1fcca4d801f98a4d2d6",
+      "metadata": {
+        "path": "assets/skills/light_4.png",
+        "image": "assets/skills/light_4.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 4,
+        "frames": 4,
+        "frameMillis": 75,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "light_5",
+      "image": "light_5.png",
+      "source_keys": [
+        "heal"
+      ],
+      "mode": "single",
+      "output_sha256": "5c3efd66e8741f0a94e10dbb1407dce229fc9d9615302a2bc775478dd3d64ba2",
+      "metadata": {
+        "path": "assets/skills/light_5.png",
+        "image": "assets/skills/light_5.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 15,
+        "frames": 15,
+        "frameMillis": 70,
+        "drawWidth": 176,
+        "drawHeight": 176,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "martial_1",
+      "image": "martial_1.png",
+      "source_keys": [
+        "punch"
+      ],
+      "mode": "single",
+      "output_sha256": "abfb2ffa0a4983cbc892fbfe0a7027eaa7e87230cb1449bd0ed24d19cd66eaaf",
+      "metadata": {
+        "path": "assets/skills/martial_1.png",
+        "image": "assets/skills/martial_1.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 3,
+        "frames": 3,
+        "frameMillis": 85,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "martial_2",
+      "image": "martial_2.png",
+      "source_keys": [
+        "punch"
+      ],
+      "mode": "triple",
+      "output_sha256": "d362ad134f8d62013d76c4f4ba3409bf70d5ed2d46cc97b7f19c37a208f5bebe",
+      "metadata": {
+        "path": "assets/skills/martial_2.png",
+        "image": "assets/skills/martial_2.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 3,
+        "frames": 3,
+        "frameMillis": 55,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "martial_3",
+      "image": "martial_3.png",
+      "source_keys": [
+        "fissure",
+        "earth"
+      ],
+      "mode": "ground",
+      "output_sha256": "c3b4709c318b218a60b5e20eabfb25a0650aefcd0556526caf1220020f7c4ebe",
+      "metadata": {
+        "path": "assets/skills/martial_3.png",
+        "image": "assets/skills/martial_3.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 16,
+        "frames": 16,
+        "frameMillis": 85,
+        "drawWidth": 192,
+        "drawHeight": 192,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "martial_4",
+      "image": "martial_4.png",
+      "source_keys": [
+        "impact",
+        "punch"
+      ],
+      "mode": "slam",
+      "output_sha256": "c447076ef7a34325f68dff97023b3a86a192795f73a4a58561845b500b47eb15",
+      "metadata": {
+        "path": "assets/skills/martial_4.png",
+        "image": "assets/skills/martial_4.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 3,
+        "frames": 3,
+        "frameMillis": 110,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    },
+    {
+      "id": "martial_5",
+      "image": "martial_5.png",
+      "source_keys": [
+        "cut"
+      ],
+      "mode": "cone",
+      "output_sha256": "bc32b39a2f8472a12bfaf0728c25c5dba9be4d55369272cdc1bc368b2a775bc8",
+      "metadata": {
+        "path": "assets/skills/martial_5.png",
+        "image": "assets/skills/martial_5.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 3,
+        "frames": 3,
+        "frameMillis": 60,
+        "drawWidth": 176,
+        "drawHeight": 176,
+        "pivotX": 64,
+        "pivotY": 64,
+        "loop": "false"
+      }
+    }
+  ]
+}

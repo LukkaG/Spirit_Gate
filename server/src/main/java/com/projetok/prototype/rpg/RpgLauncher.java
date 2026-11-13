@@ -9,6 +9,7 @@ import java.util.List;
 public final class RpgLauncher {
     private RpgLauncher() { }
     public static void main(String[] args) {
+        com.projetok.diagnostics.ErrorReports.install("cliente-rpg");
         if(args.length==2&&args[0].equals("--verify-install")) {
             LauncherSelfCheck.write(java.nio.file.Path.of(args[1]));return;
         }

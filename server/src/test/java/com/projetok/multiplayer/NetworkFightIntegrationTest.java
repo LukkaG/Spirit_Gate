@@ -10,7 +10,9 @@ class NetworkFightIntegrationTest {
     @Test void twoClientsDefeatSharedBossAndCannotDuplicateReward()throws Exception{
         try(var server=new LocalSimulationServer(InetAddress.getLoopbackAddress(),0)){server.start();try(var one=new LocalClient(InetAddress.getLoopbackAddress(),server.port(),"Coop Um");var two=new LocalClient(InetAddress.getLoopbackAddress(),server.port(),"Coop Dois")){
             Protocol.State state=one.await(s->s.actors().stream().filter(a->!a.boss()).count()==2,Duration.ofSeconds(3));
-            for(int i=0;i<180&&actor(state,CoopWorld.BOSS_ID).hp()>0;i++){control(one,state,true);control(two,state,false);long tick=state.tick();state=one.await(s->s.tick()>tick,Duration.ofSeconds(3));}
+            // O orcamento e tempo de simulacao, independente da frequencia de snapshots.
+            long combatDeadline=state.tick()+540;
+            while(state.tick()<combatDeadline&&actor(state,CoopWorld.BOSS_ID).hp()>0){control(one,state,true);control(two,state,false);long tick=state.tick();state=one.await(s->s.tick()>tick,Duration.ofSeconds(3));}
             assertEquals(0,actor(state,CoopWorld.BOSS_ID).hp(),state.toString());assertEquals(20,actor(state,one.id()).coins(),state.toString());assertEquals(20,actor(state,two.id()).coins(),state.toString());
             for(int i=0;i<4;i++){one.send(Protocol.Action.ATTACK,0,0);two.send(Protocol.Action.ATTACK,0,0);}long done=state.tick();state=one.await(s->s.tick()>=done+6,Duration.ofSeconds(3));assertEquals(20,actor(state,one.id()).coins());assertEquals(20,actor(state,two.id()).coins());assertNull(server.failure());System.out.println("COOP_TCP_REAL bossHp=0 rewards=20,20 tick="+state.tick());
         }}

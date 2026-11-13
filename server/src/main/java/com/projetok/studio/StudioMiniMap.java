@@ -18,7 +18,7 @@ final class StudioMiniMap extends JComponent {
             if(d==null||!d.region().equals(v.state().region())){g.drawString("Descritor indisponível",8,20);return;}
             g.drawString(d.name(),8,18);g.drawString(d.region(),8,35);double scale=Math.max(.001,Math.min((getWidth()-16d)/d.width(),(getHeight()-58d)/d.height()));
             g.translate(8,45);g.scale(scale,scale);g.setColor(new Color(30,65,63));g.fillRect(0,0,d.width(),d.height());
-            g.setColor(new Color(122,145,158));for(var h:d.hitboxes())if(h.solid())g.fillRect(h.x(),h.y(),h.width(),h.height());
+            g.setColor(new Color(122,145,158));for(var h:d.hitboxes())for(var o:StudioGeometry.obstacles(h))g.fill(new Rectangle2D.Float(o.x(),o.y(),o.width(),o.height()));
             g.setStroke(new BasicStroke((float)(1/scale)));g.setColor(Color.MAGENTA);for(var p:d.portals())g.draw(new Ellipse2D.Double(p.x()-10/scale,p.y()-10/scale,20/scale,20/scale));
             g.setColor(StudioTheme.ACCENT);g.fill(new Ellipse2D.Double(v.x()-3/scale,v.y()-3/scale,6/scale,6/scale));
         }finally{g.dispose();}

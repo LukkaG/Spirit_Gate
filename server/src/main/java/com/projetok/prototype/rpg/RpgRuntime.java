@@ -25,7 +25,7 @@ public final class RpgRuntime implements AutoCloseable {
     public synchronized void start() {
         if (started || closed) throw new IllegalStateException("Ciclo ja iniciado/encerrado");
         started = true;
-        loop.scheduleAtFixedRate(() -> {try{advanceOneTick();}catch(RuntimeException error){error.printStackTrace();}}, 0, 33_333_333, TimeUnit.NANOSECONDS);
+        loop.scheduleAtFixedRate(() -> {try{advanceOneTick();}catch(RuntimeException error){com.projetok.diagnostics.ErrorReports.report("Falha no ciclo RPG",error);}}, 0, 33_333_333, TimeUnit.NANOSECONDS);
     }
     synchronized void advanceOneTick(){
         if(paused||closed||failure!=null)return;

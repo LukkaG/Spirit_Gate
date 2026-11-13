@@ -1,0 +1,86 @@
+{
+  "clips": 5,
+  "frames": 54,
+  "empty_frames": 0,
+  "edge_pixels": 0,
+  "upscaled_frames": 0,
+  "warnings": [],
+  "lifecycles": {
+    "fire_5": {
+      "visible_alpha_threshold": 16,
+      "area": [
+        185,
+        794,
+        1360,
+        2782,
+        5214,
+        7133,
+        5110,
+        3720,
+        1846,
+        912,
+        275,
+        78
+      ],
+      "first_peak_ratio": 0.0259,
+      "last_peak_ratio": 0.0109
+    },
+    "water_2": {
+      "visible_alpha_threshold": 16,
+      "area": [
+        1724,
+        3799,
+        7380,
+        12900,
+        16355,
+        17570,
+        18086,
+        14797,
+        10310,
+        6535,
+        2381,
+        580
+      ],
+      "first_peak_ratio": 0.0953,
+      "last_peak_ratio": 0.0321
+    },
+    "martial_3": {
+      "visible_alpha_threshold": 16,
+      "area": [
+        193,
+        848,
+        1999,
+        3964,
+        6435,
+        7428,
+        6894,
+        6165,
+        4034,
+        2076,
+        650,
+        122
+      ],
+      "first_peak_ratio": 0.026,
+      "last_peak_ratio": 0.0164
+    },
+    "wind_4": {
+      "visible_alpha_threshold": 16,
+      "area": [
+        1477,
+        3623,
+        8847,
+        14849,
+        19799,
+        23368,
+        23101,
+        20843,
+        14709,
+        5198,
+        1421,
+        885
+      ],
+      "first_peak_ratio": 0.0632,
+      "last_peak_ratio": 0.0379
+    }
+  }
+}

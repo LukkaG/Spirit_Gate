@@ -1,0 +1,23 @@
+{
+  "scenario":"water_1 lateral target +5 units/tick after tick 2",
+  "networkCapture":false,
+  "authoritativeTrace":"test-only reflection of Projectile.point",
+  "samples":[
+    {"tick":0,"millis":0,"caster":[140.000,300.000],"target":[340.000,300.000],"server":[140.000,300.000],"client":[140.000,300.000],"error":0.000,"hp":1000,"contact":false},
+    {"tick":1,"millis":33,"caster":[140.000,300.000],"target":[340.000,300.000],"server":[158.000,300.000],"client":[158.000,300.000],"error":0.000,"hp":1000,"contact":false},
+    {"tick":2,"millis":67,"caster":[140.000,300.000],"target":[340.000,300.000],"server":[176.000,300.000],"client":[176.000,300.000],"error":0.000,"hp":1000,"contact":false},
+    {"tick":3,"millis":100,"caster":[140.000,300.000],"target":[340.000,305.000],"server":[193.992,300.549],"client":[194.000,300.000],"error":0.549,"hp":1000,"contact":false},
+    {"tick":4,"millis":133,"caster":[140.000,300.000],"target":[340.000,310.000],"server":[211.954,301.711],"client":[212.000,300.000],"error":1.712,"hp":1000,"contact":false},
+    {"tick":5,"millis":167,"caster":[140.000,300.000],"target":[340.000,315.000],"server":[229.858,303.569],"client":[230.000,300.000],"error":3.572,"hp":1000,"contact":false},
+    {"tick":6,"millis":200,"caster":[140.000,300.000],"target":[340.000,320.000],"server":[247.661,306.225],"client":[248.000,300.000],"error":6.234,"hp":1000,"contact":false},
+    {"tick":7,"millis":233,"caster":[140.000,300.000],"target":[340.000,325.000],"server":[265.300,309.812],"client":[266.000,300.000],"error":9.837,"hp":1000,"contact":false},
+    {"tick":8,"millis":267,"caster":[140.000,300.000],"target":[340.000,330.000],"server":[282.677,314.508],"client":[284.000,300.000],"error":14.568,"hp":1000,"contact":false},
+    {"tick":9,"millis":300,"caster":[140.000,300.000],"target":[340.000,335.000],"server":[299.626,320.567],"client":[302.000,300.000],"error":20.704,"hp":1000,"contact":false},
+    {"tick":10,"millis":333,"caster":[140.000,300.000],"target":[340.000,340.000],"server":[315.845,328.374],"client":[320.000,300.000],"error":28.676,"hp":1000,"contact":false},
+    {"tick":11,"millis":367,"caster":[140.000,300.000],"target":[340.000,345.000],"server":[321.054,331.959],"client":[321.000,332.000],"error":0.068,"hp":980,"contact":true}
+  ],
+  "maximumIntermediateError":28.676,
+  "terminalRasterError":0.068,
+  "impactTick":11,
+  "impact":[321.054,331.959]
+}

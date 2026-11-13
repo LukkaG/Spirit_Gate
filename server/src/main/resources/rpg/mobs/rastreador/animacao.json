@@ -1,0 +1,126 @@
+{
+  "cell_width": 64,
+  "cell_height": 64,
+  "directions": [
+    "frente",
+    "costas",
+    "esquerda",
+    "direita"
+  ],
+  "attack_frames": 5,
+  "attack_columns": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "idle_column": 0,
+  "complete_sheet": "completa_384x256.png",
+  "attack_sheet": "ataque_320x256.png",
+  "loop_attack": false,
+  "kind": "melee",
+  "action": "Melee headbutt bite. Windup hind legs compress and armored head draws back, impact head snaps forward and downward along facing direction while four paws brace, recovery neck retracts. Keep same four legs, three orange dorsal plates, ivory faceplate, no added arms.",
+  "source_scale": 0.20630656108597284,
+  "art_source": "host_image",
+  "route": "built-in image_gen",
+  "source_sha256": "295d047f4448dd647c39fd2c0a4a9789abecbaa45c547a5ecde8f0ac3cd7ad4e",
+  "states": [
+    {
+      "direction": "frente",
+      "row": 0,
+      "frames": 5,
+      "duration_ms": [
+        80,
+        140,
+        90,
+        150,
+        100
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "time_ms": 220,
+          "event": "melee_hit"
+        }
+      ],
+      "source_neutral_offset": [
+        -0.27121040723981693,
+        -0.4162895927601795
+      ]
+    },
+    {
+      "direction": "costas",
+      "row": 1,
+      "frames": 5,
+      "duration_ms": [
+        80,
+        140,
+        90,
+        150,
+        100
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "time_ms": 220,
+          "event": "melee_hit"
+        }
+      ],
+      "source_neutral_offset": [
+        -0.3743636877828038,
+        -0.6225961538461533
+      ]
+    },
+    {
+      "direction": "esquerda",
+      "row": 2,
+      "frames": 5,
+      "duration_ms": [
+        80,
+        140,
+        90,
+        150,
+        100
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "time_ms": 220,
+          "event": "melee_hit"
+        }
+      ],
+      "source_neutral_offset": [
+        0.17477375565610864,
+        -0.4162895927601795
+      ]
+    },
+    {
+      "direction": "direita",
+      "row": 3,
+      "frames": 5,
+      "duration_ms": [
+        80,
+        140,
+        90,
+        150,
+        100
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "time_ms": 220,
+          "event": "melee_hit"
+        }
+      ],
+      "source_neutral_offset": [
+        -0.5964366515837085,
+        -0.6225961538461533
+      ]
+    }
+  ],
+  "anchor": [
+    32,
+    59
+  ]
+}

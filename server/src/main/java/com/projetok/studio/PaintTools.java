@@ -12,7 +12,7 @@ final class PaintTools {
     final JLabel assignments=new JLabel("Pinceis: selecione os recortes");
     java.util.List<WorldDocument.Element> clipboard=java.util.List.of();
     PaintTools(WorldStudio ui) {
-        this.ui=ui;JComboBox<String> tools=new JComboBox<>(new String[]{"Selecionar","Mover","Lapis","Borracha","Retangulo","Balde","Conta-gotas","Colisao"});tools.addActionListener(e->tool=(String)tools.getSelectedItem());ui.toolbar.add(tools);
+        this.ui=ui;JComboBox<String> tools=new JComboBox<>(new String[]{"Selecionar","Mover","Lapis","Borracha","Retangulo","Balde","Conta-gotas","Colisao","Colisao retangular"});tools.addActionListener(e->{tool=(String)tools.getSelectedItem();if(ui.collisionTools!=null){ui.collisionTools.directional=tool.equals("Colisao");if(ui.collisionTools.directional)ui.inspectorTabs.setSelectedIndex(ui.inspectorTabs.indexOfTab("Colisao"));ui.canvas.repaint();}});ui.toolbar.add(tools);ui.toolSelector=tools;
         JComboBox<String> mode=new JComboBox<>(new String[]{"Objeto real","Tile na grade"});mode.addActionListener(e->tile=mode.getSelectedIndex()==1);ui.toolbar.add(mode);
         ui.toolbar.add(assignments);
         ui.canvas.brushPreview=()->{
@@ -33,6 +33,7 @@ final class PaintTools {
         add("Desfazer","control Z",()->ui.change(ui.history.undo()));add("Refazer","control Y",()->ui.change(ui.history.redo()));add("Copiar","control C",this::copySelection);add("Colar","control V",this::pasteSelection);
         ui.canvas.pressed=e->{copyFromPalette=false;start=null;rightPainting=false;lastPaint=null;changes=0;moving=false;gestureBase=ui.document;ui.canvas.selectionBox=null;
             if(!SwingUtilities.isLeftMouseButton(e)&&!SwingUtilities.isRightMouseButton(e))return;
+            if(tool.equals("Colisao")){try{ui.collisionTools.click(ui.canvas.worldPoint(e),SwingUtilities.isRightMouseButton(e));}catch(IllegalArgumentException|IllegalStateException invalid){ui.error(invalid);}return;}
             start=ui.canvas.worldPoint(e);rightPainting=SwingUtilities.isRightMouseButton(e);
             if(!rightPainting&&(tool.equals("Selecionar")||tool.equals("Mover"))&&!e.isShiftDown()){
                 var hit=ui.document.elements().stream().filter(a->a.layer().equals(ui.canvas.activeLayer)&&new Rectangle(a.x(),a.y(),a.width(),a.height()).contains(start)).reduce((a,b)->b);
@@ -42,12 +43,12 @@ final class PaintTools {
             }
             try{if(rightPainting)paintRight(start);else apply(start);}catch(Exception error){ui.document=ui.history.current();ui.error(error);start=null;rightPainting=false;}
         };
-        ui.canvas.dragged=e->{if(start!=null)try{if(rightPainting)paintRight(ui.canvas.worldPoint(e));else if(moving)moveSelection(ui.canvas.worldPoint(e));else if(tool.equals("Selecionar")||tool.equals("Mover")){ui.canvas.selectionBox=selectionBox(start,ui.canvas.worldPoint(e));ui.canvas.repaint();}else if(tool.equals("Lapis")||tool.equals("Borracha"))apply(ui.canvas.worldPoint(e));}catch(Exception error){ui.document=ui.history.current();ui.canvas.repaint();ui.error(error);start=null;rightPainting=false;}};
+        ui.canvas.dragged=e->{if(start!=null)try{if(rightPainting)paintRight(ui.canvas.worldPoint(e));else if(moving)moveSelection(ui.canvas.worldPoint(e));else if(tool.equals("Selecionar")||tool.equals("Mover")||tool.equals("Colisao retangular")){ui.canvas.selectionBox=selectionBox(start,ui.canvas.worldPoint(e));ui.canvas.repaint();}else if(tool.equals("Lapis")||tool.equals("Borracha"))apply(ui.canvas.worldPoint(e));}catch(Exception error){ui.document=ui.history.current();ui.canvas.repaint();ui.error(error);start=null;rightPainting=false;}};
         ui.canvas.released=e->{if(start==null)return;Point end=ui.canvas.worldPoint(e);try{
             if(rightPainting){paintRight(end);ui.change(ui.document);return;}
             if(moving){moveSelection(end);ui.change(ui.document);return;}
             if(tool.equals("Retangulo")){if(!brushTile())throw new IllegalArgumentException("Retangulo requer Tile na grade");ui.document=EditorOperations.rectangle(ui.document,brush(),start,end);}
-            if(tool.equals("Colisao"))ui.collisionTools.drag(start,end);
+            if(tool.equals("Colisao retangular"))ui.collisionTools.drag(start,end);
             if(tool.equals("Selecionar")||tool.equals("Mover")){Rectangle box=selectionBox(start,end);if(!e.isShiftDown())ui.canvas.selected.clear();ui.document.elements().stream().filter(a->a.layer().equals(ui.canvas.activeLayer)&&box.intersects(a.x(),a.y(),a.width(),a.height())).forEach(a->ui.canvas.selected.add(a.id()));ui.inspectSelection();}
             if(tool.equals("Selecionar"))ui.document.hitboxes().stream().filter(h->new Rectangle(h.x(),h.y(),h.width(),h.height()).contains(end)).findFirst().ifPresent(h->ui.canvas.selected.add(h.id()));
             ui.change(ui.document);

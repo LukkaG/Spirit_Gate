@@ -40,6 +40,20 @@ public final class CosmeticCatalog {
             if(!p.isEmpty())throw new IllegalArgumentException("Campos cosméticos desconhecidos");return new CosmeticCatalog(defs,frames,warnings);
         }catch(RuntimeException e){throw new IOException("Catálogo cosmético inválido: "+e.getMessage(),e);}
     }
+    /** Planos residentes na mesma grade logica do corpo, sem alterar arte ou metadados de origem. */
+    public CosmeticCatalog onLogicalCanvas(int width,int height,int pivotX,int pivotY,double scale) {
+        if(width<1||height<1||width>1024||height>1024||pivotX<0||pivotX>=width||pivotY<0||pivotY>height
+                ||!Double.isFinite(scale)||scale<.1||scale>4)
+            throw new IllegalArgumentException("Canvas cosmetico invalido");
+        if((long)width*height*4*frames.size()>64L*1024*1024)throw new IllegalArgumentException("Cache cosmetico excessivo");
+        Map<String,Frame> normalized=new HashMap<>();
+        for(var entry:frames.entrySet()) {
+            var frame=entry.getValue();
+            var image=RpgPlayerSprites.normalizeImage(frame.image(),frame.pivotX(),frame.pivotY(),scale,width,height,pivotX,pivotY);
+            normalized.put(entry.getKey(),new Frame(image,pivotX,pivotY));
+        }
+        return new CosmeticCatalog(definitions,normalized,warnings);
+    }
     /** Desenho apenas em memória, sempre no pivô da pose base correspondente. */
     public boolean draw(Graphics2D original,String id,String pose,String layer,float x,float y,double scale){var frame=frames.get(id+"/"+pose+"/"+layer);if(frame==null)return false;var g=(Graphics2D)original.create();try{g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);g.translate(Math.round(x-frame.pivotX()*scale),Math.round(y-frame.pivotY()*scale));g.scale(scale,scale);g.drawImage(frame.image(),0,0,null);return true;}finally{g.dispose();}}
 }

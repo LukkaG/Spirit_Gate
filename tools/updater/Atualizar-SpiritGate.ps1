@@ -2,7 +2,9 @@ param(
     [string]$InstallDir=$PSScriptRoot,
     [string]$LocalFeed,
     [switch]$NoLaunch,
-    [switch]$FunctionsOnly
+    [switch]$SkipUpdate,
+    [switch]$FunctionsOnly,
+    [string]$LaunchReadyFile
 )
 Set-StrictMode -Version Latest
 $ErrorActionPreference='Stop'
@@ -38,25 +40,35 @@ function Check-Manifest($Manifest) {
     if($total -gt 536870912){throw 'Atualizacao excessiva'}
     foreach($required in @('runtime/bin/java.exe','app/spirit-gate-rpg.jar')){if(!$names.Contains($required)){throw "Arquivo essencial ausente: $required"}}
 }
-function Fetch-File([string]$Source,[string]$Destination,[long]$Limit,[bool]$Local) {
+function Fetch-File([string]$Source,[string]$Destination,[long]$Limit,[bool]$Local,[bool]$FreshManifest=$false) {
     if($Local){
         if((Get-Item -LiteralPath $Source).Length -gt $Limit){throw 'Arquivo excede limite'}
         [IO.File]::Copy($Source,$Destination,$false);return
     }
     $uri=[uri]$Source
-    if($uri.Scheme -ne 'https' -or $uri.UserInfo){throw 'Canal remoto exige HTTPS sem credenciais no endereco'}
+    if(!$uri.IsAbsoluteUri -or $uri.Scheme -ne 'https' -or $uri.UserInfo){throw 'Canal remoto exige HTTPS sem credenciais no endereco'}
     [Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12
     $request=[Net.WebRequest]::Create($uri);$request.Timeout=15000;$request.ReadWriteTimeout=15000
+    if($FreshManifest){
+        # Revalida o ponteiro mutavel; arquivos em releases imutaveis conservam o cache normal.
+        $request.CachePolicy=New-Object Net.Cache.RequestCachePolicy([Net.Cache.RequestCacheLevel]::Reload)
+        $request.Headers[[Net.HttpRequestHeader]::CacheControl]='no-cache'
+        $request.Headers[[Net.HttpRequestHeader]::Pragma]='no-cache'
+    }
     $response=$null;$inputStream=$null;$outputStream=$null
     try {
         $response=$request.GetResponse()
-        if($response.ResponseUri.Scheme -ne 'https' -or $response.ContentLength -gt $Limit){throw 'Resposta de atualizacao invalida'}
+        if(!$response.ResponseUri.IsAbsoluteUri -or $response.ResponseUri.Scheme -ne 'https' -or $response.ResponseUri.UserInfo -or $response.ContentLength -gt $Limit){throw 'Resposta de atualizacao invalida'}
+        # O payload e relativo ao endereco configurado. Redirecionar o manifesto
+        # mudaria essa base e poderia misturar dois canais diferentes.
+        if($FreshManifest -and !$response.ResponseUri.Equals($uri)){throw 'Redirecionamento do manifesto recusado; configure o endereco final do canal'}
         $inputStream=$response.GetResponseStream();$outputStream=[IO.File]::Create($Destination)
         $buffer=New-Object byte[] 65536;[long]$received=0
         while(($count=$inputStream.Read($buffer,0,$buffer.Length)) -gt 0){
             $received+=$count;if($received -gt $Limit){throw 'Download excedeu tamanho permitido'}
             $outputStream.Write($buffer,0,$count)
         }
+        if($response.ContentLength -ge 0 -and $received -ne $response.ContentLength){throw 'Download incompleto ou tamanho de resposta divergente'}
     } finally {
         if($outputStream){$outputStream.Dispose()};if($inputStream){$inputStream.Dispose()};if($response){$response.Dispose()}
     }
@@ -65,8 +77,15 @@ function Read-Installed([string]$Root,[string]$Pointer) {
     $pointerPath=Join-Path $Root $Pointer
     if(!(Test-Path -LiteralPath $pointerPath)){return $null}
     $id=[IO.File]::ReadAllText($pointerPath).Trim()
+    return Read-Version $Root $id
+}
+function Read-Version([string]$Root,[string]$id) {
     if($id -notmatch '^[a-f0-9]{64}$'){throw 'Referencia de versao invalida'}
     $folder=Join-Path $Root "versions/$id";$manifestPath=Join-Path $folder 'installed-manifest.json'
+    $directory=Get-Item -LiteralPath $folder
+    $manifestItem=Get-Item -LiteralPath $manifestPath
+    if(!$directory.PSIsContainer -or ($directory.Attributes -band [IO.FileAttributes]::ReparsePoint) -or
+            ($manifestItem.Attributes -band [IO.FileAttributes]::ReparsePoint) -or $manifestItem.Length -gt 1048576){throw 'Diretorio ou manifesto instalado invalido'}
     if((Hash-File $manifestPath) -ne $id){throw 'Manifesto instalado alterado'}
     $manifest=Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json;Check-Manifest $manifest
     foreach($file in $manifest.files){
@@ -80,16 +99,25 @@ function Update-Installed([string]$Root,[string]$Feed,[bool]$Local,$Current) {
     New-Item -ItemType Directory -Path $stage -Force | Out-Null
     try {
     $manifestPath=Join-Path $stage 'installed-manifest.json'
-    Fetch-File $Feed $manifestPath 1048576 $Local
+    Fetch-File $Feed $manifestPath 1048576 $Local $true
     $id=Hash-File $manifestPath
     $manifest=Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json;Check-Manifest $manifest
+    if($manifest.basePath -notmatch '^[A-Za-z0-9_-]+$'){throw 'basePath invalido'}
     if($Current -and $Current.id -eq $id){return $Current}
+    $version=Join-Path $Root "versions/$id"
+    if(Test-Path -LiteralPath $version){
+        # Uma versao anterior so pode voltar a ativa depois da verificacao completa.
+        # Pastas alteradas ou incompletas sao recusadas e preservadas, nunca sobrescritas.
+        $installed=Read-Version $Root $id
+        if($Current){Write-Atomic (Join-Path $Root 'previous.txt') $Current.id}
+        Write-Atomic (Join-Path $Root 'active.txt') $id
+        Write-Host "Versao $($installed.manifest.version): arquivos instalados verificados e reutilizados."
+        return $installed
+    }
     if($Local){
         $base=Split-Path -Parent ([IO.Path]::GetFullPath($Feed))
-        if($manifest.basePath -notmatch '^[A-Za-z0-9_-]+$'){throw 'basePath invalido'}
         $base=Join-Path $base $manifest.basePath
     } else {
-        if($manifest.basePath -notmatch '^[A-Za-z0-9_-]+$'){throw 'basePath invalido'}
         $base=[uri]::new([uri]$Feed,$manifest.basePath+'/')
     }
     [int]$downloaded=0;[int]$reused=0
@@ -105,7 +133,6 @@ function Update-Installed([string]$Root,[string]$Feed,[bool]$Local,$Current) {
         }
         if((Get-Item -LiteralPath $destination).Length -ne $file.bytes -or (Hash-File $destination) -ne $file.sha256){throw "Integridade invalida: $($file.path)"}
     }
-    $version=Join-Path $Root "versions/$id"
     # Each attempt has a unique staging directory. Existing versions are never overwritten.
     if(Test-Path -LiteralPath $version){throw 'Versao ja existe; preservada para diagnostico'}
     New-Item -ItemType Directory -Path (Join-Path $Root 'versions') -Force | Out-Null
@@ -137,6 +164,54 @@ function Get-GameLaunch([string]$Root,[string]$VersionFolder) {
     $arguments+=@('-cp',(Join-Path $VersionFolder 'app/spirit-gate-rpg.jar'),'com.projetok.prototype.rpg.RpgLauncher')
     return @{java=(Join-Path $VersionFolder 'runtime/bin/java.exe');arguments=$arguments;data=$data;role=$role}
 }
+function Quote-GameArgument([string]$Value) {
+    # Escapamento do argv do Windows, sem passar por cmd.exe ou outra shell.
+    $escaped=[regex]::Replace($Value,'(\\*)"','$1$1\"')
+    $escaped=[regex]::Replace($escaped,'(\\+)$','$1$1')
+    return '"'+$escaped+'"'
+}
+function Get-LaunchReadyPath([string]$Root,[string]$Path) {
+    $absolute=[IO.Path]::GetFullPath($Path)
+    if([IO.Path]::GetDirectoryName($absolute).TrimEnd('\','/') -ne $Root.TrimEnd('\','/') -or
+       [IO.Path]::GetFileName($absolute) -notmatch '^[.]launch-ready-[a-f0-9]{32}[.]json$' -or
+       (Test-Path -LiteralPath $absolute)) {throw 'Confirmacao de abertura fora da instalacao ou ja existente'}
+    return $absolute
+}
+function Start-GameProcess($Launch,[string]$Root) {
+    $start=New-Object Diagnostics.ProcessStartInfo
+    $start.FileName=$Launch.java
+    $start.Arguments=(@($Launch.arguments | ForEach-Object {Quote-GameArgument ([string]$_)}) -join ' ')
+    $start.WorkingDirectory=$Root
+    $start.UseShellExecute=$false
+    $start.CreateNoWindow=$true
+    $process=New-Object Diagnostics.Process
+    $process.StartInfo=$start
+    try {
+        if(!$process.Start()){throw 'Nao foi possivel iniciar o jogo'}
+        if($process.WaitForExit(350)){throw 'O jogo encerrou antes de confirmar a abertura'}
+        return $process
+    } catch {$process.Dispose();throw}
+}
+function Invoke-GameHandoff($Launch,[string]$Root,[string]$ReadyPath) {
+    $game=Start-GameProcess $Launch $Root
+    try {
+        try {
+            Write-Atomic $ReadyPath (@{schemaVersion=1;state='started';pid=$game.Id;enginePid=$PID} | ConvertTo-Json -Compress)
+        } catch {
+            $signalFailure=$_
+            # A abertura ainda nao foi confirmada. Cancela somente este filho,
+            # sem abandonar um Java vivo nem liberar o lock antecipadamente.
+            try {if(!$game.HasExited){$game.Kill()}}catch{}
+            while($true){
+                try {if($game.WaitForExit(250)){break}}catch{Start-Sleep -Milliseconds 250}
+            }
+            throw $signalFailure
+        }
+        # O launcher pode fechar; este processo conserva o lock ate o jogo sair.
+        $game.WaitForExit()
+        if($game.ExitCode -ne 0){throw 'O jogo encerrou com erro; arquivos e saves foram preservados'}
+    } finally {$game.Dispose()}
+}
 if($FunctionsOnly){return}
 $root=[IO.Path]::GetFullPath($InstallDir)
 New-Item -ItemType Directory -Path $root -Force | Out-Null
@@ -150,7 +225,8 @@ try {
     try {
         $feed=$LocalFeed
         if(!$feed){$config=Get-Content -LiteralPath (Join-Path $root 'atualizacoes.json') -Raw | ConvertFrom-Json;$feed=[string]$config.feedUrl}
-        if($feed){$current=Update-Installed $root $feed ([bool]$LocalFeed) $current}
+        if($SkipUpdate){Write-Host 'Usando versao instalada verificada.'}
+        elseif($feed){$current=Update-Installed $root $feed ([bool]$LocalFeed) $current}
         else{Write-Host 'Canal ainda nao publicado; usando versao instalada.'}
     } catch {
         # Do not log remote URLs, tokens, or server response bodies.
@@ -160,10 +236,15 @@ try {
     if(!$current){throw 'Nenhuma versao valida instalada. Extraia novamente o pacote inicial.'}
     if(!$NoLaunch){
         $launch=Get-GameLaunch $root $current.folder
+        $readyPath=if($LaunchReadyFile){Get-LaunchReadyPath $root $LaunchReadyFile}else{$null}
         New-Item -ItemType Directory -Path $launch.data -Force | Out-Null
         Write-Host "Abrindo Spirit Gate $($current.manifest.version)..."
         $arguments=$launch.arguments
-        & $launch.java @arguments
-        if($LASTEXITCODE -ne 0){throw 'O jogo encerrou com erro; arquivos e saves foram preservados'}
+        if($readyPath){
+            Invoke-GameHandoff $launch $root $readyPath
+        } else {
+            & $launch.java @arguments
+            if($LASTEXITCODE -ne 0){throw 'O jogo encerrou com erro; arquivos e saves foram preservados'}
+        }
     }
 } finally {if($lock){$lock.Dispose()}}

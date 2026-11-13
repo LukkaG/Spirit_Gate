@@ -44,8 +44,7 @@ public final class DebugRuntime implements AutoCloseable {
             try {
                 advanceOneTick();
             } catch (RuntimeException exception) {
-                System.err.println("[Spirit Gate] Falha no tick de debug:");
-                exception.printStackTrace();
+                com.projetok.diagnostics.ErrorReports.report("Falha no tick de debug", exception);
                 throw exception; // falha visível; não finge que o mundo continua funcionando
             }
         }, 0, 33_333_333L, TimeUnit.NANOSECONDS);

@@ -1,0 +1,369 @@
+{
+  "water_prison_v2": {
+    "path": "assets/skills/refined-v2/art/water_prison_v2-v1.png",
+    "columns": 3,
+    "rows": 3,
+    "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "art_source": "host_image",
+    "prompt": "assets/skills/refined-v2/art/prompts.json#water_prison_v2",
+    "references": [
+      "292.png",
+      "91.png"
+    ]
+  },
+  "water_vortex_v2": {
+    "path": "assets/skills/refined-v2/art/water_vortex_v2-v1.png",
+    "columns": 3,
+    "rows": 3,
+    "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "art_source": "host_image",
+    "prompt": "assets/skills/refined-v2/art/prompts.json#water_vortex_v2",
+    "references": [
+      "231.png",
+      "134.png"
+    ]
+  },
+  "water_dash_v2": {
+    "path": "assets/skills/refined-v2/art/water_dash_v2-v1.png",
+    "columns": 3,
+    "rows": 3,
+    "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "art_source": "host_image",
+    "prompt": "assets/skills/refined-v2/art/prompts.json#water_dash_v2",
+    "references": [
+      "97.png",
+      "394.png"
+    ],
+    "registration": "front_tip",
+    "front_inset": 20
+  },
+  "martial_crater_v2": {
+    "path": "assets/skills/refined-v2/art/martial_crater_v2-v1.png",
+    "columns": 3,
+    "rows": 3,
+    "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "art_source": "host_image",
+    "prompt": "assets/skills/refined-v2/art/prompts.json#martial_crater_v2",
+    "references": [
+      "102.png",
+      "53.png",
+      "373.png"
+    ]
+  },
+  "thunder_bolt_v2": {
+    "path": "assets/skills/refined-v2/art/thunder_bolt_v2-v2.png",
+    "columns": 3,
+    "rows": 2,
+    "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "art_source": "host_image",
+    "prompt": "assets/skills/refined-v2/art/padding-fixes-prompts.json#thunder_bolt_v2",
+    "references": [
+      "96.png"
+    ]
+  },
+  "thunder_lance_v2": {
+    "path": "assets/skills/refined-v2/art/thunder_lance_v2-v2.png",
+    "columns": 2,
+    "rows": 5,
+    "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "art_source": "host_image",
+    "prompt": "assets/skills/refined-v2/art/padding-fixes-prompts.json#thunder_lance_v2",
+    "references": [
+      "34.png"
+    ],
+    "rects": [
+      [
+        0,
+        0,
+        842,
+        208
+      ],
+      [
+        842,
+        0,
+        1685,
+        208
+      ],
+      [
+        0,
+        208,
+        842,
+        408
+      ],
+      [
+        842,
+        208,
+        1685,
+        408
+      ],
+      [
+        0,
+        408,
+        842,
+        600
+      ],
+      [
+        842,
+        408,
+        1685,
+        600
+      ],
+      [
+        0,
+        600,
+        842,
+        767
+      ],
+      [
+        842,
+        600,
+        1685,
+        767
+      ],
+      [
+        0,
+        767,
+        842,
+        934
+      ]
+    ],
+    "anchors": [
+      [
+        421,
+        116
+      ],
+      [
+        421.5,
+        116
+      ],
+      [
+        421,
+        100
+      ],
+      [
+        421.5,
+        100
+      ],
+      [
+        421,
+        81
+      ],
+      [
+        421.5,
+        81
+      ],
+      [
+        421,
+        76
+      ],
+      [
+        421.5,
+        76
+      ],
+      [
+        421,
+        84
+      ]
+    ],
+    "cellCanvas": [
+      843,
+      256
+    ],
+    "registration": "front_tip"
+  },
+  "thunder_dash_v2": {
+    "path": "assets/skills/refined-v2/art/thunder_dash_v2-v1.png",
+    "columns": 3,
+    "rows": 3,
+    "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "art_source": "host_image",
+    "prompt": "assets/skills/refined-v2/art/prompts.json#thunder_dash_v2",
+    "references": [
+      "307.png",
+      "96.png"
+    ],
+    "registration": "front_tip",
+    "front_inset": 12
+  },
+  "thunder_ultimate_v2": {
+    "path": "assets/skills/refined-v2/art/thunder_ultimate_v2-v2.png",
+    "columns": 3,
+    "rows": 3,
+    "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "art_source": "host_image",
+    "prompt": "assets/skills/refined-v2/art/padding-fixes-prompts.json#thunder_ultimate_v2",
+    "references": [
+      "96.png",
+      "383.png"
+    ]
+  },
+  "fire_fissure_v2": {
+    "path": "assets/skills/refined-v2/art/fire_fissure_v2-v1.png",
+    "columns": 3,
+    "rows": 3,
+    "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "art_source": "host_image",
+    "prompt": "assets/skills/refined-v2/art/prompts.json#fire_fissure_v2",
+    "references": [
+      "53.png",
+      "343.png"
+    ]
+  },
+  "ice_arrow_v2": {
+    "path": "assets/skills/refined-v2/art/ice_arrow_v2-v1.png",
+    "columns": 3,
+    "rows": 3,
+    "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "art_source": "host_image",
+    "prompt": "assets/skills/refined-v2/art/prompts.json#ice_arrow_v2",
+    "references": [
+      "341.png"
+    ],
+    "registration": "front_tip"
+  },
+  "fire_cut_v1": {
+    "path": "assets/skills/variants/fire-variant-v1.png",
+    "columns": 3,
+    "rows": 3,
+    "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "art_source": "host_image",
+    "prompt": "assets/skills/variants/variant-prompts.json#fire",
+    "references": [
+      "252.png"
+    ]
+  },
+  "fire_eruption_original": {
+    "path": "C:/Users/lucas/Downloads/animations/249.png",
+    "columns": 4,
+    "rows": 4,
+    "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "art_source": "existing",
+    "references": [
+      "249.png"
+    ]
+  }
+}

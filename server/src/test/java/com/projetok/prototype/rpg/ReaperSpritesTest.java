@@ -4,12 +4,35 @@ import com.projetok.prototype.DirectionalAnimation.Direction;
 import com.projetok.rpg.RpgWorld;
 import java.awt.image.BufferedImage;
 import java.nio.file.Path;
+import java.awt.AlphaComposite;
+import java.util.Properties;
+import javax.imageio.ImageIO;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ReaperSpritesTest {
+    @Test void integerEnlargementPreservesEverySourcePixelAndFootPivot() throws Exception {
+        Path folder=Path.of("../assets/dev/reaper");
+        var sprites=RpgPlayerSprites.load(folder,125,1).withScale(2);
+        var metadata=new Properties();
+        try(var input=RpgPlayerSprites.class.getResourceAsStream("/rpg/reaper-player.properties")){metadata.load(input);}
+        for(var direction:Direction.values()) for(int frame=0;frame<=8;frame++) {
+            String name=metadata.getProperty(direction+"."+frame).split(",")[0];
+            var source=ImageIO.read(folder.resolve(name).toFile());
+            var rendered=new BufferedImage(256,256,BufferedImage.TYPE_INT_ARGB);
+            var g=rendered.createGraphics();
+            try {
+                g.setComposite(AlphaComposite.Src);
+                assertTrue(sprites.drawFrame(g,direction,Math.max(0,frame-1),frame>0,128,160));
+            } finally {g.dispose();}
+            // O pivo (32,60) ampliado alinha o canto superior em (64,40).
+            for(int y=0;y<64;y++)for(int x=0;x<64;x++)for(int dy=0;dy<2;dy++)for(int dx=0;dx<2;dx++)
+                assertEquals(source.getRGB(x,y),rendered.getRGB(64+2*x+dx,40+2*y+dy),name+" pixel="+x+","+y);
+            assertTrue(sprites.visualBounds(direction,Math.max(0,frame-1),frame>0,128,160).getMaxY()<=160);
+        }
+    }
     @Test void allDirectionsRenderEightFramesWithTransparentCorners() throws Exception {
         var sprites=RpgPlayerSprites.load(Path.of("../assets/dev/reaper"),125,1);
         assertEquals(8,sprites.walkFrames());

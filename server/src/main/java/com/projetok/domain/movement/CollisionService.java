@@ -30,8 +30,12 @@ public final class CollisionService {
                 throw new IllegalArgumentException("Retângulos devem ser obstáculos leves ou sólidos");
         }
     }
-    /** Corpo circular; atores sem vida, como NPCs de diálogo, também podem ser sólidos. */
-    public record Body(GameEntity entity, float radius) {
+    /** Corpo circular ou bloco de apoio quadrado; raio e meia largura usam a mesma unidade. */
+    public record Body(GameEntity entity, float radius, boolean block) {
+        /** Preserva o círculo de inimigos e consumidores históricos. */
+        public Body(GameEntity entity, float radius) { this(entity, radius, false); }
+        /** Bloco sólido de apoio usado somente por jogadores da sessão. */
+        public static Body block(GameEntity entity, float halfWidth) { return new Body(entity, halfWidth, true); }
         /** Valida a geometria sem exigir componentes específicos de combate. */
         public Body {
             java.util.Objects.requireNonNull(entity);
@@ -85,8 +89,10 @@ public final class CollisionService {
             GameEntity other = body.entity();
             if (!bodyBlocks(entity, body)) continue;
             MovementValidation.finite(other.getPosition().x(), other.getPosition().y());
-            if (overlaps(x, y, other.getPosition().x(), other.getPosition().y(),
-                    (double) radius + body.radius())) return false;
+            double sum = (double) radius + body.radius();
+            if (body.block() ? Math.abs((double)x-other.getPosition().x())<sum
+                    && Math.abs((double)y-other.getPosition().y())<sum
+                    : overlaps(x, y, other.getPosition().x(), other.getPosition().y(), sum)) return false;
         }
         return true;
     }
@@ -218,9 +224,26 @@ public final class CollisionService {
             if (!bodyBlocks(entity, body)) continue;
             var p = body.entity().getPosition();
             double sum = radius + (double) body.radius();
+            if (body.block()) {
+                if (segmentEntersBlock(start,end,p,sum)) return false;
+                continue;
+            }
             if (pointSegmentSquared(p.x(), p.y(), start, end) < sum * sum) return false;
         }
         return true;
+    }
+
+    /** Interseção com o interior aberto do bloco expandido, permitindo deslizar na face. */
+    private boolean segmentEntersBlock(Position start,Position end,Position center,double halfWidth) {
+        double near=0,far=1;
+        double[] origin={start.x(),start.y()},delta={(double)end.x()-start.x(),(double)end.y()-start.y()};
+        double[] c={center.x(),center.y()};
+        for(int axis=0;axis<2;axis++) {
+            double low=c[axis]-halfWidth,high=c[axis]+halfWidth;
+            if(delta[axis]==0) {if(origin[axis]<=low||origin[axis]>=high)return false;}
+            else {double a=(low-origin[axis])/delta[axis],b=(high-origin[axis])/delta[axis];near=Math.max(near,Math.min(a,b));far=Math.min(far,Math.max(a,b));if(near>=far)return false;}
+        }
+        return near<far;
     }
 
     /** Distância mínima do segmento ao retângulo, incluindo faces e quinas. */
@@ -359,7 +382,7 @@ public final class CollisionService {
             double distance = Math.abs((horizontal ? p.y() : p.x()) - (double) fixed);
             double sum = (double) radius + body.radius();
             if (distance >= sum) continue;
-            double extension = Math.sqrt(sum * sum - distance * distance);
+            double extension = body.block() ? sum : Math.sqrt(sum * sum - distance * distance);
             intervals.add(new Interval(center - extension, center + extension));
         }
         return intervals;
@@ -367,7 +390,13 @@ public final class CollisionService {
 
     /** Interrompe na entrada do intervalo aberto, permitindo tangência. */
     private double stopAtInterval(double origin, double target, double low, double high) {
-        if (origin > low && origin < high) return origin;
+        if (origin > low && origin < high) {
+            // A consulta float histórica pode aceitar um contato alguns ULPs dentro do
+            // intervalo double. Uma saída que aumenta a separação não pode ficar presa.
+            double middle=low+(high-low)/2;
+            if ((origin<=middle&&target<origin)||(origin>=middle&&target>origin)) return target;
+            return origin;
+        }
         if (target > origin && origin <= low && target > low) return low;
         if (target < origin && origin >= high && target < high) return high;
         return target;

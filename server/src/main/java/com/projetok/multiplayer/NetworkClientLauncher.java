@@ -9,7 +9,7 @@ import javax.swing.Timer;
 /** Janela experimental independente do RPG offline; nenhum servidor e iniciado aqui. */
 public final class NetworkClientLauncher {
     private NetworkClientLauncher(){}
-    public static void main(String[] args){SwingUtilities.invokeLater(()->{
+    public static void main(String[] args){com.projetok.diagnostics.ErrorReports.install("cliente-coop");SwingUtilities.invokeLater(()->{
         String host="127.0.0.1",name="Viajante";int port=54557;boolean allowLan=args.length==4&&args[3].equals("--lan");
         if(args.length==3||args.length==4){host=args[0];port=Integer.parseInt(args[1]);name=args[2];}
         else if(args.length==0){JTextField h=new JTextField(host),p=new JTextField("54557"),n=new JTextField(name);JCheckBox lan=new JCheckBox("Habilitar conexao LAN privada");JPanel form=new JPanel(new GridLayout(0,2));form.add(new JLabel("Servidor local"));form.add(h);form.add(new JLabel("Porta"));form.add(p);form.add(new JLabel("Nome transitorio"));form.add(n);form.add(lan);if(JOptionPane.showConfirmDialog(null,form,"Coop experimental - sem contas",JOptionPane.OK_CANCEL_OPTION)!=JOptionPane.OK_OPTION)return;host=h.getText();name=n.getText();allowLan=lan.isSelected();try{port=Integer.parseInt(p.getText());}catch(NumberFormatException error){JOptionPane.showMessageDialog(null,"Porta invalida");return;}}

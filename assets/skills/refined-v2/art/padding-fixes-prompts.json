@@ -1,0 +1,70 @@
+{
+  "route": "image_gen",
+  "model": null,
+  "estimateUsd": null,
+  "fixes": [
+    {
+      "key": "thunder_bolt_v2",
+      "references": [
+        "C:\\Users\\lucas\\Downloads\\animations\\96.png"
+      ],
+      "grid": [
+        3,
+        2
+      ],
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "prompt": "Edit the attached existing SIX-stage lightning spritesheet for a 2D pixel-art RPG. Important layout correction: REARRANGE its six existing stages into exactly THREE columns and TWO rows, SIX EQUAL RECTANGULAR CELLS. Every individual vertical lightning bolt must be fully centered in its own cell with at least20% EMPTY TRANSPARENT SPACE on EVERY side, including all thin side branches. Preserve six distinct stages from a thin bolt, growing jagged bolts, to final small fragments; no chopped bolts, no stroke touches a cell boundary, no branch crosses into a neighbor. Same scale and registration for all stages. Icy white cores, bright cyan/electric-blue borders and tiny violet edge, no green/yellow. Preserve crisp raster/pixel style, no smoothing or diffuse bloom. Actual transparent alpha background and gutters, no grid/text/labels/backdrop. Overall sheet may be square or portrait, but exactly3columns2rows with six separate full effects."
+    },
+    {
+      "key": "thunder_lance_v2",
+      "references": [
+        "C:\\Users\\lucas\\Documents\\GitHub\\Projeto-K\\assets\\skills\\refined-v2\\art\\thunder_lance_v2-v1.png"
+      ],
+      "grid": [
+        2,
+        5
+      ],
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "prompt": "Edit this electric lance spritesheet ONLY TO FIX CELL PADDING. Preserve exact TWO columns by FIVE rows, nine right-facing lance stages and the last bottom-right cell empty, same art/palette/sequence. Within EACH of its existing10equal cells, uniformly SHRINK the effect to75%of its present width and height around the SAME cell center, leaving large clean truly alpha-transparent gutters at least12%on all four sides. Do not scale the whole grid as one image, move cells or add stages. All heads, electric forks and glowing tips must be completely inside their own cell, no cropping, neighboring fragments or connected glow. Keep the existing icy-white/cyan/electric-blue crisp pixel effect with subtle violet edge; no soft bloom, no background, gridlines,text or labels. True alpha."
+    },
+    {
+      "key": "thunder_ultimate_v2",
+      "references": [
+        "C:\\Users\\lucas\\Documents\\GitHub\\Projeto-K\\assets\\skills\\refined-v2\\art\\thunder_ultimate_v2-v1.png"
+      ],
+      "grid": [
+        3,
+        3
+      ],
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "prompt": "Edit this circular lightning ultimate spritesheet ONLY TO FIX FRAME PADDING. Preserve exactly THREE columns by THREE rows, all NINE existing circular four-dash stages in the SAME order and same art/colors. Uniformly SHRINK EACH individual circular effect WITHIN ITS OWN CELL to70%of its present diameter, keeping its registration at that cell's center. Leave large clean alpha-transparent gutters at least15%on EVERY side, including all small sparks. Do not scale the entire sheet as one object, crop sparks, join neighboring cells or add stages. The ring center stays completely alpha-transparent; no opaque fill, water or character. Preserve icy-white/cyan/electric-blue jagged lightning arcs with subtle violet edge and crisp pixel/raster language, no soft bloom or sheet-wide glow. No gridlines,text,labels or backdrop. True transparent alpha."
+    }
+  ]
+}

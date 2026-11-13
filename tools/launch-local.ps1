@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('Rpg', 'Sprites', 'Studio', 'Map')][string]$Mode = 'Rpg',
+    [ValidateSet('Rpg', 'Sprites', 'Studio', 'Map', 'Mobs')][string]$Mode = 'Rpg',
     [string]$MapFolder = '',
     [switch]$Geometric,
     [switch]$BuildOnly
@@ -14,6 +14,7 @@ try {
     if ($BuildOnly) { Write-Host '[Spirit Gate] Compilacao concluida.'; exit 0 }
     $javaArguments = @()
     switch ($Mode) {
+        'Mobs' { $entry = 'com.projetok.rpg.MobPlaytest'; $clientArguments = @() }
         'Studio' { $entry = 'com.projetok.studio.WorldStudio'; $clientArguments = @('--project', $project) }
         'Map' {
             if (-not $MapFolder -or -not (Test-Path -LiteralPath $MapFolder -PathType Container)) {
@@ -38,4 +39,11 @@ try {
     & $build.Java @javaArguments -cp $build.Classes $entry @clientArguments
     if ($LASTEXITCODE -ne 0) { throw "O cliente terminou com codigo $LASTEXITCODE." }
     exit 0
-} catch { Write-Host "[Spirit Gate] ERRO: $($_.Exception.Message)" -ForegroundColor Red; exit 1 }
+} catch {
+    if (-not $_.Exception.Data.Contains('SpiritGateErrorReport')) {
+        $details = ($_ | Out-String) + "`n" + $_.ScriptStackTrace
+        & (Join-Path $PSScriptRoot 'registrar-erro-local.ps1') -Contexto "execucao local ($Mode)" -Detalhes $details
+    }
+    Write-Host "[Spirit Gate] ERRO: $($_.Exception.Message)" -ForegroundColor Red
+    exit 1
+}

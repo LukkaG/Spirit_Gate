@@ -81,8 +81,24 @@ if ($needsBuild) {
         $sourceArguments = @($sources | ForEach-Object { '"' + $_.FullName.Replace('\', '/') + '"' })
         [IO.File]::WriteAllLines($argumentsFile, $sourceArguments, (New-Object Text.UTF8Encoding($false)))
         Write-Host "[Spirit Gate] Compilando $($sources.Count) fontes para Java 17..."
-        & $javac --release 17 -encoding UTF-8 -d $staging ('@' + $argumentsFile)
-        if ($LASTEXITCODE -ne 0) { throw 'Compilacao falhou; o launcher nao usara classes antigas.' }
+        # Preserva o diagnostico do javac no console e grava TXT somente em caso de falha.
+        $compilerMessages = New-Object Text.StringBuilder
+        $previousErrorAction = $ErrorActionPreference
+        try {
+            $ErrorActionPreference = 'Continue'
+            & $javac --release 17 -encoding UTF-8 -d $staging ('@' + $argumentsFile) 2>&1 | ForEach-Object {
+                $line = $_.ToString()
+                Write-Host $line
+                if ($compilerMessages.Length -lt 1048576) { [void]$compilerMessages.AppendLine($line) }
+            }
+            $compileExit = $LASTEXITCODE
+        } finally { $ErrorActionPreference = $previousErrorAction }
+        if ($compileExit -ne 0) {
+            & (Join-Path $PSScriptRoot 'registrar-erro-local.ps1') -Contexto 'compilacao javac' -Detalhes $compilerMessages.ToString()
+            $compileFailure = New-Object InvalidOperationException 'Compilacao falhou; o launcher nao usara classes antigas.'
+            $compileFailure.Data['SpiritGateErrorReport'] = $true
+            throw $compileFailure
+        }
         foreach ($file in $resources) {
             $destination = Join-Path $staging $file.FullName.Substring($resourceRoot.Length + 1)
             New-Item -ItemType Directory -Path (Split-Path -Parent $destination) -Force | Out-Null

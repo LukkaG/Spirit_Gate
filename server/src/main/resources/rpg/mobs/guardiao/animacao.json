@@ -1,0 +1,126 @@
+{
+  "cell_width": 64,
+  "cell_height": 64,
+  "directions": [
+    "frente",
+    "costas",
+    "esquerda",
+    "direita"
+  ],
+  "attack_frames": 5,
+  "attack_columns": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "idle_column": 0,
+  "complete_sheet": "completa_384x256.png",
+  "attack_sheet": "ataque_320x256.png",
+  "loop_attack": false,
+  "kind": "melee",
+  "action": "Melee heavy two-fist hammer slam. Windup both arms lifted beside head, impact torso leans forward and both fists smash downward toward opponent IN THE ROW'S FACING DIRECTION, recovery shoulders rise and arms begin returning. Keep legs grounded; broad substantial pose changes.",
+  "source_scale": 0.20650775080432876,
+  "art_source": "host_image",
+  "route": "built-in image_gen",
+  "source_sha256": "8463e583bf07de3d8208a71923fa7a83811c456442af4e374a8598788930ecf7",
+  "states": [
+    {
+      "direction": "frente",
+      "row": 0,
+      "frames": 5,
+      "duration_ms": [
+        80,
+        140,
+        90,
+        150,
+        100
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "time_ms": 220,
+          "event": "melee_hit"
+        }
+      ],
+      "source_neutral_offset": [
+        -0.42171687627961774,
+        -0.6807399824510085
+      ]
+    },
+    {
+      "direction": "costas",
+      "row": 1,
+      "frames": 5,
+      "duration_ms": [
+        80,
+        140,
+        90,
+        150,
+        100
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "time_ms": 220,
+          "event": "melee_hit"
+        }
+      ],
+      "source_neutral_offset": [
+        -0.42171687627961774,
+        -0.2677244808423538
+      ]
+    },
+    {
+      "direction": "esquerda",
+      "row": 2,
+      "frames": 5,
+      "duration_ms": [
+        80,
+        140,
+        90,
+        150,
+        100
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "time_ms": 220,
+          "event": "melee_hit"
+        }
+      ],
+      "source_neutral_offset": [
+        -0.09568587306230114,
+        -0.887247733255343
+      ]
+    },
+    {
+      "direction": "direita",
+      "row": 3,
+      "frames": 5,
+      "duration_ms": [
+        80,
+        140,
+        90,
+        150,
+        100
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "time_ms": 220,
+          "event": "melee_hit"
+        }
+      ],
+      "source_neutral_offset": [
+        -0.3184630008774505,
+        -1.3002632348639978
+      ]
+    }
+  ],
+  "anchor": [
+    32,
+    59
+  ]
+}

@@ -8,7 +8,18 @@ public final class StudioGeometry {
     private static final GameEntity PROBE=new GameEntity(1,"Previa",new Position(0,0)){};
     private StudioGeometry(){}
     /** Areas transitaveis sao anotacoes; visibilidade da camada nao desativa colisao. */
-    public static CollisionService.Space space(WorldDocument d){return new CollisionService.Space(d.width(),d.height(),d.hitboxes().stream().filter(WorldDocument.Hitbox::solid).map(h->new CollisionService.Obstacle(h.x(),h.y(),h.width(),h.height())).toList(),java.util.List.of());}
+    public static CollisionService.Space space(WorldDocument d){return new CollisionService.Space(d.width(),d.height(),d.hitboxes().stream().flatMap(h->obstacles(h).stream()).toList(),java.util.List.of());}
+    /** Quatro lados mantêm o volume antigo; lados parciais viram bordas de um pixel. */
+    public static List<CollisionService.Obstacle> obstacles(WorldDocument.Hitbox h){
+        if(!h.solid()||h.edges()==0)return List.of();
+        if(h.edges()==WorldDocument.Hitbox.ALL)return List.of(new CollisionService.Obstacle(h.x(),h.y(),h.width(),h.height()));
+        var result=new ArrayList<CollisionService.Obstacle>();
+        if(h.blocks(WorldDocument.Hitbox.UP))result.add(new CollisionService.Obstacle(h.x(),h.y(),h.width(),1));
+        if(h.blocks(WorldDocument.Hitbox.DOWN))result.add(new CollisionService.Obstacle(h.x(),h.y()+h.height()-1,h.width(),1));
+        if(h.blocks(WorldDocument.Hitbox.LEFT))result.add(new CollisionService.Obstacle(h.x(),h.y(),1,h.height()));
+        if(h.blocks(WorldDocument.Hitbox.RIGHT))result.add(new CollisionService.Obstacle(h.x()+h.width()-1,h.y(),1,h.height()));
+        return List.copyOf(result);
+    }
     /** Previa fisica real do circulo do jogador, sem simulacao alternativa. */
     public static boolean free(WorldDocument d,float x,float y,float radius){return new CollisionService().isFree(PROBE,x,y,radius,space(d));}
     /** Consulta espaco imutavel residente para evitar reconstrucao em cada repaint. */

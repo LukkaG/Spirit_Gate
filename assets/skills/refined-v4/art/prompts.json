@@ -1,0 +1,64 @@
+{
+  "route": "image_gen",
+  "model": null,
+  "estimateUsd": null,
+  "jobs": [
+    {
+      "name": "impact",
+      "refs": [
+        "C:\\Users\\lucas\\Downloads\\animations\\6.png"
+      ],
+      "prompt": "Create an ORIGINAL high-quality 2D fantasy game contact-impact FX spritesheet inspired by the reference, not a copy. Six animation frames in an EXACT 3 columns by 2 rows grid, same CENTER in every cell, wide transparent gutters and margin. Compact white-hot contact flash with soft cyan-white core, short ivory rays and a few blue/gold sparks, ring expands then breaks into dissipating motes. Frames: tiny spark, sharp contact star, expanding ring, fragmented ring, fading sparks, last small motes (not empty). Genuine transparent background, NO opaque backdrop or glow rectangle. No arrow, no sword, no character, no text. Clear readable at 64 pixels, refined detailed hand-painted game FX, no blocky enlarged pixels. Each complete frame entirely isolated with 15% clear padding; uniform registration and scale. This impact ends a projectile on hitting a body or wall and will also dissipate blue arrows on the ground."
+    },
+    {
+      "name": "fire-fissure",
+      "refs": [
+        "C:\\Users\\lucas\\Downloads\\animations\\53.png",
+        "C:\\Users\\lucas\\Downloads\\animations\\343.png"
+      ],
+      "prompt": "Original 2D RPG ground fire-fissure animation inspired by the provided earth fracture and fire references. 3 columns x 3 rows, 9 sequential frames, genuine transparent background. EACH cell contains ONE long horizontal left-to-right jagged ground crack seen top-down/3-quarter, about 4:1 aspect, SAME FULL LENGTH and SAME POSITION in every cell, generous 12% transparent padding. Frame1 thin dark hairline crack,2 ground splits with small orange light,3 rock lips open and ember core,4 short flames emerge,5 peak molten-orange crack and small broken rock edges,6 burning fissure,7 low flames,8 glowing embers,9 quiet dark cracked ground with faint embers (not empty). No circular crater, no fireball, no vertical wall, no sword or person, no text. Organic branching cracks, dark charred earth, vivid restrained orange/yellow molten light. Sharp refined high resolution 2D game painting, no huge pixel blocks. The engine will reveal this strip progressively from the player's sword cut to the end of range; keep its full horizontal footprint identical across animation frames."
+    },
+    {
+      "name": "seismic",
+      "refs": [
+        "C:\\Users\\lucas\\Documents\\GitHub\\Projeto-K\\assets\\skills\\refined-v2\\art\\martial_crater_v2-v1.png"
+      ],
+      "prompt": "Redesign this earthquake ground impact FX as genuinely detailed HIGH-RESOLUTION art for rendering at 320x320 game pixels, not an enlarged pixel sprite. Preserve the idea: a martial strike makes a broad radial shattered-earth crater and dust ring, no hand, no character. Make a new polished hand-painted fantasy game FX sheet with EXACT 3x3 grid, nine frames, every frame anchored to same central ground point, consistent footprint and 15% generous transparent gutters so no cell touches another. Top-down 3/4 floor view, finely drawn irregular stone plates, deep radial fractures, small rock chips, layered cream dust. Frame1 compact ground shock,2 cracks spread,3 earth erupts radially,4 big dust ring,5 debris crest,6 dust settles,7 crater visible,8 residual wisps,9 quiet fractured crater. True transparent background; remove all red/yellow colored spill/background. No orange fire, no fist, no text, no square tile. The drawing should occupy at least 350x350 actual source pixels per cell; rich fine details without chunky enlarged pixels."
+    },
+    {
+      "name": "water-cut",
+      "refs": [
+        "C:\\Users\\lucas\\Documents\\GitHub\\Projeto-K\\assets\\skills\\water_1.png"
+      ],
+      "prompt": "Redesign this water slash into refined high-resolution 2D fantasy game FX, not a simple upscale. EXACT 3 columns by 3 rows with 9 isolated animation frames, transparent background, 15% clear gutters inside every cell. One RIGHT-facing crescent cut of flowing water per cell, leading curved edge on the right and thin blue trailing stream on the left. Rich clean azure/cyan liquid with fine white foam, soft translucent volume, elegant smooth arcs and droplets, remove crunchy/grainy cyan pixel noise. The crescent grows, sweeps, dissipates across 9 frames, maintaining one common registration and same facing. No character, no sword, no text, no opaque backdrop. Original design inspired by reference. Ready to render 100px wide; keep fine detail instead of oversized blocky pixels."
+    },
+    {
+      "name": "water-prison",
+      "refs": [
+        "C:\\Users\\lucas\\Documents\\GitHub\\Projeto-K\\assets\\skills\\refined-v2\\water_3.png"
+      ],
+      "prompt": "Create a more beautiful refined high-resolution version of the reference water prison FX as an EXACT 3x3 animation sheet, 9 frames, genuine transparent background. Same front/top-down-3quarter view, a hollow water bubble dome with small water pool at base. The center MUST remain clear transparent so a captive enemy is visible; thin fluid watery surface highlights only on its rim. Azure deep-blue and white foam with elegant soft translucent liquid, no granular cyan noise or solid opaque orb. Same center/base registration, consistent scale through all 9 gently swirling frames, at least15% transparent margins in EACH cell. No character, no text, no cage bars, no gold, no ice. Entire silhouettes inside cells. Detailed hand-painted game FX that looks polished at 110x132 pixels."
+    },
+    {
+      "name": "martial-punch",
+      "refs": [
+        "C:\\Users\\lucas\\Documents\\GitHub\\Projeto-K\\assets\\skills\\refined-v3\\art\\martial-combo-alpha.png"
+      ],
+      "prompt": "New refined HIGH-RESOLUTION martial punch contact animation, inspired by the fist style in the reference, ONLY fists and punch trails, no boots or legs. EXACT 3 columns by 2 rows, six sequential frames, true transparent background. Same center and consistent canvas, at least15% completely transparent gutters. Each cell: one clearly sculpted golden/cream clenched fist with white-gold speed strokes coming from left and contact spark on RIGHT. Frames: fast approach, extension, fist contact flash, short expanding shock ring, fading fist afterimage, last short dissipating strokes. No full character, no face, no sword, no arrows, no text. Detailed polished 2D RPG illustration, clean silhouettes, fine line detail, no enlarged blocky pixels, no brown background glow. Entire animation fits within each cell."
+    },
+    {
+      "name": "water-vortex",
+      "refs": [
+        "C:\\Users\\lucas\\Documents\\GitHub\\Projeto-K\\assets\\skills\\refined-v2\\water_4.png"
+      ],
+      "prompt": "Redraw this water vortex as polished HIGH-RESOLUTION hand-painted 2D game FX, not an enlarged pixel sprite. EXACT 3 columns by 3 rows, 9 separate animation frames, true transparent background. Swirling azure/cyan water tornado rising from a broad small whirlpool base, same base anchor and size in every frame. Graceful ribbon-like liquid spirals with fine white foam, smooth rich translucent blue volume and controlled droplets; remove neon pixel noise and crunchy grains. Rotating looping motion through9 frames. No ice, no gold, no opaque background, no character or text. Wide15% transparent margin in each cell, especially tip and side splashes. Whole silhouettes must fit inside cells. Designed to look beautiful at192x240 actual game pixels."
+    },
+    {
+      "name": "water-dash",
+      "refs": [
+        "C:\\Users\\lucas\\Documents\\GitHub\\Projeto-K\\assets\\skills\\refined-v2\\water_5.png"
+      ],
+      "prompt": "Redraw this water dash trail in polished detailed HIGH-RESOLUTION fantasy game FX. EXACT 3x3 grid with9 frames, true transparent background, 15% clear transparent margin INSIDE EVERY cell. One horizontal RIGHT-facing surge per frame, rounded transparent hollow water crest on the RIGHT and long flowing blue ribbon wake extending LEFT. Same leading crest anchor and horizontal axis across all9frames; subtly varying foam and wave ribbons, no drift. Rich deep azure/cyan liquid volume, delicate white foam and clean droplets, remove granular neon pixels, no ice, no character, no text, no shadow background. Elegant hydrodynamic motion, entire trail inside each cell. Inspired by reference, do not merely scale existing pixels. Fine detail readable at240x80."
+    }
+  ]
+}

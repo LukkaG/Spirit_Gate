@@ -11,6 +11,10 @@ public final class NetworkDebugOverlay {
     public static void draw(Graphics2D original,Protocol.State authoritative,Protocol.State display,
                             RpgPlayerSprites sprites,RemoteSpriteAnimation animation){draw(original,authoritative,display,sprites,animation,com.projetok.domain.movement.SessionCollisionProfile.DEFAULT,com.projetok.domain.movement.RpgSessionGeometry.structures());}
     public static void draw(Graphics2D original,Protocol.State authoritative,Protocol.State display,RpgPlayerSprites sprites,RemoteSpriteAnimation animation,com.projetok.domain.movement.SessionCollisionProfile profile,java.util.List<com.projetok.domain.movement.RpgSessionGeometry.Structure> structures){
+        draw(original,authoritative,display,sprites,animation,profile,structures,null,java.util.Map.of());
+    }
+    /** Desenha o bloco de contato e o atlas realmente selecionado para cada raca. */
+    public static void draw(Graphics2D original,Protocol.State authoritative,Protocol.State display,RpgPlayerSprites sprites,RemoteSpriteAnimation animation,com.projetok.domain.movement.SessionCollisionProfile profile,java.util.List<com.projetok.domain.movement.RpgSessionGeometry.Structure> structures,NetworkPlayerVisuals visuals,java.util.Map<Integer,Protocol.Appearance> appearances){
         if(authoritative==null)return;var g=(Graphics2D)original.create();
         try{
             g.setStroke(new BasicStroke(1));
@@ -25,13 +29,15 @@ public final class NetworkDebugOverlay {
                 if(a.boss())continue;
                 var v=display.actors().stream().filter(p->p.id()==a.id()).findFirst().orElse(a);
                 double r=profile.actorRadius();
-                g.setColor(Color.RED);g.draw(new Ellipse2D.Double(a.x()-r,a.y()-r,r*2,r*2));
+                g.setColor(Color.RED);g.draw(new Rectangle2D.Double(a.x()-r,a.y()-r,r*2,r*2));
                 g.draw(new Line2D.Float(a.x(),a.y(),v.x(),v.y()));
-                g.setColor(Color.GREEN);g.draw(new Ellipse2D.Double(v.x()-r,v.y()-r,r*2,r*2));
+                g.setColor(Color.GREEN);g.draw(new Rectangle2D.Double(v.x()-r,v.y()-r,r*2,r*2));
                 double halfSegment=profile.sceneryHalfWidth()-profile.actorRadius();
                 g.setColor(new Color(255,165,0));g.draw(new RoundRectangle2D.Double(v.x()-r-halfSegment,v.y()-r,2*(r+halfSegment),2*r,2*r,2*r));
                 g.setColor(Color.CYAN);g.draw(new Line2D.Float(v.x()-4,v.y(),v.x()+4,v.y()));g.draw(new Line2D.Float(v.x(),v.y()-4,v.x(),v.y()+4));
-                if(sprites!=null){var pose=animation.pose(a.id(),System.nanoTime()/1_000_000);g.setColor(Color.MAGENTA);g.draw(sprites.visualBounds(pose.direction(),pose.frame(),pose.walking(),v.x(),v.y()));}
+                var appearance=appearances.get(a.id());String race=appearance==null?"":appearance.race();
+                var body=visuals==null?sprites:visuals.sprites(race);
+                if(body!=null){var pose=animation.pose(a.id(),System.nanoTime()/1_000_000,visuals==null?250:visuals.frameMillis(race),body.walkFrames());g.setColor(Color.MAGENTA);g.draw(body.visualBounds(pose.direction(),pose.frame(),pose.walking(),v.x(),v.y()));}
             }
             g.setColor(Color.WHITE);g.drawString("F2 | sprite: magenta | pivot: cyan | body: green/red | scenery: orange | padded: yellow | depth: blue",12,22);
         }finally{g.dispose();}

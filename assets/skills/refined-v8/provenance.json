@@ -1,0 +1,1175 @@
+{
+  "route": "image_gen",
+  "model": null,
+  "estimateUsd": null,
+  "clips": [
+    {
+      "id": "thunder_1",
+      "file": "thunder_1.png",
+      "sha256": "6db3002f0bb9fc593121f3ef1d197ff25c7b3b5b21732aeb65c3ced05c7c13ce",
+      "source": "assets/skills/refined-v8/art/thunder-cut.png",
+      "source_sha256": "d48fee88feeb5f511182bcd57f0d85b1d1f4172796b502a91a266ed010802fd7",
+      "source_size": [
+        2170,
+        725
+      ],
+      "rects": [
+        [
+          0,
+          0,
+          723,
+          362
+        ],
+        [
+          723,
+          0,
+          1447,
+          362
+        ],
+        [
+          1447,
+          0,
+          2170,
+          362
+        ],
+        [
+          0,
+          362,
+          723,
+          725
+        ],
+        [
+          723,
+          362,
+          1447,
+          725
+        ],
+        [
+          1447,
+          362,
+          2170,
+          725
+        ]
+      ],
+      "anchors": [
+        [
+          374.5,
+          234.0
+        ],
+        [
+          370.5,
+          250.5
+        ],
+        [
+          371.5,
+          256.0
+        ],
+        [
+          351.0,
+          107.5
+        ],
+        [
+          356.0,
+          119.0
+        ],
+        [
+          349.0,
+          126.0
+        ]
+      ],
+      "registration": "center",
+      "common_crop": [
+        -215,
+        -77,
+        215,
+        77
+      ],
+      "scale": 0.3116883116883117,
+      "metadata": {
+        "path": "assets/skills/refined-v8/thunder_1.png",
+        "frameWidth": 192,
+        "frameHeight": 64,
+        "columns": 4,
+        "frames": 6,
+        "frameMillis": 70,
+        "drawWidth": 192,
+        "drawHeight": 64,
+        "pivotX": 96,
+        "pivotY": 32
+      }
+    },
+    {
+      "id": "thunder_2",
+      "file": "thunder_2.png",
+      "sha256": "ef607598dd1d8ffc2e0da0c59c60568d77bf17e3a0bb59ac9a591609c0741c36",
+      "source": "assets/skills/refined-v8/art/thunder-spear.png",
+      "source_sha256": "629453e162a96a74b16e154ab7635e0d1b15f6e7b4e3098ac6cfc1ac9af2d9d2",
+      "source_size": [
+        2170,
+        725
+      ],
+      "rects": [
+        [
+          0,
+          0,
+          723,
+          245
+        ],
+        [
+          723,
+          0,
+          1447,
+          245
+        ],
+        [
+          1447,
+          0,
+          2170,
+          245
+        ],
+        [
+          0,
+          245,
+          723,
+          483
+        ],
+        [
+          723,
+          245,
+          1447,
+          483
+        ],
+        [
+          1447,
+          245,
+          2170,
+          483
+        ],
+        [
+          0,
+          483,
+          723,
+          725
+        ],
+        [
+          723,
+          483,
+          1447,
+          725
+        ],
+        [
+          1447,
+          483,
+          2170,
+          725
+        ]
+      ],
+      "anchors": [
+        [
+          406.5,
+          186.5
+        ],
+        [
+          404.0,
+          188.5
+        ],
+        [
+          371.0,
+          187.0
+        ],
+        [
+          364.5,
+          123.0
+        ],
+        [
+          368.0,
+          111.0
+        ],
+        [
+          358.5,
+          129.5
+        ],
+        [
+          369.5,
+          69.0
+        ],
+        [
+          368.5,
+          69.5
+        ],
+        [
+          367.5,
+          70.5
+        ]
+      ],
+      "registration": "center",
+      "common_crop": [
+        -275,
+        -59,
+        275,
+        59
+      ],
+      "scale": 0.4067796610169492,
+      "metadata": {
+        "path": "assets/skills/refined-v8/thunder_2.png",
+        "frameWidth": 256,
+        "frameHeight": 64,
+        "columns": 4,
+        "frames": 9,
+        "frameMillis": 70,
+        "drawWidth": 224,
+        "drawHeight": 56,
+        "pivotX": 128,
+        "pivotY": 32
+      }
+    },
+    {
+      "id": "thunder_4",
+      "file": "thunder_4.png",
+      "sha256": "b6a6e5c236e7b8610a7aab5934768217193b9eeed774d3a1a71dd8cb8bfa3d4a",
+      "source": "assets/skills/refined-v8/art/thunder-dash-alpha.png",
+      "source_sha256": "9d7c225d52c99a4bdfd9b102c078b1104c3509dc53c3565918a12726054e28a7",
+      "source_size": [
+        2048,
+        768
+      ],
+      "rects": [
+        [
+          0,
+          0,
+          683,
+          256
+        ],
+        [
+          683,
+          0,
+          1365,
+          256
+        ],
+        [
+          1365,
+          0,
+          2048,
+          256
+        ],
+        [
+          0,
+          256,
+          683,
+          512
+        ],
+        [
+          683,
+          256,
+          1365,
+          512
+        ],
+        [
+          1365,
+          256,
+          2048,
+          512
+        ],
+        [
+          0,
+          512,
+          683,
+          768
+        ],
+        [
+          683,
+          512,
+          1365,
+          768
+        ],
+        [
+          1365,
+          512,
+          2048,
+          768
+        ]
+      ],
+      "anchors": [
+        [
+          383.0,
+          123.0
+        ],
+        [
+          370.5,
+          128.5
+        ],
+        [
+          350.5,
+          131.5
+        ],
+        [
+          343.5,
+          136.5
+        ],
+        [
+          347.0,
+          121.0
+        ],
+        [
+          346.5,
+          129.0
+        ],
+        [
+          340.5,
+          130.0
+        ],
+        [
+          352.0,
+          126.5
+        ],
+        [
+          357.0,
+          133.5
+        ]
+      ],
+      "registration": "center",
+      "common_crop": [
+        -272,
+        -96,
+        272,
+        96
+      ],
+      "scale": 0.4166666666666667,
+      "metadata": {
+        "path": "assets/skills/refined-v8/thunder_4.png",
+        "frameWidth": 256,
+        "frameHeight": 96,
+        "columns": 4,
+        "frames": 9,
+        "frameMillis": 45,
+        "drawWidth": 256,
+        "drawHeight": 96,
+        "pivotX": 128,
+        "pivotY": 48
+      }
+    },
+    {
+      "id": "thunder_5",
+      "file": "thunder_5.png",
+      "sha256": "55b086d49334ce69a327cfe3962e13da06e477b933dd6207e5b927232a37ae8e",
+      "source": "assets/skills/refined-v8/art/thunder-circuit-padded.png",
+      "source_sha256": "957e1b50f08cd77233a4d6950403d4875bd8f97b699ed87a3b3f312bc597d8da",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "rects": [
+        [
+          0,
+          0,
+          418,
+          418
+        ],
+        [
+          418,
+          0,
+          836,
+          418
+        ],
+        [
+          836,
+          0,
+          1254,
+          418
+        ],
+        [
+          0,
+          418,
+          418,
+          836
+        ],
+        [
+          418,
+          418,
+          836,
+          836
+        ],
+        [
+          836,
+          418,
+          1254,
+          836
+        ],
+        [
+          0,
+          836,
+          418,
+          1254
+        ],
+        [
+          418,
+          836,
+          836,
+          1254
+        ],
+        [
+          836,
+          836,
+          1254,
+          1254
+        ]
+      ],
+      "anchors": [
+        [
+          221.0,
+          224.0
+        ],
+        [
+          205.0,
+          226.5
+        ],
+        [
+          195.0,
+          226.0
+        ],
+        [
+          218.5,
+          199.0
+        ],
+        [
+          206.0,
+          196.0
+        ],
+        [
+          195.0,
+          199.5
+        ],
+        [
+          221.0,
+          163.5
+        ],
+        [
+          209.0,
+          164.5
+        ],
+        [
+          198.0,
+          164.5
+        ]
+      ],
+      "registration": "center",
+      "common_crop": [
+        -157,
+        -149,
+        157,
+        149
+      ],
+      "scale": 0.7643312101910829,
+      "metadata": {
+        "path": "assets/skills/refined-v8/thunder_5.png",
+        "frameWidth": 256,
+        "frameHeight": 256,
+        "columns": 4,
+        "frames": 9,
+        "frameMillis": 115,
+        "drawWidth": 240,
+        "drawHeight": 240,
+        "pivotX": 128,
+        "pivotY": 128
+      }
+    },
+    {
+      "id": "thunder_1.impact",
+      "file": "thunder_1.impact.png",
+      "sha256": "f343f7631d005a7b5f74693f548d981e45b7d7137763b50e68841ee8467e7b9f",
+      "source": "assets/skills/refined-v8/art/thunder-impact.png",
+      "source_sha256": "ec8c657bb121b3ef2196abd03a4c60e11271a68dce563f3aaf9d3b5a2d5629f4",
+      "source_size": [
+        1536,
+        1024
+      ],
+      "rects": [
+        [
+          0,
+          0,
+          512,
+          512
+        ],
+        [
+          512,
+          0,
+          1024,
+          512
+        ],
+        [
+          1024,
+          0,
+          1536,
+          512
+        ],
+        [
+          0,
+          512,
+          512,
+          1024
+        ],
+        [
+          512,
+          512,
+          1024,
+          1024
+        ],
+        [
+          1024,
+          512,
+          1536,
+          1024
+        ]
+      ],
+      "anchors": [
+        [
+          279.5,
+          280.5
+        ],
+        [
+          252.5,
+          279.5
+        ],
+        [
+          238.0,
+          280.0
+        ],
+        [
+          278.5,
+          241.5
+        ],
+        [
+          255.0,
+          242.0
+        ],
+        [
+          247.5,
+          251.5
+        ]
+      ],
+      "registration": "center",
+      "common_crop": [
+        -199,
+        -199,
+        199,
+        199
+      ],
+      "scale": 0.2814070351758794,
+      "metadata": {
+        "path": "assets/skills/refined-v8/thunder_1.impact.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 4,
+        "frames": 6,
+        "frameMillis": 50,
+        "drawWidth": 64,
+        "drawHeight": 64,
+        "pivotX": 64,
+        "pivotY": 64
+      }
+    },
+    {
+      "id": "martial_4",
+      "file": "martial_4.png",
+      "sha256": "38a40f94d472532745e489e26e94fb7a318da79c9f16a4d9dfeb6d72ec53c031",
+      "source": "assets/skills/refined-v8/art/martial-slam.png",
+      "source_sha256": "99a07c4dadf8f6509e787817ab64cacabbb4188c248819a76f1d81f1a5d54779",
+      "source_size": [
+        1536,
+        1024
+      ],
+      "rects": [
+        [
+          0,
+          0,
+          384,
+          256
+        ],
+        [
+          384,
+          0,
+          768,
+          256
+        ],
+        [
+          768,
+          0,
+          1152,
+          256
+        ],
+        [
+          1152,
+          0,
+          1536,
+          256
+        ],
+        [
+          0,
+          256,
+          384,
+          512
+        ],
+        [
+          384,
+          256,
+          768,
+          512
+        ],
+        [
+          768,
+          256,
+          1152,
+          512
+        ],
+        [
+          1152,
+          256,
+          1536,
+          512
+        ]
+      ],
+      "anchors": [
+        [
+          190.5,
+          150.0
+        ],
+        [
+          192.5,
+          153.5
+        ],
+        [
+          192.0,
+          150.0
+        ],
+        [
+          193.0,
+          157.0
+        ],
+        [
+          190.0,
+          148.0
+        ],
+        [
+          192.5,
+          150.0
+        ],
+        [
+          191.5,
+          111.5
+        ],
+        [
+          192.5,
+          172.0
+        ]
+      ],
+      "registration": "center",
+      "common_crop": [
+        -169,
+        -89,
+        169,
+        89
+      ],
+      "scale": 0.5207100591715976,
+      "metadata": {
+        "path": "assets/skills/refined-v8/martial_4.png",
+        "frameWidth": 192,
+        "frameHeight": 192,
+        "columns": 4,
+        "frames": 8,
+        "frameMillis": 25,
+        "drawWidth": 96,
+        "drawHeight": 96,
+        "pivotX": 96,
+        "pivotY": 96
+      }
+    },
+    {
+      "id": "martial_4.impact",
+      "file": "martial_4.impact.png",
+      "sha256": "c491ec4e8d10e9afa1eeb13f0042c8c031c0d1fc442270d4d60645a1aba85051",
+      "source": "assets/skills/refined-v8/art/martial-slam.png",
+      "source_sha256": "99a07c4dadf8f6509e787817ab64cacabbb4188c248819a76f1d81f1a5d54779",
+      "source_size": [
+        1536,
+        1024
+      ],
+      "rects": [
+        [
+          0,
+          512,
+          384,
+          768
+        ],
+        [
+          384,
+          512,
+          768,
+          768
+        ],
+        [
+          768,
+          512,
+          1152,
+          768
+        ],
+        [
+          1152,
+          512,
+          1536,
+          768
+        ],
+        [
+          0,
+          768,
+          384,
+          1024
+        ],
+        [
+          384,
+          768,
+          768,
+          1024
+        ],
+        [
+          768,
+          768,
+          1152,
+          1024
+        ],
+        [
+          1152,
+          768,
+          1536,
+          1024
+        ]
+      ],
+      "anchors": [
+        [
+          192,
+          211
+        ],
+        [
+          192,
+          211
+        ],
+        [
+          192,
+          211
+        ],
+        [
+          192,
+          211
+        ],
+        [
+          192,
+          203
+        ],
+        [
+          192,
+          203
+        ],
+        [
+          192,
+          203
+        ],
+        [
+          192,
+          203
+        ]
+      ],
+      "registration": "ground",
+      "common_crop": [
+        -161,
+        -172,
+        163,
+        29
+      ],
+      "scale": 0.5432098765432098,
+      "metadata": {
+        "path": "assets/skills/refined-v8/martial_4.impact.png",
+        "frameWidth": 192,
+        "frameHeight": 192,
+        "columns": 4,
+        "frames": 8,
+        "frameMillis": 45,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 95,
+        "pivotY": 134
+      }
+    },
+    {
+      "id": "water_5.travel",
+      "file": "water_5.travel.png",
+      "sha256": "7a7d2c7b29ad49b64302d77482a1415be540273d7ddc16f76d583964d7ab53aa",
+      "source": "assets/skills/refined-v8/art/water-trail.png",
+      "source_sha256": "d908fabbcf3e60776b244ba806b52f3c55fe7766ecb2de6c724ebc5f1ff8f6c1",
+      "source_size": [
+        1536,
+        1024
+      ],
+      "rects": [
+        [
+          0,
+          0,
+          512,
+          512
+        ],
+        [
+          512,
+          0,
+          1024,
+          512
+        ],
+        [
+          1024,
+          0,
+          1536,
+          512
+        ],
+        [
+          0,
+          512,
+          512,
+          1024
+        ],
+        [
+          512,
+          512,
+          1024,
+          1024
+        ],
+        [
+          1024,
+          512,
+          1536,
+          1024
+        ]
+      ],
+      "anchors": [
+        [
+          271.0,
+          264.5
+        ],
+        [
+          251.5,
+          263.5
+        ],
+        [
+          238.5,
+          258.5
+        ],
+        [
+          265.5,
+          261.0
+        ],
+        [
+          255.0,
+          260.0
+        ],
+        [
+          246.0,
+          264.5
+        ]
+      ],
+      "registration": "center",
+      "common_crop": [
+        -162,
+        -68,
+        162,
+        68
+      ],
+      "scale": 0.345679012345679,
+      "metadata": {
+        "path": "assets/skills/refined-v8/water_5.travel.png",
+        "frameWidth": 128,
+        "frameHeight": 64,
+        "columns": 4,
+        "frames": 6,
+        "frameMillis": 45,
+        "drawWidth": 96,
+        "drawHeight": 48,
+        "pivotX": 64,
+        "pivotY": 32
+      }
+    },
+    {
+      "id": "wind_3.travel",
+      "file": "wind_3.travel.png",
+      "sha256": "2a359bf47b70a66fbf2c8a39d49544a1ea52dfab14b6d8e9be233354243c9412",
+      "source": "assets/skills/refined-v8/art/wind-trail.png",
+      "source_sha256": "3dea1c2a662cadd324d3aa8a34934f3cdb1c933298d7ff5b603d3aa6eb29f826",
+      "source_size": [
+        1536,
+        1024
+      ],
+      "rects": [
+        [
+          0,
+          0,
+          512,
+          512
+        ],
+        [
+          512,
+          0,
+          1024,
+          512
+        ],
+        [
+          1024,
+          0,
+          1536,
+          512
+        ],
+        [
+          0,
+          512,
+          512,
+          1024
+        ],
+        [
+          512,
+          512,
+          1024,
+          1024
+        ],
+        [
+          1024,
+          512,
+          1536,
+          1024
+        ]
+      ],
+      "anchors": [
+        [
+          269.0,
+          265.5
+        ],
+        [
+          254.0,
+          270.0
+        ],
+        [
+          244.0,
+          256.5
+        ],
+        [
+          267.5,
+          247.0
+        ],
+        [
+          249.5,
+          253.5
+        ],
+        [
+          246.0,
+          250.0
+        ]
+      ],
+      "registration": "center",
+      "common_crop": [
+        -155,
+        -64,
+        155,
+        64
+      ],
+      "scale": 0.36129032258064514,
+      "metadata": {
+        "path": "assets/skills/refined-v8/wind_3.travel.png",
+        "frameWidth": 128,
+        "frameHeight": 64,
+        "columns": 4,
+        "frames": 6,
+        "frameMillis": 45,
+        "drawWidth": 96,
+        "drawHeight": 48,
+        "pivotX": 64,
+        "pivotY": 32
+      }
+    }
+  ],
+  "aliases": {
+    "thunder_1": {
+      "path": "assets/skills/refined-v8/thunder_1.png",
+      "frameWidth": 192,
+      "frameHeight": 64,
+      "columns": 4,
+      "frames": 6,
+      "frameMillis": 70,
+      "drawWidth": 192,
+      "drawHeight": 64,
+      "pivotX": 96,
+      "pivotY": 32
+    },
+    "thunder_2": {
+      "path": "assets/skills/refined-v8/thunder_2.png",
+      "frameWidth": 256,
+      "frameHeight": 64,
+      "columns": 4,
+      "frames": 9,
+      "frameMillis": 70,
+      "drawWidth": 224,
+      "drawHeight": 56,
+      "pivotX": 128,
+      "pivotY": 32
+    },
+    "thunder_4": {
+      "path": "assets/skills/refined-v8/thunder_4.png",
+      "frameWidth": 256,
+      "frameHeight": 96,
+      "columns": 4,
+      "frames": 9,
+      "frameMillis": 45,
+      "drawWidth": 256,
+      "drawHeight": 96,
+      "pivotX": 128,
+      "pivotY": 48
+    },
+    "thunder_5": {
+      "path": "assets/skills/refined-v8/thunder_5.png",
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "columns": 4,
+      "frames": 9,
+      "frameMillis": 115,
+      "drawWidth": 240,
+      "drawHeight": 240,
+      "pivotX": 128,
+      "pivotY": 128
+    },
+    "thunder_1.impact": {
+      "path": "assets/skills/refined-v8/thunder_1.impact.png",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 4,
+      "frames": 6,
+      "frameMillis": 50,
+      "drawWidth": 64,
+      "drawHeight": 64,
+      "pivotX": 64,
+      "pivotY": 64
+    },
+    "martial_4": {
+      "path": "assets/skills/refined-v8/martial_4.png",
+      "frameWidth": 192,
+      "frameHeight": 192,
+      "columns": 4,
+      "frames": 8,
+      "frameMillis": 25,
+      "drawWidth": 96,
+      "drawHeight": 96,
+      "pivotX": 96,
+      "pivotY": 96
+    },
+    "martial_4.impact": {
+      "path": "assets/skills/refined-v8/martial_4.impact.png",
+      "frameWidth": 192,
+      "frameHeight": 192,
+      "columns": 4,
+      "frames": 8,
+      "frameMillis": 45,
+      "drawWidth": 128,
+      "drawHeight": 128,
+      "pivotX": 95,
+      "pivotY": 134
+    },
+    "water_5.travel": {
+      "path": "assets/skills/refined-v8/water_5.travel.png",
+      "frameWidth": 128,
+      "frameHeight": 64,
+      "columns": 4,
+      "frames": 6,
+      "frameMillis": 45,
+      "drawWidth": 96,
+      "drawHeight": 48,
+      "pivotX": 64,
+      "pivotY": 32
+    },
+    "wind_3.travel": {
+      "path": "assets/skills/refined-v8/wind_3.travel.png",
+      "frameWidth": 128,
+      "frameHeight": 64,
+      "columns": 4,
+      "frames": 6,
+      "frameMillis": 45,
+      "drawWidth": 96,
+      "drawHeight": 48,
+      "pivotX": 64,
+      "pivotY": 32
+    },
+    "thunder_3": {
+      "path": "assets/skills/refined-v8/thunder_1.png",
+      "frameWidth": 192,
+      "frameHeight": 64,
+      "columns": 4,
+      "frames": 6,
+      "frameMillis": 85,
+      "drawWidth": 192,
+      "drawHeight": 64,
+      "pivotX": 96,
+      "pivotY": 32
+    },
+    "thunder_2.impact": {
+      "path": "assets/skills/refined-v8/thunder_1.impact.png",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 4,
+      "frames": 6,
+      "frameMillis": 50,
+      "drawWidth": 64,
+      "drawHeight": 64,
+      "pivotX": 64,
+      "pivotY": 64
+    },
+    "thunder_3.impact": {
+      "path": "assets/skills/refined-v8/thunder_1.impact.png",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 4,
+      "frames": 6,
+      "frameMillis": 50,
+      "drawWidth": 64,
+      "drawHeight": 64,
+      "pivotX": 64,
+      "pivotY": 64
+    },
+    "thunder_4.travel": {
+      "path": "assets/skills/refined-v8/thunder_4.png",
+      "frameWidth": 256,
+      "frameHeight": 96,
+      "columns": 4,
+      "frames": 9,
+      "frameMillis": 45,
+      "drawWidth": 256,
+      "drawHeight": 96,
+      "pivotX": 128,
+      "pivotY": 48
+    },
+    "thunder_5.travel": {
+      "path": "assets/skills/refined-v8/thunder_4.png",
+      "frameWidth": 256,
+      "frameHeight": 96,
+      "columns": 4,
+      "frames": 9,
+      "frameMillis": 45,
+      "drawWidth": 256,
+      "drawHeight": 96,
+      "pivotX": 128,
+      "pivotY": 48
+    },
+    "martial_4.travel": {
+      "path": "assets/skills/refined-v8/martial_4.png",
+      "frameWidth": 192,
+      "frameHeight": 192,
+      "columns": 4,
+      "frames": 8,
+      "frameMillis": 25,
+      "drawWidth": 96,
+      "drawHeight": 96,
+      "pivotX": 96,
+      "pivotY": 96
+    }
+  },
+  "packaging": "Recorte, registro e redução nearest; sem ampliação/recoloração/repintura por código."
+}

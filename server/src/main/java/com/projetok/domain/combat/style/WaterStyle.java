@@ -16,7 +16,7 @@ public final class WaterStyle implements CombatStyle {
 
     @Override
     public int computeDamage(StatsComponent stats) {
-        return BASE_DAMAGE + (stats.agility() / 2);
+        return BASE_DAMAGE + com.projetok.domain.combat.AttributeCombatRules.damageBonus(com.projetok.domain.combat.AttributeCombatRules.DamageKind.DOMAIN_SKILL,stats.strength(),stats.intelligence());
     }
 
     @Override

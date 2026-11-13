@@ -8,13 +8,31 @@ public final class Protocol {
     public static final int COSMETIC_APPLICATION=2;
     public static final int COMBAT_APPLICATION=3;
     public static final int CONTENT_APPLICATION=4;
-    public sealed interface Message permits Hello,Welcome,Intent,State,Bye,Error,AppearanceRequest,SessionState,CombatState,WorldRequest,Ping,Pong,Content,RevisionState,RevisionCommand { }
+    /** Aplicacao 5 acrescenta criacao efemera ao transporte de conteudo existente. */
+    public static final int CHARACTER_APPLICATION=5;
+    public static final int GAMEPLAY_APPLICATION=6;
+    /** Aplicação 7 acrescenta skills sem alterar os bytes das aplicações anteriores. */
+    public static final int SKILL_APPLICATION=7;
+    public static boolean supportsGameplayApplication(int application){return application==GAMEPLAY_APPLICATION||application==SKILL_APPLICATION;}
+    public static boolean supportsCharacterApplication(int application){return application==CHARACTER_APPLICATION||supportsGameplayApplication(application);}
+    public sealed interface Message permits Hello,Welcome,Intent,State,Bye,Error,AppearanceRequest,SessionState,CombatState,WorldRequest,Ping,Pong,Content,RevisionState,RevisionCommand,CharacterCreate,GameplayProtocol.Request,GameplayProtocol.State,GameplayProtocol.Attributes,GameplayProtocol.Energy,SkillProtocol.Request,SkillProtocol.State { }
+    /** Escolha inicial sem identidade, atributos de combate ou caminhos enviados pelo cliente. */
+    public record CharacterCreate(String race,String hair,String clothing) implements Message {
+        public CharacterCreate {
+            com.projetok.rpg.CharacterRaces.get(race);
+            var selection=new com.projetok.prototype.rpg.CosmeticCatalog.Selection(hair,clothing);
+            if("reaper".equals(race)&&!selection.equals(com.projetok.prototype.rpg.CosmeticCatalog.Selection.none()))
+                throw new IllegalArgumentException("Reaper utiliza a aparencia propria do atlas; cabelo e roupa devem ser none");
+        }
+    }
+    /** A capacidade de conteudo e compartilhada sem mudar os frames das aplicacoes anteriores. */
+    public static boolean supportsContentApplication(int application){return application==CONTENT_APPLICATION||supportsCharacterApplication(application);}
     public enum ContentKind { BEGIN,CHUNK,END,READY,ACTIVATE,ACTIVE,ABORT,RESUME,REJECT }
     public record Content(ContentKind kind,long transaction,String hash,int index,byte[] data) implements Message {
         public Content {Objects.requireNonNull(kind);if(transaction<1||!hash.matches("[a-f0-9]{64}")||index<0||index>4*1024*1024||data==null||data.length>2800)throw new IllegalArgumentException("Conteudo invalido");data=data.clone();}
         @Override public byte[] data(){return data.clone();}
     }
-    public record RevisionCommand(String hash,Message command) implements Message {public RevisionCommand{if(!hash.matches("[a-f0-9]{64}")||!(command instanceof Intent||command instanceof WorldRequest||command instanceof AppearanceRequest))throw new IllegalArgumentException("Comando sem revisao valida");}}
+    public record RevisionCommand(String hash,Message command) implements Message {public RevisionCommand{if(!hash.matches("[a-f0-9]{64}")||!(command instanceof Intent||command instanceof WorldRequest||command instanceof AppearanceRequest||command instanceof GameplayProtocol.Request||command instanceof SkillProtocol.Request))throw new IllegalArgumentException("Comando sem revisao valida");}}
     public record RevisionState(String hash,CombatState state) implements Message {public RevisionState{if(!hash.matches("[a-f0-9]{64}"))throw new IllegalArgumentException("Hash invalido");Objects.requireNonNull(state);}}
     public record Ping(long nonce)implements Message{public Ping{if(nonce<1)throw new IllegalArgumentException("Nonce invalido");}}
     public record Pong(long nonce)implements Message{public Pong{if(nonce<1)throw new IllegalArgumentException("Nonce invalido");}}
@@ -68,6 +86,13 @@ public final class Protocol {
         else if(message instanceof Content m){out.writeByte(13);out.writeByte(m.kind().ordinal());out.writeLong(m.transaction());text(out,m.hash());out.writeInt(m.index());out.writeShort(m.data().length);out.write(m.data());}
         else if(message instanceof RevisionState m){out.writeByte(14);text(out,m.hash());write(out,m.state());}
         else if(message instanceof RevisionCommand m){out.writeByte(15);text(out,m.hash());write(out,m.command());}
+        else if(message instanceof CharacterCreate m){out.writeByte(16);text(out,m.race());text(out,m.hair());text(out,m.clothing());}
+        else if(message instanceof GameplayProtocol.State m){out.writeByte(17);text(out,m.hash());write(out,m.combat());GameplayProtocol.writeSheet(out,m.sheet());}
+        else if(message instanceof GameplayProtocol.Request m){out.writeByte(18);out.writeLong(m.sequence());out.writeByte(m.operation().ordinal());text(out,m.target());}
+        else if(message instanceof GameplayProtocol.Attributes m){out.writeByte(19);text(out,m.hash());out.writeInt(m.strength());out.writeInt(m.intelligence());out.writeInt(m.agility());out.writeInt(m.level());out.writeInt(m.points());}
+        else if(message instanceof GameplayProtocol.Energy m){out.writeByte(20);text(out,m.hash());out.writeLong(m.tick());out.writeLong(m.sequence());out.writeInt(m.trained());out.writeInt(m.current());out.writeInt(m.maximum());out.writeInt(m.regenerationPermille());}
+        else if(message instanceof SkillProtocol.Request m){out.writeByte(21);out.writeLong(m.sequence());out.writeByte(m.slot());out.writeInt(m.targetId());out.writeLong(m.generation());out.writeFloat(m.x());out.writeFloat(m.y());}
+        else if(message instanceof SkillProtocol.State m){out.writeByte(22);SkillProtocol.writeState(out,m);}
         else throw new IOException("Mensagem desconhecida");
         byte[] bytes=buffer.toByteArray();if(bytes.length>MAX_FRAME)throw new IOException("Frame excessivo");var target=new DataOutputStream(stream);target.writeInt(bytes.length);target.write(bytes);target.flush();
     }
@@ -91,6 +116,13 @@ public final class Protocol {
                 case 13->{int k=in.readUnsignedByte();if(k>=ContentKind.values().length)throw new IOException("Tipo de conteudo invalido");long t=in.readLong();String h=text(in);int index=in.readInt(),n=in.readUnsignedShort();if(n>2800)throw new IOException("Bloco excessivo");byte[] data=in.readNBytes(n);if(data.length!=n)throw new EOFException();yield new Content(ContentKind.values()[k],t,h,index,data);}
                 case 14->{if(depth<3)throw new IOException("Extensao recursiva");String hash=text(in);var nested=read(in,2);if(!(nested instanceof CombatState c))throw new IOException("Snapshot de revisao invalido");yield new RevisionState(hash,c);}
                 case 15->{if(depth<1)throw new IOException("Comando recursivo");String hash=text(in);yield new RevisionCommand(hash,read(in,0));}
+                case 16->new CharacterCreate(text(in),text(in),text(in));
+                case 17->{if(depth<3)throw new IOException("Ficha aninhada recusada");String hash=text(in);var nested=read(in,2);if(!(nested instanceof CombatState combat))throw new IOException("Combate ausente");yield new GameplayProtocol.State(hash,combat,GameplayProtocol.readSheet(in));}
+                case 18->{long sequence=in.readLong();int operation=in.readUnsignedByte();if(operation>=GameplayProtocol.Operation.values().length)throw new IOException("Operacao desconhecida");yield new GameplayProtocol.Request(sequence,GameplayProtocol.Operation.values()[operation],text(in));}
+                case 19->new GameplayProtocol.Attributes(text(in),in.readInt(),in.readInt(),in.readInt(),in.readInt(),in.readInt());
+                case 20->new GameplayProtocol.Energy(text(in),in.readLong(),in.readLong(),in.readInt(),in.readInt(),in.readInt(),in.readInt());
+                case 21->new SkillProtocol.Request(in.readLong(),in.readUnsignedByte(),in.readInt(),in.readLong(),in.readFloat(),in.readFloat());
+                case 22->SkillProtocol.readState(in);
                 default->throw new IOException("Tipo desconhecido");};
             if(in.available()!=0)throw new IOException("Dados excedentes");return message;
         }catch(IllegalArgumentException error){throw new IOException("Mensagem malformada",error);}

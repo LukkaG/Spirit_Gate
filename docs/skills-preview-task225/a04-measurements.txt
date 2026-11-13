@@ -1,0 +1,8 @@
+A-04: mundo sintético descartável 960x640; perfil original-ground v1, raio 12.
+Câmara bruta x=110..170/y=280..320; aliado no apoio 140,300.
+Sem apoio livre: origem + 1024 sondas radiais + grade 235x155 (36425) = 37450 pontos por tentativa.
+A grade depende da implementação atual; contagem derivada dos limites/loops, não instrumentada.
+3 aquecimentos + 15 amostras; tempos incluem chamada/assert e não são benchmark de carga.
+Sem apoio: min=0.899 ms; mediana=0.915 ms; max=1.299 ms; ns=[1049900, 1058800, 1299100, 1057700, 1038100, 1034700, 917200, 910000, 902600, 898700, 912100, 910100, 910100, 914800, 908300]
+Origem livre: min=0.002 ms; mediana=0.002 ms; max=0.013 ms; ns=[4400, 3200, 6000, 2500, 3600, 12500, 2000, 1600, 2000, 1900, 4600, 2200, 1900, 2200, 1900]
+Limite externo JUnit: 20 s por teste. Sem alteração de imunidade/duração/materialização.

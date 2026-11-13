@@ -1,0 +1,126 @@
+{
+  "cell_width": 64,
+  "cell_height": 64,
+  "directions": [
+    "frente",
+    "costas",
+    "esquerda",
+    "direita"
+  ],
+  "attack_frames": 5,
+  "attack_columns": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "idle_column": 0,
+  "complete_sheet": "completa_384x256.png",
+  "attack_sheet": "ataque_320x256.png",
+  "loop_attack": false,
+  "kind": "melee",
+  "action": "Mordida com batida de asas; somente ataque refeito, aparencia original preservada.",
+  "source_scale": 0.197444089456869,
+  "art_source": "host_image",
+  "route": "built-in image_gen",
+  "source_sha256": "45aff01deac1ddc51d0ea20537f63e5b1e63492ea69a411402f940d2d2991b16",
+  "states": [
+    {
+      "direction": "frente",
+      "row": 0,
+      "frames": 5,
+      "duration_ms": [
+        80,
+        140,
+        90,
+        150,
+        100
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "time_ms": 220,
+          "event": "melee_hit"
+        }
+      ],
+      "source_neutral_offset": [
+        1.0,
+        1.543769968051123
+      ]
+    },
+    {
+      "direction": "costas",
+      "row": 1,
+      "frames": 5,
+      "duration_ms": [
+        80,
+        140,
+        90,
+        150,
+        100
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "time_ms": 220,
+          "event": "melee_hit"
+        }
+      ],
+      "source_neutral_offset": [
+        1.0,
+        2.5309904153354665
+      ]
+    },
+    {
+      "direction": "esquerda",
+      "row": 2,
+      "frames": 5,
+      "duration_ms": [
+        80,
+        140,
+        90,
+        150,
+        100
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "time_ms": 220,
+          "event": "melee_hit"
+        }
+      ],
+      "source_neutral_offset": [
+        1.0,
+        1.7412140575079889
+      ]
+    },
+    {
+      "direction": "direita",
+      "row": 3,
+      "frames": 5,
+      "duration_ms": [
+        80,
+        140,
+        90,
+        150,
+        100
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "time_ms": 220,
+          "event": "melee_hit"
+        }
+      ],
+      "source_neutral_offset": [
+        1.0936102236421732,
+        1.1488817891373841
+      ]
+    }
+  ],
+  "anchor": [
+    32,
+    59
+  ]
+}

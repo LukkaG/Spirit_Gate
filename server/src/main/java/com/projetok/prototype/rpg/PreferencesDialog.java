@@ -4,7 +4,19 @@ import javax.swing.*;
 import java.awt.*;
 import java.nio.file.Path;
 /** Opções reais, sem alterar o formato existente de preferências. */
-final class PreferencesDialog {
+public final class PreferencesDialog {
+    public static Path networkPreferencesFile(){return RpgMenu.dataHome().resolve("saves/preferences.properties");}
+    /** Reutiliza as opções existentes; carregamento local fora da EDT e sem gravar até Aplicar. */
+    public static void openNetwork(JFrame owner,java.util.function.Consumer<RpgPreferences> apply){
+        Path file=networkPreferencesFile();
+        new SwingWorker<RpgPreferences,Void>(){
+            protected RpgPreferences doInBackground()throws Exception{return RpgPreferences.load(file);}
+            protected void done(){if(!owner.isDisplayable())return;RpgPreferences value;
+                try{value=get();}catch(Exception error){value=RpgPreferences.defaults();JOptionPane.showMessageDialog(owner,"Preferências locais indisponíveis; usando padrões nesta janela.");}
+                open(owner,value,file,next->{SpiritTheme.reducedMotion=!next.environment();apply.accept(next);});
+            }
+        }.execute();
+    }
     static void open(JFrame owner,RpgPreferences current,Path file,java.util.function.Consumer<RpgPreferences> apply){
         JDialog dialog=new JDialog(owner,"Opções do Spirit Gate",true);dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         JSlider volume=new JSlider(0,100,current.volume());volume.setPaintTicks(true);volume.setMajorTickSpacing(25);volume.setPaintLabels(true);volume.getAccessibleContext().setAccessibleName("Volume geral");

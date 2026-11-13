@@ -86,7 +86,15 @@ class Task187BackpressureTest {
                 assertTrue(writer.isAlive());
                 assertTrue(writer.getName().startsWith("coop-writer-"));
                 // Ler alguns frames após a retenção também verifica enquadramento íntegro.
-                for (int i = 0; i < 4; i++) assertInstanceOf(Protocol.Content.class, Protocol.read(stalled.getInputStream()));
+                // Um snapshot pode entrar no writer antes do primeiro controle de preparo.
+                // Continua exigindo quatro controles integros, com leitura limitada.
+                int contentFrames = 0;
+                for (int i = 0; i < 8 && contentFrames < 4; i++) {
+                    var message = Protocol.read(stalled.getInputStream());
+                    if (message instanceof Protocol.Content) contentFrames++;
+                    else assertEquals(revision.hash(), assertInstanceOf(Protocol.RevisionState.class, message).hash());
+                }
+                assertEquals(4, contentFrames, "Quatro controles de conteudo devem chegar apesar dos snapshots intercalados");
                 stalled.close();
                 WorldRevisionTest.waitFor(() -> server.players() == 1 && !healthy.revisions().blocked()
                     && healthy.snapshot() != null);

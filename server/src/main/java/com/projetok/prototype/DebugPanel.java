@@ -64,7 +64,22 @@ public final class DebugPanel extends JPanel {
         boolean draw(Graphics2D graphics, DebugSnapshot.ActorView actor);
     }
     private ActorRenderer actorRenderer;
+    /** Composição opcional de objetos e atores; preserva a apresentação individual existente. */
+    @FunctionalInterface public interface WorldActorsRenderer {
+        void draw(Graphics2D graphics,java.util.List<DebugSnapshot.ActorView> actors,java.util.function.Consumer<DebugSnapshot.ActorView> drawActor);
+    }
+    private WorldActorsRenderer worldActorsRenderer;
+    /** Instala ordenação do mapa sem alterar os renderizadores de offline e Coop. */
+    public void setWorldActorsRenderer(WorldActorsRenderer renderer){worldActorsRenderer=renderer;}
     private java.util.function.Consumer<Graphics2D> worldOverlay;
+    private java.util.function.Consumer<Graphics2D> editorOverlay;
+    private java.util.function.Predicate<java.awt.event.MouseEvent> editorInput;
+    /** Sobreposição de autoria na câmera da partida, independente da HUD e dos efeitos. */
+    public void setEditorOverlay(java.util.function.Consumer<Graphics2D> overlay){editorOverlay=overlay;repaint();}
+    /** Intercepta apenas gestos do modo de edição antes da seleção de alvos do jogo. */
+    public void setEditorInput(java.util.function.Predicate<java.awt.event.MouseEvent> input){editorInput=input;if(input!=null)enableEvents(java.awt.AWTEvent.MOUSE_EVENT_MASK|java.awt.AWTEvent.MOUSE_MOTION_EVENT_MASK);}
+    @Override protected void processMouseEvent(java.awt.event.MouseEvent event){if(editorInput!=null&&editorInput.test(event))return;super.processMouseEvent(event);}
+    @Override protected void processMouseMotionEvent(java.awt.event.MouseEvent event){if(editorInput!=null&&editorInput.test(event))return;super.processMouseMotionEvent(event);}
     private java.util.function.Consumer<Graphics2D> worldUnderlay;
     private boolean physicalGeometry=true;
     private java.util.List<com.projetok.domain.movement.RpgSessionGeometry.Structure> depthStructures=java.util.List.of();
@@ -78,7 +93,20 @@ public final class DebugPanel extends JPanel {
     public void setWorldOverlay(java.util.function.Consumer<Graphics2D> overlay){worldOverlay=overlay;}
     public void setActorRenderer(ActorRenderer renderer) { actorRenderer=renderer; }
     private LocalArenaMap.Renderer mapRenderer;
-    private int cameraZoom=1;
+    private double cameraZoom=1;
+    private boolean pixelPerfectCamera;
+    private boolean overlayHud;
+    /** Ativação local da nova apresentação; arena, Coop e offline conservam o padrão. */
+    public void setOverlayHud(boolean enabled){overlayHud=enabled;repaint();}
+    public java.awt.geom.Rectangle2D visibleWorld(){return viewport(source.get()).visibleWorld();}
+    /** Mantem a arte em pixels logicos inteiros; HUD continua no ajuste historico. */
+    public void setPixelPerfectCamera(boolean enabled){
+        pixelPerfectCamera=enabled;
+        if(!enabled&&(cameraZoom<1||cameraZoom!=Math.rint(cameraZoom)))cameraZoom=1;
+        repaint();
+    }
+    public boolean isPixelPerfectCamera(){return pixelPerfectCamera;}
+    public double getCameraZoom(){return cameraZoom;}
     private int worldWidth=DebugWorld.WIDTH, worldHeight=DebugWorld.HEIGHT;
     private boolean culling=true;
     /** Referência de comparação visual; não altera os dados da simulação. */
@@ -91,16 +119,24 @@ public final class DebugPanel extends JPanel {
     /** Zoom inteiro opcional; padrao preserva coordenadas historicas. */
     public void setCameraZoom(int zoom) {
         if(zoom<1 || zoom>4) throw new IllegalArgumentException("Zoom invalido");
-        cameraZoom=zoom; repaint();
+        setCameraZoom((double)zoom);
+    }
+    /** Zoom fracionario opcional para comparar tamanhos no modo de teste. */
+    public void setCameraZoom(double zoom) {
+        if(!Double.isFinite(zoom)||zoom<.25||zoom>4
+                ||!pixelPerfectCamera&&(zoom<1||zoom!=Math.rint(zoom)))throw new IllegalArgumentException("Zoom invalido");
+        cameraZoom=zoom;repaint();
     }
     ArenaViewport viewport(DebugSnapshot snapshot) {
         var player=snapshot.actors().stream().filter(DebugSnapshot.ActorView::player).findFirst();
         double x=player.map(a->(double)a.x()).orElse(480d),y=player.map(a->(double)a.y()).orElse(320d);
-        return ArenaViewport.fit(getWidth()>0?getWidth():PANEL_WIDTH,getHeight()>0?getHeight():PANEL_HEIGHT,
-                worldWidth,worldHeight,x,y,cameraZoom);
+        int width=getWidth()>0?getWidth():PANEL_WIDTH,height=getHeight()>0?getHeight():PANEL_HEIGHT;
+        if(overlayHud)return ArenaViewport.immersive(width,height,worldWidth,worldHeight,x,y,cameraZoom);
+        return pixelPerfectCamera?ArenaViewport.pixelPerfect(width,height,worldWidth,worldHeight,x,y,cameraZoom):
+                ArenaViewport.fit(width,height,worldWidth,worldHeight,x,y,(int)cameraZoom);
     }
     /** Conversao no instante do comando evita mira obsoleta se a camera se moveu. */
-    java.awt.geom.Point2D.Double aimAt(float x,float y) {
+    public java.awt.geom.Point2D.Double aimAt(float x,float y) {
         var v=viewport(source.get());
         return v.containsScreen(x,y)?v.screenToWorld(x,y):new java.awt.geom.Point2D.Double(Double.NaN,Double.NaN);
     }
@@ -166,21 +202,27 @@ public final class DebugPanel extends JPanel {
 
     private void renderScene(Graphics2D g, DebugSnapshot s, java.util.List<DirectionalAnimation.View> animations) {
         var viewport=viewport(s);
+        var layout=pixelPerfectCamera?ArenaViewport.fit(getWidth()>0?getWidth():PANEL_WIDTH,getHeight()>0?getHeight():PANEL_HEIGHT,
+                worldWidth,worldHeight,0,0,1):viewport;
         Graphics2D canvas=(Graphics2D)g.create();
         try {
-        canvas.translate(viewport.offsetX(),viewport.offsetY());
-        canvas.scale(viewport.scale(),viewport.scale());
+        canvas.translate(layout.offsetX(),layout.offsetY());
+        canvas.scale(layout.scale(),layout.scale());
         canvas.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        Graphics2D world=(Graphics2D)canvas.create();
+        Graphics2D world=(Graphics2D)g.create();
         try {
-        world.clipRect(0,0,DebugWorld.WIDTH,DebugWorld.HEIGHT);
+        world.translate(viewport.offsetX(),viewport.offsetY());
+        world.scale(viewport.scale(),viewport.scale());
+        world.clipRect(0,0,(int)viewport.arenaWidth(),(int)viewport.arenaHeight());
+        world.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        if(pixelPerfectCamera){world.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_OFF);world.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);}
         world.scale(viewport.zoom(),viewport.zoom());
         world.translate(-viewport.originX(),-viewport.originY());
         renderWorld(world,s,animations);
         if(ambientLight<1f){world.setColor(new Color(8,12,35,Math.round((1f-ambientLight)*255)));world.fillRect(0,0,worldWidth,worldHeight);}
         } finally {world.dispose();}
-        if(customHud.isEmpty()){drawSidebar(canvas,s);drawBottom(canvas,s);}
-        else {
+        if(!overlayHud&&customHud.isEmpty()){drawSidebar(canvas,s);drawBottom(canvas,s);}
+        else if(!overlayHud) {
             canvas.setColor(new Color(12,19,35));canvas.fillRect(960,0,300,750);canvas.fillRect(0,640,960,110);
             canvas.setFont(new Font("SansSerif",Font.BOLD,15));canvas.setColor(TEXT);int lineY=32;
             for(String line:customHud){canvas.drawString(line,978,lineY);lineY+=26;}
@@ -202,12 +244,14 @@ public final class DebugPanel extends JPanel {
         if(physicalGeometry){if(depthStructures.isEmpty())drawObstacles(g, s);drawSoftObstacles(g, s);}
         drawIceZones(g, s);
         drawLightningTrails(g, s);
-        if(physicalGeometry&&!depthStructures.isEmpty())StructureRenderer.draw(g,depthStructures,s.actors(),actor->drawPresentedActor(g,actor,s,animations));
+        if(worldActorsRenderer!=null)worldActorsRenderer.draw(g,s.actors(),actor->drawPresentedActor(g,actor,s,animations));
+        else if(physicalGeometry&&!depthStructures.isEmpty())StructureRenderer.draw(g,depthStructures,s.actors(),actor->drawPresentedActor(g,actor,s,animations));
         else for(var actor:s.actors())drawPresentedActor(g,actor,s,animations);
         if (mapRenderer != null) mapRenderer.drawLayers(g,5,10);
         drawAttack(g, s.attack());
         drawEffects(g, s);
         if(worldOverlay!=null)worldOverlay.accept(g);
+        if(editorOverlay!=null)editorOverlay.accept(g);
     }
 
     private void drawPresentedActor(Graphics2D g,DebugSnapshot.ActorView actor,DebugSnapshot s,java.util.List<DirectionalAnimation.View> animations){

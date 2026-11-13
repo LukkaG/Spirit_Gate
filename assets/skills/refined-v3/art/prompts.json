@@ -1,0 +1,16 @@
+{
+  "route": "image_gen",
+  "model": null,
+  "estimateUsd": null,
+  "energy-arrow": {
+    "reference": "assets/skills/refined-v2/art/ice_arrow_v2-v1.png",
+    "prompt": "Edit this game FX spritesheet into pure BLUE ARCANE ENERGY arrows, not ice. Preserve exactly the 3 by 3 frame layout, RIGHT-facing direction and same single arrow per cell, consistently registered tip and axis. Replace faceted crystal arrowheads with smooth concentrated azure/cyan energy spear-like arrowheads and flowing blue energy trails; remove ALL snowflakes, ice shards, frosty and crystal motifs. Clean sharp retro 2D game FX, transparent background, generous clear padding inside each cell and between cells, no text, no character, no shadows/background. Animation phases: energy gathers, thrust, bright pulse, flowing wake. Keep same overall recognizable arrow silhouettes and bright blue style. This sheet will supply all five Aetheri skills at different sizes.",
+    "spacing_edit": "Fix only frame spacing of this 3x3 blue energy arrow FX spritesheet: shrink each entire individual arrow to 75% within its original cell, keeping its right-facing horizontal direction and same design. Ensure at least 35 pixels of clear transparent margin on all four edges of EVERY cell. No arrows or particles may touch sheet edges or neighboring cells. Maintain genuine transparency and same 9 phase animation, no ice motifs.",
+    "accepted": "energy-arrow-padded.png"
+  },
+  "martial-combo": {
+    "prompt": "Original retro 2D game FX SPRITESHEET for a martial artist rapid punches and kicks combo, transparent background, 3 columns by 3 rows, 9 distinct sequential animation frames. Every cell has the same generous transparent padding, identical registration; all action projects toward RIGHT. No full character, no face, no text, no swords, no magic arrows. Show stylized readable successive beige/golden fist silhouettes and boot/shin silhouettes made of white-gold speed strokes, short curved punch swooshes, kicks and compact impact starbursts spread in a frontal cone. Frame1 single extended fist,2 two fast fists,3 extended foot kick,4 fist plus kick,5 rapid punches,6 sweeping kick,7 strong fist and foot impact,8 fading speed trails,9 small dissipating impact sparks. Root anchored left of each cell center; the effect reaches right. Crisp pixel-like game sprite finish, restrained cream/gold colors with dark amber outlines. Keep everything wholly inside cells, leave wide completely transparent spacing. No symbols, no particles outside cell boundaries. Intended to be rendered 300 wide by 180 high over the attacking character's frontal area.",
+    "alpha_edit": "Remove the entire brown/gold backdrop and background glow from this spritesheet. Preserve ONLY the 9 fist/kick/streak impact FX as independent transparent cutouts, exactly same 3x3 layout. Genuine transparent alpha outside silhouettes, no opaque rectangle, no shadow behind. Keep gold fists, feet and speed strokes intact. Add generous completely transparent margin around each frame inside each cell to prevent overlapping adjacent cells.",
+    "accepted": "martial-combo-alpha.png"
+  }
+}

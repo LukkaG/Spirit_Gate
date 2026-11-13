@@ -21,7 +21,7 @@ public final class StudioPlaytest {
         var world=new RpgWorld(CharacterIdentity.create("Playtest","reaper","azure"),bundle.scenes());if(bundle.maps().get(bundle.start()).metadata().containsKey("collision.radius"))world.configureSyntheticCollision(com.projetok.domain.movement.SessionCollisionProfile.read(bundle.maps().get(bundle.start()).metadata()));RpgRuntime runtime=new RpgRuntime(world);
         var template=DebugWorld.demo(new java.util.Random(91)).snapshot();
         DebugPanel panel=new DebugPanel(()->{var v=runtime.snapshot();var space=bundle.scenes().maps().get(v.state().region()).space();return RpgLauncher.adapt(v,template,space.obstacles().stream().map(o->new DebugSnapshot.Obstacle(o.x(),o.y(),o.width(),o.height())).toList());});panel.setPhysicalGeometryVisible(false);
-        var render=new StudioMapRenderer(bundle,images,runtime::snapshot,player);var feedback=new RpgCombatFeedback();var boss=new RpgBossOverlay();panel.setActorRenderer(render);panel.setWorldUnderlay(g->render.layers(g,false));panel.setWorldOverlay(g->{render.layers(g,true);boss.draw(g);feedback.draw(g);});
+        var render=new StudioMapRenderer(bundle,images,runtime::snapshot,player);var feedback=new RpgCombatFeedback();var boss=new RpgBossOverlay();panel.setActorRenderer(render);panel.setWorldActorsRenderer(render::actors);panel.setPhysicalGeometryVisible(false);panel.setWorldUnderlay(g->render.layers(g,false));panel.setWorldOverlay(g->{render.layers(g,true);boss.draw(g);feedback.draw(g);});
         var minimap=new StudioMiniMap(render::document,runtime::snapshot);
         JFrame frame=new JFrame("Spirit Gate | PLAYTEST ISOLADO | "+bundle.start());frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);JPanel root=new JPanel(new BorderLayout());JLabel banner=new JLabel("Sessao sintetica sem saves pessoais | WASD mover | SPACE golpe | Q habilidade | F interagir | R recuperar");root.add(banner,BorderLayout.NORTH);root.add(panel);RpgHud hud=new RpgHud(runtime);root.add(hud,BorderLayout.SOUTH);frame.setContentPane(root);frame.setSize(1260,900);frame.setLocationRelativeTo(null);
         var logs=new ArrayList<String>();logs.add("Inicio: "+bundle.start()+" | runtime real, sem LocalSaveStore");boolean[] held=new boolean[4];String[] keys={"W","S","A","D"};
@@ -46,5 +46,5 @@ public final class StudioPlaytest {
         runtime.start();timer.start();frame.setVisible(true);
     }
     /** Execucao externa verificavel de um bundle exportado, sem fisica alternativa. */
-    public static void main(String[] args)throws Exception{if(args.length<1||args.length>2)throw new IllegalArgumentException("Uso: StudioPlaytest pasta-exportada [raiz-projeto]");launch(Path.of(args[0]),args.length==2?Path.of(args[1]):Path.of("").toAbsolutePath());}
+    public static void main(String[] args)throws Exception{com.projetok.diagnostics.ErrorReports.install("studio-playtest");if(args.length<1||args.length>2)throw new IllegalArgumentException("Uso: StudioPlaytest pasta-exportada [raiz-projeto]");launch(Path.of(args[0]),args.length==2?Path.of(args[1]):Path.of("").toAbsolutePath());}
 }

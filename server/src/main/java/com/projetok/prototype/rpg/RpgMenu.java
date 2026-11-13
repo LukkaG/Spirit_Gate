@@ -9,7 +9,7 @@ final class RpgMenu {
     /** Updater stores user data outside disposable application versions. */
     static Path dataHome(){String data=System.getProperty("spiritgate.rpg.dataDir");return data==null?home():Path.of(data).toAbsolutePath();}
     static void open() {
-        JFrame frame=new JFrame("Spirit Gate | Inicio");frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        JFrame frame=new JFrame("Spirit Gate | Inicio");SessionWindowNavigation.mark(frame);frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         CharacterSelection root=new CharacterSelection();
         var list=root.list;var status=root.status;
         CharacterSaves repository=new CharacterSaves(dataHome().resolve("saves/characters"));

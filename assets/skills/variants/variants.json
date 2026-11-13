@@ -1,0 +1,58 @@
+{
+  "water_cut": {
+    "path": "water-slash-turquoise-v1.png",
+    "columns": 3,
+    "rows": 3,
+    "prompt": "water-slash-prompt.txt"
+  },
+  "wind_cut": {
+    "path": "wind-variant-v1.png",
+    "columns": 3,
+    "rows": 3,
+    "prompt": "variant-prompts.json#wind"
+  },
+  "lightning": {
+    "path": "thunder-variant-v1.png",
+    "columns": 6,
+    "rows": 1,
+    "prompt": "variant-prompts.json#thunder"
+  },
+  "fire_cut": {
+    "path": "fire-variant-v1.png",
+    "columns": 3,
+    "rows": 3,
+    "prompt": "variant-prompts.json#fire"
+  },
+  "web": {
+    "path": "spirit-variant-v1.png",
+    "columns": 4,
+    "rows": 3,
+    "prompt": "variant-prompts.json#spirit"
+  },
+  "arrow": {
+    "path": "aetheri-variant-v1.png",
+    "columns": 2,
+    "rows": 3,
+    "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "prompt": "variant-prompts.json#aetheri"
+  },
+  "beam": {
+    "path": "light-variant-v1.png",
+    "columns": 4,
+    "rows": 4,
+    "prompt": "variant-prompts.json#light"
+  },
+  "impact": {
+    "path": "martial-variant-v1.png",
+    "columns": 3,
+    "rows": 1,
+    "prompt": "variant-prompts.json#martial"
+  }
+}

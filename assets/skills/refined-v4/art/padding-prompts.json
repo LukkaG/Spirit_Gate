@@ -1,0 +1,25 @@
+{
+  "jobs": [
+    {
+      "name": "seismic",
+      "refs": [
+        "C:\\Users\\lucas\\Documents\\GitHub\\Projeto-K\\assets\\skills\\refined-v4\\art\\seismic.png"
+      ],
+      "prompt": "Fix ONLY the frame isolation and spacing of this spritesheet. Keep the same 3 columns and 3 rows, nine animation frames and their art/design and phases. Shrink EVERY individual FX to about 70 percent within its own cell and center it on the same registration point. Leave a wide COMPLETELY TRANSPARENT gutter on all four edges INSIDE EACH cell. No rock, dust, foam, light ray or any pixel may touch the cell borders or overlap neighboring frames. Preserve genuine alpha, remove colored background spill or background haze. No drawn grid lines, no text. Preserve fine high-resolution detail; this is margin correction, not pixel enlargement."
+    },
+    {
+      "name": "martial-punch",
+      "refs": [
+        "C:\\Users\\lucas\\Documents\\GitHub\\Projeto-K\\assets\\skills\\refined-v4\\art\\martial-punch.png"
+      ],
+      "prompt": "Fix ONLY the frame isolation and spacing of this spritesheet. Keep the same 3 columns and 2 rows, six animation frames and their art/design and phases. Shrink EVERY individual FX to about 70 percent within its own cell and center it on the same registration point. Leave a wide COMPLETELY TRANSPARENT gutter on all four edges INSIDE EACH cell. No rock, dust, foam, light ray or any pixel may touch the cell borders or overlap neighboring frames. Preserve genuine alpha, remove colored background spill or background haze. No drawn grid lines, no text. Preserve fine high-resolution detail; this is margin correction, not pixel enlargement."
+    },
+    {
+      "name": "water-vortex",
+      "refs": [
+        "C:\\Users\\lucas\\Documents\\GitHub\\Projeto-K\\assets\\skills\\refined-v4\\art\\water-vortex.png"
+      ],
+      "prompt": "Fix ONLY the frame isolation and spacing of this spritesheet. Keep the same 3 columns and 3 rows, nine animation frames and their art/design and phases. Shrink EVERY individual FX to about 70 percent within its own cell and center it on the same registration point. Leave a wide COMPLETELY TRANSPARENT gutter on all four edges INSIDE EACH cell. No rock, dust, foam, light ray or any pixel may touch the cell borders or overlap neighboring frames. Preserve genuine alpha, remove colored background spill or background haze. No drawn grid lines, no text. Preserve fine high-resolution detail; this is margin correction, not pixel enlargement."
+    }
+  ]
+}

@@ -33,9 +33,9 @@ public final class SpiritGateEntry extends JPanel {
         boolean guest=Boolean.getBoolean("spiritgate.guest");
         if(guest){enter.setEnabled(false);username.setEnabled(false);remember.setEnabled(false);}
         JButton host=new CharacterSelection.SpiritButton("Hospedar via Radmin VPN",false);
-        host.setEnabled(!guest);host.addActionListener(e->RadminSessionPanel.open(true));addRow(card,c,host);
+        host.setEnabled(!guest);host.addActionListener(e->RadminSessionPanel.open(SwingUtilities.getWindowAncestor(this),true,username.getText()));addRow(card,c,host);
         JButton join=new CharacterSelection.SpiritButton("Entrar em partida",false);
-        join.addActionListener(e->RadminSessionPanel.open(false));addRow(card,c,join);
+        join.addActionListener(e->RadminSessionPanel.open(SwingUtilities.getWindowAncestor(this),false,username.getText()));addRow(card,c,join);
         status.setForeground(new Color(160,201,219));status.setFont(new Font("SansSerif",Font.PLAIN,11));addRow(card,c,status);card.setMaximumSize(new Dimension(360,card.getPreferredSize().height));content.add(card);add(content);
     }
     static JLabel label(String text){JLabel label=new JLabel(text);label.setForeground(new Color(200,229,239));label.setFont(new Font("SansSerif",Font.PLAIN,12));return label;}
@@ -49,7 +49,7 @@ public final class SpiritGateEntry extends JPanel {
     static void open(){
         new SwingWorker<BufferedImage,Void>(){protected BufferedImage doInBackground()throws Exception{return loadArt();}protected void done(){
             BufferedImage image;try{image=get();}catch(Exception error){image=null;}
-            JFrame frame=new JFrame("Spirit Gate | Portal de entrada");final SpiritGateEntry[] view=new SpiritGateEntry[1];Path settings=RpgMenu.dataHome().resolve("saves/entry.properties");
+            JFrame frame=new JFrame("Spirit Gate | Portal de entrada");SessionWindowNavigation.mark(frame);final SpiritGateEntry[] view=new SpiritGateEntry[1];Path settings=RpgMenu.dataHome().resolve("saves/entry.properties");
             view[0]=new SpiritGateEntry(image,()->{
                 String name=view[0].username.getText().strip();if(name.length()>24){view[0].status.setText("Use ate 24 caracteres no nome.");return;}
                 view[0].enter.setEnabled(false);boolean keep=view[0].remember.isSelected();

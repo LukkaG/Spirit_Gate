@@ -37,6 +37,8 @@ class UpdateDistributionTest(unittest.TestCase):
             self.assertIsNone(archive.testzip())
             self.assertFalse(any("/saves/" in name for name in archive.namelist()))
             self.assertIn("SpiritGate-Atualizavel/Jogar-SpiritGate.cmd", archive.namelist())
+            self.assertEqual(b"MZ", archive.read("SpiritGate-Atualizavel/SpiritGate-Launcher.exe")[:2])
+            self.assertIn("SpiritGate-Atualizavel/Launcher-SpiritGate.ps1", archive.namelist())
         self.assertEqual("", json.loads((app / "atualizacoes.json").read_text())["feedUrl"])
 
     def test_personal_saves_and_traversal_cannot_be_published(self):
@@ -99,6 +101,17 @@ class UpdateDistributionTest(unittest.TestCase):
             prepare(self.package, self.root / role, "1", role=role)
         self.assertEqual((self.root / "anfitriao/canal/latest.json").read_bytes(),
                          (self.root / "convidado/canal/latest.json").read_bytes())
+
+    def test_corujao_vi_host_is_normalized(self):
+        with zipfile.ZipFile(self.package, "w") as archive:
+            archive.writestr("SpiritGateCorujaoVI-Anfitriao/runtime/bin/java.exe", b"runtime")
+            archive.writestr("SpiritGateCorujaoVI-Anfitriao/app/spiritgate.jar", b"game")
+            archive.writestr("SpiritGateCorujaoVI-Anfitriao/app/SpiritGate.cfg", b"spiritgate.jar")
+        prepare(self.package, self.root / "vi", "0.198.0-dev")
+        manifest = json.loads((self.root / "vi/canal/latest.json").read_text())
+        release = self.root / "vi/canal" / manifest["basePath"]
+        self.assertEqual(b"game", (release / "app/spirit-gate-rpg.jar").read_bytes())
+        self.assertEqual(b"spirit-gate-rpg.jar", (release / "app/SpiritGate.cfg").read_bytes())
 
     def test_guest_only_payload_and_invalid_role_cannot_replace_common_channel(self):
         with zipfile.ZipFile(self.package, "w") as archive:

@@ -19,6 +19,8 @@ public final class WorldCanvas extends JPanel {
     Consumer<Point> pointer=p->{};
     Consumer<MouseEvent> pressed=e->{},dragged=e->{},released=e->{};
     Supplier<WorldDocument.Element> brushPreview=()->null;
+    Consumer<Graphics2D> editOverlay=g->{};
+    Function<MouseEvent,Point> gameCoordinates;
     Point panStart;double startX,startY;
     final long animationStart=System.nanoTime();
     WorldDocument indexedDocument;CanvasIndex index;com.projetok.domain.movement.CollisionService.Space physics;
@@ -38,7 +40,17 @@ public final class WorldCanvas extends JPanel {
         };addMouseListener(mouse);addMouseMotionListener(mouse);addMouseWheelListener(mouse);
     }
     /** Conversao utilizada por todas as ferramentas. */
-    public Point worldPoint(MouseEvent event){var p=viewport.world(event.getX(),event.getY());return new Point((int)Math.floor(p.x),(int)Math.floor(p.y));}
+    public Point worldPoint(MouseEvent event){if(event.getComponent()!=this&&gameCoordinates!=null)return gameCoordinates.apply(event);var p=viewport.world(event.getX(),event.getY());return new Point((int)Math.floor(p.x),(int)Math.floor(p.y));}
+    /** Mostra ferramentas na câmera do jogo, sem introduzir arte de colisão na cena salva. */
+    void gameOverlay(Graphics2D g){
+        var d=source.get();var clip=g.getClipBounds();if(clip==null)clip=new Rectangle(0,0,d.width(),d.height());
+        if(grid){g.setColor(new Color(100,220,240,45));int cell=d.grid();for(int x=Math.max(0,clip.x/cell*cell);x<Math.min(d.width(),clip.x+clip.width);x+=cell)g.drawLine(x,Math.max(0,clip.y),x,Math.min(d.height(),clip.y+clip.height));for(int y=Math.max(0,clip.y/cell*cell);y<Math.min(d.height(),clip.y+clip.height);y+=cell)g.drawLine(Math.max(0,clip.x),y,Math.min(d.width(),clip.x+clip.width),y);}
+        if(collisions)for(var h:d.hitboxes()){g.setColor(new Color(255,100,80,180));for(var o:StudioGeometry.obstacles(h))g.draw(new java.awt.geom.Rectangle2D.Float(o.x(),o.y(),o.width(),o.height()));}
+        for(var e:d.elements())if(selected.contains(e.id())){g.setColor(Color.YELLOW);g.drawRect(e.x(),e.y(),e.width(),e.height());}
+        if(selectionBox!=null){g.setColor(Color.CYAN);g.draw(selectionBox);}
+        var ghost=brushPreview.get();if(ghost!=null){var image=images.peek(ghost.asset());if(image!=null){var copy=(Graphics2D)g.create();try{copy.setComposite(AlphaComposite.SrcOver.derive(.45f));var c=ghost.crop();copy.drawImage(image,ghost.x(),ghost.y(),ghost.x()+ghost.width(),ghost.y()+ghost.height(),c.x(),c.y(),c.x()+c.width(),c.y()+c.height(),null);}finally{copy.dispose();}}}
+        editOverlay.accept(g);
+    }
     /** Zoom explicito conserva o centro da area de trabalho. */
     public void zoom(double value){viewport=viewport.zoomAt(value,getWidth()/2d,getHeight()/2d);repaint();}
     @Override protected void paintComponent(Graphics original) {
@@ -56,7 +68,8 @@ public final class WorldCanvas extends JPanel {
                 if(e.kind()==WorldDocument.Kind.ENEMY&&e.properties().containsKey("spawn.quantity")){g.setColor(new Color(255,140,60,60));g.fillRect(e.x(),e.y(),e.width(),e.height());g.setColor(Color.ORANGE);g.drawString("Spawn x"+e.properties().get("spawn.quantity"),e.x(),e.y()+12);}
             }
             if(grid&&d.grid()*viewport.zoom()>=8){g.setColor(new Color(255,255,255,30));g.setStroke(new BasicStroke((float)(1/viewport.zoom())));int cell=d.grid();for(int x=Math.max(0,visible.x/cell*cell);x<=Math.min(d.width(),visible.x+visible.width);x+=cell)g.drawLine(x,visible.y,x,visible.y+visible.height);for(int y=Math.max(0,visible.y/cell*cell);y<=Math.min(d.height(),visible.y+visible.height);y+=cell)g.drawLine(visible.x,y,visible.x+visible.width,y);}
-            if(collisions)for(var h:d.hitboxes()) {g.setColor(h.solid()?new Color(255,85,70,80):new Color(65,220,160,60));g.fillRect(h.x(),h.y(),h.width(),h.height());g.setColor(selected.contains(h.id())?Color.YELLOW:h.solid()?Color.RED:Color.GREEN);g.drawRect(h.x(),h.y(),h.width(),h.height());}
+            if(collisions)for(var h:d.hitboxes()) {g.setColor(h.solid()?new Color(255,85,70,80):new Color(65,220,160,60));for(var o:StudioGeometry.obstacles(h))g.fill(new java.awt.geom.Rectangle2D.Float(o.x(),o.y(),o.width(),o.height()));g.setColor(selected.contains(h.id())?Color.YELLOW:h.solid()?Color.RED:Color.GREEN);for(var o:StudioGeometry.obstacles(h))g.draw(new java.awt.geom.Rectangle2D.Float(o.x(),o.y(),o.width(),o.height()));}
+            editOverlay.accept(g);
             if(playerPreview){g.setColor(StudioGeometry.free(physics,cursor.x,cursor.y,18)?Color.GREEN:Color.RED);g.drawOval(cursor.x-18,cursor.y-18,36,36);}
             var ghost=brushPreview.get();
             if(ghost!=null){var resident=images.peek(ghost.asset());var crop=ghost.crop();var composite=g.getComposite();g.setComposite(AlphaComposite.SrcOver.derive(.45f));

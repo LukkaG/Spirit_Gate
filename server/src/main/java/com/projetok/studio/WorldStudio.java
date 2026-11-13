@@ -19,11 +19,22 @@ public final class WorldStudio extends JFrame {
     final JTextField search=new JTextField();final JComboBox<String> categories=new JComboBox<>(new String[]{"Todas","Sem categoria","Terrenos","Arvores","Construcoes","Decoracao","Personagens","NPCs","Inimigos","Interativos","Efeitos","Tilesets"});
     final TilePalette tilePalette=new TilePalette(this);
     final JTextArea details=new JTextArea();final JLabel status=new JLabel("Indexe os assets do projeto para comecar.");
+    JComboBox<String> toolSelector;
     final JToolBar toolbar=new WrapToolbar();final JButton refresh=new JButton("Atualizar biblioteca");
     LayerTools layerTools;FileTools fileTools;
     AssetLibraryTools libraryTools;
     CollisionTools collisionTools;
     StudioLiveTools liveTools;
+    AdminMapTools adminMaps;
+    InGameMapEditor inGameEditor;
+    private JFrame gameFrame;
+    private Container previousContent;
+    private JMenuBar previousMenu;
+    private InputMap previousInput;
+    private ActionMap previousActions;
+    private java.awt.event.WindowListener gameCloseListener;
+    final JPanel gameHost=new JPanel(new BorderLayout());
+    JSplitPane workspace;
     boolean snap=true;
     final Map<String,WorldDocument> knownMaps=new LinkedHashMap<>();
     final JPanel inspector=new JPanel(new BorderLayout());
@@ -38,7 +49,7 @@ public final class WorldStudio extends JFrame {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(1400,900);setMinimumSize(new Dimension(900,600));setLocationRelativeTo(null);
         toolbar.setFloatable(false);toolbar.add(refresh);refresh.addActionListener(e->rescan());
-        JButton minus=new JButton("Zoom -"),plus=new JButton("Zoom +");toolbar.add(minus);toolbar.add(plus);minus.addActionListener(e->canvas.zoom(canvas.viewport.zoom()/1.2));plus.addActionListener(e->canvas.zoom(canvas.viewport.zoom()*1.2));
+        JButton minus=new JButton("Zoom -"),plus=new JButton("Zoom +");toolbar.add(minus);toolbar.add(plus);minus.addActionListener(e->zoom(1/1.2));plus.addActionListener(e->zoom(1.2));
         JCheckBox grid=new JCheckBox("Grade",true);grid.addActionListener(e->{canvas.grid=grid.isSelected();canvas.repaint();});toolbar.add(grid);
         JPanel left=new JPanel(new BorderLayout(4,4)),filters=new JPanel(new GridLayout(0,1,4,4));filters.add(search);filters.add(categories);left.add(filters,BorderLayout.NORTH);left.add(new JScrollPane(library));
         libraryTools=new AssetLibraryTools(this,filters);
@@ -48,7 +59,10 @@ public final class WorldStudio extends JFrame {
         JButton category=new JButton("Definir categoria (F2)");category.addActionListener(e->defineCategory());left.add(category,BorderLayout.SOUTH);
         library.getInputMap().put(KeyStroke.getKeyStroke("F2"),"category");library.getActionMap().put("category",new AbstractAction(){public void actionPerformed(java.awt.event.ActionEvent e){defineCategory();}});
         details.setEditable(false);details.setLineWrap(true);details.setWrapStyleWord(true);inspector.add(new JScrollPane(details));inspector.setPreferredSize(new Dimension(260,400));
-        JSplitPane center=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,canvas,inspector);center.setResizeWeight(1);JSplitPane all=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,left,center);all.setDividerLocation(270);all.setResizeWeight(0);
+        gameHost.add(new JLabel("Inicie o jogo integrado para testar o mapa e as hitboxes ao vivo.",SwingConstants.CENTER));
+        canvas.setMinimumSize(new Dimension(240,180));gameHost.setMinimumSize(new Dimension(240,180));
+        workspace=new JSplitPane(JSplitPane.VERTICAL_SPLIT,canvas,gameHost);workspace.setResizeWeight(.55);workspace.setDividerLocation(.55);
+        JSplitPane center=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,workspace,inspector);center.setResizeWeight(1);JSplitPane all=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,left,center);all.setDividerLocation(270);all.setResizeWeight(0);
         setLayout(new BorderLayout(6,6));add(toolbar,BorderLayout.NORTH);add(all);add(status,BorderLayout.SOUTH);
         canvas.pointer=p->{lastCursor=p;status.setText(document.name()+" | "+p.x+", "+p.y+" | Grade "+document.grid()+" | Zoom "+Math.round(canvas.viewport.zoom()*100)+"% | Camada "+canvas.activeLayer);};
         canvas.pressed=e->{Point p=canvas.worldPoint(e);canvas.selected.clear();document.elements().stream().filter(a->new Rectangle(a.x(),a.y(),a.width(),a.height()).contains(p)).reduce((a,b)->b).ifPresent(a->{canvas.selected.add(a.id());details.setText(a.toString());});canvas.repaint();};
@@ -73,6 +87,7 @@ public final class WorldStudio extends JFrame {
         new MapTools(this);
         new StudioHelp(this);
         liveTools=new StudioLiveTools(this);
+        adminMaps=new AdminMapTools(this);
         action("Missões","Abrir Quest Builder",()->new QuestBuilder(project).setVisible(true));
         action("Personagem","Aparência temporária (perfil sintético)",()->AppearancePreview.launch(project));
         search.setToolTipText("Buscar recursos pelo caminho ou nome");
@@ -87,6 +102,42 @@ public final class WorldStudio extends JFrame {
         if(getJMenuBar()!=null) StudioTheme.apply(getJMenuBar());
         getContentPane().setBackground(StudioTheme.BACKGROUND);
     }
+    /** Abre um documento mantendo o catalogo de mapas e reinicia apenas a sessao de edicao. */
+    void openDocument(WorldDocument next,Path file){
+        document=history.reset(next);canvas.selected.clear();canvas.activeLayer="ground";collisionTools.cell=null;
+        fileTools.file=file;fileTools.saved=next;layerTools.refresh();warmImages();canvas.repaint();
+        if(inGameEditor!=null)inGameEditor.openDocument();else liveTools.restart();
+    }
+    /** Incorpora ferramentas na janela da partida e permite voltar sem encerrar o servidor. */
+    public void enterGame(JFrame frame){
+        if(!SwingUtilities.isEventDispatchThread())throw new IllegalStateException("Editor exige EDT");
+        if(Boolean.getBoolean("spiritgate.guest"))throw new IllegalStateException("Convidado nao possui painel admin");
+        gameFrame=frame;frame.getRootPane().putClientProperty("worldEditorActive",Boolean.TRUE);Object router=frame.getRootPane().getClientProperty("networkInputRouter");if(router instanceof com.projetok.multiplayer.GameInputRouter input)input.refreshContext();previousInput=frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);previousActions=frame.getRootPane().getActionMap();previousContent=frame.getContentPane();previousMenu=frame.getJMenuBar();
+        Container content=getContentPane();setContentPane(new JPanel());frame.setContentPane(content);frame.setJMenuBar(getJMenuBar());
+        var back=new JButton("Voltar ao jogo");back.addActionListener(e->fileTools.confirm(this::dispose));toolbar.add(back,0);
+        frame.getRootPane().setInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW,getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW));
+        frame.getRootPane().setActionMap(getRootPane().getActionMap());
+        frame.revalidate();frame.repaint();rescan();
+        gameCloseListener=new java.awt.event.WindowAdapter(){@Override public void windowClosed(java.awt.event.WindowEvent e){dispose();}};frame.addWindowListener(gameCloseListener);
+        adminMaps.refresh();inspectorTabs.setSelectedIndex(inspectorTabs.indexOfTab("Mapas"));
+    }
+    /** Abre somente a paleta na HUD atual; a conexão e o renderizador da partida são preservados. */
+    public void enterLiveGame(JFrame frame,com.projetok.multiplayer.RevisionCoordinator target,LivePublishing store){
+        if(!SwingUtilities.isEventDispatchThread())throw new IllegalStateException("Editor exige EDT");
+        if(Boolean.getBoolean("spiritgate.guest"))throw new IllegalStateException("Convidado não possui capacidade administrativa");
+        new InGameMapEditor(this,frame,target,store);
+    }
+    /** Bloqueia também a janela hospedeira durante operações de arquivo do editor incorporado. */
+    @Override public void setEnabled(boolean enabled){super.setEnabled(enabled);if(inGameEditor!=null)inGameEditor.frame.setEnabled(enabled);else if(gameFrame!=null)gameFrame.setEnabled(enabled);}
+    /** Encerra recursos da edicao e restaura a partida que possui o servidor. */
+    @Override public void dispose(){
+        if(inGameEditor!=null)inGameEditor.close();
+        if(liveTools!=null)liveTools.close();
+        if(gameFrame!=null){var frame=gameFrame;gameFrame=null;frame.getRootPane().putClientProperty("worldEditorActive",null);frame.removeWindowListener(gameCloseListener);frame.getRootPane().setInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW,previousInput);frame.getRootPane().setActionMap(previousActions);frame.setContentPane(previousContent);frame.setJMenuBar(previousMenu);frame.revalidate();frame.repaint();}
+        super.dispose();
+    }
+    /** Ajusta a camera ativa; o canvas auxiliar conserva seu proprio enquadramento. */
+    void zoom(double factor){if(liveTools!=null&&liveTools.game!=null)liveTools.game.zoom(factor);else canvas.zoom(canvas.viewport.zoom()*factor);}
     void change(WorldDocument next){document=history.commit(Autotiling.refresh(next));if(layerTools!=null)layerTools.refresh();canvas.repaint();}
     void inspectSelection(){details.setText(document.elements().stream().filter(e->canvas.selected.contains(e.id())).map(Object::toString).collect(java.util.stream.Collectors.joining("\n")));}
     Map<String,WorldDocument> maps(){var maps=new LinkedHashMap<>(knownMaps);maps.put(document.id(),document);return Map.copyOf(maps);}
@@ -107,8 +158,8 @@ public final class WorldStudio extends JFrame {
         protected Void doInBackground()throws Exception{for(String id:ids)if(selected.containsKey(id))images.load(selected.get(id));return null;}
         protected void done(){try{get();tilePalette.repaint();canvas.repaint();}catch(Exception error){error(error);}}
     }.execute();}
-    void error(Exception error){status.setText("Operacao recusada: "+(error.getCause()==null?error.getMessage():error.getCause().getMessage()));}
+    void error(Exception error){com.projetok.diagnostics.ErrorReports.report("Operação do World Studio",error);status.setText("Operacao recusada: "+(error.getCause()==null?error.getMessage():error.getCause().getMessage()));}
     /** Inicializa a ferramenta sem iniciar banco, servidor ou personagem. */
     public void authorizePublication(com.projetok.multiplayer.RevisionCoordinator target,LivePublishing store){if(Boolean.getBoolean("spiritgate.guest"))throw new IllegalStateException("Convidado nao publica");liveTools.authorize(target,store);}
-    public static void main(String[] args){String exe=System.getProperty("jpackage.app-path");Path root=args.length==2&&args[0].equals("--project")?Path.of(args[1]):exe==null?Path.of(""):Path.of(exe).toAbsolutePath().getParent();SwingUtilities.invokeLater(()->{var studio=new WorldStudio(root);studio.setVisible(true);studio.rescan();});}
+    public static void main(String[] args){com.projetok.diagnostics.ErrorReports.install("world-studio");String exe=System.getProperty("jpackage.app-path");Path root=args.length==2&&args[0].equals("--project")?Path.of(args[1]):exe==null?Path.of(""):Path.of(exe).toAbsolutePath().getParent();SwingUtilities.invokeLater(()->{var studio=new WorldStudio(root);studio.setVisible(true);studio.rescan();});}
 }

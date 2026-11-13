@@ -26,3 +26,16 @@ __pycache__/
 /saves/
 /studio-projects/
 /browser-preview/
+/temp/
+
+# Saidas portateis e capturas geradas; fontes e manuais ficam no projeto.
+/Validacao Portatil/
+/docs.zip
+/server.zip
+/docs/TASK-*.png
+/docs/TASK-*.diff
+
+# Relatorios locais de erros e atendimentos automaticos (podem conter caminhos locais).
+/logs/erros/
+/logs/analises/
+/logs/monitor/

@@ -1,0 +1,2239 @@
+{
+    "buildId":  "20261113T003427Z-e989a97f",
+    "sourceHead":  "13b91dca20e16d6729d2dced79c1a4431b74ca09",
+    "sourceIncludesUncommittedChanges":  true,
+    "compileFingerprint":  "4af495c1256c19a457ee5654be9690666e992e5918fe70ed51e476cbaf909cd1",
+    "skillsImages":  45,
+    "files":  [
+                  {
+                      "path":  "Abrir-Skills.cmd",
+                      "bytes":  124,
+                      "sha256":  "e5f9eab4c8bb883346625a4ceb4519697cd2dd3e273633d906c45fa4955ca32e"
+                  },
+                  {
+                      "path":  "app/.jpackage.xml",
+                      "bytes":  205,
+                      "sha256":  "d14609a18a282aa79013d1e149e5fa20f11e7aa0af2a38e5b421bacd7c706a14"
+                  },
+                  {
+                      "path":  "app/SpiritGateSkills.cfg",
+                      "bytes":  153,
+                      "sha256":  "4336f1c5dd7a1e94be85fa5a3e35d0f74031812e6839412aeb977e0a7cf89a50"
+                  },
+                  {
+                      "path":  "app/spiritgate-skills.jar",
+                      "bytes":  14437125,
+                      "sha256":  "04c5dfed4442e7f9f693c404f5f612104d82080c2b0d74826ff657a167637b04"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-BACK.0.png",
+                      "bytes":  462,
+                      "sha256":  "396bde1bc3bb1a5ff113bbe53d14742ccbc992831d0a56681a25aa60c7bf0d6e"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-BACK.1.png",
+                      "bytes":  461,
+                      "sha256":  "d0f5c3027f11e1ef3c8ac57636f0844b3524aac7428f3977ce6d8b0d7ad27f9d"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-BACK.2.png",
+                      "bytes":  450,
+                      "sha256":  "94d4435bf6a782f54cc82459705e7d4a9060ba69ba16a6986d8d8050633a6379"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-BACK.3.png",
+                      "bytes":  461,
+                      "sha256":  "fbbc03bde4d94f0328643bb5e833e27515ecbe8674b1e84966f18c93eaeb8ec8"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-BACK.4.png",
+                      "bytes":  449,
+                      "sha256":  "7176c7494df1679e2aaa1d3ce0bdf86f4aac2dd739f6d09caa8eea2efd724bee"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-FRONT.0.png",
+                      "bytes":  611,
+                      "sha256":  "58fac5648e0938c691b40fa6adce49aa615b09d550026e63c71fd69301c7cae9"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-FRONT.1.png",
+                      "bytes":  680,
+                      "sha256":  "b8a66b15aa3ef6500288336750876edb07ba5f66568a2b6496a89ed23310a28f"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-FRONT.2.png",
+                      "bytes":  690,
+                      "sha256":  "5e9bb107462254f500f3642d33d7d237e77cfdacf7101d16e839e3e05ffb90d3"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-FRONT.3.png",
+                      "bytes":  680,
+                      "sha256":  "c7fce95a2b75dd481128118ddff80849c2d28c776f01d50be01558a01d42d373"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-FRONT.4.png",
+                      "bytes":  690,
+                      "sha256":  "ff1b9723f60822068397af5ccc32189f2d513f7b64a153f94855c542d5d1bdc0"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-LEFT.0.png",
+                      "bytes":  579,
+                      "sha256":  "292e4b66ccecd225dca4f620291243f226d29cf7796ea8c6085af1342c16d919"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-LEFT.1.png",
+                      "bytes":  585,
+                      "sha256":  "222d776217d29b89fafc89e6a9d705e33819c60eb3d0ea179316f3b846b13724"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-LEFT.2.png",
+                      "bytes":  583,
+                      "sha256":  "38b97f952390284adea131ea66d00031c17fbc5444a278804c36701a3779e67e"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-LEFT.3.png",
+                      "bytes":  576,
+                      "sha256":  "9cdb21cf1fb06d9b3a7db324078033f3d6a4c1f0c7f6186b70406ddba3cd09bc"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-LEFT.4.png",
+                      "bytes":  576,
+                      "sha256":  "2dce569535f795ea8bf040dccfa81ebbe4c7211041ccec69f2e81c60f3f19556"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-RIGHT.0.png",
+                      "bytes":  586,
+                      "sha256":  "0b789cc4e3a67e2c0049f284f7af442bc23394e8acddfae4c34a84456039fa82"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-RIGHT.1.png",
+                      "bytes":  585,
+                      "sha256":  "c606becbed9d8063f09af849e68964561050cb7bed77d970f1a64f71897109c9"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-RIGHT.2.png",
+                      "bytes":  584,
+                      "sha256":  "45720aeaaeafdb20cd87a124c3c4e96f530aa9c31b1810855e8d2fe2e0a72ee5"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-RIGHT.3.png",
+                      "bytes":  584,
+                      "sha256":  "6c98a66d46f69c532a7e549b22c51bf3e44c20cf2e1abcba1133b73176ff0731"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/jacket/clothing-RIGHT.4.png",
+                      "bytes":  584,
+                      "sha256":  "f9894436f8f322ec804d1cd9e9233ae000ffab26c95935bc67e6fcd1e740e59d"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-BACK.0.png",
+                      "bytes":  495,
+                      "sha256":  "0e05425b1f5223d6e4e6de5b8ef0530783278594b43ceafb445b325c73dd8456"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-BACK.1.png",
+                      "bytes":  503,
+                      "sha256":  "34e4374bdd6d50ee750c0a30a230c80b1c97a1b437c447e699adeee83ce80dfd"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-BACK.2.png",
+                      "bytes":  492,
+                      "sha256":  "95e4b1674135bfcec72266649a5fe25f3ca173305ec841a78c083f11e1b6ffe3"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-BACK.3.png",
+                      "bytes":  504,
+                      "sha256":  "4dcab73b1ce29258b88b6122247474af7021b155f0da261105a3c3fceea958d4"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-BACK.4.png",
+                      "bytes":  496,
+                      "sha256":  "5e43c64d4a3b9bfaa37d690994ed5f2e3564c448ef0f08c3eac472bcbb55b3b6"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-FRONT.0.png",
+                      "bytes":  463,
+                      "sha256":  "a6b8fbd4307968bb29b0c99cd152008d2e5f41e1fc621213752b8158384379e6"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-FRONT.1.png",
+                      "bytes":  496,
+                      "sha256":  "aaf1f7aa502344fc8f25202cf8b90718397fa2e375aa8bf6d04a71c8498b2159"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-FRONT.2.png",
+                      "bytes":  508,
+                      "sha256":  "b93c60c61a91f538bdd5eac3a247eaafeae2a98aa9877dbe653af59dc1d7e3b5"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-FRONT.3.png",
+                      "bytes":  500,
+                      "sha256":  "2d41abe7eea547e09aac4acd288319ddc043e1651f5dd325d6ed48fb8c5a5c93"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-FRONT.4.png",
+                      "bytes":  501,
+                      "sha256":  "765a0bc12857f32e77dce916c483aad97f050ce73c2f8bd749869c87d82b00db"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-LEFT.0.png",
+                      "bytes":  446,
+                      "sha256":  "a929140ef8a7df427914265ba39856de82c5f920333975f7d3d8160285100250"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-LEFT.1.png",
+                      "bytes":  443,
+                      "sha256":  "9cb3cf3bd89894c39b937d73d70b0a3c47c408ef5abb5a2c8f087b785ce017d2"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-LEFT.2.png",
+                      "bytes":  434,
+                      "sha256":  "694926148277c86a9c73867724d76f488642e5f18e4a998c635cf3ae9f760612"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-LEFT.3.png",
+                      "bytes":  448,
+                      "sha256":  "459ad53c51640f85f4c747b0bfe0ad0f82d0fbc07ddda3aba02c8cc4d80dd837"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-LEFT.4.png",
+                      "bytes":  448,
+                      "sha256":  "be57c4c713c44a45a98dd50519cb430489f8200c6122f1a89d5de82790bc1e2c"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-RIGHT.0.png",
+                      "bytes":  458,
+                      "sha256":  "1ff5c4c2aebb94d0023ec1d5c1d08306b175c19c1c5090b3f7978efbb0dc6d20"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-RIGHT.1.png",
+                      "bytes":  458,
+                      "sha256":  "32e8a8e90561e8d942a9100de5a159eb709cc53142a744d0001b7d81b7ed9494"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-RIGHT.2.png",
+                      "bytes":  446,
+                      "sha256":  "7c20834493a9b38a903b0d42ae60a83d507ebf194b9e0f30b36b256aae870b6e"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-RIGHT.3.png",
+                      "bytes":  459,
+                      "sha256":  "2f65acc6bce5ab167c84a71f7c2bf8049b84b3faf1e4cc224437bb0b7827dfa3"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/light_armor/clothing-RIGHT.4.png",
+                      "bytes":  459,
+                      "sha256":  "498b4ec7e6b725ca9ddedfd0cae80676c810cbe94b69a2638b5021cac9b00468"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-BACK.0.png",
+                      "bytes":  518,
+                      "sha256":  "3c47bc1584fddce77381b652da059e0c5f930e8de13155221707c02873a5015c"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-BACK.1.png",
+                      "bytes":  516,
+                      "sha256":  "cb2c444f6f28b17bcbb2801cc1522a4611dfcc1a3f4cfaa878c7adcf074d69b7"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-BACK.2.png",
+                      "bytes":  503,
+                      "sha256":  "e82cb0ab0fab3f62b4a0c71876561d81924aa1449ca2e669d42bd8d8473bde09"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-BACK.3.png",
+                      "bytes":  520,
+                      "sha256":  "d1e91a2ddee3595d021f6b8e13640d6d6fb9b328a50a8e0a1910b8156943dbcc"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-BACK.4.png",
+                      "bytes":  503,
+                      "sha256":  "c00c4e4f05ac39717914bc746dd325f4c0289a92ac89439ffcbc37c51aeda99d"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-FRONT.0.png",
+                      "bytes":  532,
+                      "sha256":  "d6bb1aa80b4b6c7da1aa48d9117a133df541045a15ccdd279ae1934dc53a7079"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-FRONT.1.png",
+                      "bytes":  504,
+                      "sha256":  "192b3a9f9f29c023d52ccc6b4b0d8311e9014a82bda0ddbf2d02b125e86508e8"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-FRONT.2.png",
+                      "bytes":  510,
+                      "sha256":  "fc3c2c7c1447f35eac95b45430eb31a66ef0acf79b501b489c84507308451c78"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-FRONT.3.png",
+                      "bytes":  505,
+                      "sha256":  "4f20bacd47717675ac0f29460d263aedcdf7bafffb7d4f6a022b7c236c50e28b"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-FRONT.4.png",
+                      "bytes":  510,
+                      "sha256":  "f5b2ef268fda3ef4ae283bfc42de61a62dd5c208914cd78ca63360b673aecc36"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-LEFT.0.png",
+                      "bytes":  458,
+                      "sha256":  "6ee42f06c53642f38637bd9cd71c3ea2a52d2d8f2859ba6c46f2cfd4bf69f9ef"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-LEFT.1.png",
+                      "bytes":  497,
+                      "sha256":  "7522fe66d100d8769149409d3c21d7bcb301a99f23650ba2147632792fc5016b"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-LEFT.2.png",
+                      "bytes":  495,
+                      "sha256":  "aef93d100a444901f51102fd5ccab98764dd1336426c00ce5a7714c27037766b"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-LEFT.3.png",
+                      "bytes":  529,
+                      "sha256":  "0f7bfb01405edf7fe997b5561950f33221b220b8c5210fd7e98f52b81e37f5de"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-LEFT.4.png",
+                      "bytes":  532,
+                      "sha256":  "b67d3c42c03a92c84bc4d6eb0fd63d40db24f4714ae57631214d5957a49eee1c"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-RIGHT.0.png",
+                      "bytes":  467,
+                      "sha256":  "1d0d3b2a58a63260f33ca0ab3cc8c4213e7e1e5028ab758ebad6564e1c31920e"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-RIGHT.1.png",
+                      "bytes":  490,
+                      "sha256":  "af09951097d5b03deff42e30e0221a2dea259d7ccda70aa1e6020752a763a1bf"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-RIGHT.2.png",
+                      "bytes":  502,
+                      "sha256":  "6dfe88edbe40ce1bf69f311c9a1266fe0308c999606a66c0a7878434a1a19b2f"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-RIGHT.3.png",
+                      "bytes":  533,
+                      "sha256":  "5c6bb0166f498b4e216547a15dd8fcbe1f50ad76780f0a11bf429ed63c7c0469"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/clothing/tunic/clothing-RIGHT.4.png",
+                      "bytes":  535,
+                      "sha256":  "a0a88933477cbd076ee374b80fab9783c5589113548b6ddcf075f483b9a59bfc"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-BACK.0.png",
+                      "bytes":  532,
+                      "sha256":  "50393a8b933b8e9256721d310eaf77337200153bd399c44ca49db422e850ad1a"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-BACK.1.png",
+                      "bytes":  519,
+                      "sha256":  "06eac799d387ac9f8436d2f6a4ca0afbfa18b601af0995086c29d75fc413ceae"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-BACK.2.png",
+                      "bytes":  514,
+                      "sha256":  "e8f3bce2074574f983c6ea01a30dcd7059d0cf9c83ee5c7ef3195ab95026be59"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-BACK.3.png",
+                      "bytes":  519,
+                      "sha256":  "c759d85b2f11ab6405acfd1b9d015df54dd8092cf0ac67d3a930f4d5d6d86cbe"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-BACK.4.png",
+                      "bytes":  514,
+                      "sha256":  "e62c51f9c8ecf26553ee64b5e0498b74761b6223d678aaafa0378bb615e0135b"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-FRONT.0.png",
+                      "bytes":  547,
+                      "sha256":  "83b2748bd9d559bd723b41be8b76dd89c115a1ea64073ae4383242a184652369"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-FRONT.1.png",
+                      "bytes":  493,
+                      "sha256":  "21be4fbe46697d42f986955c18bdcffb914f2d551c68157d1af525b076fc2d3b"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-FRONT.2.png",
+                      "bytes":  493,
+                      "sha256":  "4fd595a7b32de45075f9339f46280dbe03b095b3149f720b815cc179a6741a62"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-FRONT.3.png",
+                      "bytes":  498,
+                      "sha256":  "979bdbeb47e7829223039113d8a81290107fdb5d6e172fbbf0dbd1e3b1fe74f5"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-FRONT.4.png",
+                      "bytes":  492,
+                      "sha256":  "5a1d29f37c01e87aa5313acfa872a28094274e5e7e7d0fa8f1a5a52f6647be8f"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-LEFT.0.png",
+                      "bytes":  572,
+                      "sha256":  "ae5da0fe5571f702cdedf2ade91553d781ee96701d13408fb583bdc8920acc47"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-LEFT.1.png",
+                      "bytes":  601,
+                      "sha256":  "f52cc7ed0979d492db3d438538e0866d01442a8b2d3cf4806df135e92a416629"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-LEFT.2.png",
+                      "bytes":  601,
+                      "sha256":  "a7baa884c924bef1283d1c793abf680bd021519acc4bf5b20176b8b9007be6e7"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-LEFT.3.png",
+                      "bytes":  601,
+                      "sha256":  "9e240c85163cb753d94a85232460629ca747d7de390cddb53875d2b8a6607ad5"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-LEFT.4.png",
+                      "bytes":  601,
+                      "sha256":  "2024ae844c26a08488312bca614e86d124d08f45fa91049e70c18d065c3c2d9f"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-RIGHT.0.png",
+                      "bytes":  573,
+                      "sha256":  "d0d833215f2fb82d7792f9e408461c0c89b5ce42054cd547b633a3872b440d08"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-RIGHT.1.png",
+                      "bytes":  573,
+                      "sha256":  "d3447f03381d810472044a2e52a493d83117578d1fb307c2a529b7bc1b7d429d"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-RIGHT.2.png",
+                      "bytes":  593,
+                      "sha256":  "c70274432c4f29e46b9dc764ada80cf7cd92448f73723fbec23cdfd95338ef05"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-RIGHT.3.png",
+                      "bytes":  592,
+                      "sha256":  "e2797382eac1c897fce5663da23f0e3d8e61ce92453f0d8b89278b3d29d048d5"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_back-RIGHT.4.png",
+                      "bytes":  592,
+                      "sha256":  "3a25a1c883da489ca878de0eb82cc351eb8a3262df429a39464d726571e39383"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-BACK.0.png",
+                      "bytes":  612,
+                      "sha256":  "be43aed0e2c2fcabdc3e84a81172a7e5b408f5b6594719b86110d6d95791e5d2"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-BACK.1.png",
+                      "bytes":  588,
+                      "sha256":  "c92ae379f15e650b0988566af083064fa9c8ed64064c1950400bbef55ab8ba35"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-BACK.2.png",
+                      "bytes":  583,
+                      "sha256":  "dc759cab6408cb3dfd3c3e26484e72a1b59fa5958d9e474a349d1b3094a4f455"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-BACK.3.png",
+                      "bytes":  588,
+                      "sha256":  "77ee6c8839a3973fc8767d0dfba53174fa27bb345e48486de88e7b70439d3ac8"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-BACK.4.png",
+                      "bytes":  583,
+                      "sha256":  "153a53d6f52b9c95c656e22177755b276d5ff0c2c39936329efef8bcd8386241"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-FRONT.0.png",
+                      "bytes":  732,
+                      "sha256":  "946bf555f93a8150f9a8c6da03ef8a9f4dda26d71e712ec5a5fcbab6da09bc0e"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-FRONT.1.png",
+                      "bytes":  668,
+                      "sha256":  "9e7508e9154c8940ec4a322bdd77205d08eb2b543522cccf8452850bb75e5c2d"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-FRONT.2.png",
+                      "bytes":  665,
+                      "sha256":  "f9561f5cce3df256e03c06f473bc2eff4153092eb370032b1b9a92dc9bb25f91"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-FRONT.3.png",
+                      "bytes":  670,
+                      "sha256":  "a051aa9cd65948b3a54e7545d7709aeea75879506efa5dc9573ca3d5f0cb6a60"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-FRONT.4.png",
+                      "bytes":  665,
+                      "sha256":  "0a05d23eaaf108fce76e79013461e9e508e5da01e0cb4e5ca306aa6432acdad6"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-LEFT.0.png",
+                      "bytes":  750,
+                      "sha256":  "4cb57690962b5d66315dc98ab00e9f893709e83e20d10abfe98aeb4087188831"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-LEFT.1.png",
+                      "bytes":  767,
+                      "sha256":  "f0118d8bc6a55a22004f6dd3de54474a8a9b3600897c6c228fe268ece042650d"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-LEFT.2.png",
+                      "bytes":  768,
+                      "sha256":  "93ded3c6a8dba36fb9abeda7a5edea61db2c482d61187d76f900c6bced8253ac"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-LEFT.3.png",
+                      "bytes":  773,
+                      "sha256":  "41fc32771d8a70f4a8df0bd1151c48217469a62bf43f3fb2620fc0f3a07ea460"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-LEFT.4.png",
+                      "bytes":  774,
+                      "sha256":  "9a18e26427e187d973ff1eef61b95e6912ef816e1397ee7be9d870f777d404a9"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-RIGHT.0.png",
+                      "bytes":  750,
+                      "sha256":  "3501702f049c3c85a43bdde0f21910110fdb7b63b211cfa716a7482821222529"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-RIGHT.1.png",
+                      "bytes":  743,
+                      "sha256":  "50284ec40dbfb23a2f056a34198008a6f11468726e13b4f2117c83536c293850"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-RIGHT.2.png",
+                      "bytes":  765,
+                      "sha256":  "2efe1f81170d71a299e05d9fd6116c2cb580fadb046b9ce2e4774d402faad3e0"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-RIGHT.3.png",
+                      "bytes":  773,
+                      "sha256":  "701cb7cfdfd256ec336077413740a73a67d510015c43863e0413dd30484ecf35"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_medium/hair_front-RIGHT.4.png",
+                      "bytes":  774,
+                      "sha256":  "f608de44d915e1b70c15d715c87ff82a1cd2a4e1f7ab11f844092189dd1d96a1"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-BACK.0.png",
+                      "bytes":  279,
+                      "sha256":  "269c131eb82097a64d704a314a398edd28768b739aaf6d60c5a0e1e07d4b8ff3"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-BACK.1.png",
+                      "bytes":  272,
+                      "sha256":  "b4f9ecc8a2045ee3eb2864026a4210251ab7f808b8d82841728bcc01fa6eb7f1"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-BACK.2.png",
+                      "bytes":  272,
+                      "sha256":  "eef12c966fb5d82407f60b08753a76e1885cafab808ca81dc02c204858f924e9"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-BACK.3.png",
+                      "bytes":  273,
+                      "sha256":  "285fada5fbe57570e2ca64f437f666397c6bd127ac612466ad14733c494811c6"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-BACK.4.png",
+                      "bytes":  272,
+                      "sha256":  "8a0944d3307fc0ae945cd287a00fdc7e23fdcf0e7e41e24d575e852b40d5469f"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-FRONT.0.png",
+                      "bytes":  285,
+                      "sha256":  "890bf9023ba368032d3ecf94ee10fa10e873df7a59ff304882c08efd1748bff6"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-FRONT.1.png",
+                      "bytes":  251,
+                      "sha256":  "851538763f842e862aaf9f0e0fe0fd57bce93bfb508c1a5850db23290ea5ecc9"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-FRONT.2.png",
+                      "bytes":  256,
+                      "sha256":  "3a43c13daf62a771ac645c86dcb3db3b547b68df3bbd6570496a1d64ac0ca32c"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-FRONT.3.png",
+                      "bytes":  260,
+                      "sha256":  "c9d90a4a2a9be8e53cdd119b9c2c0f6954d6f37dd8d38f204bea15f14fa83135"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-FRONT.4.png",
+                      "bytes":  255,
+                      "sha256":  "47739bbc5f30efae6def31c85c108e30cadebce7eb4ad3c1707f83d7c3282f73"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-LEFT.0.png",
+                      "bytes":  294,
+                      "sha256":  "9abb635a9735f612bc1e101e7e9e4222ae7ad9553f16b1824764539314394dea"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-LEFT.1.png",
+                      "bytes":  309,
+                      "sha256":  "bcb1cc9be8b8b35250c70c0b90ad4f84560cda6326bed5c662c17e78d5252fa0"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-LEFT.2.png",
+                      "bytes":  307,
+                      "sha256":  "7a19a13143b13f1891ec6a02c81bf7eb73dbaba88dd3513d46fbd4cbb49fe618"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-LEFT.3.png",
+                      "bytes":  307,
+                      "sha256":  "04b234f0c1a94b887593c9d8ff383861df79c41adea37a3c43f0b843ddcddf57"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-LEFT.4.png",
+                      "bytes":  307,
+                      "sha256":  "ff126863fe43b2acd8b727009d06a77c0d08f6fcb8727f6d2479bcf4bfd0bd7b"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-RIGHT.0.png",
+                      "bytes":  294,
+                      "sha256":  "4806a13a2b6ee32558d721059973aa969810770724f2d65b6896c2cd051aa412"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-RIGHT.1.png",
+                      "bytes":  285,
+                      "sha256":  "c3dc1ce22dbd57b9e7537f87f41cf40c62c1c720a2346d285858fc56435524d4"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-RIGHT.2.png",
+                      "bytes":  305,
+                      "sha256":  "de0078c311c8a295891490873d3912077a90616590a8e77474b64ba4c8bbd86d"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-RIGHT.3.png",
+                      "bytes":  303,
+                      "sha256":  "6d32f0c31872416e045bf61b5c066371a521bd012e88636dbafbdec958563650"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_back-RIGHT.4.png",
+                      "bytes":  305,
+                      "sha256":  "603da2b4f5b5d9b6070a8d89e320166bba7df5116024d5f3683682a9c9562fee"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-BACK.0.png",
+                      "bytes":  596,
+                      "sha256":  "d03778b2dd2980abd7525c12bc8b088c00300481caa6a2ce84744c356a9c81b6"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-BACK.1.png",
+                      "bytes":  590,
+                      "sha256":  "d50904ef9d97a23c0a08919f34cbb31fd41ae24ea21cefee7f0bf907e81a9d82"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-BACK.2.png",
+                      "bytes":  584,
+                      "sha256":  "cc1ba62d13922d3f86df4e3fb7a1569b7eca55ef5c9dfcf087daaf82c5fa4a21"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-BACK.3.png",
+                      "bytes":  590,
+                      "sha256":  "4c37beb06bdc4273eaac2f653c56e72cd9a9697f0030de2a9f77eb269a18bdcb"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-BACK.4.png",
+                      "bytes":  584,
+                      "sha256":  "22b262fb4c3bc13c2f128d4bbb707fc6ea0ff9614b6ba0da622a6ffc961f3d6b"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-FRONT.0.png",
+                      "bytes":  436,
+                      "sha256":  "250fb6135923a7c4f8924e8a830d385a8be7ed414d64e637b25fea9fcc06d069"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-FRONT.1.png",
+                      "bytes":  398,
+                      "sha256":  "604780f12788ce65d669620d9413d31a68bd537d8e8e596aaab7bc636fe72183"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-FRONT.2.png",
+                      "bytes":  402,
+                      "sha256":  "8e803924aa6199cfb6754966532162418082e2489c9e976da5412af8fed621af"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-FRONT.3.png",
+                      "bytes":  409,
+                      "sha256":  "f9c15b3a482f12b6b2b1e5597bc81fa5267be6cb616c48d1a34124fb678dbdf5"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-FRONT.4.png",
+                      "bytes":  402,
+                      "sha256":  "d5903bc0ef62c81939a7b79c0c2977ed385a94122b54cab6cb0e91415b07d33c"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-LEFT.0.png",
+                      "bytes":  443,
+                      "sha256":  "f20df0944c4d2d73de8af4eaeccd4f45f532ae46727ee8fd30d25d2a1e523969"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-LEFT.1.png",
+                      "bytes":  455,
+                      "sha256":  "6e40503a066c13896a9f7d6eb862f3ed80dba818551e144488d6bf3622b99d4b"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-LEFT.2.png",
+                      "bytes":  455,
+                      "sha256":  "59ee92df4457c23a0f48b10076b33d3f6b83ba3da22c8ef4a0f9ba8fe791179f"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-LEFT.3.png",
+                      "bytes":  451,
+                      "sha256":  "eea9e5effb201fc4e2f8be50d7a09a04cd95428b7c918fc9685ae0d0fa2ac05d"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-LEFT.4.png",
+                      "bytes":  453,
+                      "sha256":  "d577d8a6385c0d0a9e37ea2e3024c8b891c056a4aa824474170175dfd3ceadce"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-RIGHT.0.png",
+                      "bytes":  441,
+                      "sha256":  "25d6960605efdf90214868bd5ee9ac21be25b400afe67e5cedb08ef1f9c0d827"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-RIGHT.1.png",
+                      "bytes":  428,
+                      "sha256":  "b0a70643d2eb4f4f078e9cfbfe8ed72cf072609d4ace3c312ad6c080cbe8f3a5"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-RIGHT.2.png",
+                      "bytes":  452,
+                      "sha256":  "f9c6e2c3df8f2370785abaf32e4b0f2ce2c8ae786d567d3a7166f63fda05c201"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-RIGHT.3.png",
+                      "bytes":  450,
+                      "sha256":  "68dd25de36c7fce8ad3be4edd29d6b8f0bab8162bdf7b9f602d61e50894603ea"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_short/hair_front-RIGHT.4.png",
+                      "bytes":  450,
+                      "sha256":  "5a4595682214159758ce2c5f65a6951873094dd77fba6d7f448c661882977db1"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-BACK.0.png",
+                      "bytes":  279,
+                      "sha256":  "1f3f11473cf770e648e16c85c3579cf38d480a02093138e320682130850c0c65"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-BACK.1.png",
+                      "bytes":  272,
+                      "sha256":  "91a565a332472214f0df6ff654c71dd2c7703dd69873d05bdafb836a8d77d5bd"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-BACK.2.png",
+                      "bytes":  272,
+                      "sha256":  "3b0c22b377a9a5d13d547de766dfe817c7fe322caed21ed3dfec8364c507a107"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-BACK.3.png",
+                      "bytes":  273,
+                      "sha256":  "86411b183e987ac5e1ac751d9759d46625580e6e260ce260436c48a33241850a"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-BACK.4.png",
+                      "bytes":  272,
+                      "sha256":  "5d8743a33aec0a158201bde0d8e84f051a8c941f84f096670ef033ca97f9eed8"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-FRONT.0.png",
+                      "bytes":  285,
+                      "sha256":  "0700c0f11078ad0b6ab17249d7cbeb625397e4ca0bf3f530e20be95769b758f4"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-FRONT.1.png",
+                      "bytes":  250,
+                      "sha256":  "e265b77191d3d9c9cc1583355f8cb779025590fd03f2eea8aecf27e31d3a4bae"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-FRONT.2.png",
+                      "bytes":  256,
+                      "sha256":  "59fcdb91fb28a6c8ce470e7353a3e45e33884304c6a5ccb4c9efda4e08a9ce18"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-FRONT.3.png",
+                      "bytes":  260,
+                      "sha256":  "adea6880ae80caad1e732bdfa3e206e209642a5f2d47385c0f6afc8837c5d715"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-FRONT.4.png",
+                      "bytes":  255,
+                      "sha256":  "c5846a9a4da3d7539efa3d9f599d2f9faa01981fca81543bfaf3ab815cf4cd65"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-LEFT.0.png",
+                      "bytes":  293,
+                      "sha256":  "23cf0c2caef38d78ee120e8851fd127687785a6a4341970a2684eb0b9ec09268"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-LEFT.1.png",
+                      "bytes":  309,
+                      "sha256":  "8e7d7cd3d39b7314e505bb76f588bed3cbd085bf2fc4749c71889df045b35ee5"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-LEFT.2.png",
+                      "bytes":  307,
+                      "sha256":  "62c283fbc97f41108d704fb3dc7c3d367f8d30ee412243a87ca1d5eff9c22743"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-LEFT.3.png",
+                      "bytes":  307,
+                      "sha256":  "9459b74fc5d64882d32b12a1f45a378711147727004fc26100317e4fa7a001af"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-LEFT.4.png",
+                      "bytes":  307,
+                      "sha256":  "25b271e0ed8a1a677a19271b97de185c0a3ae0a0792bf6379980878517bb4e52"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-RIGHT.0.png",
+                      "bytes":  294,
+                      "sha256":  "3617340347d7c91526705a4669ef199ac747bbbccfe3f586c060f69e53b6d583"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-RIGHT.1.png",
+                      "bytes":  285,
+                      "sha256":  "b45d9bd18337be9d2af4ecd75222e930acb98d693ebb212e97fb24cefa2677c9"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-RIGHT.2.png",
+                      "bytes":  305,
+                      "sha256":  "710641610b04cd5532ca1d39c397c824464d95512a99e874851dcc81c1c7d1ca"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-RIGHT.3.png",
+                      "bytes":  303,
+                      "sha256":  "fde0ef4250ebae30ed7feb0c79362cf100f0052cba3846245e1eb3d9075b848d"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_back-RIGHT.4.png",
+                      "bytes":  305,
+                      "sha256":  "77eb0747eb50d57b5f0595e4425e0bd249de0867117a65f1c599d263e2c44248"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-BACK.0.png",
+                      "bytes":  612,
+                      "sha256":  "f4ea016db58035ec45bbb9bcdaecfd39f4573c1d5bc990374d8e784dcea552f2"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-BACK.1.png",
+                      "bytes":  605,
+                      "sha256":  "5d3bf1e257a6a6683c1ff3bddeeb5a81154f6796bb864f836f32412c76a3152d"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-BACK.2.png",
+                      "bytes":  601,
+                      "sha256":  "ff0e5888b736a154523a61d7843a4cf2276beec980afa4f6b491ece1f19e3e7b"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-BACK.3.png",
+                      "bytes":  606,
+                      "sha256":  "cdd61356a7af70a63e0d17ee6536976e68173657a28e8b9e5685e3f5985c822a"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-BACK.4.png",
+                      "bytes":  600,
+                      "sha256":  "d9fb9fb698c8635d9ba6537008d2ccf043d907c684b33f4090b8a441d55fb4fd"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-FRONT.0.png",
+                      "bytes":  457,
+                      "sha256":  "2fa67a6de925306cba9bb4495c39cc59e8db67bbf59b537f2a2f9dbffd93babd"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-FRONT.1.png",
+                      "bytes":  414,
+                      "sha256":  "95cafedcb57f79e34c295c08a935838187ea80682e6c496bdbbd2f580b98d5a1"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-FRONT.2.png",
+                      "bytes":  418,
+                      "sha256":  "b6ffcc70f9e32736abb35717e03c3bca48c9c9d253dc1b377ee31295e805ead4"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-FRONT.3.png",
+                      "bytes":  425,
+                      "sha256":  "308bf1271977404ad42c2286060821e7433b3c15aee5b55fc5224aa74ddb5ec8"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-FRONT.4.png",
+                      "bytes":  418,
+                      "sha256":  "003b43df39834828f39f5661214912c21be33ad411782c66017770dc441aeadd"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-LEFT.0.png",
+                      "bytes":  460,
+                      "sha256":  "002d667926d38db06631d88b8cca467cddd9c7a3f76003160fa43640f4cace6c"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-LEFT.1.png",
+                      "bytes":  469,
+                      "sha256":  "62ad28374219d9625979ebde47ea43aff41d9ab3d5284f7343c8c140085d0bb6"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-LEFT.2.png",
+                      "bytes":  469,
+                      "sha256":  "8957b336e8e0b66e9390d4881afd5b5a7b85966c6352236d0eb0603ed611bb96"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-LEFT.3.png",
+                      "bytes":  474,
+                      "sha256":  "8dc397a3ffdfbc29d2d67a0fe88c2d21920320fc69715a7feb910235c8549e2e"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-LEFT.4.png",
+                      "bytes":  475,
+                      "sha256":  "77acd57a639a6ee63640396b957fe982c59946bd20d0871669f50439d1f71153"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-RIGHT.0.png",
+                      "bytes":  460,
+                      "sha256":  "6396a3f72f5804bff82f44f4ab4fb06dca6ab13523e6e4de6d874aa0db55b452"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-RIGHT.1.png",
+                      "bytes":  437,
+                      "sha256":  "0823c4f94424a55483156e021bc61577b05428ae2d5b853e14e52b936457532a"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-RIGHT.2.png",
+                      "bytes":  469,
+                      "sha256":  "6940cb625e46755175b24590157b22fb4cf8ed3f7f5a2f866621b898459b8331"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-RIGHT.3.png",
+                      "bytes":  473,
+                      "sha256":  "93b4899caae0171f68efea1203214cdfd666ed867f63f73583cba1172762bb51"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/hair/hair_spiky/hair_front-RIGHT.4.png",
+                      "bytes":  474,
+                      "sha256":  "3e6384143b6a495871139c39bb1e24056f311ed3f9c1882c54376b64c353040f"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/manifest.properties",
+                      "bytes":  30550,
+                      "sha256":  "56ee566702c7039d7592280f812590a5de3689974ad030194562fdb27a529bbd"
+                  },
+                  {
+                      "path":  "assets/dev/generated/corujao-iv-v1/README.txt",
+                      "bytes":  222,
+                      "sha256":  "741549be894bc85505e9785986e91e19ec539cb9f871906c5f4c7b19dc89177d"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Main_Character_Idle_Back.png",
+                      "bytes":  16462,
+                      "sha256":  "81d93e06334d60b36b553eb6ff6e086c1d6c92658e6a70012a6a2b2a65464d6e"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Main_Character_Idle_Front.png",
+                      "bytes":  17708,
+                      "sha256":  "2daf77863ea6b0c6b7840c6a83e682e16e79564b160eced24858b1526b38297c"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Main_Character_Idle_Left.png",
+                      "bytes":  13117,
+                      "sha256":  "0795c957fb19c81c64d4881308fa2e3c29fffaf2a43601f6134efd32034fe192"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Main_Character_Idle_Right.png",
+                      "bytes":  13137,
+                      "sha256":  "eb0c0a64d4e7009d7415e5f0c54dc99aec1c6e140b50b2d7990da10cafaa7ec2"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Walk_Character_Back1.png",
+                      "bytes":  15983,
+                      "sha256":  "ff83b04e6d2f95dbbaa4017b39af6a4d9c61d421fd0585d0f27bd119981a1408"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Walk_Character_Back2.png",
+                      "bytes":  15745,
+                      "sha256":  "ea170c973d37c6af41b763af147d24dc99fb044d8630a0a4ee290d8478271d43"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Walk_Character_Back3.png",
+                      "bytes":  16223,
+                      "sha256":  "659c0d7ab4d47a9c18ace87c18b284e1c779625b3339a0b3b7f413b7ad90d220"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Walk_Character_Back4.png",
+                      "bytes":  15741,
+                      "sha256":  "4f32888da7c830b3146089db730c4d436050c42cea207d6d02ed9388c10727fb"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Walk_character_Front1.png",
+                      "bytes":  18101,
+                      "sha256":  "8bb5c12853fa084db51624a99ee3b350f342531a21a0dbd8b1deb5d37ee3168b"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Walk_character_Front2.png",
+                      "bytes":  17197,
+                      "sha256":  "e80cd02c38cbf5a2d2cdc103de4a72a36e00c34a21969a1fee05d801fb686598"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Walk_character_Front3.png",
+                      "bytes":  17599,
+                      "sha256":  "8dfb422cf689a2a59e6953c20f5fae1732a23384e8bb65fa2a84733ed89a0d51"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Walk_character_Front4.png",
+                      "bytes":  17257,
+                      "sha256":  "1a3c4ccb7c059f20a33dbf0ac1d63e295aaac44e3c49a8bca8526e37a57a31ee"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Walk_Character_Left1.png",
+                      "bytes":  16985,
+                      "sha256":  "a1bcbf3de8714a1ff9785a6ede1d07805f31f65fd042ea26477efbded77a4c93"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Walk_Character_Left2.png",
+                      "bytes":  16841,
+                      "sha256":  "83d152e65e116e9ad0a4639fe0e786a04a357d6112ec30673862845a48690d1c"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Walk_Character_Left3.png",
+                      "bytes":  15933,
+                      "sha256":  "ca7f870541659c268d160ecadc03f475d6529571feaccd19ad2026a507d1f8c7"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Walk_Character_Left4.png",
+                      "bytes":  15778,
+                      "sha256":  "6df54479d04f596e0d7f4b6574d95bd992e5756c320928a76b4e45c0f51c875e"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Walk_character_Right1.png",
+                      "bytes":  17098,
+                      "sha256":  "382db872046aa56fa7b745cbfc21d5fb109f817f4fc1830b9b5177a179fa2cdc"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Walk_character_Right2.png",
+                      "bytes":  16796,
+                      "sha256":  "794b7377f57d53540a68d5dc8dce024c0e4cd60dd343fff93750e3dfd0a7e855"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Walk_character_Right3.png",
+                      "bytes":  16029,
+                      "sha256":  "672954482868c7c5da817f8cdc55eda0ecd1026e7eef4c6afe895f2ae96ff04e"
+                  },
+                  {
+                      "path":  "assets/dev/player-base/Walk_character_Right4.png",
+                      "bytes":  15873,
+                      "sha256":  "8b776595c5737b55db78172e9dc69c5335ffb0e89b5f6d1d660ccb6688ae9c98"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/README.md",
+                      "bytes":  2223,
+                      "sha256":  "2c37ea2686e15868a56e755045c5b5639f2f22704a3fcb2a2df54f5aa93fdef9"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_IDLE_Costa.png",
+                      "bytes":  3467,
+                      "sha256":  "159aa7217c69841a0273c02f4f3cb2451bcc5685b30fc3ebc51667ef40babd8a"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_IDLE_Direita.png",
+                      "bytes":  2736,
+                      "sha256":  "1da3184fc65663ff07efd16eb64245d06a7a7a8861f26762a93a6f94d475a33c"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_IDLE_Esquerda.png",
+                      "bytes":  2686,
+                      "sha256":  "ccffbe4aa99c07fbe6e4cf1a6e22c4163daff77cd6009bd555a152fdbbbb35c0"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_IDLE_Frente.png",
+                      "bytes":  3331,
+                      "sha256":  "778b31e8aea088fa3754cfffab71ee45e677445d6ea7f231dc87f66756867767"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Costas1.png",
+                      "bytes":  1840,
+                      "sha256":  "0e4c28d56bab48da39d415f7d3dbe696144ee53888722854bfd37acc8e50d5e4"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Costas2.png",
+                      "bytes":  1853,
+                      "sha256":  "547ad94b042f509971203dbeca28024118c77f8a6b0483edd2fbbb88d4a3387f"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Costas3.png",
+                      "bytes":  1800,
+                      "sha256":  "2e3da8b60618f4911f1754b1ced91dd0b421b0ed04cda49434431b954df4d8da"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Costas4.png",
+                      "bytes":  1849,
+                      "sha256":  "8556e34b351a3b3f04d1e149c1cc8ed0c9a239b5857004756443bd645b0fe5d2"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Costas5.png",
+                      "bytes":  1823,
+                      "sha256":  "ad9d56d2e5e5afb37741b1507eb5138d789168d1961495a059fc273f0a62f113"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Costas6.png",
+                      "bytes":  1842,
+                      "sha256":  "4bcbd943c65d036735365ed87314c7b9e515efdaa49fc3993cdc99e5d12acdee"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Costas7.png",
+                      "bytes":  1821,
+                      "sha256":  "74cb2972fe094b00ebd125d1ddf9c40ac9f6810a24bb532a183ab84368d69836"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Costas8.png",
+                      "bytes":  1847,
+                      "sha256":  "75597accf8ec21523d6d313a113e49e9388d9fdaeae461e53d2f01f0b7e9ac07"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Direita1.png",
+                      "bytes":  3256,
+                      "sha256":  "0b9370c3e439778c2506aaf3596b647be0432b2925848b4ecc73075fdaa7217e"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Direita2.png",
+                      "bytes":  2938,
+                      "sha256":  "61c4ba98153b5ac1c4b99266fa58d72490a7b7ce44b2ec477cd49dd3ea38294f"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Direita3.png",
+                      "bytes":  2603,
+                      "sha256":  "2d7e2da9ec15f556a8e187eeb0e6938dd9651b7ecb2840c80acc8501e7a38f0c"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Direita4.png",
+                      "bytes":  3086,
+                      "sha256":  "59313e35fca1732a2ff58e46143cdd0f3c7271f82e882eb5e6f95bc62c825985"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Direita5.png",
+                      "bytes":  3159,
+                      "sha256":  "9992795dc1a202e0e86f99c0b34d06983b99a9b81cb5e41576ed326e80bf7ba2"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Direita6.png",
+                      "bytes":  2865,
+                      "sha256":  "df815dc21698f920ebd4d2e611f699766f93c235509c147aa4348a897c51fac6"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Direita7.png",
+                      "bytes":  2613,
+                      "sha256":  "82d0b5e048b0bd10dee814b28e70e5a9b830591d6f0e67ce696b822a639fe018"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Direita8.png",
+                      "bytes":  3170,
+                      "sha256":  "c6e9e12f3aed0f39f5561eca31122894c8a1035ec5eb9cc16613d42f98c5d30a"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Esquerda1.png",
+                      "bytes":  3212,
+                      "sha256":  "12005d295d0256283cd4057b2516af0a17d23d8f1d5a224de2af5928fda1aa13"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Esquerda2.png",
+                      "bytes":  2948,
+                      "sha256":  "45d4e649fb6def4644b63104abafa190a866948812e151cef8e3d927aa376a08"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Esquerda3.png",
+                      "bytes":  2632,
+                      "sha256":  "9bdb965fbcfdf809846d5c3c1de388e7cf2a5fa9860802623c9500701edbd4a7"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Esquerda4.png",
+                      "bytes":  3224,
+                      "sha256":  "18480b79f2c9bf209ce5321c2d132b53122a14c4c269a3813d8eb55cd547fadf"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Esquerda5.png",
+                      "bytes":  3018,
+                      "sha256":  "01be2cf9a90d1b02a3b4e27ede3ecb63140a83565fed967c6193ea1d3cc026a4"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Esquerda6.png",
+                      "bytes":  3188,
+                      "sha256":  "74164c8d0efa07a9b1cfd1048f67c297653210b4886c23b001ab817e89889a28"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Esquerda7.png",
+                      "bytes":  2665,
+                      "sha256":  "e80eb235ecb495b0725eef1edf8a79a239e5a6be2d0de6ccd192312721346470"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Esquerda8.png",
+                      "bytes":  3282,
+                      "sha256":  "9e7c7d86ee00f44509c2a46afce93a1dd73b98623512eb52a78d4953fc6e81f0"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Frente1.png",
+                      "bytes":  3317,
+                      "sha256":  "c5e7693b91d83d92a4a4e5639375281348457e809d3aa4721a72fd11895b1115"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Frente2.png",
+                      "bytes":  3275,
+                      "sha256":  "046cb1553d3e3028a8006295388c9b3e0505a7d644a588e72da34ce1fed5f41a"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Frente3.png",
+                      "bytes":  3136,
+                      "sha256":  "acb5425422993f3b568271391890c258d86fb52781438e53cac14d0c0f7e9485"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Frente4.png",
+                      "bytes":  3370,
+                      "sha256":  "b8bddd095badcde4cc68da5b8c01c24d1f4a50f186623dc6bf90449446c7fb6a"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Frente5.png",
+                      "bytes":  3184,
+                      "sha256":  "68e1d74ed5bcc3086f81c8d2d14a62b429eca01b4804ac2d76951c15d94560d8"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Frente6.png",
+                      "bytes":  3281,
+                      "sha256":  "e22137ec8afb746e867ea28a4ea10a9abcf890eadd2d37b63aad889b81014568"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Frente7.png",
+                      "bytes":  3161,
+                      "sha256":  "2d0b1a599149e68231b1047f693701d642c3ca6421c17df970adf263c4380525"
+                  },
+                  {
+                      "path":  "assets/dev/reaper/Reaper_Walking_Frente8.png",
+                      "bytes":  3274,
+                      "sha256":  "9eda92ea51904c1cc08195908c3c920e45ae4926bd4d437796f0094a8f127c8d"
+                  },
+                  {
+                      "path":  "assets/skills/fire_1.png",
+                      "bytes":  39473,
+                      "sha256":  "b8bb68f73a865f87158f3ac8be079a16a78f60b94b0ceae40fb13a783261ed0c"
+                  },
+                  {
+                      "path":  "assets/skills/light_1.png",
+                      "bytes":  34562,
+                      "sha256":  "5c3efd66e8741f0a94e10dbb1407dce229fc9d9615302a2bc775478dd3d64ba2"
+                  },
+                  {
+                      "path":  "assets/skills/light_2.png",
+                      "bytes":  176317,
+                      "sha256":  "11305c20795f5ca825f027adf8cade639a6a9e92ef03fa50702c51d0e3ab8b40"
+                  },
+                  {
+                      "path":  "assets/skills/light_3.png",
+                      "bytes":  203354,
+                      "sha256":  "63966ea1f801883527eb6afcd305d21ae101afb87a11d48e33b7eb283927205a"
+                  },
+                  {
+                      "path":  "assets/skills/light_4.png",
+                      "bytes":  23618,
+                      "sha256":  "b1320f8911711272c64b408445f1718eb6b32bb1338ce1fcca4d801f98a4d2d6"
+                  },
+                  {
+                      "path":  "assets/skills/light_5.png",
+                      "bytes":  34562,
+                      "sha256":  "5c3efd66e8741f0a94e10dbb1407dce229fc9d9615302a2bc775478dd3d64ba2"
+                  },
+                  {
+                      "path":  "assets/skills/manifest.properties",
+                      "bytes":  12811,
+                      "sha256":  "9e8348144c1f63d6623f702b1ccd9cd5ab53aa517bca29de93638a7c5f0c6b6d"
+                  },
+                  {
+                      "path":  "assets/skills/provenance.json",
+                      "bytes":  73095,
+                      "sha256":  "fa71933cf1617c8bbe1b07eef56d679299363c7feb3779c49f91004afacda05c"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v2/fire_2.travel.png",
+                      "bytes":  134624,
+                      "sha256":  "6b2fadcc82d7204a58ac633c4b3067e996e98515a7f1b0fa1bbee304a2382115"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v2/fire_4.travel.png",
+                      "bytes":  134624,
+                      "sha256":  "6b2fadcc82d7204a58ac633c4b3067e996e98515a7f1b0fa1bbee304a2382115"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v2/manifest.properties",
+                      "bytes":  6679,
+                      "sha256":  "e61d4d397c30a09fd7ff719dc0bece9f3f059a8fba268342d102b65fc18bd126"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v2/provenance.json",
+                      "bytes":  38964,
+                      "sha256":  "e4b8ef0a1897c42e82ad7a3b92f9c271a2412175655e7f516d92c77e4be259f2"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v3/aetheri_1.png",
+                      "bytes":  194456,
+                      "sha256":  "d106bfc1327217c394680b20fc0be8108bafe7dc1645fc26ca064ec4af1f8f2a"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v3/aetheri_2.png",
+                      "bytes":  194456,
+                      "sha256":  "d106bfc1327217c394680b20fc0be8108bafe7dc1645fc26ca064ec4af1f8f2a"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v3/aetheri_3.png",
+                      "bytes":  121944,
+                      "sha256":  "22ddce4fea60e0e7a17dc07a3ff0fcae4450085eddd8702fe4a7172a76d066b2"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v3/aetheri_4.png",
+                      "bytes":  194456,
+                      "sha256":  "d106bfc1327217c394680b20fc0be8108bafe7dc1645fc26ca064ec4af1f8f2a"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v3/aetheri_5.png",
+                      "bytes":  222904,
+                      "sha256":  "b72c5fea82de1018f12f5060211528bf8dfb3e9e27922116c9156bcb52dde3ad"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v3/aetheri_5.travel.png",
+                      "bytes":  194456,
+                      "sha256":  "d106bfc1327217c394680b20fc0be8108bafe7dc1645fc26ca064ec4af1f8f2a"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v3/manifest.properties",
+                      "bytes":  2060,
+                      "sha256":  "9b9df947938d0f783e368885464c05d7350f36b6c8675b19bf434c73dae45e28"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v3/martial_5.png",
+                      "bytes":  555801,
+                      "sha256":  "2abb0e8397000c8990257fed66c2affbfff1a713844f4392afdb7a093c749548"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v3/provenance.json",
+                      "bytes":  7314,
+                      "sha256":  "cd2eb708e11bc7ebee5682e325d204ffa1420b475484373af56fa77ad2a0655a"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v4/fire_2.png",
+                      "bytes":  358395,
+                      "sha256":  "5242f45f73ad1238fd6965e3f6bfab220f5ecf35f1093c7ef2f0fc67c9bd03b1"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v4/impact.png",
+                      "bytes":  122267,
+                      "sha256":  "721c832b953c903791ae8f2cc574b8c9d58341b3a76e5b9152c8496ad05a88d4"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v4/manifest.properties",
+                      "bytes":  8139,
+                      "sha256":  "f65dc868177208c16f535149d3ec8df9b0e96db5c49f9a09f4d2eeb87b88b2dc"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v4/martial_1.png",
+                      "bytes":  90213,
+                      "sha256":  "f42b4274ce1af04f4e1166489ff0be47e7b52855d511f786f95bb12201fe768b"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v4/provenance.json",
+                      "bytes":  34098,
+                      "sha256":  "48f83920c0176fa3ed22892ca749cfb270570bcecead241c26b7d27172860bd3"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v4/water_1.png",
+                      "bytes":  385401,
+                      "sha256":  "41fad09fb03ed372f4f0ff5096abae83ad241285688818e832049fff10a5b0b5"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v4/water_3.png",
+                      "bytes":  529467,
+                      "sha256":  "f4774197fae52f25687435d892f0fa02a0b1c88cd6e3568e1ffcf80a5d48ead3"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v4/water_5.png",
+                      "bytes":  292868,
+                      "sha256":  "f7055701664f02a6e8c1f538609743d4e2a9d4222365333f5fd1a515d2bf3739"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v5/fire_3.png",
+                      "bytes":  649828,
+                      "sha256":  "9ef4087981c66552c705618da67492dc22cdcd6b278f666b13ceb4e0857d9883"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v5/fire_4.png",
+                      "bytes":  751360,
+                      "sha256":  "8bcc1c7367e7cb87066d61dfce5e8b5ef9f22e21ddeb2028c2c6825e3bea8e28"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v5/manifest.properties",
+                      "bytes":  1096,
+                      "sha256":  "da3184f7a162a489aaa71f604530c08bf75f4ce62ff47344cc1560864d448649"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v5/provenance.json",
+                      "bytes":  7680,
+                      "sha256":  "650724db97f7c46ad7fd9d501d20701a5047ed39a6e99634b34eb30389d70c97"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v5/water_4.png",
+                      "bytes":  768446,
+                      "sha256":  "f335ef3ac8d7477c9543bfb96783b330349d318885a23c34b5a53594d758189a"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v6/fire_5.png",
+                      "bytes":  229219,
+                      "sha256":  "5efd2f99e884d930427d449e639c4c5f1a7a37ed9dfead25fb3a444b0edaafcd"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v6/manifest.properties",
+                      "bytes":  2235,
+                      "sha256":  "48711a02e83b7c8d3a79b379a74d9a4c19a2e001a0ba2cac312cb6d4b75d6483"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v6/provenance.json",
+                      "bytes":  8383,
+                      "sha256":  "7792c44709bf4a8b96b61339ab47beaece2fc459450d290833adfc7ff183db37"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v6/water_2.png",
+                      "bytes":  551616,
+                      "sha256":  "bd34f9eb1394aaecb8e3de535ad1accc23cf45f1377a925315349a73c1b7a907"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v6/wind_4.impact.png",
+                      "bytes":  262315,
+                      "sha256":  "67f207de56bd91afab2626bc3e9a88ed1b114fa3d53528b7cdfb2ffd8818dc3e"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v6/wind_4.png",
+                      "bytes":  534441,
+                      "sha256":  "a3b5613598b8cafd3a2bc325592c53e2ab857c8751dd15fd8f6afecbf1e60355"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v7/manifest.properties",
+                      "bytes":  335,
+                      "sha256":  "9b28326dce472c0dfe55c60cb1c1764d1bda8e0e772797738707929a7ac08652"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v7/martial_3.png",
+                      "bytes":  525583,
+                      "sha256":  "e1e9f1626e9c3f542f01871d2ee6d9bb4ee8454b925cc3d11c9a7e9cf08fdc3b"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v7/provenance.json",
+                      "bytes":  2821,
+                      "sha256":  "e4187e600f39dfee5f3771df55118cbc52de4ecd918b7d3284f22f1cc79c6cf7"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v8/manifest.properties",
+                      "bytes":  4684,
+                      "sha256":  "17f997fe19a2d9bcd85ce59127bdf9a4d06104720e2a0ce999195dc195ec1be3"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v8/martial_4.impact.png",
+                      "bytes":  153178,
+                      "sha256":  "c491ec4e8d10e9afa1eeb13f0042c8c031c0d1fc442270d4d60645a1aba85051"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v8/martial_4.png",
+                      "bytes":  212282,
+                      "sha256":  "38a40f94d472532745e489e26e94fb7a318da79c9f16a4d9dfeb6d72ec53c031"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v8/provenance.json",
+                      "bytes":  22631,
+                      "sha256":  "87788e264360570142fa5d3330f09440b8e09be62b122dcf4f098b82f3f66334"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v8/thunder_1.impact.png",
+                      "bytes":  98782,
+                      "sha256":  "f343f7631d005a7b5f74693f548d981e45b7d7137763b50e68841ee8467e7b9f"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v8/thunder_1.png",
+                      "bytes":  43963,
+                      "sha256":  "6db3002f0bb9fc593121f3ef1d197ff25c7b3b5b21732aeb65c3ced05c7c13ce"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v8/thunder_2.png",
+                      "bytes":  77164,
+                      "sha256":  "ef607598dd1d8ffc2e0da0c59c60568d77bf17e3a0bb59ac9a591609c0741c36"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v8/thunder_4.png",
+                      "bytes":  259032,
+                      "sha256":  "b6a6e5c236e7b8610a7aab5934768217193b9eeed774d3a1a71dd8cb8bfa3d4a"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v8/thunder_5.png",
+                      "bytes":  637644,
+                      "sha256":  "55b086d49334ce69a327cfe3962e13da06e477b933dd6207e5b927232a37ae8e"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v8/water_5.travel.png",
+                      "bytes":  73533,
+                      "sha256":  "7a7d2c7b29ad49b64302d77482a1415be540273d7ddc16f76d583964d7ab53aa"
+                  },
+                  {
+                      "path":  "assets/skills/refined-v8/wind_3.travel.png",
+                      "bytes":  59062,
+                      "sha256":  "2a359bf47b70a66fbf2c8a39d49544a1ea52dfab14b6d8e9be233354243c9412"
+                  },
+                  {
+                      "path":  "assets/skills/spirit_1.png",
+                      "bytes":  103092,
+                      "sha256":  "4d78920ffb844b93e99d89c90bca25336f51ab2f60ae97a78e32417257da5630"
+                  },
+                  {
+                      "path":  "assets/skills/spirit_2.png",
+                      "bytes":  133896,
+                      "sha256":  "3bd40f22aea04bb1ac7a1fec7d272b318a64c905a99297509bde4b1659c4df54"
+                  },
+                  {
+                      "path":  "assets/skills/spirit_3.png",
+                      "bytes":  23618,
+                      "sha256":  "b1320f8911711272c64b408445f1718eb6b32bb1338ce1fcca4d801f98a4d2d6"
+                  },
+                  {
+                      "path":  "assets/skills/spirit_4.png",
+                      "bytes":  182930,
+                      "sha256":  "fd322738c5641824dd5c9a28bc04b400793ae28896de08137d33952726d87bf8"
+                  },
+                  {
+                      "path":  "assets/skills/spirit_5.png",
+                      "bytes":  18508,
+                      "sha256":  "d7baccdd27825a71b9320468137db9b817757b9c50a7cf7cafffa7571c6117c2"
+                  },
+                  {
+                      "path":  "assets/skills/wind_1.png",
+                      "bytes":  40884,
+                      "sha256":  "21d3896862e981e2cc5139f48d86b45fb36333d81636e1a30d8bc7defcbf5f9e"
+                  },
+                  {
+                      "path":  "assets/skills/wind_3.png",
+                      "bytes":  40884,
+                      "sha256":  "21d3896862e981e2cc5139f48d86b45fb36333d81636e1a30d8bc7defcbf5f9e"
+                  },
+                  {
+                      "path":  "LEIA-ME.txt",
+                      "bytes":  874,
+                      "sha256":  "4b2c0b4199115ff8f2f3abde89f90b0f1305bab280b5674d633e8404418648cd"
+                  },
+                  {
+                      "path":  "ROTEIRO-SKILLS.md",
+                      "bytes":  13914,
+                      "sha256":  "30b460d046b673d60cf95565db05b5d25c55429db1fc67b2b27d3efdfd8958ae"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-console-l1-1-0.dll",
+                      "bytes":  22072,
+                      "sha256":  "88ace577a9c51061cb7d1a36babbbefa48212fadc838ffde98fdfff60de18386"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-console-l1-2-0.dll",
+                      "bytes":  22056,
+                      "sha256":  "c062477ad3bfdc57b0cc402179637a214dab5045c8d644592c7decca7d18aa50"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-datetime-l1-1-0.dll",
+                      "bytes":  22056,
+                      "sha256":  "1bd81dfd19204b44662510d9054852fb77c9f25c1088d647881c9b976cc16818"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-debug-l1-1-0.dll",
+                      "bytes":  21944,
+                      "sha256":  "591358eb4d1531e9563ee0813e4301c552ce364c912ce684d16576eabf195dc3"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-errorhandling-l1-1-0.dll",
+                      "bytes":  22096,
+                      "sha256":  "d56ce7b1cd76108ad6c137326ec694a14c99d48c3d7b0ace8c3ff4d9bcee3ce8"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-fibers-l1-1-0.dll",
+                      "bytes":  22072,
+                      "sha256":  "91d249d7bc0e38ef6bcb17158b1fdc6dd8888dc086615c9b8b750b87e52a5fb3"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-fibers-l1-1-1.dll",
+                      "bytes":  22072,
+                      "sha256":  "fc9d86cec621383eab636ebc87ddd3f5c19a3cb2a33d97be112c051d0b275429"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-file-l1-1-0.dll",
+                      "bytes":  26152,
+                      "sha256":  "1ca895aba4e7435563a6b43e85eba67a0f8c74aa6a6a94d0fc48fa35535e2585"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-file-l1-2-0.dll",
+                      "bytes":  22056,
+                      "sha256":  "4cadbc0c39da7c6722206fdcebd670abe5b8d261e7b041dd94f9397a89d1990d"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-file-l2-1-0.dll",
+                      "bytes":  21960,
+                      "sha256":  "93c624b366ba16c643fc8933070a26f03b073ad0cf7f80173266d67536c61989"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-handle-l1-1-0.dll",
+                      "bytes":  21944,
+                      "sha256":  "39095f59c41d76ec81bb2723d646fde4c148e7cc3402f4980d2ade95cb9c84f9"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-heap-l1-1-0.dll",
+                      "bytes":  22072,
+                      "sha256":  "8f105771b236dbcb859de271f0a6822ce1cb79c36988dd42c9e3f6f55c5f7eb9"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-interlocked-l1-1-0.dll",
+                      "bytes":  22072,
+                      "sha256":  "53b25e753ca785bf8b695d89dde5818a318890211dc992a89146f16658f0b606"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-kernel32-legacy-l1-1-1.dll",
+                      "bytes":  22080,
+                      "sha256":  "a9b13a1cd1b8c19b0c6b4afcd5bb0dd29c0e2288231ac9e6db8510094ce68ba6"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-libraryloader-l1-1-0.dll",
+                      "bytes":  22056,
+                      "sha256":  "7f39ba298b41e4963047341288cab36b6a241835ee11ba4ad70f44dacd40906c"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-localization-l1-2-0.dll",
+                      "bytes":  22080,
+                      "sha256":  "6ee44dd0d8510dc024c9f7c79b1b9fa88c987b26b6beb6653ddd11751c34e5dc"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-memory-l1-1-0.dll",
+                      "bytes":  22056,
+                      "sha256":  "0512a35316ec9180437f86696a84c5c06a7e4e82e050055a656e5bf9fca206f9"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-namedpipe-l1-1-0.dll",
+                      "bytes":  22096,
+                      "sha256":  "c05f1fffe3b5a2738ea54ce9485cca026fb9635f982626fba1e1dcc531897273"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-processenvironment-l1-1-0.dll",
+                      "bytes":  21968,
+                      "sha256":  "c4eca98c3c67b6395d5b005b00ac1eb0318b86b23aa71035a44c2b1602befba9"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-processthreads-l1-1-0.dll",
+                      "bytes":  22096,
+                      "sha256":  "5ccb89e93d67bc3288d4e84649c5346e66e15e3d7cd65d989daf3f4cb584be9a"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-processthreads-l1-1-1.dll",
+                      "bytes":  22072,
+                      "sha256":  "4ad565a8ba3ef0ea8ab87221ad11f83ee0bc844ce236607958406663b407333e"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-profile-l1-1-0.dll",
+                      "bytes":  22080,
+                      "sha256":  "7809160932f44e59b021699f5bc68799eb7293ee1fa926d6fcca3c3445302e61"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-rtlsupport-l1-1-0.dll",
+                      "bytes":  21960,
+                      "sha256":  "9dc1e91e71c7c054854bd1487cb4e6946d82c9f463430f1c4e8d1471005172b1"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-string-l1-1-0.dll",
+                      "bytes":  22056,
+                      "sha256":  "60fc31d2a0c634412f529dba76af3b9bf991352877c6dae528186d3935704cfd"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-synch-l1-1-0.dll",
+                      "bytes":  22056,
+                      "sha256":  "3a72b4f29f39a265d32ad12f0ce15dbf60129c840e10d84d427829ede45e78ad"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-synch-l1-2-0.dll",
+                      "bytes":  22080,
+                      "sha256":  "efc1e4460984a73cf47a3def033af1c8f3b1dbc1a56cd27781d3aacf3e3330cb"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-sysinfo-l1-1-0.dll",
+                      "bytes":  22072,
+                      "sha256":  "b203d862ddef1dd62bf623fc866c7f7a9c317c1c2ae30d1f52cb41f955b5698e"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-sysinfo-l1-2-0.dll",
+                      "bytes":  22080,
+                      "sha256":  "2703635d835396afd0f138d7c73751afe7e33a24f4225d08c1690b0a371932c0"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-timezone-l1-1-0.dll",
+                      "bytes":  22056,
+                      "sha256":  "33f4fddc181066fce06b2227bded813f95e94ed1f3d785e982c6b6b56c510c57"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-core-util-l1-1-0.dll",
+                      "bytes":  21944,
+                      "sha256":  "6eda016742a6171205a387a14b3c0b331841567740376f56768f8c151724207d"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-crt-conio-l1-1-0.dll",
+                      "bytes":  22056,
+                      "sha256":  "b762061b688aae679afe788904d2c9970f74a7dac98f3b42463d08f25e483d3f"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-crt-convert-l1-1-0.dll",
+                      "bytes":  26056,
+                      "sha256":  "ebb2ae5535a64f65daeab8235585114fc9dd2cf1a49f5852d446250b998b6ae4"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-crt-environment-l1-1-0.dll",
+                      "bytes":  22080,
+                      "sha256":  "17d63275d00bdd8670422b95bd264c532998e0a1b041079e54fce4b6b7a55819"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-crt-filesystem-l1-1-0.dll",
+                      "bytes":  22056,
+                      "sha256":  "9a9e2a65a281644e368d0f272b95ba5f6b445d1c35910d06056c5ebeb77402db"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-crt-heap-l1-1-0.dll",
+                      "bytes":  22096,
+                      "sha256":  "bab9ac3ec83e380ae51e4295ef3bf2c738627812d3a49d1e713661abbc8dc57a"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-crt-locale-l1-1-0.dll",
+                      "bytes":  22080,
+                      "sha256":  "bd14c67ea28e21d6257ad780a37122c9b5773f69e693f5db6bffaee4d839526e"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-crt-math-l1-1-0.dll",
+                      "bytes":  30248,
+                      "sha256":  "606d66d82db562ea7979179d06486a0f94d079941d26b80a1e2c49d29959df6f"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-crt-multibyte-l1-1-0.dll",
+                      "bytes":  30248,
+                      "sha256":  "95f49efbe8107786733fa7c474025cf3fee0ac632f240367b296c736d06572aa"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-crt-private-l1-1-0.dll",
+                      "bytes":  75328,
+                      "sha256":  "1bc82bed6143d2bf1b6b08a7809f4a5e29317d6fddd338a7da3c0223522e4bbf"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-crt-process-l1-1-0.dll",
+                      "bytes":  22096,
+                      "sha256":  "f6156b1020380ec4f0e48577ebedaaef5fb1ab1f337d8b4e72e6a33a7567a9cc"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-crt-runtime-l1-1-0.dll",
+                      "bytes":  26152,
+                      "sha256":  "c5902934d026d7e15fbe9917d474f3322846a41a25e66f4b2b1f758801879f4b"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-crt-stdio-l1-1-0.dll",
+                      "bytes":  26168,
+                      "sha256":  "a9c5a153d8c0286f9b41a2b1c65854ad9e6471b8755b7de87bae4470e60bcab6"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-crt-string-l1-1-0.dll",
+                      "bytes":  26176,
+                      "sha256":  "25b8f83a7767211b11132775a0e27a45aa4ec8ab4e6572599f9c172ae3606b40"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-crt-time-l1-1-0.dll",
+                      "bytes":  22096,
+                      "sha256":  "7c7f6393f06de11750adb09cc5698ae55cd9fb27b2e51e207286feb1b5b2b156"
+                  },
+                  {
+                      "path":  "runtime/bin/api-ms-win-crt-utility-l1-1-0.dll",
+                      "bytes":  21952,
+                      "sha256":  "d8ba5f17b9ffcbf3aeaf3fa1da226832d2fa90f81acce0cd669464e76ce434ac"
+                  },
+                  {
+                      "path":  "runtime/bin/awt.dll",
+                      "bytes":  1493112,
+                      "sha256":  "358e7d8b59bf2f544a6a2b495d070abe34c6aeacc91667fdd46572bb19b73cc5"
+                  },
+                  {
+                      "path":  "runtime/bin/fontmanager.dll",
+                      "bytes":  1030272,
+                      "sha256":  "b08bad15f0497ae383e9db02cc548a323692cc77dccdf9166392f7f528231f64"
+                  },
+                  {
+                      "path":  "runtime/bin/freetype.dll",
+                      "bytes":  560768,
+                      "sha256":  "1fca733dd0035e6f0030baec539e9d9790e04497e715c4fdb58d39e9da5208cb"
+                  },
+                  {
+                      "path":  "runtime/bin/java.dll",
+                      "bytes":  148088,
+                      "sha256":  "e4cbd1c144a8347463240ce4d567b31c4a4994f031f082d7b60d55738f9d36aa"
+                  },
+                  {
+                      "path":  "runtime/bin/java.exe",
+                      "bytes":  50296,
+                      "sha256":  "1977f302375adbb920d41dac65c7e22eb9c2ed8e1e8d6258964154ff16f14406"
+                  },
+                  {
+                      "path":  "runtime/bin/javajpeg.dll",
+                      "bytes":  180856,
+                      "sha256":  "f3ceecee8d9035e1712d9a36487dc2af563db897a277c824245f2b27580da544"
+                  },
+                  {
+                      "path":  "runtime/bin/javaw.exe",
+                      "bytes":  50296,
+                      "sha256":  "326c477cf91039f50f4ffb507801972882ea09546bd9e2c9f36e9d32a5aa7a97"
+                  },
+                  {
+                      "path":  "runtime/bin/jawt.dll",
+                      "bytes":  21632,
+                      "sha256":  "7a3414204ebd9980ca8e9e20c3866d9f3768a485e00deeeeb2499e2d28c8b521"
+                  },
+                  {
+                      "path":  "runtime/bin/jimage.dll",
+                      "bytes":  34424,
+                      "sha256":  "ccbd2249f4437395977cdca262cdce4a27e077a14ac9dec63095b0db0c88a23c"
+                  },
+                  {
+                      "path":  "runtime/bin/jli.dll",
+                      "bytes":  89720,
+                      "sha256":  "6c15f990b5d849859d090becbf92365d08dd249971d4fa2236a7e653e7b7630f"
+                  },
+                  {
+                      "path":  "runtime/bin/jsound.dll",
+                      "bytes":  61048,
+                      "sha256":  "7aeb27db70236f5d324be556286b51fd2155272308657c80e7cbf56753e562b3"
+                  },
+                  {
+                      "path":  "runtime/bin/keytool.exe",
+                      "bytes":  24184,
+                      "sha256":  "38767197bb826db7bcdfbd0eae3c7578dc4d05d6d7db8368e677aad7505f6678"
+                  },
+                  {
+                      "path":  "runtime/bin/lcms.dll",
+                      "bytes":  261760,
+                      "sha256":  "5d081163a10593e581051a804d463f02c2e0e506b7a0577c4642c56ce7803dff"
+                  },
+                  {
+                      "path":  "runtime/bin/mlib_image.dll",
+                      "bytes":  521336,
+                      "sha256":  "3161b6a9fad7d3a929be2d578c63add47648c4be336ecbacd413689844762ca1"
+                  },
+                  {
+                      "path":  "runtime/bin/msvcp140.dll",
+                      "bytes":  575056,
+                      "sha256":  "a4c2229bdc2a2a630acdc095b4d86008e5c3e3bc7773174354f3da4f5beb9cde"
+                  },
+                  {
+                      "path":  "runtime/bin/net.dll",
+                      "bytes":  98432,
+                      "sha256":  "363b5784dc8a64eb82f10eae337ab0e600a9e10aa88fabca15cb1fe9950be653"
+                  },
+                  {
+                      "path":  "runtime/bin/nio.dll",
+                      "bytes":  80504,
+                      "sha256":  "4571b9e62b49e18561b29aa13ce9257c3f3529967657d8386e39e26e37b4922f"
+                  },
+                  {
+                      "path":  "runtime/bin/prefs.dll",
+                      "bytes":  25720,
+                      "sha256":  "cd2a65c7e10f5e1352103fa1f3bc79a0297865f403dbbff8485d72f5b2fc004a"
+                  },
+                  {
+                      "path":  "runtime/bin/server/jvm.dll",
+                      "bytes":  12684920,
+                      "sha256":  "6b9a2354b41134986d61d1f8ff0f9614e3a6b7e235469b7e9260fe7a1d9bb84a"
+                  },
+                  {
+                      "path":  "runtime/bin/splashscreen.dll",
+                      "bytes":  216704,
+                      "sha256":  "9b35352de5ed51a4f109c03f41e075163a076dcd80b12f9dc5391311f4e8ab30"
+                  },
+                  {
+                      "path":  "runtime/bin/ucrtbase.dll",
+                      "bytes":  1361448,
+                      "sha256":  "2e5fb14b7bf8540278f3614a12f0226e56a7cc9e64b81cbd976c6fcf2f71cbfb"
+                  },
+                  {
+                      "path":  "runtime/bin/vcruntime140.dll",
+                      "bytes":  119888,
+                      "sha256":  "02c6aa0e6e624411a9f19b0360a7865ab15908e26024510e5c38a9c08362c35a"
+                  },
+                  {
+                      "path":  "runtime/bin/vcruntime140_1.dll",
+                      "bytes":  49640,
+                      "sha256":  "7dd9aa02e271c68ca6d5f18d651d23a15d7259715af43326578f7dde27f37637"
+                  },
+                  {
+                      "path":  "runtime/bin/verify.dll",
+                      "bytes":  54904,
+                      "sha256":  "5337b2ead28600e047c974b0121ade3a62006ec2b74461be0a0538eef2293c90"
+                  },
+                  {
+                      "path":  "runtime/bin/zip.dll",
+                      "bytes":  87672,
+                      "sha256":  "a96a5cd67013edf93fac2044c0797cd35759dd2237f1940968bcc1952ed294cd"
+                  },
+                  {
+                      "path":  "runtime/conf/net.properties",
+                      "bytes":  7504,
+                      "sha256":  "56dd1f6095c189c1052f6baa32e457efc09de4832e19cdb82bb236dc8abfee9f"
+                  },
+                  {
+                      "path":  "runtime/conf/security/java.policy",
+                      "bytes":  2293,
+                      "sha256":  "1224c11b69032c80e1493416641c82a37e558913a41f959f83ab2f96f097d6c0"
+                  },
+                  {
+                      "path":  "runtime/conf/security/java.security",
+                      "bytes":  69696,
+                      "sha256":  "5cd497073edfd7fc26c68e92caee264a739db43d6781f8d8e8b74efbd107cfe7"
+                  },
+                  {
+                      "path":  "runtime/conf/security/policy/limited/default_local.policy",
+                      "bytes":  647,
+                      "sha256":  "2b2627548e61316150d47ffc3e6cad465ca05b3cccd4785eb7d21aa7baa0f441"
+                  },
+                  {
+                      "path":  "runtime/conf/security/policy/limited/default_US_export.policy",
+                      "bytes":  146,
+                      "sha256":  "758b930a526fc670ab7537f8c26321527050a31f5f42149a2dda623c56a0a1a9"
+                  },
+                  {
+                      "path":  "runtime/conf/security/policy/limited/exempt_local.policy",
+                      "bytes":  566,
+                      "sha256":  "8c3d7648abcd95a272ce12db870082937f4d7f6878d730d83cb7fbb31eb8b2c9"
+                  },
+                  {
+                      "path":  "runtime/conf/security/policy/README.txt",
+                      "bytes":  2390,
+                      "sha256":  "6da0747334b0fea7592fd92614b2bbc8b126535e129b1fee483774d914e98eb5"
+                  },
+                  {
+                      "path":  "runtime/conf/security/policy/unlimited/default_local.policy",
+                      "bytes":  193,
+                      "sha256":  "8d8a318e6d90dfd7e26612d2b6385aa704f686ca6134c551f8928418d92b851a"
+                  },
+                  {
+                      "path":  "runtime/conf/security/policy/unlimited/default_US_export.policy",
+                      "bytes":  146,
+                      "sha256":  "758b930a526fc670ab7537f8c26321527050a31f5f42149a2dda623c56a0a1a9"
+                  },
+                  {
+                      "path":  "runtime/conf/sound.properties",
+                      "bytes":  1210,
+                      "sha256":  "299c2360b6155eb28990ec49cd21753f97e43442fe8fab03e04f3e213df43a66"
+                  },
+                  {
+                      "path":  "runtime/legal/java.base/ADDITIONAL_LICENSE_INFO",
+                      "bytes":  2114,
+                      "sha256":  "a69bce275ba7a3570af6579cb0f55682cd75fedfcd49e0e8e9022270c447c916"
+                  },
+                  {
+                      "path":  "runtime/legal/java.base/aes.md",
+                      "bytes":  1444,
+                      "sha256":  "45c6d4da48325edfbff3dcf71c704e504c057904435ed23c6d57046d551eb69d"
+                  },
+                  {
+                      "path":  "runtime/legal/java.base/asm.md",
+                      "bytes":  1584,
+                      "sha256":  "1ff912740e84e024711def5fa482ffbb46eff64559760c467352dfa7c39a3307"
+                  },
+                  {
+                      "path":  "runtime/legal/java.base/ASSEMBLY_EXCEPTION",
+                      "bytes":  1522,
+                      "sha256":  "a44eb7b5caf5534c6ef536b21edb40b4d6babf91bf97d9d45596868618b2c6fb"
+                  },
+                  {
+                      "path":  "runtime/legal/java.base/cldr.md",
+                      "bytes":  9130,
+                      "sha256":  "f2bd33ded550a05d59e8f659416ef382490504548d846e6388b1dffd273aa077"
+                  },
+                  {
+                      "path":  "runtime/legal/java.base/c-libutl.md",
+                      "bytes":  1556,
+                      "sha256":  "bef40679922d6fdfb7e4ddb223ad6722300f6054ba737bbf6188d60fcec517f9"
+                  },
+                  {
+                      "path":  "runtime/legal/java.base/icu.md",
+                      "bytes":  11086,
+                      "sha256":  "af0057e8553906083f69c2fb9fe9ed4ae8bc2340a0b1e376a424702f00300b29"
+                  },
+                  {
+                      "path":  "runtime/legal/java.base/LICENSE",
+                      "bytes":  19274,
+                      "sha256":  "4b9abebc4338048a7c2dc184e9f800deb349366bdf28eb23c2677a77b4c87726"
+                  },
+                  {
+                      "path":  "runtime/legal/java.base/public_suffix.md",
+                      "bytes":  17785,
+                      "sha256":  "e7705b408e894e91c93968640773b1532cd9927f8a7f178020aa3c3f38c8b363"
+                  },
+                  {
+                      "path":  "runtime/legal/java.base/siphash.md",
+                      "bytes":  8256,
+                      "sha256":  "5a792b5a74ad2a5f3d6a7ad8b7a841116e58a772c18bc6e392320a365b222c76"
+                  },
+                  {
+                      "path":  "runtime/legal/java.base/unicode.md",
+                      "bytes":  2384,
+                      "sha256":  "5e4e6623a21a63f9bc16ea54af4133b8038e490c0d499a74676f9e5a61b9c5b2"
+                  },
+                  {
+                      "path":  "runtime/legal/java.base/wepoll.md",
+                      "bytes":  1454,
+                      "sha256":  "3ac2992770080453b98c42afa807ba4b2c1738ef756b92a55c645f55e7df48f0"
+                  },
+                  {
+                      "path":  "runtime/legal/java.base/zlib.md",
+                      "bytes":  1010,
+                      "sha256":  "c9c70c36a1f0325e8788771906202d42ba6ab4205caca44ec0f665707e83226b"
+                  },
+                  {
+                      "path":  "runtime/legal/java.datatransfer/ADDITIONAL_LICENSE_INFO",
+                      "bytes":  49,
+                      "sha256":  "ebf9777bd307ed789ceabf282a9aca168c391c7f48e15a60939352efb3ea33f9"
+                  },
+                  {
+                      "path":  "runtime/legal/java.datatransfer/ASSEMBLY_EXCEPTION",
+                      "bytes":  44,
+                      "sha256":  "b998cda101e5a1ebcfb5ff9cddd76ed43a2f2169676592d428b7c0d780665f2a"
+                  },
+                  {
+                      "path":  "runtime/legal/java.datatransfer/LICENSE",
+                      "bytes":  33,
+                      "sha256":  "86e0516b888276a492b19f9a84f5a866ed36925fae1510b3a94a0b6213e69192"
+                  },
+                  {
+                      "path":  "runtime/legal/java.desktop/ADDITIONAL_LICENSE_INFO",
+                      "bytes":  49,
+                      "sha256":  "ebf9777bd307ed789ceabf282a9aca168c391c7f48e15a60939352efb3ea33f9"
+                  },
+                  {
+                      "path":  "runtime/legal/java.desktop/ASSEMBLY_EXCEPTION",
+                      "bytes":  44,
+                      "sha256":  "b998cda101e5a1ebcfb5ff9cddd76ed43a2f2169676592d428b7c0d780665f2a"
+                  },
+                  {
+                      "path":  "runtime/legal/java.desktop/colorimaging.md",
+                      "bytes":  167,
+                      "sha256":  "04d61e3e8e71dd452ebe52008af5378d9f6640d14578aeb515dc5375973b0189"
+                  },
+                  {
+                      "path":  "runtime/legal/java.desktop/freetype.md",
+                      "bytes":  30465,
+                      "sha256":  "553e804baecb7de7129d77c7259a6b70037d1893f1c600b41b35201695fb7758"
+                  },
+                  {
+                      "path":  "runtime/legal/java.desktop/giflib.md",
+                      "bytes":  1689,
+                      "sha256":  "206aab89ec75968e48a6a1ed6df7d8b9bfb7aea12cbe4c9345d93e5d97460a25"
+                  },
+                  {
+                      "path":  "runtime/legal/java.desktop/harfbuzz.md",
+                      "bytes":  3629,
+                      "sha256":  "5ec7cba7f8e7fc3a089213140aab6fa1b3bd5bf8a91bf8bddb3b8d315fc5f7d0"
+                  },
+                  {
+                      "path":  "runtime/legal/java.desktop/jpeg.md",
+                      "bytes":  3475,
+                      "sha256":  "580be596216ee11e2554b24ce944973acaede2ebf5ffba34a6bd8cc441c05043"
+                  },
+                  {
+                      "path":  "runtime/legal/java.desktop/lcms.md",
+                      "bytes":  2654,
+                      "sha256":  "843f9f6fa9c3f8109fcf4d5fe74caf7f2ae8e9bcd92238e4aff2d428c932b24b"
+                  },
+                  {
+                      "path":  "runtime/legal/java.desktop/libpng.md",
+                      "bytes":  7519,
+                      "sha256":  "f73afb394792f3aeecd959e89487603677a430e56b44eba596d8b572accfd540"
+                  },
+                  {
+                      "path":  "runtime/legal/java.desktop/LICENSE",
+                      "bytes":  33,
+                      "sha256":  "86e0516b888276a492b19f9a84f5a866ed36925fae1510b3a94a0b6213e69192"
+                  },
+                  {
+                      "path":  "runtime/legal/java.desktop/mesa3d.md",
+                      "bytes":  5732,
+                      "sha256":  "63f4e6f75caebbccb95d903fb43e46ac7111b3624d0a34f146b276d7d9e7b152"
+                  },
+                  {
+                      "path":  "runtime/legal/java.prefs/ADDITIONAL_LICENSE_INFO",
+                      "bytes":  49,
+                      "sha256":  "ebf9777bd307ed789ceabf282a9aca168c391c7f48e15a60939352efb3ea33f9"
+                  },
+                  {
+                      "path":  "runtime/legal/java.prefs/ASSEMBLY_EXCEPTION",
+                      "bytes":  44,
+                      "sha256":  "b998cda101e5a1ebcfb5ff9cddd76ed43a2f2169676592d428b7c0d780665f2a"
+                  },
+                  {
+                      "path":  "runtime/legal/java.prefs/LICENSE",
+                      "bytes":  33,
+                      "sha256":  "86e0516b888276a492b19f9a84f5a866ed36925fae1510b3a94a0b6213e69192"
+                  },
+                  {
+                      "path":  "runtime/legal/java.xml/ADDITIONAL_LICENSE_INFO",
+                      "bytes":  49,
+                      "sha256":  "ebf9777bd307ed789ceabf282a9aca168c391c7f48e15a60939352efb3ea33f9"
+                  },
+                  {
+                      "path":  "runtime/legal/java.xml/ASSEMBLY_EXCEPTION",
+                      "bytes":  44,
+                      "sha256":  "b998cda101e5a1ebcfb5ff9cddd76ed43a2f2169676592d428b7c0d780665f2a"
+                  },
+                  {
+                      "path":  "runtime/legal/java.xml/bcel.md",
+                      "bytes":  11196,
+                      "sha256":  "cd578186ad93de46cca29ec8ace2b11f9da751987f3f140e6095c528596cc8c1"
+                  },
+                  {
+                      "path":  "runtime/legal/java.xml/dom.md",
+                      "bytes":  3761,
+                      "sha256":  "6686e8877667584a3a7c07344baadca1a03e29f677162d87c3c0811e990d1148"
+                  },
+                  {
+                      "path":  "runtime/legal/java.xml/jcup.md",
+                      "bytes":  1448,
+                      "sha256":  "8d5dcfdf50455a3c34c753a98f21e953248af200415a9084e3f102cb6c43b8bf"
+                  },
+                  {
+                      "path":  "runtime/legal/java.xml/LICENSE",
+                      "bytes":  33,
+                      "sha256":  "86e0516b888276a492b19f9a84f5a866ed36925fae1510b3a94a0b6213e69192"
+                  },
+                  {
+                      "path":  "runtime/legal/java.xml/xalan.md",
+                      "bytes":  13494,
+                      "sha256":  "ea67226be5cfe19c7e79725c2c24a16676323264d69f9747c528de0b44541b03"
+                  },
+                  {
+                      "path":  "runtime/legal/java.xml/xerces.md",
+                      "bytes":  11852,
+                      "sha256":  "472224f99de833f4f4c19f2f8a0317f22114e1c641f5d77ffa3a4280a1b80176"
+                  },
+                  {
+                      "path":  "runtime/legal/jdk.random/ADDITIONAL_LICENSE_INFO",
+                      "bytes":  49,
+                      "sha256":  "ebf9777bd307ed789ceabf282a9aca168c391c7f48e15a60939352efb3ea33f9"
+                  },
+                  {
+                      "path":  "runtime/legal/jdk.random/ASSEMBLY_EXCEPTION",
+                      "bytes":  44,
+                      "sha256":  "b998cda101e5a1ebcfb5ff9cddd76ed43a2f2169676592d428b7c0d780665f2a"
+                  },
+                  {
+                      "path":  "runtime/legal/jdk.random/LICENSE",
+                      "bytes":  33,
+                      "sha256":  "86e0516b888276a492b19f9a84f5a866ed36925fae1510b3a94a0b6213e69192"
+                  },
+                  {
+                      "path":  "runtime/lib/classlist",
+                      "bytes":  72950,
+                      "sha256":  "5e70bc24a91a857eb0d01eefe04a9a2d4726010a89046d972b37378336ea046d"
+                  },
+                  {
+                      "path":  "runtime/lib/fontconfig.bfc",
+                      "bytes":  4630,
+                      "sha256":  "968ac99bbaaf8a49a474c934e73ad58f88c6c7f2a363cb44771e0378444e36ba"
+                  },
+                  {
+                      "path":  "runtime/lib/fontconfig.properties.src",
+                      "bytes":  12345,
+                      "sha256":  "b44540473b97364e0f7a8a0002dd21d7a0717028fa1533f139bc98f40c91c0f0"
+                  },
+                  {
+                      "path":  "runtime/lib/jawt.lib",
+                      "bytes":  1682,
+                      "sha256":  "af64af138d14b9fd0849d7f66ad6b529a4e5ec9c25476557bf6b3d65a8ac6884"
+                  },
+                  {
+                      "path":  "runtime/lib/jrt-fs.jar",
+                      "bytes":  110515,
+                      "sha256":  "c0ca05b7af856766e6bd6bd8af6155b7066e5bc38b6c5398be435c0d57144cd1"
+                  },
+                  {
+                      "path":  "runtime/lib/jvm.cfg",
+                      "bytes":  29,
+                      "sha256":  "aa9efb969444c1484e29adecab55a122458090616e766b2f1230ef05bc3867e0"
+                  },
+                  {
+                      "path":  "runtime/lib/jvm.lib",
+                      "bytes":  1040306,
+                      "sha256":  "78d6360d8daef6bbffb3c0c4b62fb9e3d21d529de1101d167f5d533843edf321"
+                  },
+                  {
+                      "path":  "runtime/lib/modules",
+                      "bytes":  20848304,
+                      "sha256":  "28c295190c631f0d436db8b0cde2ac73ae28055e48cef763fd172f659e6f2ffb"
+                  },
+                  {
+                      "path":  "runtime/lib/psfont.properties.ja",
+                      "bytes":  3793,
+                      "sha256":  "5a4bd51b969bf187ff86d94f4a71fdfbfa602762975fa3c73d264b4575f7c78f"
+                  },
+                  {
+                      "path":  "runtime/lib/psfontj2d.properties",
+                      "bytes":  11390,
+                      "sha256":  "780c565d5af3ee6f68b887b75c041cdf46a0592f67012f12eeb691283e92630a"
+                  },
+                  {
+                      "path":  "runtime/lib/security/blocked.certs",
+                      "bytes":  2527,
+                      "sha256":  "583500b76965eb54b03493372989ab4d3426f85462d1db232c5ae6706a4d6c58"
+                  },
+                  {
+                      "path":  "runtime/lib/security/cacerts",
+                      "bytes":  137281,
+                      "sha256":  "229eba133aba1e538de07e695155d1c3443059d298d3a1de02d7818887ff9043"
+                  },
+                  {
+                      "path":  "runtime/lib/security/default.policy",
+                      "bytes":  10936,
+                      "sha256":  "f6340c1f4084d6927dc6491d9a1747e5d9b761f9f8158c0e36cb4d3ce519fcda"
+                  },
+                  {
+                      "path":  "runtime/lib/security/public_suffix_list.dat",
+                      "bytes":  229254,
+                      "sha256":  "37e71e43c8605f29b9072f152d0ea4708735cdf335a5b68b2bc2f875760806c3"
+                  },
+                  {
+                      "path":  "runtime/lib/tzdb.dat",
+                      "bytes":  102956,
+                      "sha256":  "5906b44e25a8a730131d7ba1beb5d15af27043f6536f1a169ca8a5d8b8bed8f8"
+                  },
+                  {
+                      "path":  "runtime/lib/tzmappings",
+                      "bytes":  22143,
+                      "sha256":  "36dc51c4bf787f640a4b45cbb84ab6954f6e595cbd3617c2f5a4e1e607b38bff"
+                  },
+                  {
+                      "path":  "runtime/release",
+                      "bytes":  109,
+                      "sha256":  "daa05444fe06873328cce82a5a6981db4195848e2a587ad90fb1daea01aa162d"
+                  },
+                  {
+                      "path":  "SpiritGateSkills.exe",
+                      "bytes":  449024,
+                      "sha256":  "5c3f9ed904f4c1478de735b90a5b746dff04645df8f24251abaec187f3547ed1"
+                  },
+                  {
+                      "path":  "Verificar-Pacote.cmd",
+                      "bytes":  265,
+                      "sha256":  "883621be1e779f58649ab6dd7f84cac717bf53f94f6a1abe8964068dd24c3510"
+                  }
+              ]
+}

@@ -1,0 +1,207 @@
+{
+  "clip_count": 18,
+  "frame_count": 170,
+  "empty_frames": 0,
+  "grid_failures": 0,
+  "warnings": [],
+  "clips": [
+    {
+      "id": "water_3",
+      "frames": 9,
+      "nonempty_frames": 9,
+      "edge_pixels": 0,
+      "grid_valid": true,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "water_4",
+      "frames": 9,
+      "nonempty_frames": 9,
+      "edge_pixels": 0,
+      "grid_valid": true,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "water_5",
+      "frames": 9,
+      "nonempty_frames": 9,
+      "edge_pixels": 0,
+      "grid_valid": true,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "thunder_1",
+      "frames": 6,
+      "nonempty_frames": 6,
+      "edge_pixels": 0,
+      "grid_valid": true,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "thunder_2",
+      "frames": 9,
+      "nonempty_frames": 9,
+      "edge_pixels": 0,
+      "grid_valid": true,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "thunder_3",
+      "frames": 6,
+      "nonempty_frames": 6,
+      "edge_pixels": 0,
+      "grid_valid": true,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "thunder_4",
+      "frames": 9,
+      "nonempty_frames": 9,
+      "edge_pixels": 0,
+      "grid_valid": true,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "thunder_5",
+      "frames": 9,
+      "nonempty_frames": 9,
+      "edge_pixels": 0,
+      "grid_valid": true,
+      "alpha_extrema": [
+        0,
+        254
+      ]
+    },
+    {
+      "id": "fire_2",
+      "frames": 9,
+      "nonempty_frames": 9,
+      "edge_pixels": 0,
+      "grid_valid": true,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "fire_2.travel",
+      "frames": 9,
+      "nonempty_frames": 9,
+      "edge_pixels": 0,
+      "grid_valid": true,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "fire_4",
+      "frames": 16,
+      "nonempty_frames": 16,
+      "edge_pixels": 0,
+      "grid_valid": true,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "fire_4.travel",
+      "frames": 9,
+      "nonempty_frames": 9,
+      "edge_pixels": 0,
+      "grid_valid": true,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "fire_4.ground",
+      "frames": 9,
+      "nonempty_frames": 9,
+      "edge_pixels": 0,
+      "grid_valid": true,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "fire_4.impact",
+      "frames": 16,
+      "nonempty_frames": 16,
+      "edge_pixels": 0,
+      "grid_valid": true,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "aetheri_4",
+      "frames": 9,
+      "nonempty_frames": 9,
+      "edge_pixels": 0,
+      "grid_valid": true,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "aetheri_5",
+      "frames": 9,
+      "nonempty_frames": 9,
+      "edge_pixels": 0,
+      "grid_valid": true,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "aetheri_5.travel",
+      "frames": 9,
+      "nonempty_frames": 9,
+      "edge_pixels": 0,
+      "grid_valid": true,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    },
+    {
+      "id": "martial_3",
+      "frames": 9,
+      "nonempty_frames": 9,
+      "edge_pixels": 0,
+      "grid_valid": true,
+      "alpha_extrema": [
+        0,
+        255
+      ]
+    }
+  ]
+}

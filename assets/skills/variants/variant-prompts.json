@@ -1,0 +1,70 @@
+{
+  "route": "image_gen",
+  "model": null,
+  "estimateUsd": null,
+  "jobs": [
+    {
+      "family": "wind",
+      "target": "C:\\Users\\lucas\\Downloads\\animations\\253.png",
+      "grid": [
+        3,
+        3
+      ],
+      "prompt": "Use case: precise-object-edit. Edit the supplied transparent game-effect spritesheet. Preserve exactly the grid, number of cells, row-major frame order, each pose and its animation phase, registration and transparent spacing. Make a small art variant for Spirit Gate, retaining the original crisp raster/pixel effect style. Change only the colors and a few small tips/particles described below. Do not add text, borders, backgrounds, opaque shadows, characters or extra frames. True transparent alpha background is essential. Keep each effect entirely within its own cell with clear transparent gutters. Grid is exactly 3 columns by 3 rows, nine wind-slash frames. Keep their existing sizes and crescent orientations. Shift the silver-gray wind to pale cool silver with subtle mint edges and a white core; slightly split two outer gust tips and move a few small droplets so the resulting sheet is recognizably related but distinct. Match the original 2:1 overall aspect ratio."
+    },
+    {
+      "family": "thunder",
+      "target": "C:\\Users\\lucas\\Downloads\\animations\\96.png",
+      "grid": [
+        6,
+        1
+      ],
+      "prompt": "Use case: precise-object-edit. Edit the supplied transparent game-effect spritesheet. Preserve exactly the grid, number of cells, row-major frame order, each pose and its animation phase, registration and transparent spacing. Make a small art variant for Spirit Gate, retaining the original crisp raster/pixel effect style. Change only the colors and a few small tips/particles described below. Do not add text, borders, backgrounds, opaque shadows, characters or extra frames. True transparent alpha background is essential. Keep each effect entirely within its own cell with clear transparent gutters. Grid is exactly 6 columns by 1 row, six narrow vertical lightning stages. Keep the height and progression of every bolt, including the fragmented final phases. Change pale blue lightning to bright icy white with electric violet-blue outlines and a few tiny angular side forks. Keep six equally spaced narrow cells, in the same order. Overall image has approximately square aspect ratio."
+    },
+    {
+      "family": "fire",
+      "target": "C:\\Users\\lucas\\Downloads\\animations\\252.png",
+      "grid": [
+        3,
+        3
+      ],
+      "prompt": "Use case: precise-object-edit. Edit the supplied transparent game-effect spritesheet. Preserve exactly the grid, number of cells, row-major frame order, each pose and its animation phase, registration and transparent spacing. Make a small art variant for Spirit Gate, retaining the original crisp raster/pixel effect style. Change only the colors and a few small tips/particles described below. Do not add text, borders, backgrounds, opaque shadows, characters or extra frames. True transparent alpha background is essential. Keep each effect entirely within its own cell with clear transparent gutters. Grid is exactly 3 columns by 3 rows, nine fire-slash crescent frames. Preserve every crescent orientation and dissipating final stages. Shift the original yellow-orange to a pale yellow hot core, stronger coral-orange flame bodies and a thin deeper crimson outer fringe. Slightly reshape two flame tips and a few small detached sparks. Match the original 2:1 overall aspect ratio."
+    },
+    {
+      "family": "spirit",
+      "target": "C:\\Users\\lucas\\Downloads\\animations\\175.png",
+      "grid": [
+        4,
+        3
+      ],
+      "prompt": "Use case: precise-object-edit. Edit the supplied transparent game-effect spritesheet. Preserve exactly the grid, number of cells, row-major frame order, each pose and its animation phase, registration and transparent spacing. Make a small art variant for Spirit Gate, retaining the original crisp raster/pixel effect style. Change only the colors and a few small tips/particles described below. Do not add text, borders, backgrounds, opaque shadows, characters or extra frames. True transparent alpha background is essential. Keep each effect entirely within its own cell with clear transparent gutters. Grid is exactly 4 columns by 3 rows, twelve expanding web/star glyph frames. Keep the same web-like restraint symbol, its center, expansion, white highlight climax and fading final phases. Shift cyan-blue to amethyst and lavender with pale lilac highlights. Alter only a few small crossing threads and tiny outer knot tips, maintaining the readable web. Overall aspect ratio 4:3."
+    },
+    {
+      "family": "aetheri",
+      "target": "C:\\Users\\lucas\\Documents\\GitHub\\Projeto-K\\assets\\skills\\variants\\aetheri-arrow-edit-target-v1.png",
+      "grid": [
+        2,
+        3
+      ],
+      "prompt": "Use case: precise-object-edit. Edit the supplied transparent game-effect spritesheet. Preserve exactly the grid, number of cells, row-major frame order, each pose and its animation phase, registration and transparent spacing. Make a small art variant for Spirit Gate, retaining the original crisp raster/pixel effect style. Change only the colors and a few small tips/particles described below. Do not add text, borders, backgrounds, opaque shadows, characters or extra frames. True transparent alpha background is essential. Keep each effect entirely within its own cell with clear transparent gutters. Grid is exactly 2 columns by 3 rows, six horizontal right-facing arrow projectiles. The first frame is small and each next frame has a progressively longer trail. Keep all six lengths and all rightward arrowheads, no reordering or left-facing arrows. Change gray arrowheads to warm bronze-gold and subdued pale golden shaft trails; refine the tip into a slightly more angular arrowhead, only small design changes. Keep high contrast for visibility at small game size, no bloom. Match the reference's 2:1 overall aspect ratio. No drawn bows."
+    },
+    {
+      "family": "light",
+      "target": "C:\\Users\\lucas\\Downloads\\animations\\109.png",
+      "grid": [
+        4,
+        4
+      ],
+      "prompt": "Use case: precise-object-edit. Edit the supplied transparent game-effect spritesheet. Preserve exactly the grid, number of cells, row-major frame order, each pose and its animation phase, registration and transparent spacing. Make a small art variant for Spirit Gate, retaining the original crisp raster/pixel effect style. Change only the colors and a few small tips/particles described below. Do not add text, borders, backgrounds, opaque shadows, characters or extra frames. True transparent alpha background is essential. Keep each effect entirely within its own cell with clear transparent gutters. Grid is exactly 4 columns by 4 rows. Preserve the starburst-to-pillar magic sequence: the reference has an intentionally almost empty middle band and its bottom row has four vertical light-beam frames. Do not fill the deliberately empty cells. Change cyan-blue to warm ivory-white cores with thin pale-gold edges. Slightly reshape a few outer star points and beam-top rays; keep the same overall shapes, sequence, spacing and scale. Overall aspect ratio 2:3 portrait."
+    },
+    {
+      "family": "martial",
+      "target": "C:\\Users\\lucas\\Downloads\\animations\\6.png",
+      "grid": [
+        3,
+        1
+      ],
+      "prompt": "Use case: precise-object-edit. Edit the supplied transparent game-effect spritesheet. Preserve exactly the grid, number of cells, row-major frame order, each pose and its animation phase, registration and transparent spacing. Make a small art variant for Spirit Gate, retaining the original crisp raster/pixel effect style. Change only the colors and a few small tips/particles described below. Do not add text, borders, backgrounds, opaque shadows, characters or extra frames. True transparent alpha background is essential. Keep each effect entirely within its own cell with clear transparent gutters. Grid is exactly 3 columns by 1 row, three growing punch-impact flashes. Keep the small-to-large progression and circular shock impact silhouette. Change the pale yellow core to ivory-gold with a subtle warmer amber outer edge; slightly change the angle and length of a few outer burst rays. The effect should read as a physical punch shock, not fire or an explosion. Match the reference's 3:1 overall aspect ratio."
+    }
+  ]
+}

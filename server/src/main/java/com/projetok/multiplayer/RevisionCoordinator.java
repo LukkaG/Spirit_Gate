@@ -46,6 +46,12 @@ public final class RevisionCoordinator implements PublicationTarget {
     }
     public RevisionCoordinator(RpgSessionWorld world,LiveRevision initial,AssetCatalog.Result assets){this.assets=assets;this.world=world;activeContent=initial;try{published=!initial.hash().equals(WorldContent.baseline().hash());}catch(Exception e){throw new IllegalStateException(e);}status=new Status(Phase.IDLE,initial.hash(),"",Map.of(),"Pronto",0,0);}
     public Status status(){return status;}
+    /** Capacidade local do anfitrião; esta operação não existe no protocolo de clientes. */
+    public CompletableFuture<PreviewServer.Ack> visitEditorMap(int player,String mapId){return submit(()->{
+        if(transaction!=null)throw new IllegalStateException("Aguarde a aplicação da edição");
+        var map=activeContent.bundle().maps().get(mapId);if(map==null)throw new IllegalArgumentException("Mapa fora da partida");
+        return ack(world.visitEditorRegion(player,map.region()),"Visita ao mapa de edição");
+    });}
     public String activeHash(){return status.hash();}
     public String compatibility(){return "rpg-content-application-4/v1";}
     private PreviewServer.Ack ack(boolean accepted,String message){return new PreviewServer.Ack(accepted,world.capture().content().number(),world.contentHash(),message,0,0);}
@@ -57,7 +63,7 @@ public final class RevisionCoordinator implements PublicationTarget {
         try{bytes=WorldContent.encode(next);safe=WorldContent.decode(bytes,assets);}catch(Exception e){f.completeExceptionally(e);return f;}
         queue(()->{try{
             if(transaction!=null||!world.contentHash().equals(expected)||safe.number()<=world.capture().content().number())throw new IllegalStateException("Revisao base divergente ou publicacao concorrente");
-            for(var entry:clients.entrySet())if(entry.getValue().application!=4||!entry.getValue().state.equals("ACTIVE"))throw new IllegalStateException("Cliente "+entry.getKey()+" desatualizado ou ainda nao preparado");
+            for(var entry:clients.entrySet())if(!Protocol.supportsContentApplication(entry.getValue().application)||!entry.getValue().state.equals("ACTIVE"))throw new IllegalStateException("Cliente "+entry.getKey()+" desatualizado ou ainda nao preparado");
             long start=System.nanoTime();world.freeze(true);var candidate=world.prepareRevision(safe);var tx=new Tx(++sequence,safe,world.capture(),candidate,f,timeout);transaction=tx;tx.payloadBefore=payloadBytes;tx.wireBefore=wireBytes;
             for(var client:clients.values())offer(client,tx.id,safe.hash(),bytes,false);
             status=new Status(Phase.WAITING_CLIENTS,world.contentHash(),safe.hash(),Map.of(),"Preparando clientes",System.nanoTime()-start,start);
@@ -76,9 +82,9 @@ public final class RevisionCoordinator implements PublicationTarget {
     private void control(Client c,Protocol.ContentKind kind,long id,String hash){if(c.controls.size()>=12){c.kick=true;return;}c.controls.add(new Protocol.Content(kind,id,hash,0,new byte[0]));}
     private void offer(Client c,long id,String hash,byte[] bytes,boolean initial){c.transfer=bytes;c.offset=0;c.end=false;c.tx=id;c.hash=hash;c.state="PREPARING";c.initial=initial;c.deadline=System.nanoTime()+timeout;c.controls.clear();c.controls.add(new Protocol.Content(Protocol.ContentKind.BEGIN,id,hash,bytes.length,(initial?"":world.contentHash()).getBytes(java.nio.charset.StandardCharsets.UTF_8)));}
     public boolean admit(int id,int application){
-        if(closed||transaction!=null||published&&application!=4)return false;
+        if(closed||transaction!=null||published&&!Protocol.supportsContentApplication(application))return false;
         var c=new Client(application);clients.put(id,c);
-        if(application==4)try{offer(c,++sequence,world.contentHash(),WorldContent.encode(world.capture().content()),true);world.freeze(true);}catch(Exception e){clients.remove(id);return false;}
+        if(Protocol.supportsContentApplication(application))try{offer(c,++sequence,world.contentHash(),WorldContent.encode(world.capture().content()),true);world.freeze(true);}catch(Exception e){clients.remove(id);return false;}
         return true;
     }
     public void depart(int id){if(clients.remove(id)==null)return;if(transaction!=null)recover("Cliente "+id+" desconectou durante publicacao");else world.freeze(clients.values().stream().anyMatch(c->c.initial));}
@@ -89,7 +95,7 @@ public final class RevisionCoordinator implements PublicationTarget {
     }
     private Protocol.Content count(Protocol.Content message){wireBytes+=86+message.data().length;if(message.kind()==Protocol.ContentKind.CHUNK)payloadBytes+=message.data().length;return message;}
     private void measure(Tx tx){long now=System.nanoTime();metrics=new Metrics(payloadBytes-tx.payloadBefore,wireBytes-tx.wireBefore,status.serverPrepareNanos(),(tx.readyAt==0?now:tx.readyAt)-tx.started,tx.activationStart==0?0:(tx.verifiedAt==0?now:tx.verifiedAt)-tx.activationStart,now-tx.started,tx.recoveryStart==0?0:now-tx.recoveryStart);}
-    public void ack(int id,Protocol.Content message){var c=clients.get(id);if(c==null||c.application!=4||c.tx!=message.transaction()||!Objects.equals(c.hash,message.hash())||message.data().length>240)return;
+    public void ack(int id,Protocol.Content message){var c=clients.get(id);if(c==null||!Protocol.supportsContentApplication(c.application)||c.tx!=message.transaction()||!Objects.equals(c.hash,message.hash())||message.data().length>240)return;
         if(message.kind()==Protocol.ContentKind.REJECT){if(c.initial){c.kick=true;return;}recover("Cliente "+id+" rejeitou: "+new String(message.data(),java.nio.charset.StandardCharsets.UTF_8));return;}
         if(message.kind()==Protocol.ContentKind.READY&&c.state.equals("PREPARING")&&c.end){c.state="READY";if(c.initial){c.state="ACTIVATING";control(c,Protocol.ContentKind.ACTIVATE,c.tx,c.hash);}}
         else if(message.kind()==Protocol.ContentKind.ACTIVE&&(c.state.equals("ACTIVATING")||c.state.equals("RECOVERING"))){c.state="ACTIVE";if(c.initial){c.initial=false;control(c,Protocol.ContentKind.RESUME,c.tx,c.hash);if(transaction==null)world.freeze(clients.values().stream().anyMatch(p->p.initial));}}

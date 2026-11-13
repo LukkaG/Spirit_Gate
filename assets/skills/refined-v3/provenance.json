@@ -1,0 +1,348 @@
+{
+  "art_source": "host_image",
+  "route": "image_gen",
+  "sources": {
+    "energy": {
+      "path": "assets/skills/refined-v3/art/energy-arrow-padded.png",
+      "columns": 3,
+      "rows": 3,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "references": [],
+      "art_source": "host_image",
+      "registration": "front_tip",
+      "sha256": "c6561d96deb44735edbf77fee363dd4be289b2249e886369486eeb377f06d1fa",
+      "size": [
+        1254,
+        1254
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          418,
+          418
+        ],
+        [
+          418,
+          0,
+          836,
+          418
+        ],
+        [
+          836,
+          0,
+          1254,
+          418
+        ],
+        [
+          0,
+          418,
+          418,
+          836
+        ],
+        [
+          418,
+          418,
+          836,
+          836
+        ],
+        [
+          836,
+          418,
+          1254,
+          836
+        ],
+        [
+          0,
+          836,
+          418,
+          1254
+        ],
+        [
+          418,
+          836,
+          836,
+          1254
+        ],
+        [
+          836,
+          836,
+          1254,
+          1254
+        ]
+      ],
+      "common_crop": [
+        114,
+        344,
+        429,
+        491
+      ],
+      "registered_anchor": [
+        304,
+        74
+      ],
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    },
+    "combo": {
+      "path": "assets/skills/refined-v3/art/martial-combo-alpha.png",
+      "columns": 3,
+      "rows": 3,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "references": [],
+      "art_source": "host_image",
+      "sha256": "ae50caa94d491e863034c42cd4096751c87f4b136cd350e382cb5769c5f95c74",
+      "size": [
+        1536,
+        1024
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          512,
+          341
+        ],
+        [
+          512,
+          0,
+          1024,
+          341
+        ],
+        [
+          1024,
+          0,
+          1536,
+          341
+        ],
+        [
+          0,
+          341,
+          512,
+          683
+        ],
+        [
+          512,
+          341,
+          1024,
+          683
+        ],
+        [
+          1024,
+          341,
+          1536,
+          683
+        ],
+        [
+          0,
+          683,
+          512,
+          1024
+        ],
+        [
+          512,
+          683,
+          1024,
+          1024
+        ],
+        [
+          1024,
+          683,
+          1536,
+          1024
+        ]
+      ],
+      "common_crop": [
+        33,
+        0,
+        502,
+        322
+      ],
+      "registered_anchor": null,
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    }
+  },
+  "clips": [
+    {
+      "id": "aetheri_1",
+      "source": "energy",
+      "mode": "single",
+      "metadata": {
+        "path": "assets/skills/refined-v3/aetheri_1.png",
+        "frameWidth": 256,
+        "frameHeight": 96,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 70,
+        "drawWidth": 96,
+        "drawHeight": 36,
+        "pivotX": 208,
+        "pivotY": 48
+      },
+      "sha256": "d106bfc1327217c394680b20fc0be8108bafe7dc1645fc26ca064ec4af1f8f2a"
+    },
+    {
+      "id": "aetheri_2",
+      "source": "energy",
+      "mode": "single",
+      "metadata": {
+        "path": "assets/skills/refined-v3/aetheri_2.png",
+        "frameWidth": 256,
+        "frameHeight": 96,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 70,
+        "drawWidth": 96,
+        "drawHeight": 36,
+        "pivotX": 208,
+        "pivotY": 48
+      },
+      "sha256": "d106bfc1327217c394680b20fc0be8108bafe7dc1645fc26ca064ec4af1f8f2a"
+    },
+    {
+      "id": "aetheri_3",
+      "source": "energy",
+      "mode": "rain",
+      "metadata": {
+        "path": "assets/skills/refined-v3/aetheri_3.png",
+        "frameWidth": 256,
+        "frameHeight": 256,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 70,
+        "drawWidth": 220,
+        "drawHeight": 220,
+        "pivotX": 128,
+        "pivotY": 128
+      },
+      "sha256": "22ddce4fea60e0e7a17dc07a3ff0fcae4450085eddd8702fe4a7172a76d066b2"
+    },
+    {
+      "id": "aetheri_4",
+      "source": "energy",
+      "mode": "single",
+      "metadata": {
+        "path": "assets/skills/refined-v3/aetheri_4.png",
+        "frameWidth": 256,
+        "frameHeight": 96,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 70,
+        "drawWidth": 240,
+        "drawHeight": 90,
+        "pivotX": 208,
+        "pivotY": 48
+      },
+      "sha256": "d106bfc1327217c394680b20fc0be8108bafe7dc1645fc26ca064ec4af1f8f2a"
+    },
+    {
+      "id": "aetheri_5",
+      "source": "energy",
+      "mode": "volley",
+      "metadata": {
+        "path": "assets/skills/refined-v3/aetheri_5.png",
+        "frameWidth": 256,
+        "frameHeight": 192,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 70,
+        "drawWidth": 224,
+        "drawHeight": 168,
+        "pivotX": 128,
+        "pivotY": 96
+      },
+      "sha256": "b72c5fea82de1018f12f5060211528bf8dfb3e9e27922116c9156bcb52dde3ad"
+    },
+    {
+      "id": "aetheri_5.travel",
+      "source": "energy",
+      "mode": "single",
+      "metadata": {
+        "path": "assets/skills/refined-v3/aetheri_5.travel.png",
+        "frameWidth": 256,
+        "frameHeight": 96,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 70,
+        "drawWidth": 72,
+        "drawHeight": 27,
+        "pivotX": 208,
+        "pivotY": 48
+      },
+      "sha256": "d106bfc1327217c394680b20fc0be8108bafe7dc1645fc26ca064ec4af1f8f2a"
+    },
+    {
+      "id": "martial_5",
+      "source": "combo",
+      "mode": "combo",
+      "metadata": {
+        "path": "assets/skills/refined-v3/martial_5.png",
+        "frameWidth": 320,
+        "frameHeight": 192,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 70,
+        "drawWidth": 220,
+        "drawHeight": 180,
+        "pivotX": 32,
+        "pivotY": 96
+      },
+      "sha256": "2abb0e8397000c8990257fed66c2affbfff1a713844f4392afdb7a093c749548"
+    }
+  ],
+  "packaging": "Recorte, registro de ponta, composicao e escala nearest; sem repintura ou recoloracao.",
+  "inherited_seismic": "assets/skills/refined-v2/martial_3.png; somente draw 320x320"
+}

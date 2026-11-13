@@ -4,6 +4,18 @@ import java.util.*;
 
 /** Ledger em memória de autoria; os objetivos são executados pelo QuestService real. */
 public final class AuthoredQuestSession {
+    /** Observa o ledger existente no owner; não atualiza objetivos nem entrega recompensas. */
+    QuestService.Ledger readLedger(CharacterReadContext context, RpgWorld world) {
+        context.requireWorld(world);
+        return service.readLedger(progress,flags,context,world);
+    }
+
+    /** Retorna o contrato imutável disponível; versão do livro não é revisão econômica. */
+    QuestBook readBook(CharacterReadContext context, RpgWorld world) {
+        context.requireWorld(world);
+        return book;
+    }
+
     private final QuestService service;
     private final QuestBook book;
     private final Map<String,QuestBook.Draft> drafts=new TreeMap<>();

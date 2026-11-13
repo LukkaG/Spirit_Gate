@@ -1,0 +1,64 @@
+{
+  "clips": 3,
+  "frames": 36,
+  "empty_frames": 0,
+  "edge_pixels": 0,
+  "upscaled_frames": 0,
+  "warnings": [],
+  "lifecycles": {
+    "fire_4": {
+      "opaque_pixels": [
+        1367,
+        4969,
+        8627,
+        18862,
+        48456,
+        46503,
+        27222,
+        18724,
+        8656,
+        2813,
+        1095,
+        742
+      ],
+      "first_peak_ratio": 0.0282,
+      "last_peak_ratio": 0.0153
+    },
+    "fire_3": {
+      "opaque_pixels": [
+        345,
+        2328,
+        7034,
+        16231,
+        28737,
+        35764,
+        32861,
+        17794,
+        10922,
+        3408,
+        474,
+        128
+      ],
+      "first_peak_ratio": 0.0096,
+      "last_peak_ratio": 0.0036
+    },
+    "water_4": {
+      "opaque_pixels": [
+        1141,
+        4760,
+        8800,
+        17015,
+        35450,
+        43766,
+        39282,
+        26277,
+        11763,
+        8775,
+        2931,
+        432
+      ],
+      "first_peak_ratio": 0.0261,
+      "last_peak_ratio": 0.0099
+    }
+  }
+}

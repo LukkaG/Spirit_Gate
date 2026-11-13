@@ -22,12 +22,14 @@ function Make-Feed([string]$Release,[string]$Payload){
 }
 Make-Feed 'v1' 'first'
 $feed=Join-Path $feedRoot 'latest.json'
+$firstManifest=[IO.File]::ReadAllBytes($feed)
 $current=Update-Installed $root $feed $true $null
 Assert-True ((Read-Installed $root 'active.txt').id -eq $current.id) 'Initial install and full verification'
 $data=Join-Path $root 'data/saves/characters';New-Item -ItemType Directory -Path $data -Force | Out-Null
 $save=Join-Path $data 'personal.properties';[IO.File]::WriteAllText($save,'do not modify');$saveHash=Hash-File $save
 $oldId=$current.id
 Make-Feed 'v2' 'second'
+$secondManifest=[IO.File]::ReadAllBytes($feed)
 # Deleting unchanged files from the source proves they are reused from the verified installation.
 [IO.File]::Delete((Join-Path $feedRoot 'v2/runtime/bin/java.exe'))
 [IO.File]::Delete((Join-Path $feedRoot 'v2/assets/dev/player-base/test.png'))
@@ -42,6 +44,27 @@ Make-Feed 'v3' 'third'
 Must-Reject {Update-Installed $root $feed $true $current} 'Wrong download hash rejected'
 Assert-True ((Read-Installed $root 'active.txt').id -eq $current.id) 'Failed update does not activate partial version'
 Assert-True (@(Get-ChildItem -LiteralPath (Join-Path $root 'staging')).Count -eq 0) 'Staging cleaned after failed download'
+$secondId=$current.id
+$secondJar=Join-Path $current.folder 'app/spirit-gate-rpg.jar'
+$secondJarBytes=[IO.File]::ReadAllBytes($secondJar)
+# Sem os payloads remotos da v1, um rollback so pode funcionar pela copia local validada.
+foreach($name in @('runtime/bin/java.exe','app/spirit-gate-rpg.jar','assets/dev/player-base/test.png')){[IO.File]::Delete((Join-Path $feedRoot ('v1/'+$name)))}
+[IO.File]::WriteAllBytes($feed,$firstManifest)
+$current=Update-Installed $root $feed $true $current
+Assert-True ($current.id -eq $oldId -and (Read-Installed $root 'active.txt').id -eq $oldId) 'Rollback reuses a previously installed verified version without downloads'
+Assert-True ((Read-Installed $root 'previous.txt').id -eq $secondId) 'Rollback retains the replaced active version as previous'
+Assert-True ((Hash-File $save) -eq $saveHash) 'Rollback preserves personal saves'
+[IO.File]::WriteAllBytes($feed,$secondManifest)
+[IO.File]::WriteAllText($secondJar,'tampered-version')
+Must-Reject {Update-Installed $root $feed $true $current} 'Corrupt previously installed version cannot be reactivated'
+Assert-True ((Read-Installed $root 'active.txt').id -eq $oldId) 'Rejected reactivation preserves active pointer'
+Assert-True ([IO.File]::ReadAllText($secondJar) -eq 'tampered-version') 'Rejected existing version is preserved rather than overwritten'
+[IO.File]::WriteAllBytes($secondJar,$secondJarBytes)
+$current=Update-Installed $root $feed $true $current
+Assert-True ($current.id -eq $secondId) 'A restored verified installed version can be reactivated'
+# O restante do ensaio continua exercitando o manifesto invalido da v3.
+Make-Feed 'v3-rejected' 'third'
+[IO.File]::WriteAllText((Join-Path $feedRoot 'v3-rejected/app/spirit-gate-rpg.jar'),'broken')
 $manifest=Get-Content -LiteralPath $feed -Raw | ConvertFrom-Json
 $original=$manifest.files[0].path
 foreach($bad in @('../outside','/absolute','data/saves/test','saves/test','CON.txt','app/../evil','app/space.','app\evil','installed-manifest.json')){

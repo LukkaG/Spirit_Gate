@@ -10,12 +10,24 @@ public final class LauncherSession {
     private static final java.util.Map<LocalSimulationServer,Managed> managed=java.util.Collections.synchronizedMap(new java.util.WeakHashMap<>());
     public static Managed managed(LocalSimulationServer server){if(Boolean.getBoolean("spiritgate.guest"))throw new IllegalStateException("Convidado nao recebe capacidade administrativa");var result=managed.get(server);if(result==null||!server.running())throw new IllegalStateException("Selecione servidor local gerenciado ativo");return result;}
     public static com.projetok.studio.WorldStudio openStudio(LocalSimulationServer server,java.nio.file.Path root){var selected=managed(server);var studio=new com.projetok.studio.WorldStudio(root);studio.authorizePublication(selected.target(),selected.store());studio.setVisible(true);return studio;}
+    /** Abre o editor no jogo somente para o dono do servidor gerenciado. */
+    public static void openStudioInGame(LocalSimulationServer server,java.nio.file.Path root,javax.swing.JFrame frame){
+        if(frame.getRootPane().getClientProperty("inGameMapEditor") instanceof com.projetok.studio.WorldStudio)return;
+        var selected=managed(server);var studio=new com.projetok.studio.WorldStudio(root);
+        try{studio.enterLiveGame(frame,selected.target(),selected.store());}catch(RuntimeException failure){studio.dispose();throw failure;}
+    }
     public static java.nio.file.Path revisionRoot(java.nio.file.Path root,int port){String data=System.getProperty("spiritgate.rpg.dataDir");return (data==null?root:java.nio.file.Path.of(data)).resolve("studio-projects/game-revisions-"+port);}
     public static LocalSimulationServer start(InetAddress address,int port,CosmeticCatalog catalog,java.nio.file.Path root)throws Exception {
+        return start(address,port,catalog,root,false);
+    }
+    public static LocalSimulationServer startExpanded(InetAddress address,int port,CosmeticCatalog catalog,java.nio.file.Path root)throws Exception {
+        return start(address,port,catalog,root,true);
+    }
+    private static LocalSimulationServer start(InetAddress address,int port,CosmeticCatalog catalog,java.nio.file.Path root,boolean expanded)throws Exception {
         if(Boolean.getBoolean("spiritgate.guest"))throw new IllegalStateException("Modo convidado nao hospeda/publica");
         var assets=com.projetok.studio.AssetCatalog.scan(root,null);var store=new com.projetok.studio.LivePublishing(revisionRoot(root,port));
         if(java.nio.file.Files.exists(store.root().resolve("pending.properties")))throw new IllegalStateException("Publicacao interrompida: recuperar journal antes de hospedar");
-        var initial=store.current().isEmpty()?com.projetok.studio.WorldContent.baseline():store.active(0,assets);
+        var initial=store.current().isEmpty()?(expanded?com.projetok.studio.CorujaoSevenWorld.initial(assets):com.projetok.studio.WorldContent.baseline()):store.active(0,assets);
         var world=new RpgSessionWorld(List.of("reaper","human"),catalog,true);world.enableRevisions(initial,assets);
         var server=address.isLoopbackAddress()?new LocalSimulationServer(address,port,world):LocalSimulationServer.radmin(address,port,world);
         try{server.start();managed.put(server,new Managed(world.revisions(),store,initial));return server;}catch(Exception e){server.close();throw e;}
@@ -25,9 +37,10 @@ public final class LauncherSession {
     }
     /** Explicit private host entry for local/VPN scripts; editor remains in this JVM. */
     public static void main(String[] args)throws Exception{
+        com.projetok.diagnostics.ErrorReports.install("servidor-gerenciado");
         java.nio.file.Path root=java.nio.file.Path.of(".");int port=54557;InetAddress address=InetAddress.getLoopbackAddress();
         for(int i=0;i<args.length;i++)switch(args[i]){case "--project"->root=java.nio.file.Path.of(args[++i]);case "--port"->port=Integer.parseInt(args[++i]);case "--bind"->address=InetAddress.getByName(args[++i]);default->throw new IllegalArgumentException("Uso: --project P --port N --bind IP");}
-        var project=root.toAbsolutePath();var server=start(address,port,CosmeticCatalog.load(project.resolve("assets/dev/generated/corujao-iv-v1")),project);Runtime.getRuntime().addShutdownHook(new Thread(server::close));
+        var project=root.toAbsolutePath();var server=startExpanded(address,port,CosmeticCatalog.load(project.resolve("assets/dev/generated/corujao-iv-v1")),project);Runtime.getRuntime().addShutdownHook(new Thread(server::close));
         javax.swing.SwingUtilities.invokeLater(()->{
             var frame=new javax.swing.JFrame("Spirit Gate | Servidor RPG V4 local gerenciado");var panel=new javax.swing.JPanel(new java.awt.BorderLayout());var state=new javax.swing.JTextArea(8,60);state.setEditable(false);state.setLineWrap(true);state.setWrapStyleWord(true);panel.add(state);
             var studio=new javax.swing.JButton("Autorizar World Studio neste servidor");panel.add(studio,java.awt.BorderLayout.SOUTH);studio.addActionListener(e->{if(javax.swing.JOptionPane.showConfirmDialog(frame,"Autorizar Studio local? Somente Salvar aplica conteudo.","Autorizar",javax.swing.JOptionPane.YES_NO_OPTION)==javax.swing.JOptionPane.YES_OPTION)openStudio(server,project);});

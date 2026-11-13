@@ -8,6 +8,46 @@ import java.util.List;
 
 /** Mundo offline: uma thread proprietaria, geometria compartilhada com a arena. */
 public final class RpgWorld {
+    // --- Observação interna: nenhuma concessão, inicialização tardia ou avanço ---
+
+    /** Copia o estado bruto no owner declarado; NaN conserva cadência ainda não inicializada. */
+    CharacterReadState readCharacterState(CharacterReadContext context) {
+        java.util.Objects.requireNonNull(context).requireWorld(this);
+        var position = body.getPosition();
+        return new CharacterReadState(identity, region, position.x(), position.y(), ticks, xp, domain,
+                manualStats, manualStatsEnabled, hp, stamina, energyRegenerationRemainder, maximumEnergy(),
+                inventory.capacity(), inventory.slots(), equipment, coins, attackReadyTick,
+                preciseAttackReady, abilityReadyTick, potionReadyTick, portalReadyTick,
+                new CharacterReadState.Restrictions(skillRootUntil, skillStunUntil, skillSlowUntil,
+                        skillSlowScale, evadeUntilTick, transitioning, skillDashing, skillSentry,
+                        skillIntangible, false),
+                questService.readLedger(quests, flags, context, this),
+                authoredQuests == null ? null : authoredQuests.readLedger(context, this),
+                authoredQuests == null ? null : authoredQuests.readBook(context, this));
+    }
+
+    private double energyRegenerationRemainder;
+    public int trainedEnergy(){return manualStatsEnabled?manualStats.energy():0;}
+    public int maximumEnergy(){return com.projetok.domain.combat.EnergyRules.maximum(trainedEnergy());}
+    public double energyRegenerationPerSecond(){return com.projetok.domain.combat.EnergyRules.regenerationPerSecond(trainedEnergy());}
+    /** O DTO legado conserva a faixa 0..1000, agora como fração da capacidade. */
+    public float normalizedEnergy(){return Math.max(0,Math.min(1000,stamina*1000f/maximumEnergy()));}
+    private double preciseAttackReady=Double.NaN;
+    private java.util.random.RandomGenerator evasionRandom=new java.util.Random();
+    public static final int BASIC_ATTACK_TICKS=12;
+    private int trainedAgility(){return manualStatsEnabled?manualStats.agility():0;}
+    public double basicDodgeChance(){return com.projetok.domain.combat.AttributeCombatRules.basicDodgeChance(trainedAgility());}
+    public double basicAttackInterval(){return com.projetok.domain.combat.AttributeCombatRules.basicInterval(BASIC_ATTACK_TICKS,trainedAgility());}
+    /** Fórmula reutilizável para técnicas; o executor da habilidade conserva suas validações. */
+    public int skillAttributeBonus(com.projetok.domain.combat.AttributeCombatRules.DamageKind kind){return manualStatsEnabled?com.projetok.domain.combat.AttributeCombatRules.damageBonus(kind,manualStats.strength(),manualStats.intelligence()):0;}
+    /** Fonte injetável no pacote para testes determinísticos do combate autoritativo. */
+    void evasionRandom(java.util.random.RandomGenerator source){evasionRandom=java.util.Objects.requireNonNull(source);}
+    private com.projetok.domain.entity.component.StatsComponent manualStats=new com.projetok.domain.entity.component.StatsComponent(0,0,0,1,0);
+    private boolean manualStatsEnabled;
+    /** Investimentos da sessão: mesmos pontos e operações do domínio, sem alterar saves pessoais. */
+    public com.projetok.domain.entity.component.StatsComponent manualAttributes(){if(!isSynthetic())throw new IllegalStateException("Atributos de sessão indisponíveis");manualStatsEnabled=true;var rules=new com.projetok.domain.progression.LevelingRules();while(manualStats.level()<level())manualStats=manualStats.applyLevelUp(rules.pointsForLevel(manualStats.level()+1),com.projetok.domain.race.AttributeGrowth.NONE);return manualStats;}
+    public boolean allocateAttribute(String id){if(!isSynthetic()||hp<=0||transitioning)return false;var stats=manualAttributes();if(stats.unspentPoints()==0)return false;var next=switch(id){case "strength"->stats.spendOnStrength();case "intelligence"->stats.spendOnIntelligence();case "agility"->stats.spendOnAgility();case "energy"->stats.spendOnEnergy();default->null;};if(next==null)return false;manualStats=next;message="Ponto de atributo distribuído";return true;}
+    private int manualAttackBonus(){return manualStatsEnabled?new com.projetok.domain.combat.style.UnarmedStrike().computeDamage(manualStats):0;}
     private float physicalRadius=18;
     private com.projetok.domain.movement.SessionCollisionProfile sessionProfile;
     private boolean contentFork;
@@ -26,9 +66,9 @@ public final class RpgWorld {
     public RpgWorld forkSyntheticRevision(RpgSceneSet next,com.projetok.domain.movement.SessionCollisionProfile profile){
         if(!isSynthetic()||scenes==null||!next.maps().containsKey(region))throw new IllegalStateException("Regiao ocupada removida ou sessao nao sintetica");
         var copy=new RpgWorld(identity,next);copy.configureSyntheticCollision(profile);copy.region=region;copy.space=copy.networkScenery(next.maps().get(region).space());copy.body.setPosition(body.getPosition());
-        copy.hp=hp;copy.xp=xp;copy.coins=coins;copy.ticks=ticks;copy.domain=domain;copy.stamina=stamina;copy.facingX=facingX;copy.facingY=facingY;
+        copy.hp=hp;copy.xp=xp;copy.coins=coins;copy.ticks=ticks;copy.domain=domain;copy.stamina=stamina;copy.energyRegenerationRemainder=energyRegenerationRemainder;copy.facingX=facingX;copy.facingY=facingY;copy.manualStats=manualStats;copy.manualStatsEnabled=manualStatsEnabled;
         copy.inventory.replace(InventoryService.restore(copy.items,20,inventory.snapshot()));copy.equipment.clear();copy.equipment.putAll(equipment);copy.quests.putAll(quests);copy.flags.clear();copy.flags.addAll(flags);
-        copy.abilityReadyTick=abilityReadyTick;copy.evadeUntilTick=evadeUntilTick;copy.attackReadyTick=attackReadyTick;copy.portalReadyTick=portalReadyTick;copy.potionReadyTick=potionReadyTick;
+        copy.abilityReadyTick=abilityReadyTick;copy.evadeUntilTick=evadeUntilTick;copy.attackReadyTick=attackReadyTick;copy.preciseAttackReady=preciseAttackReady;copy.evasionRandom=evasionRandom;copy.portalReadyTick=portalReadyTick;copy.potionReadyTick=potionReadyTick;
         copy.eventSequence=eventSequence;copy.events.addAll(events);if(authoredQuests!=null)copy.authoredQuests=authoredQuests.copy();copy.contentFork=true;
         if(!new CollisionService().isFree(copy.body,copy.body.getPosition().x(),copy.body.getPosition().y(),profile.actorRadius(),copy.space))throw new IllegalArgumentException("Revisao ocuparia um jogador");
         return copy;
@@ -57,6 +97,14 @@ public final class RpgWorld {
     private int stamina=1000;
     private long abilityReadyTick;
     private long evadeUntilTick;
+    // Estados das novas técnicas vivem somente na sessão; nenhum campo novo é persistido.
+    private long skillRootUntil,skillStunUntil,skillSlowUntil;
+    private float skillSlowScale=1;
+    private boolean skillDashing,skillSentry,skillIntangible;
+    /** Estado efêmero de combate; nunca é salvo ou aceito de um cliente. */
+    public boolean skillIntangible(){return isSynthetic()&&skillIntangible;}
+    /** Permite à população retirar somente o contato com mobs durante a investida frontal. */
+    public boolean skillInDash(){return isSynthetic()&&skillDashing;}
     private DomainProgression domain = DomainProgression.initial();
     private AuthoredQuestSession authoredQuests;
     /** Sessão autorada somente em memória, construída sem carregar um save pessoal. */
@@ -97,15 +145,37 @@ public final class RpgWorld {
             +"Pagamento e missao ainda indisponiveis; nivel, itens e equipamentos serao preservados.";
     }
     public boolean canShunpo() { return level()>=SHUNPO_LEVEL; }
+    public static final int SHUNPO_TARGET_RANGE=240;
+    /** Identidade transitória do spawn, usada apenas pelo combate de sessão. */
+    public record CombatTarget(int id,long generation,float x,float y) { }
+    public CombatTarget combatTarget(int id){if(!isSynthetic())return null;return enemies.current(region).stream().filter(e->e.getId()==id&&e.hp>0).map(e->new CombatTarget(id,e.generation,e.getPosition().x(),e.getPosition().y())).findFirst().orElse(null);}
+    private EnemyService.Enemy exactTarget(int id,long generation){return enemies.current(region).stream().filter(e->e.getId()==id&&e.generation==generation&&e.hp>0&&(!e.definition.id().equals("warden")||bossUnlocked())).findFirst().orElse(null);}
+    public Position combatFacing(){return new Position(facingX,facingY);}
+    /** Direção aceita pelo servidor, inclusive quando mover/parar chega no mesmo tick. */
+    public void faceSyntheticDirection(float x,float y){if(!isSynthetic()||!Float.isFinite(x)||!Float.isFinite(y)||Math.abs(x)>1||Math.abs(y)>1)throw new IllegalArgumentException("Direção de sessão inválida");var direction=movement.direction(x,y);if(direction.x()!=0||direction.y()!=0){facingX=direction.x();facingY=direction.y();}}
+    private void face(EnemyService.Enemy target){var p=body.getPosition();var direction=movement.direction(target.getPosition().x()-p.x(),target.getPosition().y()-p.y());if(direction.x()!=0||direction.y()!=0){facingX=direction.x();facingY=direction.y();}}
+    /** Ataque com alvo exato: vira mesmo fora do alcance, sem caminhar ou trocar de vítima. */
+    public boolean attackTarget(int id,long generation){if(!isSynthetic()||hp<=0||transitioning)return false;var target=exactTarget(id,generation);if(target==null)return false;face(target);if(distance(body.getPosition(),target.getPosition())>basicAttackRange()){message="Alvo fora do alcance do ataque básico";return false;}if(!targetLineClear(body.getPosition(),target.getPosition())){message="Alvo bloqueado por obstáculo";return false;}return strike(basicAttackRange(),attackPower(),false,id,generation);}
+    /** Traçado contínuo para alvos explícitos, incluindo paredes menores que a amostragem antiga. */
+    private boolean targetLineClear(Position a,Position b){var obstacles=scenes==null?space.obstacles():scenes.maps().get(region).space().obstacles();return new CollisionService().canTraverseSegment(body,a,b,1,new CollisionService.Space(space.width(),space.height(),obstacles,List.of()));}
     /** Shunpo ofensivo: aproxima de alvo visivel sem atravessar geometria. */
     public boolean castAbility() {
         if(!shunpoReady())return false;
         var position=body.getPosition();
         var target=enemies.current(region).stream().filter(e->e.hp>0
             &&(!e.definition.id().equals("warden")||bossUnlocked())
-            &&distance(position,e.getPosition())<=240&&lineClear(position,e.getPosition()))
+            &&distance(position,e.getPosition())<=SHUNPO_TARGET_RANGE&&lineClear(position,e.getPosition()))
             .min(java.util.Comparator.comparingDouble(e->distance(position,e.getPosition()))).orElse(null);
         if(target==null){message="Shunpo ofensivo exige um alvo visivel no alcance";return false;}
+        return shunpoTo(target);
+    }
+    /** Seleção explícita da sessão; nunca recorre ao inimigo mais próximo. */
+    public boolean castAbilityTarget(int id,long generation){if(!isSynthetic()||!shunpoReady())return false;var target=exactTarget(id,generation);if(target==null||distance(body.getPosition(),target.getPosition())>SHUNPO_TARGET_RANGE||!targetLineClear(body.getPosition(),target.getPosition())){message="Shunpo exige alvo válido, visível e a até "+SHUNPO_TARGET_RANGE;return false;}return shunpoTo(target);}
+    public static final int SHUNPO_FORWARD_DISTANCE=70;
+    /** Sem alvo, avança na direção atual usando o mesmo corpo e custo do Shunpo defensivo. */
+    public boolean castForwardAbility(){if(!isSynthetic()||!shunpoReady())return false;var before=body.getPosition();movement.moveContinuous(body,facingX*SHUNPO_FORWARD_DISTANCE,facingY*SHUNPO_FORWARD_DISTANCE,physicalRadius,space);if(distance(before,body.getPosition())<1){message="Avanço do Shunpo bloqueado";return false;}consumeShunpo();message="Shunpo ofensivo à frente";return true;}
+    private boolean shunpoTo(EnemyService.Enemy target){
+        var position=body.getPosition();
         var direction=movement.direction(position.x()-target.getPosition().x(),position.y()-target.getPosition().y());
         if(direction.x()==0&&direction.y()==0)direction=new Position(-facingX,-facingY);
         float x=target.getPosition().x()+direction.x()*42, y=target.getPosition().y()+direction.y()*42;
@@ -115,6 +185,7 @@ public final class RpgWorld {
         consumeShunpo();message="Shunpo ofensivo";return true;
     }
     private boolean shunpoReady() {
+        if(skillMovementBlocked()||skillDashing){message="Shunpo indisponível durante controle ou investida";return false;}
         if(!canShunpo()){message="Shunpo exige nivel 20 de personagem";return false;}
         if(hp<=0||transitioning){message="Shunpo indisponível neste estado";return false;}
         if(ticks<abilityReadyTick){message="Shunpo em recarga compartilhada";return false;}
@@ -137,10 +208,14 @@ public final class RpgWorld {
         if(hp>0) hp+=maxHp()-previous;
     }
     public void receiveDamage(int amount) { if(amount<0||amount>10000) throw new IllegalArgumentException("Dano invalido");
+        if(skillIntangible()){message="Intangível: golpe evitado.";return;}
         if(amount>0&&hp>0&&ticks<evadeUntilTick){message="Shunpo: esquiva!";return;}
         int before=hp;hp=Math.max(0,hp-amount);
+        if(hp==0&&isSynthetic()){skillClearControls();skillDashing(false);}
         if(before>hp)event(RpgCombatEvent.Kind.HIT,1,body.getPosition().x(),body.getPosition().y(),before-hp);
         if(before>0&&hp==0)event(RpgCombatEvent.Kind.KO,1,body.getPosition().x(),body.getPosition().y(),0); }
+    /** Apenas hits básicos consultam AGI; habilidades/ambiente usam receiveDamage. */
+    public boolean receiveBasicDamage(int amount){if(amount<0||amount>10000)throw new IllegalArgumentException("Dano inválido");if(amount>0&&hp>0&&ticks>=evadeUntilTick&&basicDodgeChance()>0&&evasionRandom.nextDouble()<basicDodgeChance()){message="Esquiva por agilidade!";return true;}receiveDamage(amount);return false;}
     public boolean use(String id) {
         ItemCatalog.Item item=items.get(id);
         if(item.category()!=ItemCatalog.Category.CONSUMABLE || hp==0 || hp==maxHp() || transitioning || ticks<potionReadyTick || inventory.count(id)==0) return false;
@@ -150,8 +225,16 @@ public final class RpgWorld {
         message=item.name()+": vida recuperada"; return true;
     }
     public InventoryService inventory() { return inventory; }
+    public java.util.Map<String,String> equippedItems(){return java.util.Map.copyOf(equipment);}
+    public record ProgressView(long xp,int level,long nextLevelXp,int attack,int defense,String domain) { }
+    public ProgressView progressView(){return new ProgressView(xp,level(),progression.cap()>0&&level()>=progression.cap()?xp:progression.threshold(level()+1),attackPower(),defense(),domain.domain());}
+    public record AbilityView(int attackTicks,int shunpoTicks,int potionTicks,int basicRange) { }
+    public AbilityView abilityView(){return new AbilityView(attackRemaining(),(int)Math.max(0,abilityReadyTick-ticks),(int)Math.max(0,potionReadyTick-ticks),basicAttackRange());}
+    public String networkMessage(){return message;}
+    /** Recarga confirmada, em ticks de 30 Hz; leitura não muda o combate. */
+    public int attackRemaining(){return (int)Math.max(0,attackReadyTick-ticks);}
     public boolean activate(String action){boolean accepted=switch(action){case "rpg.attack"->attack();case "rpg.unarmed"->punch();case "rpg.ability"->castAbility();case "rpg.secondary"->castSecondaryAbility();case "item.potion"->use("potion");default->throw new IllegalArgumentException("Acao de hotbar desconhecida");};if(!accepted)event(RpgCombatEvent.Kind.REJECT,1,body.getPosition().x(),body.getPosition().y(),0);return accepted;}
-    public int attackPower() { return identity.baseAttack()+(level()-1)*progression.attackPerLevel()+equipmentPower("weapon"); }
+    public int attackPower() { return identity.baseAttack()+(level()-1)*progression.attackPerLevel()+equipmentPower("weapon")+manualAttackBonus(); }
     public int defense() { return equipmentPower("torso")+equipmentPower("legs")+equipmentPower("accessory"); }
     private int equipmentPower(String slot) { return equipment.containsKey(slot)?items.get(equipment.get(slot)).power():0; }
     public boolean equip(String id) {
@@ -200,6 +283,15 @@ public final class RpgWorld {
         if(sharedEncounter==null)throw new IllegalStateException("Encontro ausente");
         if(authoredQuests!=null){authoredQuests.event("kill",enemy.definition.id(),enemy.spawn,enemy.generation);authoredQuests.refresh(inventory,region);}
     }
+    /** Loot individual por contribuição, protegido pelo ledger de geração já existente. */
+    boolean sharedReward(EnemyService.Enemy enemy) {
+        if(sharedEncounter==null||hp<=0||!region.equals(enemy.region))return false;
+        if(!loot.award(enemy.spawn,enemy.generation,enemy.definition.id(),inventory,flags,
+                new java.util.Random(741L^identity.id().getMostSignificantBits()^enemy.spawn.hashCode()^enemy.generation)))return false;
+        awardExperience(3);coins=Math.min(1_000_000,coins+5);
+        message="Recompensa individual: +3 XP, +5 moedas e loot da tabela";
+        return true;
+    }
     private final LootService loot=new LootService(content,items);
     private java.util.random.RandomGenerator random;
     private long attackReadyTick;
@@ -214,6 +306,16 @@ public final class RpgWorld {
         questService.refresh(quests,flags,inventory,region);if(authoredQuests!=null)authoredQuests.refresh(inventory,region);message="Coletado: "+items.get(o.item()).name()+" x"+o.amount();return true;
     }
     private long portalReadyTick;
+    /** Visita administrativa a uma cena de sessão; o servidor fornece os corpos do destino. */
+    public boolean enterEditorRegion(String destination,List<CollisionService.Body> occupied){
+        if(scenes==null||hp<=0||transitioning||skillDashing||!scenes.maps().containsKey(destination))return false;
+        var geometry=scenes.maps().get(destination);var raw=networkScenery(geometry.space());
+        var candidate=new CollisionService.Space(raw.width(),raw.height(),raw.obstacles(),occupied);
+        Position safe=null;var origin=geometry.spawn();
+        for(float dx:new float[]{0,40,-40,80,-80})if(new CollisionService().isFree(body,origin.x()+dx,origin.y(),physicalRadius,candidate)){safe=new Position(origin.x()+dx,origin.y());break;}
+        if(safe==null)return false;
+        space=candidate;region=destination;body.setPosition(safe);skillClearControls();closeDialogue();message="Editando cenário da partida";return true;
+    }
     public boolean travel(String id) {
         var portal=portals.get(id);
         if(hp==0||transitioning||ticks<portalReadyTick||!portal.region().equals(region)||distance(body.getPosition(),new Position(portal.x(),portal.y()))>65)return false;
@@ -225,7 +327,7 @@ public final class RpgWorld {
         try{space=destination;region=portal.destination();flags.add("visited:"+region);body.setPosition(new Position(portal.arrivalX(),portal.arrivalY()));closeDialogue();portalReadyTick=ticks+30;if(region.equals("ruins"))flags.add("dungeon-started");questService.refresh(quests,flags,inventory,region);if(authoredQuests!=null)authoredQuests.refresh(inventory,region);message="Chegou a "+content.get("region",region).name();return true;}finally{transitioning=false;}
     }
     private boolean bossUnlocked(){return enemies.current("ruins").stream().filter(e->!e.definition.id().equals("warden")).allMatch(e->e.hp==0);}
-    public boolean returnHome(){if(hp>0)return false;region=scenes==null?"village":scenes.initialRegion();if(scenes!=null)space=networkScenery(scenes.maps().get(region).space());body.setPosition(scenes==null?new Position(140,320):scenes.maps().get(region).spawn());hp=maxHp();stamina=1000;closeDialogue();message="Recuperado em Aurora. Progresso preservado.";return true;}
+    public boolean returnHome(){if(hp>0)return false;region=scenes==null?"village":scenes.initialRegion();if(scenes!=null)space=networkScenery(scenes.maps().get(region).space());body.setPosition(scenes==null?new Position(140,320):scenes.maps().get(region).spawn());skillClearControls();skillDashing(false);hp=maxHp();stamina=maximumEnergy();energyRegenerationRemainder=0;closeDialogue();message="Recuperado em Aurora. Progresso preservado.";return true;}
     private String activeNpc="";
     /** Mercadorias oferecidas pelo comerciante local, sem estoque persistente. */
     public static java.util.Set<String> merchantItems(){return java.util.Set.of("potion","sword","robe");}
@@ -280,7 +382,7 @@ public final class RpgWorld {
         return switch(identity.race()){case "spirit"->180;case "reaper"->82;default->60;};
     }
     /** Qualquer raca pode optar por socos sem receber especializacao Marcial. */
-    public boolean punch() { return strike(60,identity.baseAttack()+(level()-1)*progression.attackPerLevel(),true); }
+    public boolean punch() { return strike(60,identity.baseAttack()+(level()-1)*progression.attackPerLevel()+manualAttackBonus(),true); }
     public boolean attack() { return strike(basicAttackRange(),attackPower()); }
     /** Shunpo defensivo com janela curta e recarga compartilhada. */
     public boolean castSecondaryAbility() {
@@ -296,11 +398,14 @@ public final class RpgWorld {
         return strike(range,power,false);
     }
     private boolean strike(int range,int power,boolean unarmed) {
-        if(hp==0||transitioning||ticks<attackReadyTick)return false;
-        EnemyService.Enemy target=enemies.current(region).stream().filter(e->e.hp>0&&(!e.definition.id().equals("warden")||bossUnlocked())&&distance(body.getPosition(),e.getPosition())<= range&&lineClear(body.getPosition(),e.getPosition()))
+        return strike(range,power,unarmed,0,0);
+    }
+    private boolean strike(int range,int power,boolean unarmed,int selectedId,long generation) {
+        if(hp==0||transitioning||ticks<attackReadyTick||skillActionsBlocked()||skillDashing)return false;
+        EnemyService.Enemy target=enemies.current(region).stream().filter(e->e.hp>0&&(selectedId==0||e.getId()==selectedId&&e.generation==generation)&&(!e.definition.id().equals("warden")||bossUnlocked())&&distance(body.getPosition(),e.getPosition())<= range&&lineClear(body.getPosition(),e.getPosition()))
             .min(java.util.Comparator.comparingDouble(e->distance(body.getPosition(),e.getPosition()))).orElse(null);
         if(target==null||!lineClear(body.getPosition(),target.getPosition()))return false;
-        attackReadyTick=ticks+12;int previousHp=target.hp;target.hp=Math.max(0,target.hp-power);
+        if(manualStatsEnabled){preciseAttackReady=com.projetok.domain.combat.AttributeCombatRules.nextBasicReady(preciseAttackReady,ticks,BASIC_ATTACK_TICKS,trainedAgility());attackReadyTick=(long)Math.ceil(preciseAttackReady);}else attackReadyTick=ticks+BASIC_ATTACK_TICKS;int previousHp=target.hp;target.hp=Math.max(0,target.hp-power);
         message="Golpe em "+target.getName()+": "+(previousHp-target.hp);
         if(sharedEncounter!=null) {
             sharedEncounter.hit(this,target,previousHp-target.hp,ticks);
@@ -328,7 +433,7 @@ public final class RpgWorld {
     private long ticks;
     public RpgSave save() {
         domain.writeTo(flags);
-        var persistent=new java.util.TreeSet<>(flags);persistent.removeIf(f->f.startsWith("stamina:")||f.startsWith("mob:")||f.startsWith("attack-until:")||f.startsWith("portal-until:")||f.startsWith("facing:"));persistent.add("stamina:"+stamina);persistent.add("facing:"+facingX+":"+facingY);persistent.add("attack-until:"+attackReadyTick);persistent.add("portal-until:"+portalReadyTick);persistent.addAll(enemies.saveFlags());
+        var persistent=new java.util.TreeSet<>(flags);persistent.removeIf(f->f.startsWith("stamina:")||f.startsWith("mob:")||f.startsWith("attack-until:")||f.startsWith("portal-until:")||f.startsWith("facing:"));persistent.add("stamina:"+Math.round(normalizedEnergy()));persistent.add("facing:"+facingX+":"+facingY);persistent.add("attack-until:"+attackReadyTick);persistent.add("portal-until:"+portalReadyTick);persistent.addAll(enemies.saveFlags());
         return new RpgSave(identity,region,body.getPosition().x(),body.getPosition().y(),hp,xp,coins,inventory.snapshot(),equipment,quests,persistent,ticks);
     }
     public static RpgWorld restore(RpgSave state) {
@@ -380,13 +485,151 @@ public final class RpgWorld {
         }
     }
     public record View(float x, float y, long ticks, CharacterIdentity identity, RpgSave state, int attack, int defense, String message, int maxHp, int level,List<EnemyService.View> enemies,List<NpcService.View> npcs,String activeNpc,DialogueService.Node dialogue,List<QuestService.View> journal,List<PortalService.Portal> portals,List<WorldObjects.ObjectView> objects,List<RpgCombatEvent> events) { public View { events=List.copyOf(events);enemies=List.copyOf(enemies);npcs=List.copyOf(npcs);journal=List.copyOf(journal);portals=List.copyOf(portals);objects=List.copyOf(objects); } }
+    /** Leitura transitoria da thread proprietaria, sem montar save ou listas de interface. */
+    public record NetworkState(float x,float y,long ticks,CharacterIdentity identity,String region,
+                               int hp,int maxHp,int stamina,int coins) { }
+    public NetworkState networkState() {
+        var position=body.getPosition();
+        return new NetworkState(position.x(),position.y(),ticks,identity,region,hp,maxHp(),stamina,coins);
+    }
+    /** Listas imutaveis da regiao para a sessao, sem serializar inventario ou progresso. */
+    public List<NpcService.View> networkNpcs() {return npcs.views(region);}
+    public List<PortalService.Portal> networkPortals() {return portals.views(region);}
+
+    // --- Ponte restrita para o executor autoritativo de técnicas de sessão ---
+
+    /** Atordoamento impede ataques e habilidades; prisão mantém essas ações disponíveis. */
+    boolean skillActionsBlocked(){return isSynthetic()&&ticks<skillStunUntil;}
+    /** Controles são efêmeros e não afetam a campanha comum nem seu formato de save. */
+    boolean skillMovementBlocked(){return isSynthetic()&&(skillSentry||ticks<skillRootUntil||ticks<skillStunUntil);}
+    /** Imobilidade voluntária da Sentinela; não bloqueia o lançamento das flechas. */
+    void skillSentry(boolean active){skillSentry=active;}
+    /** Agilidade autoritativa da ficha; o cliente nunca fornece a cadência de disparos. */
+    int skillAgility(){return trainedAgility();}
+    /** Somente domínios de arco da sessão usam o ataque básico em projétil desta extensão. */
+    public boolean skillBowUser(){return isSynthetic()&&(domain.domain().equals("bow_long")||domain.domain().equals("bow_short"));}
+    /** Reserva a recarga básica existente, inclusive frações de agilidade, sem cobrar uma técnica. */
+    boolean skillReserveBasicArrow(){
+        if(!skillReady()||ticks<attackReadyTick)return false;
+        preciseAttackReady= com.projetok.domain.combat.AttributeCombatRules.nextBasicReady(preciseAttackReady,ticks,BASIC_ATTACK_TICKS,trainedAgility());
+        attackReadyTick=(long)Math.ceil(preciseAttackReady);return true;
+    }
+    /** Centraliza elegibilidade antes de qualquer consumo ou agendamento. */
+    boolean skillReady(){return isSynthetic()&&sharedEncounter!=null&&hp>0&&!transitioning&&!skillActionsBlocked()&&!skillDashing;}
+    /** Debita energia em décimos somente depois das validações completas do executor. */
+    boolean skillSpend(int cost){if(cost<0||!skillReady()||stamina<cost*10)return false;stamina-=cost*10;return true;}
+    /** Posição de apoio usada por áreas, segmentos e colisão; nunca é fornecida como autoridade pelo cliente. */
+    Position skillPosition(){return body.getPosition();}
+    /** Relógio privado sincronizado ao tick da sessão, sem leituras de tempo de parede. */
+    long skillTick(){return ticks;}
+    /** População da própria região; a geração será revalidada em cada impacto. */
+    List<EnemyService.Enemy> skillEnemies(){return enemies.current(region);}
+    /** Preserva o bloqueio de chefes e a elegibilidade já usada pelo ataque direcionado existente. */
+    boolean skillTargetable(EnemyService.Enemy enemy){return exactTarget(enemy.getId(),enemy.generation)==enemy;}
+    /** Geometria já configurada pela sessão, incluindo corpos móveis e limites históricos. */
+    CollisionService.Space skillSpace(){return space;}
+    /** Linha de visão utiliza obstáculos reais, preservando a margem física somente no deslocamento. */
+    boolean skillVisible(Position from,Position to){return targetLineClear(from,to);}
+    /** Atualiza o facing confirmado no servidor sem mover o jogador até o cursor. */
+    void skillFace(Position to){var p=body.getPosition();var direction=movement.direction(to.x()-p.x(),to.y()-p.y());if(direction.x()!=0||direction.y()!=0){facingX=direction.x();facingY=direction.y();}}
+    /** Reserva o movimento manual durante o dash e libera a reserva ao terminar ou cancelar. */
+    void skillDashing(boolean active){skillDashing=active;if(!active)skillIntangible=false;}
+    /** Inicia a fase oculta do especial sem alterar save, hitbox ou controles globais. */
+    void skillIntangible(boolean active){skillIntangible=active;}
+    /** Investidas atravessam mobs, mas conservam paredes, obstáculos leves e blocos de aliados. */
+    private CollisionService.Space skillRushSpace(){return new CollisionService.Space(space.width(),space.height(),space.obstacles(),space.bodies().stream().filter(CollisionService.Body::block).toList());}
+    /** Obtém o fim alcançável antes de debitar recursos, sem exigir um alvo. */
+    Position skillRushEnd(Position desired){
+        var context=skillRushSpace();var p=body.getPosition();var probe=new GameEntity(-1,"Investida",p){};
+        if(!new CollisionService().isFree(probe,p.x(),p.y(),physicalRadius,context))return p;
+        movement.moveContinuous(probe,desired.x()-p.x(),desired.y()-p.y(),physicalRadius,context);return probe.getPosition();
+    }
+    /** Varre o segmento atual e permite acertar quem cruza a investida, sem colisão com mobs. */
+    boolean skillRushMove(Position to){
+        if(!isSynthetic()||hp<=0||skillMovementBlocked())return false;var from=body.getPosition();var context=skillRushSpace();
+        if(!new CollisionService().isFree(body,from.x(),from.y(),physicalRadius,context))return false;
+        movement.moveContinuous(body,to.x()-from.x(),to.y()-from.y(),physicalRadius,context);
+        if(distance(from,body.getPosition())<.001)return false;skillFace(to);return true;
+    }
+    /** Materializa no apoio livre mais próximo, sem empurrar aliados nem atravessar paredes. */
+    boolean skillReappear(){
+        var occupied=sharedEncounter.playerReentrySpace(this);var collisions=new CollisionService();var origin=body.getPosition();
+        if(collisions.isFree(body,origin.x(),origin.y(),physicalRadius,occupied))return true;
+        var scenery=new CollisionService.Space(occupied.width(),occupied.height(),occupied.obstacles(),List.of());
+        for(int radius=4;radius<=128;radius+=4)for(int i=0;i<32;i++){
+            double angle=2*Math.PI*i/32;var p=new Position((float)(origin.x()+Math.cos(angle)*radius),(float)(origin.y()+Math.sin(angle)*radius));
+            if(collisions.isFree(body,p.x(),p.y(),physicalRadius,occupied)&&collisions.canTraverseSegment(body,origin,p,physicalRadius,scenery)){body.setPosition(p);return true;}
+        }
+        Position best=null;double nearest=Double.POSITIVE_INFINITY;
+        for(float y=physicalRadius;y<=occupied.height()-physicalRadius;y+=4)for(float x=physicalRadius;x<=occupied.width()-physicalRadius;x+=4){
+            double distance=Math.hypot(x-origin.x(),y-origin.y());if(distance>=nearest||!collisions.isFree(body,x,y,physicalRadius,occupied))continue;
+            var p=new Position(x,y);if(collisions.canTraverseSegment(body,origin,p,physicalRadius,scenery)){best=p;nearest=distance;}
+        }
+        if(best!=null){body.setPosition(best);return true;}return false;
+    }
+    /** Valida a trajetória completa de um dash antes do consumo, com o mesmo corpo da caminhada. */
+    boolean skillDashPath(Position to){return !skillMovementBlocked()&&new CollisionService().canTraverseSegment(body,body.getPosition(),to,physicalRadius,space);}
+    /** Avança um segmento contínuo; um bloqueio dinâmico encurta o dash sem atravessar corpos. */
+    boolean skillMove(Position to){if(!isSynthetic()||hp<=0||skillMovementBlocked())return false;var before=body.getPosition();if(!new CollisionService().isFree(body,before.x(),before.y(),physicalRadius,space))return false;movement.moveContinuous(body,to.x()-before.x(),to.y()-before.y(),physicalRadius,space);if(distance(before,body.getPosition())>.001){var facing=movement.direction(body.getPosition().x()-before.x(),body.getPosition().y()-before.y());facingX=facing.x();facingY=facing.y();return true;}return false;}
+    /**
+     * Limita um projétil pelo segmento contínuo contra o cenário bruto, sem dilatação do jogador.
+     * A busca preserva o último ponto livre; paredes finas não são puladas entre dois ticks.
+     */
+    Position skillProjectileEnd(Position from,Position to,float radius){
+        var raw=scenes!=null?scenes.maps().get(region).space():sessionProfile==null?space:com.projetok.domain.movement.RpgSessionGeometry.raw();
+        var geometry=new CollisionService.Space(raw.width(),raw.height(),raw.obstacles(),List.of());
+        var probe=new GameEntity(-1,"Projétil",from){};var collisions=new CollisionService();
+        if(!collisions.isFree(probe,from.x(),from.y(),radius,geometry))return from;
+        if(collisions.canTraverseSegment(probe,from,to,radius,geometry))return to;
+        float low=0,high=1;Position safe=from;
+        for(int i=0;i<24;i++){float middle=(low+high)/2;var candidate=new Position(from.x()+(to.x()-from.x())*middle,from.y()+(to.y()-from.y())*middle);if(collisions.canTraverseSegment(probe,from,candidate,radius,geometry)){safe=candidate;low=middle;}else high=middle;}
+        return safe;
+    }
+    /** Feedback privado de uma ação validada ou recusada, reaproveitando o aviso da ficha existente. */
+    void skillNotice(String notice){message=java.util.Objects.requireNonNull(notice);}
+    /**
+     * Desloca uma vítima com a geometria dos inimigos, sem aplicar a cápsula de cenário do jogador.
+     * Mobs já sobrepostos conservam sua posição e os demais efeitos do golpe, sem forçar uma saída.
+     */
+    void skillDisplace(EnemyService.Enemy enemy,Position destination){
+        var dynamic=sharedEncounter.skillDisplacementSpace(enemy);
+        var p=enemy.getPosition();
+        if(!new CollisionService().isFree(enemy,p.x(),p.y(),19,dynamic)){
+            message="Não há espaço para deslocar o inimigo.";return;
+        }
+        movement.moveContinuous(enemy,destination.x()-p.x(),destination.y()-p.y(),19,dynamic);
+    }
+    /** Usa o ledger existente para contribuição, morte, missões e loot; nenhuma recompensa paralela. */
+    int skillDamage(EnemyService.Enemy enemy,long generation,int amount){
+        if(!isSynthetic()||sharedEncounter==null||enemy.hp<=0||enemy.generation!=generation||!enemy.region.equals(region)||amount<1)return 0;
+        int damage=Math.min(enemy.hp,Math.min(10000,amount));enemy.hp-=damage;
+        sharedEncounter.hit(this,enemy,damage,ticks);if(enemy.hp==0)enemy.clearSkillEffects();return damage;
+    }
+    /** Recupera vida sem reviver implicitamente um aliado derrotado. */
+    boolean skillHeal(int amount){if(!isSynthetic()||hp<=0||amount<1||hp>=maxHp())return false;hp=Math.min(maxHp(),hp+amount);return true;}
+    /** Revive no próprio apoio somente se ele estiver livre; não transporta nem restaura energia. */
+    boolean skillRevive(int amount,CollisionService.Space occupied){var p=body.getPosition();if(!isSynthetic()||hp!=0||amount<1||!new CollisionService().isFree(body,p.x(),p.y(),physicalRadius,occupied))return false;skillClearControls();skillDashing(false);hp=Math.min(maxHp(),amount);return true;}
+    /** Remove somente controles de sessão, sem apagar buffs ou flags persistidos. */
+    void skillClearControls(){skillRootUntil=skillStunUntil=skillSlowUntil=0;skillSlowScale=1;}
+    /** Aplica controle com expiração absoluta; renovar não soma durações. */
+    void skillApplyControl(RpgSkillCatalog.Effect effect){if(!isSynthetic()||hp<=0)return;switch(effect.type()){
+        case ROOT->skillRootUntil=Math.max(skillRootUntil,ticks+effect.durationTicks());
+        case STUN->skillStunUntil=Math.max(skillStunUntil,ticks+effect.durationTicks());
+        case SLOW->{skillSlowUntil=Math.max(skillSlowUntil,ticks+effect.durationTicks());skillSlowScale=effect.potencyPermille()/1000f;}
+        default->throw new IllegalArgumentException("Efeito periódico requer executor");
+    }}
+
+    /** Avança movimento e energia; controles de técnicas são consultados somente nas sessões sintéticas. */
     public void tick(float x, float y) {
         Position direction=movement.direction(x,y);
         if(hp>0) {
-            if(sessionProfile==null)movement.moveDirected(body,direction,215,1f/30,physicalRadius,space);
-            else movement.moveContinuous(body,direction.x()*215/30,direction.y()*215/30,physicalRadius,space);
+            float controlledSpeed=isSynthetic()&&ticks<skillSlowUntil?215*skillSlowScale:215;
+            if(!skillMovementBlocked()&&!skillDashing){
+                if(sessionProfile==null)movement.moveDirected(body,direction,controlledSpeed,1f/30,physicalRadius,space);
+                else movement.moveContinuous(body,direction.x()*controlledSpeed/30,direction.y()*controlledSpeed/30,physicalRadius,space);
+            }
             if(x!=0||y!=0){facingX=direction.x();facingY=direction.y();}
-            stamina=Math.min(1000,stamina+5);
+            energyRegenerationRemainder+=com.projetok.domain.combat.EnergyRules.regenerationPerTick(trainedEnergy());int gain=(int)Math.floor(energyRegenerationRemainder+1e-9);energyRegenerationRemainder=Math.max(0,energyRegenerationRemainder-gain);stamina=Math.min(maximumEnergy(),stamina+gain);if(stamina==maximumEnergy())energyRegenerationRemainder=0;
         }
         ticks++;
         if(sharedEncounter==null)enemies.respawn(ticks,region);

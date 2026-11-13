@@ -1,0 +1,128 @@
+{
+  "mob": "160_Sentinela",
+  "cell_width": 64,
+  "cell_height": 64,
+  "columns": 6,
+  "rows": 4,
+  "direction_order": [
+    "frente",
+    "costas",
+    "esquerda",
+    "direita"
+  ],
+  "state": "andar",
+  "frames_per_direction": 6,
+  "loop": true,
+  "frame_ms": 100,
+  "cycle_ms": 600,
+  "anchor": [
+    32,
+    59
+  ],
+  "source_scale": 0.24539877300613497,
+  "art_source": "host_image",
+  "route": "built-in image_gen",
+  "source_sha256": "9d8a8e53b13aa16f308bf03f69044f41e5a078a598ac5f0ffb8cef57aeb52d81",
+  "states": [
+    {
+      "name": "andar_frente",
+      "row": 0,
+      "columns": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "duration_ms": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": true,
+      "registration_offset": [
+        -0.054192229038857676,
+        1.5766871165644147
+      ]
+    },
+    {
+      "name": "andar_costas",
+      "row": 1,
+      "columns": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "duration_ms": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": true,
+      "registration_offset": [
+        0.04805725971370478,
+        0.5950920245398805
+      ]
+    },
+    {
+      "name": "andar_esquerda",
+      "row": 2,
+      "columns": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "duration_ms": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": true,
+      "registration_offset": [
+        0.33435582822085763,
+        0.10429447852760632
+      ]
+    },
+    {
+      "name": "andar_direita",
+      "row": 3,
+      "columns": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "duration_ms": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "loop": true,
+      "registration_offset": [
+        -0.5654396728016309,
+        0.3496932515337434
+      ]
+    }
+  ]
+}

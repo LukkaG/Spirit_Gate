@@ -27,6 +27,7 @@ public final class DebugLauncher {
     private DebugLauncher() { }
 
     public static void main(String[] args) {
+        com.projetok.diagnostics.ErrorReports.install("arena-debug");
         if (args.length == 0) SwingUtilities.invokeLater(DebugLauncher::open);
         else if (args.length == 2 && "--map".equals(args[0])) {
             try {

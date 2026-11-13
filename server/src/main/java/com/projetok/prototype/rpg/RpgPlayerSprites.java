@@ -18,16 +18,17 @@ public final class RpgPlayerSprites implements DebugPanel.ActorRenderer {
     public static final int DEFAULT_FRAME_MILLIS=250;
     public static final double DEFAULT_SCALE=0.5;
     private record Frame(BufferedImage image,int pivotX,int pivotY,Rectangle alpha) { }
-    private static Rectangle alphaBounds(BufferedImage image){int l=image.getWidth(),t=image.getHeight(),r=0,b=0;for(int y=0;y<image.getHeight();y++)for(int x=0;x<image.getWidth();x++)if((image.getRGB(x,y)>>>24)!=0){l=Math.min(l,x);t=Math.min(t,y);r=Math.max(r,x+1);b=Math.max(b,y+1);}return new Rectangle(l,t,r-l,b-t);}
+    private static Rectangle alphaBounds(BufferedImage image){int l=image.getWidth(),t=image.getHeight(),r=0,b=0;for(int y=0;y<image.getHeight();y++)for(int x=0;x<image.getWidth();x++)if((image.getRGB(x,y)>>>24)!=0){l=Math.min(l,x);t=Math.min(t,y);r=Math.max(r,x+1);b=Math.max(b,y+1);}return r<=l||b<=t?new Rectangle():new Rectangle(l,t,r-l,b-t);}
     public java.awt.geom.Rectangle2D visualBounds(com.projetok.prototype.DirectionalAnimation.Direction direction,int walkFrame,boolean walking,float x,float y){var f=frames.get(direction+"."+(walking?walkFrame+1:0));return new java.awt.geom.Rectangle2D.Double(Math.round(x-f.pivotX()*scale)+f.alpha().x*scale,Math.round(y-f.pivotY()*scale)+f.alpha().y*scale,f.alpha().width*scale,f.alpha().height*scale);}
     private final Map<String,Frame> frames;
     private final RpgPlayerAnimation animation;
     private final double scale;
+    private final int frameMillis;
     private final int walkFrames;
     private final RpgVisualState visual=new RpgVisualState();
     private boolean spirit;
     private RpgPlayerSprites(Map<String,Frame> frames,int frameMillis,double scale) {
-        this.frames=Map.copyOf(frames);walkFrames=frames.size()/4-1;animation=new RpgPlayerAnimation(frameMillis,walkFrames);this.scale=scale;
+        this.frames=Map.copyOf(frames);walkFrames=frames.size()/4-1;animation=new RpgPlayerAnimation(frameMillis,walkFrames);this.scale=scale;this.frameMillis=frameMillis;
     }
     public static Path defaultFolder() { return RpgMenu.home().resolve("assets/dev/player-base"); }
     public static Path reaperFolder() { return RpgMenu.home().resolve("assets/dev/reaper"); }
@@ -97,6 +98,44 @@ public final class RpgPlayerSprites implements DebugPanel.ActorRenderer {
         return new RpgPlayerSprites(frames,frameMillis,scale);
     }
     public double scale() { return scale; }
+    private static void validateScale(double scale) {
+        if(!Double.isFinite(scale)||scale<0.1||scale>4.0) throw new IllegalArgumentException("spriteScale: 0.1..4.0");
+    }
+    /** Outra escala de apresentacao sobre os mesmos PNGs residentes, sem reamostrar ou reler arquivos. */
+    public RpgPlayerSprites withScale(double value) {
+        validateScale(value);
+        return value==scale?this:new RpgPlayerSprites(frames,frameMillis,value);
+    }
+    /** Normaliza uma vez a grade logica residente, sem alterar os PNGs de origem.
+     * O zoom posterior amplia esse raster por inteiros em vez de reamostrar a fonte. */
+    public RpgPlayerSprites onLogicalCanvas(int width,int height,int pivotX,int pivotY) {
+        if(width<1||height<1||width>1024||height>1024||pivotX<0||pivotX>=width||pivotY<0||pivotY>height)
+            throw new IllegalArgumentException("Canvas logico invalido");
+        if((long)width*height*4*frames.size()>64L*1024*1024)throw new IllegalArgumentException("Canvas residente excessivo");
+        Map<String,Frame> normalized=new HashMap<>();
+        for(var entry:frames.entrySet()) {
+            var frame=entry.getValue();
+            var image=normalizeImage(frame.image(),frame.pivotX(),frame.pivotY(),scale,width,height,pivotX,pivotY);
+            normalized.put(entry.getKey(),new Frame(image,pivotX,pivotY,alphaBounds(image)));
+        }
+        return new RpgPlayerSprites(normalized,frameMillis,1);
+    }
+    /** Mesma amostragem residente para corpo e planos cosmeticos. */
+    static BufferedImage normalizeImage(BufferedImage source,int sourcePivotX,int sourcePivotY,double scale,
+                                        int width,int height,int pivotX,int pivotY) {
+        int left=(int)Math.round(pivotX-sourcePivotX*scale),top=(int)Math.round(pivotY-sourcePivotY*scale);
+        var alpha=alphaBounds(source);
+        if(!alpha.isEmpty()&&(left+alpha.x*scale<0||top+alpha.y*scale<0
+                ||left+(alpha.x+alpha.width)*scale>width||top+(alpha.y+alpha.height)*scale>height))
+            throw new IllegalArgumentException("Canvas cortaria pixels ocupados");
+        var image=new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);var g=image.createGraphics();
+        try {
+            g.setComposite(AlphaComposite.Src);
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+            g.translate(left,top);g.scale(scale,scale);g.drawImage(source,0,0,null);
+        } finally {g.dispose();}
+        return image;
+    }
     public int walkFrames() { return walkFrames; }
     /** Desenha frame residente para apresentação remota, sem alterar estado lógico ou gerar cópias. */
     public boolean drawFrame(Graphics2D original,com.projetok.prototype.DirectionalAnimation.Direction direction,int walkFrame,boolean walking,float x,float y){

@@ -1,0 +1,128 @@
+{
+  "mob": "145_Alado",
+  "cell_width": 64,
+  "cell_height": 64,
+  "columns": 6,
+  "rows": 4,
+  "direction_order": [
+    "frente",
+    "costas",
+    "esquerda",
+    "direita"
+  ],
+  "state": "voar",
+  "frames_per_direction": 6,
+  "loop": true,
+  "frame_ms": 80,
+  "cycle_ms": 480,
+  "anchor": [
+    32,
+    59
+  ],
+  "source_scale": 0.23904382470119523,
+  "art_source": "host_image",
+  "route": "built-in image_gen",
+  "source_sha256": "12b68ca7d17eb8297dbd676c382ea56425b4a6913573e3bfc13eaaac203c5fab",
+  "states": [
+    {
+      "name": "voar_frente",
+      "row": 0,
+      "columns": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "duration_ms": [
+        80,
+        80,
+        80,
+        80,
+        80,
+        80
+      ],
+      "loop": true,
+      "registration_offset": [
+        1.7609561752988048,
+        -2.5418326693227096
+      ]
+    },
+    {
+      "name": "voar_costas",
+      "row": 1,
+      "columns": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "duration_ms": [
+        80,
+        80,
+        80,
+        80,
+        80,
+        80
+      ],
+      "loop": true,
+      "registration_offset": [
+        1.7609561752988048,
+        -2.7808764940239046
+      ]
+    },
+    {
+      "name": "voar_esquerda",
+      "row": 2,
+      "columns": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "duration_ms": [
+        80,
+        80,
+        80,
+        80,
+        80,
+        80
+      ],
+      "loop": true,
+      "registration_offset": [
+        -0.452191235059761,
+        -3.2589641434262955
+      ]
+    },
+    {
+      "name": "voar_direita",
+      "row": 3,
+      "columns": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "duration_ms": [
+        80,
+        80,
+        80,
+        80,
+        80,
+        80
+      ],
+      "loop": true,
+      "registration_offset": [
+        2.2370517928286837,
+        -3.2589641434262955
+      ]
+    }
+  ]
+}

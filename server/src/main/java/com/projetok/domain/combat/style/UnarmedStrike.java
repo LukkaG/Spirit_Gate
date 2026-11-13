@@ -32,7 +32,7 @@ public final class UnarmedStrike implements CombatStyle {
      */
     @Override
     public int computeDamage(StatsComponent stats) {
-        return stats.strength() / 2;
+        return com.projetok.domain.combat.AttributeCombatRules.damageBonus(com.projetok.domain.combat.AttributeCombatRules.DamageKind.UNARMED_SKILL,stats.strength(),stats.intelligence());
     }
 
     /**

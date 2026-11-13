@@ -5,7 +5,7 @@ import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.*;
 
-/** Formato SG World Studio V1: Properties UTF-8, registros delimitados e textos Base64URL. */
+/** Formato SG World Studio V1/V2: Properties UTF-8, registros delimitados e textos Base64URL. */
 public final class DocumentStore {
     private static final int LIMIT=32_000_000;
     private static final java.util.concurrent.atomic.AtomicLong TEMP_SEQUENCE=new java.util.concurrent.atomic.AtomicLong();
@@ -22,13 +22,13 @@ public final class DocumentStore {
     private static int count(Properties p,String key,int max){int n=integer(take(p,key+".count"));if(n<0||n>max)throw new IllegalArgumentException("Contagem excessiva: "+key);return n;}
     /** Serializa somente dados, sem usar serializacao Java ou executar scripts. */
     public static byte[] encode(WorldDocument d)throws IOException {
-        Properties p=new Properties();p.setProperty("format","spirit-gate-world-studio");p.setProperty("schema","1");p.setProperty("id",d.id());p.setProperty("name",d.name());p.setProperty("region",d.region());p.setProperty("width",""+d.width());p.setProperty("height",""+d.height());p.setProperty("grid",""+d.grid());p.setProperty("metadata",map(d.metadata()));
+        Properties p=new Properties();p.setProperty("format","spirit-gate-world-studio");boolean directional=d.hitboxes().stream().anyMatch(h->h.edges()!=WorldDocument.Hitbox.ALL);p.setProperty("schema",directional?"2":"1");p.setProperty("id",d.id());p.setProperty("name",d.name());p.setProperty("region",d.region());p.setProperty("width",""+d.width());p.setProperty("height",""+d.height());p.setProperty("grid",""+d.grid());p.setProperty("metadata",map(d.metadata()));
         p.setProperty("layer.count",""+d.layers().size());for(int i=0;i<d.layers().size();i++){var l=d.layers().get(i);p.setProperty("layer."+i,row(l.id(),text(l.name()),l.role(),l.order(),l.visible(),l.locked()));}
         p.setProperty("element.count",""+d.elements().size());for(int i=0;i<d.elements().size();i++){var e=d.elements().get(i);var c=e.crop();p.setProperty("element."+i,row(e.id(),e.kind(),e.asset(),e.sha(),c.x(),c.y(),c.width(),c.height(),e.x(),e.y(),e.width(),e.height(),e.layer(),e.visible(),e.locked(),text(e.reference()),e.direction(),map(e.properties())));}
-        p.setProperty("hitbox.count",""+d.hitboxes().size());for(int i=0;i<d.hitboxes().size();i++){var h=d.hitboxes().get(i);p.setProperty("hitbox."+i,row(h.id(),h.x(),h.y(),h.width(),h.height(),h.solid(),h.layer()));}
+        p.setProperty("hitbox.count",""+d.hitboxes().size());for(int i=0;i<d.hitboxes().size();i++){var h=d.hitboxes().get(i);p.setProperty("hitbox."+i,directional?row(h.id(),h.x(),h.y(),h.width(),h.height(),h.solid(),h.layer(),h.edges()):row(h.id(),h.x(),h.y(),h.width(),h.height(),h.solid(),h.layer()));}
         p.setProperty("portal.count",""+d.portals().size());for(int i=0;i<d.portals().size();i++){var x=d.portals().get(i);p.setProperty("portal."+i,row(x.id(),x.x(),x.y(),x.destination(),x.arrivalX(),x.arrivalY(),text(x.quest()),x.direction()));}
         p.setProperty("trigger.count",""+d.triggers().size());for(int i=0;i<d.triggers().size();i++){var t=d.triggers().get(i);p.setProperty("trigger."+i,row(t.id(),t.when(),t.action(),text(t.target()),text(t.message()),t.x(),t.y(),t.width(),t.height(),t.once()));}
-        StringWriter writer=new StringWriter();p.store(writer,"Spirit Gate World Studio V1");byte[] bytes=writer.toString().getBytes(StandardCharsets.UTF_8);if(bytes.length>LIMIT)throw new IOException("Documento excede 32 MB");return bytes;
+        StringWriter writer=new StringWriter();p.store(writer,directional?"Spirit Gate World Studio V2 - directional collision":"Spirit Gate World Studio V1");byte[] bytes=writer.toString().getBytes(StandardCharsets.UTF_8);if(bytes.length>LIMIT)throw new IOException("Documento excede 32 MB");return bytes;
     }
     /** Valida versao, contagens, chaves duplicadas/desconhecidas e invariantes antes de abrir. */
     public static WorldDocument decode(byte[] bytes)throws IOException {
@@ -36,11 +36,11 @@ public final class DocumentStore {
         Properties p=new Properties(){@Override public synchronized Object put(Object key,Object value){if(containsKey(key))throw new IllegalArgumentException("Chave duplicada: "+key);return super.put(key,value);}};
         try {
             p.load(new StringReader(StandardCharsets.UTF_8.newDecoder().decode(ByteBuffer.wrap(bytes)).toString()));
-            if(!take(p,"format").equals("spirit-gate-world-studio")||!take(p,"schema").equals("1"))throw new IllegalArgumentException("Formato/versao nao suportado");
+            String schema=take(p,"schema");if(!take(p,"format").equals("spirit-gate-world-studio")||!Set.of("1","2").contains(schema))throw new IllegalArgumentException("Formato/versao nao suportado");
             String id=take(p,"id"),name=take(p,"name"),region=take(p,"region");int width=integer(take(p,"width")),height=integer(take(p,"height")),grid=integer(take(p,"grid"));var metadata=unmap(take(p,"metadata"));
             var layers=new ArrayList<WorldDocument.Layer>();for(int n=count(p,"layer",32),i=0;i<n;i++){var v=fields(p,"layer."+i,6);layers.add(new WorldDocument.Layer(v[0],unt(v[1]),WorldDocument.Role.valueOf(v[2]),integer(v[3]),bool(v[4]),bool(v[5])));}
             var elements=new ArrayList<WorldDocument.Element>();for(int n=count(p,"element",100000),i=0;i<n;i++){var v=fields(p,"element."+i,18);elements.add(new WorldDocument.Element(v[0],WorldDocument.Kind.valueOf(v[1]),v[2],v[3],new WorldDocument.Crop(integer(v[4]),integer(v[5]),integer(v[6]),integer(v[7])),integer(v[8]),integer(v[9]),integer(v[10]),integer(v[11]),v[12],bool(v[13]),bool(v[14]),unt(v[15]),v[16],unmap(v[17])));}
-            var hitboxes=new ArrayList<WorldDocument.Hitbox>();for(int n=count(p,"hitbox",4096),i=0;i<n;i++){var v=fields(p,"hitbox."+i,7);hitboxes.add(new WorldDocument.Hitbox(v[0],integer(v[1]),integer(v[2]),integer(v[3]),integer(v[4]),bool(v[5]),v[6]));}
+            var hitboxes=new ArrayList<WorldDocument.Hitbox>();for(int n=count(p,"hitbox",4096),i=0;i<n;i++){var v=fields(p,"hitbox."+i,schema.equals("2")?8:7);hitboxes.add(new WorldDocument.Hitbox(v[0],integer(v[1]),integer(v[2]),integer(v[3]),integer(v[4]),bool(v[5]),v[6],schema.equals("2")?integer(v[7]):WorldDocument.Hitbox.ALL));}
             var portals=new ArrayList<WorldDocument.Portal>();for(int n=count(p,"portal",64),i=0;i<n;i++){var v=fields(p,"portal."+i,8);portals.add(new WorldDocument.Portal(v[0],integer(v[1]),integer(v[2]),v[3],integer(v[4]),integer(v[5]),unt(v[6]),v[7]));}
             var triggers=new ArrayList<WorldDocument.Trigger>();for(int n=count(p,"trigger",256),i=0;i<n;i++){var v=fields(p,"trigger."+i,10);triggers.add(new WorldDocument.Trigger(v[0],v[1],v[2],unt(v[3]),unt(v[4]),integer(v[5]),integer(v[6]),integer(v[7]),integer(v[8]),bool(v[9])));}
             if(!p.isEmpty())throw new IllegalArgumentException("Campos desconhecidos: "+p.keySet());return new WorldDocument(1,id,name,region,width,height,grid,layers,elements,hitboxes,portals,triggers,metadata);

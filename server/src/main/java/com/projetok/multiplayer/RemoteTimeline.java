@@ -11,6 +11,7 @@ public final class RemoteTimeline {
     private final int override=Integer.getInteger("spiritgate.network.bufferMillis",0);
     public long corrections,dropped;
     public long obstacleCorrections;
+    public long actorCorrections;
     private final com.projetok.domain.movement.CollisionService collision=new com.projetok.domain.movement.CollisionService();
     private final com.projetok.domain.entity.GameEntity visualProbe=new com.projetok.domain.entity.GameEntity(1,"Presentation",new com.projetok.domain.entity.Position(140,300)){};
     private record WallCorrection(long tick,Protocol.Actor actor){}
@@ -26,11 +27,18 @@ public final class RemoteTimeline {
         double interval=diagnostics.snapshotIntervals.percentileMillis(.5);
         double p95=diagnostics.snapshotIntervals.percentileMillis(.95);
         if(override!=0)bufferMillis=override;
-        else if(Double.isFinite(interval))bufferMillis=Math.max(50,Math.min(150,interval*.75+Math.min(40,Math.max(0,p95-interval))));
+        else if(Double.isFinite(interval))bufferMillis=Math.max(25,Math.min(150,interval*.75+Math.min(40,Math.max(0,p95-interval))));
         return true;
     }
     public double bufferMillis(){return bufferMillis;}
     public Protocol.State sample(long now,int localId){
+        return sample(now,localId,com.projetok.domain.movement.SessionCollisionProfile.DEFAULT.actorRadius());
+    }
+    public Protocol.State sample(long now,int localId,float actorRadius){
+        return sample(now,localId,actorRadius,id->false);
+    }
+    /** Contatos visuais ignoram quem está intangível; a posição continua fornecida pelo servidor. */
+    public Protocol.State sample(long now,int localId,float actorRadius,java.util.function.IntPredicate intangible){
         var newest=states.peekLast();if(newest==null)return null;
         double requested=newest.tick()+(Math.max(0,now-receipt)/1e6-bufferMillis)*.03;
         targetTick=Math.min(newest.tick(),Math.max(targetTick,requested));
@@ -38,6 +46,7 @@ public final class RemoteTimeline {
         for(var state:states){after=state;if(state.tick()>=targetTick)break;before=state;}
         double alpha=after.tick()==before.tick()?1:Math.max(0,Math.min(1,(targetTick-before.tick())/(after.tick()-before.tick())));
         var visual=new RemotePresentation(before,after).sample(alpha,localId);
+        var local=newest.actors().stream().filter(a->a.id()==localId).findFirst().orElse(null);
         wallCorrections.keySet().removeIf(id->newest.actors().stream().noneMatch(a->a.id()==id));
         // Local actor is always the newest authoritative state, even when remote history is older.
         return new Protocol.State(newest.tick(),newest.actors().stream().map(a->{
@@ -48,6 +57,13 @@ public final class RemoteTimeline {
             var held=wallCorrections.get(a.id());
             if(held!=null&&targetTick<held.tick())return at(a,held.actor().x(),held.actor().y());
             wallCorrections.remove(a.id());
+            // O jogador local ja esta no tick novo; a historia do amigo nao pode
+            // apresentar seu bloco dentro dele enquanto ambos se aproximam.
+            if(local!=null&&local.hp()>0&&a.id()<=1_000_000&&a.hp()>0&&!intangible.test(localId)&&!intangible.test(a.id())
+                    &&Math.abs((double)old.x()-local.x())<2*actorRadius
+                    &&Math.abs((double)old.y()-local.y())<2*actorRadius){
+                actorCorrections++;wallCorrections.put(a.id(),new WallCorrection(newest.tick(),a));return a;
+            }
             if(!a.boss()&&!collision.isFree(visualProbe,old.x(),old.y(),
                     com.projetok.domain.movement.RpgCollisionProfile.PLAYER_RADIUS,
                     com.projetok.domain.movement.RpgSessionGeometry.player())){obstacleCorrections++;wallCorrections.put(a.id(),new WallCorrection(newest.tick(),a));return a;}

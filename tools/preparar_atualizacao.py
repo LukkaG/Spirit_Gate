@@ -22,7 +22,12 @@ def prepare(package, destination, version, feed_url="", role="anfitriao"):
     channel = destination / "canal"
     channel.mkdir()
     package_hash = hashlib.sha256(package.read_bytes()).hexdigest()
-    release_name = "release-" + package_hash[:24]
+    updater_root = Path(__file__).parent / "updater"
+    versioned = {"launcher/" + name: (updater_root / name).read_bytes()
+                 for name in ("Atualizar-SpiritGate.ps1", "Launcher-SpiritGate.ps1")}
+    release_hash = hashlib.sha256(package_hash.encode() + b"".join(
+        name.encode() + hashlib.sha256(data).digest() for name, data in sorted(versioned.items()))).hexdigest()
+    release_name = "release-" + release_hash[:24]
     release = channel / release_name
     release.mkdir()
     files, names = [], set()
@@ -31,9 +36,9 @@ def prepare(package, destination, version, feed_url="", role="anfitriao"):
         roots = {PurePosixPath(entry.filename).parts[0] for entry in entries}
         # One common payload/channel for both roles. Guest-only source packages
         # cannot silently restrict the host's next update.
-        if len(roots) != 1 or not roots <= {"SpiritGateRPG", "SpiritGateCorujaoV-Anfitriao"}:
+        if len(roots) != 1 or not roots <= {"SpiritGateRPG", "SpiritGateCorujaoV-Anfitriao", "SpiritGateCorujaoVI-Anfitriao"}:
             raise ValueError("Use pacote legado RPG ou Anfitriao completo")
-        modern = roots == {"SpiritGateCorujaoV-Anfitriao"}
+        modern = roots != {"SpiritGateRPG"}
         if len(entries) > 2000 or sum(e.file_size for e in entries) > 512 * 1024**2:
             raise ValueError("Pacote excessivo")
         for entry in entries:
@@ -41,6 +46,8 @@ def prepare(package, destination, version, feed_url="", role="anfitriao"):
             if len(path.parts) < 2:
                 raise ValueError("Raiz inesperada")
             name = "/".join(path.parts[1:])
+            if name in versioned:
+                continue  # Sempre inclui a UI e o motor atuais no payload verificado.
             if modern and name == "manifest-sha256.json":
                 continue  # The normalized files get the updater's verified manifest.
             if modern and name == "app/spiritgate.jar":
@@ -63,6 +70,12 @@ def prepare(package, destination, version, feed_url="", role="anfitriao"):
             output.parent.mkdir(parents=True, exist_ok=True)
             output.write_bytes(data)
             files.append(dict(path=name, bytes=len(data), sha256=hashlib.sha256(data).hexdigest()))
+    for name, data in versioned.items():
+        output = release / name
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_bytes(data)
+        names.add(name.lower())
+        files.append(dict(path=name, bytes=len(data), sha256=hashlib.sha256(data).hexdigest()))
     if not {"runtime/bin/java.exe", "app/spirit-gate-rpg.jar"} <= names:
         raise ValueError("Runtime ou jogo ausente")
     manifest = dict(schemaVersion=1, version=version, basePath=release_name,
@@ -76,11 +89,16 @@ def prepare(package, destination, version, feed_url="", role="anfitriao"):
     (initial / "installed-manifest.json").write_bytes(manifest_bytes)
     (launcher / "active.txt").write_text(identity, encoding="ascii")
     (launcher / "atualizacoes.json").write_text(json.dumps(dict(feedUrl=feed_url, role=role), indent=2), encoding="utf-8")
-    for name in ("Atualizar-SpiritGate.ps1", "Jogar-SpiritGate.cmd"):
+    for name in ("Atualizar-SpiritGate.ps1", "Jogar-SpiritGate.cmd", "Launcher-SpiritGate.ps1", "Iniciar-SpiritGate.ps1"):
         shutil.copy2(Path(__file__).parent / "updater" / name, launcher / name)
+    import subprocess
+    subprocess.run(["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
+                    str(Path(__file__).parent / "updater" / "Build-Launcher.ps1"),
+                    "-Destination", str(launcher / "SpiritGate-Launcher.exe")], check=True,
+                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (launcher / "LEIA-ME.txt").write_text(
         "SPIRIT GATE - INICIADOR COM ATUALIZACAO\n"
-        "Extraia tudo e abra Jogar-SpiritGate.cmd. Windows 64 bits; Java integrado.\n"
+        "Extraia tudo e abra SpiritGate-Launcher.exe. Windows 64 bits; Java integrado.\n"
         f"Papel desta instalacao: {role}. O canal do jogo e comum aos dois papeis.\n"
         "O launcher inclui os botoes Radmin da versao instalada; o iniciador atualiza antes de abri-lo.\n"
         "Saves e preferencias ficam em data/saves, fora das versoes.\n" +

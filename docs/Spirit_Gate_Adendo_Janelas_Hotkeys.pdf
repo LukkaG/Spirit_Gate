@@ -1,0 +1,260 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R 10 0 R] /Count 4 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 3157 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(# Spirit Gate - relatório do adendo de janelas e teclado) Tj T*
+() Tj T*
+(Data: 31/10/2026. Branch: beco. Base: 6d72c6595dee6dbe4dea832fe6047ee81f51d4a3.) Tj T*
+() Tj T*
+(## Resultado e escopo) Tj T*
+() Tj T*
+(Adendo implementado na interface da partida multiplayer V6, sobre a TASK-213 e seu) Tj T*
+(refinamento visual. Inventário, perfil, missões, menu e configurações agora abrem como) Tj T*
+(painéis internos do jogo, sem decoração de janela do Windows. Usam navy translúcido,) Tj T*
+(bordas ciano, fechamento próprio, foco visível e arraste limitado à área disponível. A) Tj T*
+(janela principal do jogo mantém sua moldura externa normal.) Tj T*
+() Tj T*
+(A composição inferior em três blocos, as barras alinhadas e os quatro slots funcionais) Tj T*
+(com reservas visuais foram preservados. Os painéis reaproveitam os dados e ações) Tj T*
+(existentes. O inventário ganhou busca local por nome; isso não altera o inventário) Tj T*
+(autoritativo.) Tj T*
+() Tj T*
+(Esta entrega atende ao adendo e fornece a base das TASKs 214-217. Não declara concluídos) Tj T*
+(o inventário completo da 214, a evolução de missões da 215, todo o escopo da 216 ou a) Tj T*
+(consolidação geral da 217. As TASKs 218-222 também permanecem pendentes. O prompt) Tj T*
+(original do ciclo determina iniciar somente a TASK-213; o novo adendo autorizou estas) Tj T*
+(correções imediatas de janelas, teclado e apresentação de configurações.) Tj T*
+() Tj T*
+(## Comportamento do teclado) Tj T*
+() Tj T*
+(O roteador central recebe os eventos apenas da janela da partida. As ações existentes) Tj T*
+(continuam na ActionMap; as associações globais antigas são retiradas enquanto ele está) Tj T*
+(instalado e restauradas no descarte, impedindo que uma tecla bloqueada pelo contexto) Tj T*
+(reapareça como comando de gameplay.) Tj T*
+() Tj T*
+(- TAB e SHIFT+TAB mantêm a navegação de foco. SHIFT isolado executa sua ação ao soltar,) Tj T*
+(sem confundir SHIFT+TAB com habilidade.) Tj T*
+(- SPACE executa ataque durante gameplay, mesmo com foco em inventário, configurações ou) Tj T*
+(outro botão da HUD. Não aciona acidentalmente o botão destacado.) Tj T*
+(- ENTER ativa o botão focado. O atalho de inventário funciona mesmo com foco em outro) Tj T*
+(botão.) Tj T*
+(- Campos de texto, controles de edição, captura de atalhos e configurações modais) Tj T*
+(recebem sua entrada sem movimento ou combate. Uma checkbox nas configurações mantém o) Tj T*
+(comportamento normal de SPACE.) Tj T*
+(- Repetição de KEY_PRESSED não duplica a ação. Mudança de contexto, desconexão e) Tj T*
+(recuperação limpam o estado; teclas já pressionadas aguardam soltura antes de serem) Tj T*
+(aceitas novamente.) Tj T*
+(- Outras janelas não são interceptadas. Ao fechar a partida, dispatcher, listener de) Tj T*
+(foco e bindings são removidos/restaurados.) Tj T*
+() Tj T*
+(## Configurações integradas) Tj T*
+() Tj T*
+(Áudio contém o volume geral e o mute reais já suportados. Acessibilidade oferece redução) Tj T*
+(de animações/iluminação decorativas. A resolução ajusta a janela. Os controles exibem os) Tj T*
+() Tj T*
+(Spirit Gate - Adendo Janelas e Hotkeys - página 1/4) Tj T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 3128 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(atalhos atuais e permitem captura com validação de conflitos e teclas reservadas.) Tj T*
+() Tj T*
+(Cancelar, X e ESC descartam o rascunho. Aplicar grava volume, mute e preferência de) Tj T*
+(redução usando o RpgPreferences existente, mantendo seu formato e caminho. Os atalhos) Tj T*
+(personalizados são aplicados somente à sessão atual e atualizam os rótulos da HUD; não) Tj T*
+(são gravados em saves. Resolução também mantém comportamento de sessão. Não foram) Tj T*
+(criados controles separados fictícios para música e efeitos.) Tj T*
+() Tj T*
+(O carregamento e a gravação não bloqueiam a interface. O fechamento durante carregamento) Tj T*
+(invalida resultados atrasados; durante confirmação da gravação, os controles e o) Tj T*
+(fechamento ficam bloqueados até seu resultado. Erros de reconexão do V6 aparecem no) Tj T*
+(painel de menu existente.) Tj T*
+() Tj T*
+(## Arquivos de produção) Tj T*
+() Tj T*
+(Todos os caminhos abaixo são relativos a server/src/main/java/com/projetok/.) Tj T*
+() Tj T*
+(- multiplayer/GameInputRouter.java: novo roteador contextual, captura,) Tj T*
+(validação/remapeamento de sessão e descarte.) Tj T*
+(- multiplayer/GamePanels.java: novo gerenciador de painéis, modalidade, foco,) Tj T*
+(fechamento, arraste e limites.) Tj T*
+(- multiplayer/NetworkSettingsPanel.java: nova apresentação integrada de configurações e) Tj T*
+(rascunho Aplicar/Cancelar.) Tj T*
+(- multiplayer/RpgNetworkClientLauncher.java: integração dos cinco painéis,) Tj T*
+(disponibilidade do input, reconexão e ciclo de vida.) Tj T*
+(- multiplayer/GameHudStyle.java: componentes locais navy/ciano, transparência, foco,) Tj T*
+(sliders e controles.) Tj T*
+(- multiplayer/NetworkGameHud.java: camada dos painéis, layout e rótulos dos utilitários.) Tj T*
+(- multiplayer/NetworkHotbar.java: rótulos dos atalhos e disposição do perfil.) Tj T*
+(- multiplayer/NetworkInventoryPanel.java: busca local e ações ajustadas ao espaço) Tj T*
+(disponível.) Tj T*
+(- multiplayer/NetworkQuestPanel.java: disposição e rótulos de ações existentes.) Tj T*
+(- prototype/rpg/PreferencesDialog.java: acesso ao caminho de preferências já existente.) Tj T*
+(- prototype/rpg/SpiritTheme.java: exposição das cores existentes e da opção de movimento) Tj T*
+(reduzido.) Tj T*
+() Tj T*
+(Não houve alterações no protocolo, dano, cooldowns, habilidades do servidor, colisão,) Tj T*
+(progressão, regras de missões ou inventário autoritativo. Os fluxos legados de) Tj T*
+(offline/Coop e World Studio foram preservados. Nenhuma dependência adicionada.) Tj T*
+() Tj T*
+(## Testes e evidências) Tj T*
+() Tj T*
+(Compilação: 258 fontes principais e 226 arquivos de teste.) Tj T*
+() Tj T*
+(Regressão Java completa: 695 executados, 670 aprovados, 25 abortados por ausência de) Tj T*
+(ambiente gráfico nessa rodada, zero falhas e zero ignorados. Esses testes gráficos foram) Tj T*
+(cobertos na execução com GUI: 12 classes, 33 execuções aprovadas, zero abortos e zero) Tj T*
+(falhas. Os totais se sobrepõem e não devem ser somados como testes únicos.) Tj T*
+() Tj T*
+() Tj T*
+(Spirit Gate - Adendo Janelas e Hotkeys - página 2/4) Tj T*
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 3295 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(Novos testes: GameInputRoutingTest \(dois casos\), GamePanelsIntegrationTest \(um caso\) e) Tj T*
+(utilitário SwingKeys. Task212PlayableUiTest e Task213HudSwingTest foram atualizados para) Tj T*
+(verificar os painéis internos, incluindo ausência de janelas nativas secundárias. A) Tj T*
+(rodada GUI também cobriu Task191LifecycleTest, RadminLauncherUiTest,) Tj T*
+(SessionGameReconnectCloseTest, Task201RadminCancellationTest,) Tj T*
+(Task201SessionWindowFlowTest e as três classes de regressão do Studio.) Tj T*
+() Tj T*
+(O teste integrado iniciou servidor e dois clientes V6 reais. Com foco nos botões, os) Tj T*
+(ataques produziram hits confirmados pelo servidor e observados pelos dois clientes.) Tj T*
+(Houve verificação de movimento observado pelo par, digitação sem comandos, atalhos,) Tj T*
+(captura, Aplicar/Cancelar, fechamento, reabertura, arraste nos limites e remoção de) Tj T*
+(listeners. Os cinco painéis foram verificados em 1366x768, 1000x700 e 640x480.) Tj T*
+(Configurações compactas usam rolagem com ações de rodapé acessíveis. A pintura RGBA foi) Tj T*
+(verificada com alpha entre zero e 255, além de capturas em cenários claro e escuro.) Tj T*
+() Tj T*
+(Comandos reproduzíveis:) Tj T*
+() Tj T*
+(    python tools/run-local-tests.py) Tj T*
+(    python tools/corujao7_verify.py ADENDO-JANELAS-GUI) Tj T*
+(com.projetok.multiplayer.GameInputRoutingTest) Tj T*
+(com.projetok.multiplayer.GamePanelsIntegrationTest) Tj T*
+(com.projetok.multiplayer.Task213HudSwingTest) Tj T*
+(com.projetok.multiplayer.Task212PlayableUiTest) Tj T*
+(com.projetok.multiplayer.Task191LifecycleTest) Tj T*
+(com.projetok.prototype.rpg.RadminLauncherUiTest) Tj T*
+(com.projetok.prototype.rpg.SessionGameReconnectCloseTest) Tj T*
+(com.projetok.prototype.rpg.Task201RadminCancellationTest) Tj T*
+(com.projetok.prototype.rpg.Task201SessionWindowFlowTest) Tj T*
+(com.projetok.studio.QuestBuilderTest com.projetok.studio.StudioGestureSafetyTest) Tj T*
+(com.projetok.studio.StudioUsabilityTest --gui --cycle corujao-viii) Tj T*
+() Tj T*
+(Logs e resultados estruturados:) Tj T*
+() Tj T*
+(- .task-checkpoints/ADENDO-JANELAS-HOTKEYS/corujao-viii/java-full-final.log) Tj T*
+(- .task-checkpoints/ADENDO-JANELAS-GUI/corujao-viii/verification-gui.json) Tj T*
+(- .task-checkpoints/ADENDO-JANELAS-HOTKEYS/corujao-viii/integrity-final.json) Tj T*
+(- .task-checkpoints/ADENDO-JANELAS-HOTKEYS/corujao-viii/implementation.patch) Tj T*
+() Tj T*
+(## Limitações e verificações pendentes) Tj T*
+() Tj T*
+(java.awt.Robot não entregou eventos nativos de teclado neste ambiente. Uma prova isolada) Tj T*
+(registrou ausência desses eventos e sucesso dos eventos enviados à fila AWT. Os testes) Tj T*
+(aprovados passam por EventQueue, KeyEventDispatcher, foco real e bindings Swing; não) Tj T*
+(chamam diretamente as ações para simular o resultado. Isso comprova o roteamento de) Tj T*
+(eventos da aplicação, mas não constitui homologação de digitação física. A evidência) Tj T*
+(está em keyboard-probe.log no checkpoint do adendo. As primeiras tentativas com Robot) Tj T*
+(falharam e não foram contadas como aprovação.) Tj T*
+() Tj T*
+(Ainda requerem conferência humana: teclado físico no Windows, preferência visual final,) Tj T*
+() Tj T*
+(Spirit Gate - Adendo Janelas e Hotkeys - página 3/4) Tj T*
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 11 0 R >>
+endobj
+11 0 obj
+<< /Length 2186 >>
+stream
+BT /F1 10 Tf 14 TL 42 795 Td
+(legibilidade em diferentes monitores e sessão Radmin entre duas máquinas. Multiplayer) Tj T*
+(com dois clientes foi validado localmente; não é prova de conectividade entre) Tj T*
+(computadores distintos. A modalidade descrita se refere aos painéis internos; o fluxo) Tj T*
+(preexistente de confirmação de encerramento continua usando seu mecanismo próprio.) Tj T*
+() Tj T*
+(Uma tentativa intermediária do teste de iluminação usou valor abaixo do mínimo aceito) Tj T*
+(pelo motor. A fixture foi corrigida para 0,5, sem mudar limites do runtime, e a rodada) Tj T*
+(final passou.) Tj T*
+() Tj T*
+(## Integridade e entrega) Tj T*
+() Tj T*
+(3.913 arquivos protegidos em assets, saves e dist permaneceram idênticos ao início. As) Tj T*
+(fontes permaneceram estáveis durante as duas rodadas finais. As 2.432 exclusões) Tj T*
+(históricas do workspace foram preservadas. Arquivos sintéticos gerados pelos testes) Tj T*
+(foram arquivados no novo checkpoint; duas evidências antigas de mapa com timestamps) Tj T*
+(regenerados foram restauradas byte a byte após arquivar as novas saídas.) Tj T*
+() Tj T*
+(Sem commit, push, release ou publicação. Os pacotes de distribuição anteriores foram) Tj T*
+(preservados; esta entrega está no código-fonte e nas evidências, sem novo executável) Tj T*
+(empacotado.) Tj T*
+() Tj T*
+(## Capturas reais) Tj T*
+() Tj T*
+(- ADENDO-settings-1366.png: configurações integradas em resolução ampla.) Tj T*
+(- ADENDO-settings-640.png: configurações compactas, rolagem e rodapé.) Tj T*
+(- ADENDO-inventory-1366.png: inventário integrado.) Tj T*
+(- ADENDO-inventory-text-focus.png: foco na busca de texto.) Tj T*
+(- ADENDO-settings-rebind-focus.png: captura contextual de atalho.) Tj T*
+(- ADENDO-journal-1000.png: missões integradas.) Tj T*
+(- ADENDO-inventory-bright.png e ADENDO-inventory-dark.png: composição em duas) Tj T*
+(iluminações.) Tj T*
+() Tj T*
+(As capturas completas dos cinco painéis nas três resoluções ficam em .task-) Tj T*
+(checkpoints/ADENDO-JANELAS-GUI/corujao-viii/ui-regression/. As imagens anteriores da) Tj T*
+(TASK-213 foram preservadas.) Tj T*
+() Tj T*
+(Spirit Gate - Adendo Janelas e Hotkeys - página 4/4) Tj T*
+ET
+endstream
+endobj
+xref
+0 12
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000140 00000 n 
+0000000237 00000 n 
+0000000363 00000 n 
+0000003572 00000 n 
+0000003698 00000 n 
+0000006878 00000 n 
+0000007004 00000 n 
+0000010351 00000 n 
+0000010479 00000 n 
+trailer
+<< /Size 12 /Root 1 0 R >>
+startxref
+12718
+%%EOF

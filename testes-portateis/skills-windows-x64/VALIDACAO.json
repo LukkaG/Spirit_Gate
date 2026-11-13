@@ -1,0 +1,32 @@
+{
+  "dataLocal": "2026-11-12",
+  "artefato": "SpiritGate-Skills-Windows64-20261113T003427Z-e989a97f.zip",
+  "sha256": "8153cab7db60a75c64583640b3cfddc4c58481338c402a0c11eb3d56452ff991",
+  "bytes": 54717404,
+  "arquivosDoManifestoConferidos": 446,
+  "imagensEfetivasDeSkills": 45,
+  "probesDoRuntimeEmbutido": {
+    "SkillsLocalPreviewProbe": 0,
+    "SkillsLiveSwitchProbe": 0
+  },
+  "javaHeadless": {
+    "exitCode": 0,
+    "reported": 1253,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 57,
+    "classes": 279,
+    "executed": 1196
+  },
+  "python": {
+    "test_assets.py": {
+      "aprovados": 7
+    },
+    "test_sprite_review.py": {
+      "aprovados": 5
+    }
+  },
+  "outrosComputadoresFisicos": "PENDENTE",
+  "radminEntreMaquinas": "NAO_EXECUTADO",
+  "aprovacaoVisualHumana": "PENDENTE"
+}

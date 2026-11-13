@@ -1,0 +1,453 @@
+{
+  "route": "image_gen",
+  "model": null,
+  "estimateUsd": null,
+  "clips": [
+    {
+      "id": "fire_5",
+      "file": "fire_5.png",
+      "source": "assets/skills/refined-v6/art/fire-cross.png",
+      "source_sha256": "90f5071df7964ecc029af87869bc27df28d98f449f91d43226fdbaf4b35dfe54",
+      "rects": [
+        [
+          0,
+          0,
+          362,
+          362
+        ],
+        [
+          362,
+          0,
+          724,
+          362
+        ],
+        [
+          724,
+          0,
+          1086,
+          362
+        ],
+        [
+          1086,
+          0,
+          1448,
+          362
+        ],
+        [
+          0,
+          362,
+          362,
+          724
+        ],
+        [
+          362,
+          362,
+          724,
+          724
+        ],
+        [
+          724,
+          362,
+          1086,
+          724
+        ],
+        [
+          1086,
+          362,
+          1448,
+          724
+        ],
+        [
+          0,
+          724,
+          362,
+          1086
+        ],
+        [
+          362,
+          724,
+          724,
+          1086
+        ],
+        [
+          724,
+          724,
+          1086,
+          1086
+        ],
+        [
+          1086,
+          724,
+          1448,
+          1086
+        ]
+      ],
+      "common_crop": [
+        42,
+        51,
+        321,
+        309
+      ],
+      "pivot": [
+        96,
+        96
+      ],
+      "scale": 0.6308243727598566,
+      "mirror_horizontal": false,
+      "sha256": "5efd2f99e884d930427d449e639c4c5f1a7a37ed9dfead25fb3a444b0edaafcd",
+      "metadata": {
+        "path": "assets/skills/refined-v6/fire_5.png",
+        "frameWidth": 192,
+        "frameHeight": 192,
+        "columns": 4,
+        "frames": 12,
+        "frameMillis": 28,
+        "drawWidth": 96,
+        "drawHeight": 96,
+        "pivotX": 96,
+        "pivotY": 96
+      }
+    },
+    {
+      "id": "water_2",
+      "file": "water_2.png",
+      "source": "assets/skills/refined-v6/art/water-spin-isolated.png",
+      "source_sha256": "72c564a137f3906d2ddb3efbc7696a0396383c609bda2037acb396f11e0a6daa",
+      "rects": [
+        [
+          0,
+          0,
+          362,
+          362
+        ],
+        [
+          362,
+          0,
+          724,
+          362
+        ],
+        [
+          724,
+          0,
+          1086,
+          362
+        ],
+        [
+          1086,
+          0,
+          1448,
+          362
+        ],
+        [
+          0,
+          362,
+          362,
+          724
+        ],
+        [
+          362,
+          362,
+          724,
+          724
+        ],
+        [
+          724,
+          362,
+          1086,
+          724
+        ],
+        [
+          1086,
+          362,
+          1448,
+          724
+        ],
+        [
+          0,
+          724,
+          362,
+          1086
+        ],
+        [
+          362,
+          724,
+          724,
+          1086
+        ],
+        [
+          724,
+          724,
+          1086,
+          1086
+        ],
+        [
+          1086,
+          724,
+          1448,
+          1086
+        ]
+      ],
+      "common_crop": [
+        57,
+        72,
+        305,
+        275
+      ],
+      "pivot": [
+        160,
+        167
+      ],
+      "scale": 1,
+      "mirror_horizontal": false,
+      "sha256": "bd34f9eb1394aaecb8e3de535ad1accc23cf45f1377a925315349a73c1b7a907",
+      "metadata": {
+        "path": "assets/skills/refined-v6/water_2.png",
+        "frameWidth": 320,
+        "frameHeight": 320,
+        "columns": 4,
+        "frames": 12,
+        "frameMillis": 50,
+        "drawWidth": 200,
+        "drawHeight": 200,
+        "pivotX": 160,
+        "pivotY": 167
+      }
+    },
+    {
+      "id": "martial_3",
+      "file": "martial_3.png",
+      "source": "assets/skills/refined-v6/art/seismic-transparent.png",
+      "source_sha256": "f7fad646c2d0fc71a9ed8891b77390dbeadd7802cf028eb226e37a48d4583072",
+      "rects": [
+        [
+          0,
+          0,
+          362,
+          362
+        ],
+        [
+          362,
+          0,
+          724,
+          362
+        ],
+        [
+          724,
+          0,
+          1086,
+          362
+        ],
+        [
+          1086,
+          0,
+          1448,
+          362
+        ],
+        [
+          0,
+          362,
+          362,
+          724
+        ],
+        [
+          362,
+          362,
+          724,
+          724
+        ],
+        [
+          724,
+          362,
+          1086,
+          724
+        ],
+        [
+          1086,
+          362,
+          1448,
+          724
+        ],
+        [
+          0,
+          724,
+          362,
+          1086
+        ],
+        [
+          362,
+          724,
+          724,
+          1086
+        ],
+        [
+          724,
+          724,
+          1086,
+          1086
+        ],
+        [
+          1086,
+          724,
+          1448,
+          1086
+        ]
+      ],
+      "common_crop": [
+        41,
+        93,
+        326,
+        265
+      ],
+      "pivot": [
+        157,
+        122
+      ],
+      "scale": 1,
+      "mirror_horizontal": false,
+      "sha256": "b00f72e444191b1291d56255e0fc2c84927859a55c883cb8846060d918be0c14",
+      "metadata": {
+        "path": "assets/skills/refined-v6/martial_3.png",
+        "frameWidth": 320,
+        "frameHeight": 240,
+        "columns": 4,
+        "frames": 12,
+        "frameMillis": 75,
+        "drawWidth": 240,
+        "drawHeight": 180,
+        "pivotX": 157,
+        "pivotY": 122
+      }
+    },
+    {
+      "id": "wind_4",
+      "file": "wind_4.png",
+      "source": "assets/skills/refined-v6/art/wind-triple.png",
+      "source_sha256": "9299078897c8e1e0ca9112471912c3bf152b32d3ed0e99534a77f556e7496d44",
+      "rects": [
+        [
+          0,
+          0,
+          362,
+          362
+        ],
+        [
+          362,
+          0,
+          724,
+          362
+        ],
+        [
+          724,
+          0,
+          1086,
+          362
+        ],
+        [
+          1086,
+          0,
+          1448,
+          362
+        ],
+        [
+          0,
+          362,
+          362,
+          724
+        ],
+        [
+          362,
+          362,
+          724,
+          724
+        ],
+        [
+          724,
+          362,
+          1086,
+          724
+        ],
+        [
+          1086,
+          362,
+          1448,
+          724
+        ],
+        [
+          0,
+          724,
+          362,
+          1086
+        ],
+        [
+          362,
+          724,
+          724,
+          1086
+        ],
+        [
+          724,
+          724,
+          1086,
+          1086
+        ],
+        [
+          1086,
+          724,
+          1448,
+          1086
+        ]
+      ],
+      "common_crop": [
+        26,
+        97,
+        329,
+        268
+      ],
+      "pivot": [
+        163,
+        110
+      ],
+      "scale": 1,
+      "mirror_horizontal": false,
+      "sha256": "a3b5613598b8cafd3a2bc325592c53e2ab857c8751dd15fd8f6afecbf1e60355",
+      "metadata": {
+        "path": "assets/skills/refined-v6/wind_4.png",
+        "frameWidth": 320,
+        "frameHeight": 224,
+        "columns": 4,
+        "frames": 12,
+        "frameMillis": 45,
+        "drawWidth": 160,
+        "drawHeight": 112,
+        "pivotX": 163,
+        "pivotY": 110
+      }
+    },
+    {
+      "id": "wind_4.impact",
+      "file": "wind_4.impact.png",
+      "source_frames": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "sha256": "67f207de56bd91afab2626bc3e9a88ed1b114fa3d53528b7cdfb2ffd8818dc3e",
+      "metadata": {
+        "path": "assets/skills/refined-v6/wind_4.impact.png",
+        "frameWidth": 320,
+        "frameHeight": 224,
+        "columns": 4,
+        "frames": 6,
+        "frameMillis": 50,
+        "drawWidth": 160,
+        "drawHeight": 112,
+        "pivotX": 163,
+        "pivotY": 110
+      }
+    }
+  ],
+  "packaging": "Recorte, registro, espelhamento de direção e redução nearest; sem ampliação/recoloração/repintura."
+}

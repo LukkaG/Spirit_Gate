@@ -1,0 +1,39 @@
+{
+  "route": "image_gen",
+  "model": null,
+  "estimateUsd": null,
+  "jobs": [
+    {
+      "name": "thunder-cut",
+      "prompt": "Use case: precise-object-edit. Edit ONLY lightning COLOR PALETTE in the attached Spirit Gate pixel-art FX sheet. Preserve the sharp bolt/spear silhouette, facingRIGHT, negative space, per-frame growth, and electrical branch pattern. Replace ALL blue/cyan/violet electrical pixels with warm lightning: luminous pale yellow-white cores, golden yellow main channels, amber and orange edge sparks. Electrical forks, NOT fire flames. Keep clean crisp pixel clusters, no blur or gray backdrop. Output EXACTLY 6 distinct animation frames arranged 3 columns by 2 rows, equal cells read left-right top-bottom. Fixed cell registration center50%50%, fixed scale across frames, NO autozoom. All frames inside inner70% cell with generous15%transparentgutters. Maintain original proportions of the horizontal bolt/spear, not a circular explosion. True TRANSPARENT alpha through all background/gaps, no checkerboard, text or gridlines. This is a recolor matching the original game art, not new characters."
+    },
+    {
+      "name": "thunder-spear",
+      "prompt": "Use case: precise-object-edit. Edit ONLY lightning COLOR PALETTE in the attached Spirit Gate pixel-art FX sheet. Preserve the sharp bolt/spear silhouette, facingRIGHT, negative space, per-frame growth, and electrical branch pattern. Replace ALL blue/cyan/violet electrical pixels with warm lightning: luminous pale yellow-white cores, golden yellow main channels, amber and orange edge sparks. Electrical forks, NOT fire flames. Keep clean crisp pixel clusters, no blur or gray backdrop. Output EXACTLY 9 distinct animation frames arranged 3 columns by 3 rows, equal cells read left-right top-bottom. Fixed cell registration center50%50%, fixed scale across frames, NO autozoom. All frames inside inner70% cell with generous15%transparentgutters. Maintain original proportions of the horizontal bolt/spear, not a circular explosion. True TRANSPARENT alpha through all background/gaps, no checkerboard, text or gridlines. This is a recolor matching the original game art, not new characters."
+    },
+    {
+      "name": "thunder-dash",
+      "prompt": "Use case: precise-object-edit. Edit attached Spirit Gate pixelart game FX sheet, change ONLY blue/cyan/violet palette to bright warm yellow and amber/orange lightning: pale yellow-white core, golden yellow electrical branches, orange edges and sparks. Preserve its horizontal lightning speed wake/arrow, facing RIGHT, sharp electrical forks and per-frame silhouette. It must read as lightning, NOT fire. Exactly9 separate frames in strict equal3columns3rows grid read left-right top-bottom. Same scale/registration center50%50% eachcell; no frame individually enlarged. Keep every effect whollyinside inner70%cell with15%transparentpadding, no intercell particles. Genuine TRANSPARENT alpha in all background/gaps, not black/gray/paintedcheckerboard; no text/gridlines. Crisp pixel clusters, no blur/glow backdrop. Keep original game art identity."
+    },
+    {
+      "name": "thunder-circuit",
+      "prompt": "Use case: precise-object-edit. Edit attached Spirit Gate pixelart game FX sheet, change ONLY blue/cyan/violet palette to bright warm yellow and amber/orange lightning: pale yellow-white core, golden yellow electrical branches, orange edges and sparks. Preserve its open circular electrical arcs with TRANSPARENT hollow center, sharp electrical forks and per-frame silhouette. It must read as lightning, NOT fire. Exactly9 separate frames in strict equal3columns3rows grid read left-right top-bottom. Same scale/registration center50%50% eachcell; no frame individually enlarged. Keep every effect whollyinside inner70%cell with15%transparentpadding, no intercell particles. Genuine TRANSPARENT alpha in all background/gaps, not black/gray/paintedcheckerboard; no text/gridlines. Crisp pixel clusters, no blur/glow backdrop. Keep original game art identity."
+    },
+    {
+      "name": "thunder-dash-alpha",
+      "prompt": "Use case: background-extraction. Correct this game FX sheet without changing its lightning style or yellow/orange palette. Remove ALL orange/brown/black glow backdrop. KEEP ONLY the narrow sharp yellow-white lightning channels and thin amber/orange branches in their EXACT existing9positions, no filled background or glowbetweenbranches. True transparent alpha, NO matte. Keep3columns3rows. Eachboltwholeinsideinner70%cell. Crisp pixelclusters, no text, gridlines or checkerboard. Do not generate any character or scene. Actual transparent alpha in all emptygaps."
+    },
+    {
+      "name": "thunder-circuit-padded",
+      "prompt": "Use case: background-extraction. Correct this game FX sheet without changing its lightning style or yellow/orange palette. Keep the9gold lightning ring frames, exact3columns3rows. Increase transparent padding: uniformly reduce art to inner65% of EACH equalcell, keeping commoncellcenter fixed and no crop. Remove residual glowingfield INSIDE rings andbetween cells. Centerhole must be fullytransparent. Keep sharp yellow-white forked channels with orangeedges; NO background. Crisp pixelclusters, no text, gridlines or checkerboard. Do not generate any character or scene. Actual transparent alpha in all emptygaps."
+    },
+    {
+      "name": "thunder-impact",
+      "prompt": "Use case: precise-object-edit. Recolor this SIX-frame impact sprite sheet to exclusively golden yellow/amber/orange lightning sparks with pale yellow-white cores. Preserve starburst then dissipating ring sequence,3columns2rows, and frameidentity. Replace ALL blue/cyan with warmgold. Keep everyframeinner70%cell, generous transparentgutters and truealpha incenter/background. Remove broad glowbackground; onlysharp sparks andelectrical ring. Crisp pixelclusters, no text/checkerboard or scene."
+    },
+    {
+      "name": "martial-slam",
+      "prompt": "Use case: stylized-concept. New original 2D RPG GRAB AND BODY SLAM effect spritesheet, reference fist only provides amber/tan hand and white speedline style. NO characters or enemybodies, only stylized hands and actionFX layered over the existing real sprites. EXACTLY16frames STRICT4columns4rows equalcells, fixedcenter50%50%, samecamera/scale,15%transparentgutters. Frames1-8 GRAB phase:1two faint open tan hands with short wrappedwhitewrists at left/right of clear emptycenter,2hands approach,3fingersreach,4hands close gripping the emptycenter frombothsides,5firmgrip white pressurelines,6hands curlupward withsmall amberarc,7smalloverheadthrowarc and handsbeginrelease,8lastdownwardmotionstreak handsfading. Frames9-16 BODY SLAM phase:9a short downwardwhite/tan streak togroundcenter,10compact strong ochre/white groundcontact burst,11flat elliptical broken shockring withtiny stonechips,12low dustpuffs,13sparsecrackedground andchipsettling,14fewdustwisps,15tinyspecks,16only2faintspecks. The first8frames show HANDS, not fists punching andnot 8explosions. Last8show a SLAM into horizontalground, no fire/lightning/giantcrater. Crisp pixelart top-downthreequarter Spirit Gate aesthetic, clean readable at96x96 grab /128x96slam, no photorealism or backgroundglow. True TRANSPARENT alpha, NO matte/checkerboard, no gridlines/text. Everywholeeffectisolatedinside itscell."
+    }
+  ]
+}

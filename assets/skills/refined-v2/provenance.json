@@ -1,0 +1,1915 @@
+{
+  "generator": "prepare_skill_assets.py:refined-v2",
+  "art_source": "mixed",
+  "sources": {
+    "water_prison_v2": {
+      "path": "assets/skills/refined-v2/art/water_prison_v2-v1.png",
+      "columns": 3,
+      "rows": 3,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "art_source": "host_image",
+      "prompt": "assets/skills/refined-v2/art/prompts.json#water_prison_v2",
+      "references": [
+        "292.png",
+        "91.png"
+      ],
+      "sha256": "eb6b57ba4d97b62e596eba2c46413f553eaadd280b1d7f3832efdbaabc4350c1",
+      "size": [
+        1254,
+        1254
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          418,
+          418
+        ],
+        [
+          418,
+          0,
+          836,
+          418
+        ],
+        [
+          836,
+          0,
+          1254,
+          418
+        ],
+        [
+          0,
+          418,
+          418,
+          836
+        ],
+        [
+          418,
+          418,
+          836,
+          836
+        ],
+        [
+          836,
+          418,
+          1254,
+          836
+        ],
+        [
+          0,
+          836,
+          418,
+          1254
+        ],
+        [
+          418,
+          836,
+          836,
+          1254
+        ],
+        [
+          836,
+          836,
+          1254,
+          1254
+        ]
+      ],
+      "common_crop": [
+        8,
+        39,
+        415,
+        392
+      ],
+      "registered_anchor": null,
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [
+        {
+          "file": "292.png",
+          "sha256": "c023ff6bc34549315eafd618adca8523d0486833eb49d321932a11c7f281fd4e"
+        },
+        {
+          "file": "91.png",
+          "sha256": "5d3196b34d6040b7a0f9814aa304be77ad1e3c1b1a526a825d1d836f1107a834"
+        }
+      ],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    },
+    "water_vortex_v2": {
+      "path": "assets/skills/refined-v2/art/water_vortex_v2-v1.png",
+      "columns": 3,
+      "rows": 3,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "art_source": "host_image",
+      "prompt": "assets/skills/refined-v2/art/prompts.json#water_vortex_v2",
+      "references": [
+        "231.png",
+        "134.png"
+      ],
+      "sha256": "3d27cc8be0035d43debf0073640d81f891286235ee03711ef418e07bbc25745d",
+      "size": [
+        1254,
+        1254
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          418,
+          418
+        ],
+        [
+          418,
+          0,
+          836,
+          418
+        ],
+        [
+          836,
+          0,
+          1254,
+          418
+        ],
+        [
+          0,
+          418,
+          418,
+          836
+        ],
+        [
+          418,
+          418,
+          836,
+          836
+        ],
+        [
+          836,
+          418,
+          1254,
+          836
+        ],
+        [
+          0,
+          836,
+          418,
+          1254
+        ],
+        [
+          418,
+          836,
+          836,
+          1254
+        ],
+        [
+          836,
+          836,
+          1254,
+          1254
+        ]
+      ],
+      "common_crop": [
+        31,
+        14,
+        392,
+        406
+      ],
+      "registered_anchor": null,
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [
+        {
+          "file": "231.png",
+          "sha256": "e4b5c79cf6e58e10bb1c626ab48724839630e30f12ca6993f1cbe49fdf2ceebd"
+        },
+        {
+          "file": "134.png",
+          "sha256": "92d07e35c4c928b215af681176cfbcdc11f7d379de5cf62a0fccb25251f6f549"
+        }
+      ],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    },
+    "water_dash_v2": {
+      "path": "assets/skills/refined-v2/art/water_dash_v2-v1.png",
+      "columns": 3,
+      "rows": 3,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "art_source": "host_image",
+      "prompt": "assets/skills/refined-v2/art/prompts.json#water_dash_v2",
+      "references": [
+        "97.png",
+        "394.png"
+      ],
+      "registration": "front_tip",
+      "front_inset": 20,
+      "sha256": "56237d535ddced46c9ad7a9aeb12e2b9f0f6549e0aa59050a951f87a8c600baf",
+      "size": [
+        1254,
+        1254
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          418,
+          418
+        ],
+        [
+          418,
+          0,
+          836,
+          418
+        ],
+        [
+          836,
+          0,
+          1254,
+          418
+        ],
+        [
+          0,
+          418,
+          418,
+          836
+        ],
+        [
+          418,
+          418,
+          836,
+          836
+        ],
+        [
+          836,
+          418,
+          1254,
+          836
+        ],
+        [
+          0,
+          836,
+          418,
+          1254
+        ],
+        [
+          418,
+          836,
+          836,
+          1254
+        ],
+        [
+          836,
+          836,
+          1254,
+          1254
+        ]
+      ],
+      "common_crop": [
+        49,
+        350,
+        444,
+        464
+      ],
+      "registered_anchor": [
+        369,
+        68
+      ],
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [
+        {
+          "file": "97.png",
+          "sha256": "7911629bc16a776fb11768ee56cf43400a9417ef7b5a92e12139c6b717d5b5ad"
+        },
+        {
+          "file": "394.png",
+          "sha256": "1ba16e86cbe8f45ded52147a2d01f454a79d8ea87cb3d5789905294fb77512be"
+        }
+      ],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    },
+    "martial_crater_v2": {
+      "path": "assets/skills/refined-v2/art/martial_crater_v2-v1.png",
+      "columns": 3,
+      "rows": 3,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "art_source": "host_image",
+      "prompt": "assets/skills/refined-v2/art/prompts.json#martial_crater_v2",
+      "references": [
+        "102.png",
+        "53.png",
+        "373.png"
+      ],
+      "sha256": "e27c1d7867fe8fdaa18a22c319ea5838aa314c0956689052f937055f2643cb46",
+      "size": [
+        1254,
+        1254
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          418,
+          418
+        ],
+        [
+          418,
+          0,
+          836,
+          418
+        ],
+        [
+          836,
+          0,
+          1254,
+          418
+        ],
+        [
+          0,
+          418,
+          418,
+          836
+        ],
+        [
+          418,
+          418,
+          836,
+          836
+        ],
+        [
+          836,
+          418,
+          1254,
+          836
+        ],
+        [
+          0,
+          836,
+          418,
+          1254
+        ],
+        [
+          418,
+          836,
+          836,
+          1254
+        ],
+        [
+          836,
+          836,
+          1254,
+          1254
+        ]
+      ],
+      "common_crop": [
+        0,
+        47,
+        418,
+        404
+      ],
+      "registered_anchor": null,
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [
+        {
+          "file": "102.png",
+          "sha256": "73c8750a3fee1705b55e8451760a42db0ea41dd47e5aebfc373bb96f73b72971"
+        },
+        {
+          "file": "53.png",
+          "sha256": "a9096b939cd0b2b30f5576a30f44482b0dde3fe3cbbdeebaaf70ba74e0021069"
+        },
+        {
+          "file": "373.png",
+          "sha256": "c8533a9a1bba694e333b8f5397dc3e9098cd0dd016b70fc7841a8ea4523354aa"
+        }
+      ],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    },
+    "thunder_bolt_v2": {
+      "path": "assets/skills/refined-v2/art/thunder_bolt_v2-v2.png",
+      "columns": 3,
+      "rows": 2,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "art_source": "host_image",
+      "prompt": "assets/skills/refined-v2/art/padding-fixes-prompts.json#thunder_bolt_v2",
+      "references": [
+        "96.png"
+      ],
+      "sha256": "97da1a49f2f9f084979430f1716a6563e5bae73170d93edb3ff633a5d5a5c69b",
+      "size": [
+        1161,
+        1355
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          387,
+          678
+        ],
+        [
+          387,
+          0,
+          774,
+          678
+        ],
+        [
+          774,
+          0,
+          1161,
+          678
+        ],
+        [
+          0,
+          678,
+          387,
+          1355
+        ],
+        [
+          387,
+          678,
+          774,
+          1355
+        ],
+        [
+          774,
+          678,
+          1161,
+          1355
+        ]
+      ],
+      "common_crop": [
+        82,
+        27,
+        335,
+        661
+      ],
+      "registered_anchor": null,
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [
+        {
+          "file": "96.png",
+          "sha256": "7e7c6694f218ed65a2203b47470d5a3d038dcdbc265c2556239d27e1ae6b8122"
+        }
+      ],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    },
+    "thunder_lance_v2": {
+      "path": "assets/skills/refined-v2/art/thunder_lance_v2-v2.png",
+      "columns": 2,
+      "rows": 5,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "art_source": "host_image",
+      "prompt": "assets/skills/refined-v2/art/padding-fixes-prompts.json#thunder_lance_v2",
+      "references": [
+        "34.png"
+      ],
+      "rects": [
+        [
+          0,
+          0,
+          842,
+          208
+        ],
+        [
+          842,
+          0,
+          1685,
+          208
+        ],
+        [
+          0,
+          208,
+          842,
+          408
+        ],
+        [
+          842,
+          208,
+          1685,
+          408
+        ],
+        [
+          0,
+          408,
+          842,
+          600
+        ],
+        [
+          842,
+          408,
+          1685,
+          600
+        ],
+        [
+          0,
+          600,
+          842,
+          767
+        ],
+        [
+          842,
+          600,
+          1685,
+          767
+        ],
+        [
+          0,
+          767,
+          842,
+          934
+        ]
+      ],
+      "anchors": [
+        [
+          421,
+          116
+        ],
+        [
+          421.5,
+          116
+        ],
+        [
+          421,
+          100
+        ],
+        [
+          421.5,
+          100
+        ],
+        [
+          421,
+          81
+        ],
+        [
+          421.5,
+          81
+        ],
+        [
+          421,
+          76
+        ],
+        [
+          421.5,
+          76
+        ],
+        [
+          421,
+          84
+        ]
+      ],
+      "cellCanvas": [
+        843,
+        256
+      ],
+      "registration": "front_tip",
+      "sha256": "dac4c2146e4c62e4661bde11a514978e9e057551fcdc42831b00c9297b1ce028",
+      "size": [
+        1685,
+        934
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          842,
+          208
+        ],
+        [
+          842,
+          0,
+          1685,
+          208
+        ],
+        [
+          0,
+          208,
+          842,
+          408
+        ],
+        [
+          842,
+          208,
+          1685,
+          408
+        ],
+        [
+          0,
+          408,
+          842,
+          600
+        ],
+        [
+          842,
+          408,
+          1685,
+          600
+        ],
+        [
+          0,
+          600,
+          842,
+          767
+        ],
+        [
+          842,
+          600,
+          1685,
+          767
+        ],
+        [
+          0,
+          767,
+          842,
+          934
+        ]
+      ],
+      "common_crop": [
+        194,
+        169,
+        851,
+        327
+      ],
+      "registered_anchor": [
+        649,
+        87
+      ],
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [
+        {
+          "file": "34.png",
+          "sha256": "41a2987b65160e37fd3ef34d9e9c1e285c653565abfbb049d0c0090a61d18ba2"
+        }
+      ],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    },
+    "thunder_dash_v2": {
+      "path": "assets/skills/refined-v2/art/thunder_dash_v2-v1.png",
+      "columns": 3,
+      "rows": 3,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "art_source": "host_image",
+      "prompt": "assets/skills/refined-v2/art/prompts.json#thunder_dash_v2",
+      "references": [
+        "307.png",
+        "96.png"
+      ],
+      "registration": "front_tip",
+      "front_inset": 12,
+      "sha256": "112b5ba51b48a3768dc5a8cadeebc3c284de7a1a60267552a53b34855071ff59",
+      "size": [
+        1254,
+        1254
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          418,
+          418
+        ],
+        [
+          418,
+          0,
+          836,
+          418
+        ],
+        [
+          836,
+          0,
+          1254,
+          418
+        ],
+        [
+          0,
+          418,
+          418,
+          836
+        ],
+        [
+          418,
+          418,
+          836,
+          836
+        ],
+        [
+          836,
+          418,
+          1254,
+          836
+        ],
+        [
+          0,
+          836,
+          418,
+          1254
+        ],
+        [
+          418,
+          836,
+          836,
+          1254
+        ],
+        [
+          836,
+          836,
+          1254,
+          1254
+        ]
+      ],
+      "common_crop": [
+        43,
+        332,
+        439,
+        484
+      ],
+      "registered_anchor": [
+        375,
+        86
+      ],
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [
+        {
+          "file": "307.png",
+          "sha256": "98b8c48ae3306d0777cccbfe33144ee3af0488711a210aab0c897ac4678994b0"
+        },
+        {
+          "file": "96.png",
+          "sha256": "7e7c6694f218ed65a2203b47470d5a3d038dcdbc265c2556239d27e1ae6b8122"
+        }
+      ],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    },
+    "thunder_ultimate_v2": {
+      "path": "assets/skills/refined-v2/art/thunder_ultimate_v2-v2.png",
+      "columns": 3,
+      "rows": 3,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "art_source": "host_image",
+      "prompt": "assets/skills/refined-v2/art/padding-fixes-prompts.json#thunder_ultimate_v2",
+      "references": [
+        "96.png",
+        "383.png"
+      ],
+      "sha256": "33b2d11b92add73e9241b72b91dd2e2c72ac0c66811847a83a222e09ac39dfc5",
+      "size": [
+        1254,
+        1254
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          418,
+          418
+        ],
+        [
+          418,
+          0,
+          836,
+          418
+        ],
+        [
+          836,
+          0,
+          1254,
+          418
+        ],
+        [
+          0,
+          418,
+          418,
+          836
+        ],
+        [
+          418,
+          418,
+          836,
+          836
+        ],
+        [
+          836,
+          418,
+          1254,
+          836
+        ],
+        [
+          0,
+          836,
+          418,
+          1254
+        ],
+        [
+          418,
+          836,
+          836,
+          1254
+        ],
+        [
+          836,
+          836,
+          1254,
+          1254
+        ]
+      ],
+      "common_crop": [
+        48,
+        35,
+        384,
+        375
+      ],
+      "registered_anchor": null,
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [
+        {
+          "file": "96.png",
+          "sha256": "7e7c6694f218ed65a2203b47470d5a3d038dcdbc265c2556239d27e1ae6b8122"
+        },
+        {
+          "file": "383.png",
+          "sha256": "c7d96e80db649f91da266136026fcb12f9273b77f8ad925c883dc5c45b711307"
+        }
+      ],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    },
+    "fire_fissure_v2": {
+      "path": "assets/skills/refined-v2/art/fire_fissure_v2-v1.png",
+      "columns": 3,
+      "rows": 3,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "art_source": "host_image",
+      "prompt": "assets/skills/refined-v2/art/prompts.json#fire_fissure_v2",
+      "references": [
+        "53.png",
+        "343.png"
+      ],
+      "sha256": "89b37fa66848e1cadd95645f382b1e47d1941739f0f77c1d743ac3a28d123343",
+      "size": [
+        1254,
+        1254
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          418,
+          418
+        ],
+        [
+          418,
+          0,
+          836,
+          418
+        ],
+        [
+          836,
+          0,
+          1254,
+          418
+        ],
+        [
+          0,
+          418,
+          418,
+          836
+        ],
+        [
+          418,
+          418,
+          836,
+          836
+        ],
+        [
+          836,
+          418,
+          1254,
+          836
+        ],
+        [
+          0,
+          836,
+          418,
+          1254
+        ],
+        [
+          418,
+          836,
+          836,
+          1254
+        ],
+        [
+          836,
+          836,
+          1254,
+          1254
+        ]
+      ],
+      "common_crop": [
+        45,
+        160,
+        385,
+        341
+      ],
+      "registered_anchor": null,
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [
+        {
+          "file": "53.png",
+          "sha256": "a9096b939cd0b2b30f5576a30f44482b0dde3fe3cbbdeebaaf70ba74e0021069"
+        },
+        {
+          "file": "343.png",
+          "sha256": "6e9b1d393e3d9c1893b6172765906c0e524989168d453f726b8f91512cb03d9e"
+        }
+      ],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    },
+    "ice_arrow_v2": {
+      "path": "assets/skills/refined-v2/art/ice_arrow_v2-v1.png",
+      "columns": 3,
+      "rows": 3,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "art_source": "host_image",
+      "prompt": "assets/skills/refined-v2/art/prompts.json#ice_arrow_v2",
+      "references": [
+        "341.png"
+      ],
+      "registration": "front_tip",
+      "sha256": "bd7ee7de4b253b0f72782716eef61b2f7c4f5f18c5e48c365c9f2f3f5dd31542",
+      "size": [
+        1254,
+        1254
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          418,
+          418
+        ],
+        [
+          418,
+          0,
+          836,
+          418
+        ],
+        [
+          836,
+          0,
+          1254,
+          418
+        ],
+        [
+          0,
+          418,
+          418,
+          836
+        ],
+        [
+          418,
+          418,
+          836,
+          836
+        ],
+        [
+          836,
+          418,
+          1254,
+          836
+        ],
+        [
+          0,
+          836,
+          418,
+          1254
+        ],
+        [
+          418,
+          836,
+          836,
+          1254
+        ],
+        [
+          836,
+          836,
+          1254,
+          1254
+        ]
+      ],
+      "common_crop": [
+        32,
+        339,
+        425,
+        495
+      ],
+      "registered_anchor": [
+        386,
+        79
+      ],
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [
+        {
+          "file": "341.png",
+          "sha256": "2bbb058a6b23b5ead397b37e5e560c22872d86435b6d9a15712d7a38783982ae"
+        }
+      ],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    },
+    "fire_cut_v1": {
+      "path": "assets/skills/variants/fire-variant-v1.png",
+      "columns": 3,
+      "rows": 3,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "art_source": "host_image",
+      "prompt": "assets/skills/variants/variant-prompts.json#fire",
+      "references": [
+        "252.png"
+      ],
+      "sha256": "f1cbb40f4acf5c84ffd412231ce58fa00efdddb2dd643f2310068ea1f412d726",
+      "size": [
+        1774,
+        887
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          591,
+          296
+        ],
+        [
+          591,
+          0,
+          1183,
+          296
+        ],
+        [
+          1183,
+          0,
+          1774,
+          296
+        ],
+        [
+          0,
+          296,
+          591,
+          591
+        ],
+        [
+          591,
+          296,
+          1183,
+          591
+        ],
+        [
+          1183,
+          296,
+          1774,
+          591
+        ],
+        [
+          0,
+          591,
+          591,
+          887
+        ],
+        [
+          591,
+          591,
+          1183,
+          887
+        ],
+        [
+          1183,
+          591,
+          1774,
+          887
+        ]
+      ],
+      "common_crop": [
+        54,
+        11,
+        519,
+        277
+      ],
+      "registered_anchor": null,
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [
+        {
+          "file": "252.png",
+          "sha256": "9825a3cde7771579d5438f12c1708f48d40d2bce7ce1e667c33fbf1d3fe8a70b"
+        }
+      ],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    },
+    "fire_eruption_original": {
+      "path": "C:/Users/lucas/Downloads/animations/249.png",
+      "columns": 4,
+      "rows": 4,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "art_source": "existing",
+      "references": [
+        "249.png"
+      ],
+      "sha256": "791bdb3ae329c4f0318c42b6fa146ce36a3ca7eb46b4f44c7e8df7e324e761a8",
+      "size": [
+        1024,
+        1024
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          256,
+          256
+        ],
+        [
+          256,
+          0,
+          512,
+          256
+        ],
+        [
+          512,
+          0,
+          768,
+          256
+        ],
+        [
+          768,
+          0,
+          1024,
+          256
+        ],
+        [
+          0,
+          256,
+          256,
+          512
+        ],
+        [
+          256,
+          256,
+          512,
+          512
+        ],
+        [
+          512,
+          256,
+          768,
+          512
+        ],
+        [
+          768,
+          256,
+          1024,
+          512
+        ],
+        [
+          0,
+          512,
+          256,
+          768
+        ],
+        [
+          256,
+          512,
+          512,
+          768
+        ],
+        [
+          512,
+          512,
+          768,
+          768
+        ],
+        [
+          768,
+          512,
+          1024,
+          768
+        ],
+        [
+          0,
+          768,
+          256,
+          1024
+        ],
+        [
+          256,
+          768,
+          512,
+          1024
+        ],
+        [
+          512,
+          768,
+          768,
+          1024
+        ],
+        [
+          768,
+          768,
+          1024,
+          1024
+        ]
+      ],
+      "common_crop": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "registered_anchor": null,
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        9
+      ],
+      "originals": [
+        {
+          "file": "249.png",
+          "sha256": "791bdb3ae329c4f0318c42b6fa146ce36a3ca7eb46b4f44c7e8df7e324e761a8"
+        }
+      ],
+      "generation": null
+    }
+  },
+  "base_manifest_sha256": "9e8348144c1f63d6623f702b1ccd9cd5ab53aa517bca29de93638a7c5f0c6b6d",
+  "clips": [
+    {
+      "id": "water_3",
+      "image": "water_3.png",
+      "source": "water_prison_v2",
+      "mode": "single",
+      "metadata": {
+        "path": "assets/skills/refined-v2/water_3.png",
+        "image": "assets/skills/refined-v2/water_3.png",
+        "frameWidth": 160,
+        "frameHeight": 192,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 100,
+        "drawWidth": 100,
+        "drawHeight": 120,
+        "pivotX": 80,
+        "pivotY": 96,
+        "loop": "true"
+      },
+      "output_sha256": "9f4607abc64eeea4d8a7a7c0dfa48d69aa2f773983832d9832d390fb93b9f33f"
+    },
+    {
+      "id": "water_4",
+      "image": "water_4.png",
+      "source": "water_vortex_v2",
+      "mode": "single",
+      "metadata": {
+        "path": "assets/skills/refined-v2/water_4.png",
+        "image": "assets/skills/refined-v2/water_4.png",
+        "frameWidth": 192,
+        "frameHeight": 256,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 85,
+        "drawWidth": 192,
+        "drawHeight": 256,
+        "pivotX": 96,
+        "pivotY": 220,
+        "loop": "true"
+      },
+      "output_sha256": "ded3eb6ba17a409d555d552179f7f0cd379171b138a8145ef42649402106fa03"
+    },
+    {
+      "id": "water_5",
+      "image": "water_5.png",
+      "source": "water_dash_v2",
+      "mode": "single",
+      "metadata": {
+        "path": "assets/skills/refined-v2/water_5.png",
+        "image": "assets/skills/refined-v2/water_5.png",
+        "frameWidth": 256,
+        "frameHeight": 96,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 45,
+        "drawWidth": 256,
+        "drawHeight": 96,
+        "pivotX": 232,
+        "pivotY": 55,
+        "loop": "true"
+      },
+      "output_sha256": "09b7b7ee5cb70863e471c6e5a8d7fcb5af355df40bf558aa5d4a36ff8a2e075c"
+    },
+    {
+      "id": "thunder_1",
+      "image": "thunder_1.png",
+      "source": "thunder_bolt_v2",
+      "mode": "horizontal",
+      "metadata": {
+        "path": "assets/skills/refined-v2/thunder_1.png",
+        "image": "assets/skills/refined-v2/thunder_1.png",
+        "frameWidth": 192,
+        "frameHeight": 64,
+        "columns": 6,
+        "frames": 6,
+        "frameMillis": 70,
+        "drawWidth": 192,
+        "drawHeight": 64,
+        "pivotX": 96,
+        "pivotY": 32,
+        "loop": "false"
+      },
+      "output_sha256": "3ae0f1a621be88708af1f535a08413e7b41efee268c5a8d29f1d4bfd1fee7929"
+    },
+    {
+      "id": "thunder_2",
+      "image": "thunder_2.png",
+      "source": "thunder_lance_v2",
+      "mode": "single",
+      "metadata": {
+        "path": "assets/skills/refined-v2/thunder_2.png",
+        "image": "assets/skills/refined-v2/thunder_2.png",
+        "frameWidth": 256,
+        "frameHeight": 64,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 65,
+        "drawWidth": 256,
+        "drawHeight": 64,
+        "pivotX": 226,
+        "pivotY": 34,
+        "loop": "false"
+      },
+      "output_sha256": "edd4a81f1ecc80cc864fae52aa1381cd6d5145c3073abe36e4726fb6eaac1413"
+    },
+    {
+      "id": "thunder_3",
+      "image": "thunder_3.png",
+      "source": "thunder_bolt_v2",
+      "mode": "horizontal",
+      "metadata": {
+        "path": "assets/skills/refined-v2/thunder_3.png",
+        "image": "assets/skills/refined-v2/thunder_3.png",
+        "frameWidth": 192,
+        "frameHeight": 64,
+        "columns": 6,
+        "frames": 6,
+        "frameMillis": 85,
+        "drawWidth": 192,
+        "drawHeight": 64,
+        "pivotX": 96,
+        "pivotY": 32,
+        "loop": "false"
+      },
+      "output_sha256": "3ae0f1a621be88708af1f535a08413e7b41efee268c5a8d29f1d4bfd1fee7929"
+    },
+    {
+      "id": "thunder_4",
+      "image": "thunder_4.png",
+      "source": "thunder_dash_v2",
+      "mode": "single",
+      "metadata": {
+        "path": "assets/skills/refined-v2/thunder_4.png",
+        "image": "assets/skills/refined-v2/thunder_4.png",
+        "frameWidth": 256,
+        "frameHeight": 96,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 45,
+        "drawWidth": 256,
+        "drawHeight": 96,
+        "pivotX": 221,
+        "pivotY": 53,
+        "loop": "true"
+      },
+      "output_sha256": "0ed210a156088eacb147abf3ae4666a7eed5158b5bebb3553ee46dce9e2d9bed"
+    },
+    {
+      "id": "thunder_5",
+      "image": "thunder_5.png",
+      "source": "thunder_ultimate_v2",
+      "mode": "single",
+      "metadata": {
+        "path": "assets/skills/refined-v2/thunder_5.png",
+        "image": "assets/skills/refined-v2/thunder_5.png",
+        "frameWidth": 256,
+        "frameHeight": 256,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 115,
+        "drawWidth": 240,
+        "drawHeight": 240,
+        "pivotX": 128,
+        "pivotY": 128,
+        "loop": "false"
+      },
+      "output_sha256": "d464a027fc01d67b2dd4ecb4c3819b0fde8c17dcfdddcd180f082278c329961a"
+    },
+    {
+      "id": "fire_2",
+      "image": "fire_2.png",
+      "source": "fire_fissure_v2",
+      "mode": "single",
+      "metadata": {
+        "path": "assets/skills/refined-v2/fire_2.png",
+        "image": "assets/skills/refined-v2/fire_2.png",
+        "frameWidth": 320,
+        "frameHeight": 96,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 100,
+        "drawWidth": 260,
+        "drawHeight": 78,
+        "pivotX": 0,
+        "pivotY": 48,
+        "loop": "false"
+      },
+      "output_sha256": "76b22f05d0f1da5f4ab8217c9cfa6311c97259409e0310a4bcd883afa264b351"
+    },
+    {
+      "id": "fire_2.travel",
+      "image": "fire_2.travel.png",
+      "source": "fire_cut_v1",
+      "mode": "single",
+      "metadata": {
+        "path": "assets/skills/refined-v2/fire_2.travel.png",
+        "image": "assets/skills/refined-v2/fire_2.travel.png",
+        "frameWidth": 192,
+        "frameHeight": 128,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 60,
+        "drawWidth": 120,
+        "drawHeight": 80,
+        "pivotX": 96,
+        "pivotY": 64,
+        "loop": "false"
+      },
+      "output_sha256": "6b2fadcc82d7204a58ac633c4b3067e996e98515a7f1b0fa1bbee304a2382115"
+    },
+    {
+      "id": "fire_4",
+      "image": "fire_4.png",
+      "source": "fire_eruption_original",
+      "mode": "single",
+      "metadata": {
+        "path": "assets/skills/refined-v2/fire_4.png",
+        "image": "assets/skills/refined-v2/fire_4.png",
+        "frameWidth": 192,
+        "frameHeight": 192,
+        "columns": 16,
+        "frames": 16,
+        "frameMillis": 80,
+        "drawWidth": 192,
+        "drawHeight": 192,
+        "pivotX": 96,
+        "pivotY": 180,
+        "loop": "false"
+      },
+      "output_sha256": "842dd86b27f6f31e200c512cde006fec0c54d12e1c6ab6bdb29c000aacf0e719"
+    },
+    {
+      "id": "fire_4.travel",
+      "image": "fire_4.travel.png",
+      "source": "fire_cut_v1",
+      "mode": "single",
+      "metadata": {
+        "path": "assets/skills/refined-v2/fire_4.travel.png",
+        "image": "assets/skills/refined-v2/fire_4.travel.png",
+        "frameWidth": 192,
+        "frameHeight": 128,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 60,
+        "drawWidth": 144,
+        "drawHeight": 96,
+        "pivotX": 96,
+        "pivotY": 64,
+        "loop": "false"
+      },
+      "output_sha256": "6b2fadcc82d7204a58ac633c4b3067e996e98515a7f1b0fa1bbee304a2382115"
+    },
+    {
+      "id": "fire_4.ground",
+      "image": "fire_4.ground.png",
+      "source": "fire_fissure_v2",
+      "mode": "single",
+      "metadata": {
+        "path": "assets/skills/refined-v2/fire_4.ground.png",
+        "image": "assets/skills/refined-v2/fire_4.ground.png",
+        "frameWidth": 320,
+        "frameHeight": 96,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 100,
+        "drawWidth": 280,
+        "drawHeight": 84,
+        "pivotX": 0,
+        "pivotY": 48,
+        "loop": "false"
+      },
+      "output_sha256": "76b22f05d0f1da5f4ab8217c9cfa6311c97259409e0310a4bcd883afa264b351"
+    },
+    {
+      "id": "fire_4.impact",
+      "image": "fire_4.impact.png",
+      "source": "fire_eruption_original",
+      "mode": "single",
+      "metadata": {
+        "path": "assets/skills/refined-v2/fire_4.impact.png",
+        "image": "assets/skills/refined-v2/fire_4.impact.png",
+        "frameWidth": 192,
+        "frameHeight": 192,
+        "columns": 16,
+        "frames": 16,
+        "frameMillis": 80,
+        "drawWidth": 192,
+        "drawHeight": 192,
+        "pivotX": 96,
+        "pivotY": 180,
+        "loop": "false"
+      },
+      "output_sha256": "842dd86b27f6f31e200c512cde006fec0c54d12e1c6ab6bdb29c000aacf0e719"
+    },
+    {
+      "id": "aetheri_4",
+      "image": "aetheri_4.png",
+      "source": "ice_arrow_v2",
+      "mode": "single",
+      "metadata": {
+        "path": "assets/skills/refined-v2/aetheri_4.png",
+        "image": "assets/skills/refined-v2/aetheri_4.png",
+        "frameWidth": 256,
+        "frameHeight": 96,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 65,
+        "drawWidth": 240,
+        "drawHeight": 90,
+        "pivotX": 225,
+        "pivotY": 49,
+        "loop": "true"
+      },
+      "output_sha256": "67bfca961fc564bcf8da1f082c78dca582650b950a1df2e72d0e62a7e4000587"
+    },
+    {
+      "id": "aetheri_5",
+      "image": "aetheri_5.png",
+      "source": "ice_arrow_v2",
+      "mode": "volley",
+      "metadata": {
+        "path": "assets/skills/refined-v2/aetheri_5.png",
+        "image": "assets/skills/refined-v2/aetheri_5.png",
+        "frameWidth": 256,
+        "frameHeight": 192,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 70,
+        "drawWidth": 224,
+        "drawHeight": 168,
+        "pivotX": 128,
+        "pivotY": 96,
+        "loop": "false"
+      },
+      "output_sha256": "910345005a1c6a62cb2542edf971259a63c634e5d2d0208833b426726b7911ce"
+    },
+    {
+      "id": "aetheri_5.travel",
+      "image": "aetheri_5.travel.png",
+      "source": "ice_arrow_v2",
+      "mode": "single",
+      "metadata": {
+        "path": "assets/skills/refined-v2/aetheri_5.travel.png",
+        "image": "assets/skills/refined-v2/aetheri_5.travel.png",
+        "frameWidth": 256,
+        "frameHeight": 96,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 70,
+        "drawWidth": 72,
+        "drawHeight": 27,
+        "pivotX": 225,
+        "pivotY": 49,
+        "loop": "true"
+      },
+      "output_sha256": "67bfca961fc564bcf8da1f082c78dca582650b950a1df2e72d0e62a7e4000587"
+    },
+    {
+      "id": "martial_3",
+      "image": "martial_3.png",
+      "source": "martial_crater_v2",
+      "mode": "single",
+      "metadata": {
+        "path": "assets/skills/refined-v2/martial_3.png",
+        "image": "assets/skills/refined-v2/martial_3.png",
+        "frameWidth": 256,
+        "frameHeight": 256,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 95,
+        "drawWidth": 240,
+        "drawHeight": 240,
+        "pivotX": 128,
+        "pivotY": 128,
+        "loop": "false"
+      },
+      "output_sha256": "4007c88562b7c1af94922ead5495fac1c42c9804765634fc3249fc88240f3e6f"
+    }
+  ],
+  "packaging": "Explicit source rectangles/anchors, shared framing crop, uniform nearest scale, rotation/composition; no Python repaint, recolor or alpha rewrite."
+}

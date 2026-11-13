@@ -1,0 +1,184 @@
+{
+  "cell_width": 64,
+  "cell_height": 64,
+  "columns": 4,
+  "states": [
+    "carga",
+    "ponta",
+    "feixe",
+    "impacto"
+  ],
+  "directions": {
+    "frente": {
+      "carga": {
+        "row": 0,
+        "frames": 4,
+        "frame_ms": 80,
+        "loop": false,
+        "anchor": [
+          32,
+          32
+        ]
+      },
+      "ponta": {
+        "row": 1,
+        "frames": 4,
+        "frame_ms": 80,
+        "loop": true,
+        "anchor": [
+          32,
+          32
+        ]
+      },
+      "feixe": {
+        "row": 2,
+        "frames": 4,
+        "frame_ms": 80,
+        "loop": true,
+        "anchor": [
+          32,
+          32
+        ]
+      },
+      "impacto": {
+        "row": 3,
+        "frames": 4,
+        "frame_ms": 80,
+        "loop": false,
+        "anchor": [
+          32,
+          32
+        ]
+      }
+    },
+    "costas": {
+      "carga": {
+        "row": 0,
+        "frames": 4,
+        "frame_ms": 80,
+        "loop": false,
+        "anchor": [
+          32,
+          32
+        ]
+      },
+      "ponta": {
+        "row": 1,
+        "frames": 4,
+        "frame_ms": 80,
+        "loop": true,
+        "anchor": [
+          32,
+          32
+        ]
+      },
+      "feixe": {
+        "row": 2,
+        "frames": 4,
+        "frame_ms": 80,
+        "loop": true,
+        "anchor": [
+          32,
+          32
+        ]
+      },
+      "impacto": {
+        "row": 3,
+        "frames": 4,
+        "frame_ms": 80,
+        "loop": false,
+        "anchor": [
+          32,
+          32
+        ]
+      }
+    },
+    "esquerda": {
+      "carga": {
+        "row": 0,
+        "frames": 4,
+        "frame_ms": 80,
+        "loop": false,
+        "anchor": [
+          32,
+          32
+        ]
+      },
+      "ponta": {
+        "row": 1,
+        "frames": 4,
+        "frame_ms": 80,
+        "loop": true,
+        "anchor": [
+          32,
+          32
+        ]
+      },
+      "feixe": {
+        "row": 2,
+        "frames": 4,
+        "frame_ms": 80,
+        "loop": true,
+        "anchor": [
+          32,
+          32
+        ]
+      },
+      "impacto": {
+        "row": 3,
+        "frames": 4,
+        "frame_ms": 80,
+        "loop": false,
+        "anchor": [
+          32,
+          32
+        ]
+      }
+    },
+    "direita": {
+      "carga": {
+        "row": 0,
+        "frames": 4,
+        "frame_ms": 80,
+        "loop": false,
+        "anchor": [
+          32,
+          32
+        ]
+      },
+      "ponta": {
+        "row": 1,
+        "frames": 4,
+        "frame_ms": 80,
+        "loop": true,
+        "anchor": [
+          32,
+          32
+        ]
+      },
+      "feixe": {
+        "row": 2,
+        "frames": 4,
+        "frame_ms": 80,
+        "loop": true,
+        "anchor": [
+          32,
+          32
+        ]
+      },
+      "impacto": {
+        "row": 3,
+        "frames": 4,
+        "frame_ms": 80,
+        "loop": false,
+        "anchor": [
+          32,
+          32
+        ]
+      }
+    }
+  },
+  "use": "charge at mouth before release; projectile head travels along facing; repeat beam body behind head or use head alone as projectile; impact at collision",
+  "beam_tile_overlap_px": 16,
+  "collision": "game determines raycast/hitbox and range; beam artwork does not determine damage"
+}

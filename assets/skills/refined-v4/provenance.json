@@ -1,0 +1,1833 @@
+{
+  "route": "image_gen",
+  "model": null,
+  "estimateUsd": null,
+  "sources": {
+    "impact": {
+      "path": "assets/skills/refined-v4/art/impact.png",
+      "columns": 3,
+      "rows": 2,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "references": [],
+      "art_source": "host_image",
+      "rects": [
+        [
+          0,
+          0,
+          512,
+          512
+        ],
+        [
+          512,
+          0,
+          1024,
+          512
+        ],
+        [
+          1024,
+          0,
+          1536,
+          512
+        ],
+        [
+          0,
+          512,
+          512,
+          1024
+        ],
+        [
+          512,
+          512,
+          1024,
+          1024
+        ],
+        [
+          1024,
+          512,
+          1536,
+          1024
+        ]
+      ],
+      "anchors": [
+        [
+          256,
+          288
+        ],
+        [
+          256,
+          288
+        ],
+        [
+          256,
+          288
+        ],
+        [
+          256,
+          256
+        ],
+        [
+          256,
+          256
+        ],
+        [
+          256,
+          256
+        ]
+      ],
+      "cellCanvas": [
+        768,
+        768
+      ],
+      "sha256": "6d72a0b167b59bd1707086976a62fa2316bc66765a4d896f599daffbcc6bbf25",
+      "size": [
+        1536,
+        1024
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          512,
+          512
+        ],
+        [
+          512,
+          0,
+          1024,
+          512
+        ],
+        [
+          1024,
+          0,
+          1536,
+          512
+        ],
+        [
+          0,
+          512,
+          512,
+          1024
+        ],
+        [
+          512,
+          512,
+          1024,
+          1024
+        ],
+        [
+          1024,
+          512,
+          1536,
+          1024
+        ]
+      ],
+      "common_crop": [
+        150,
+        169,
+        615,
+        592
+      ],
+      "registered_anchor": null,
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    },
+    "fire-fissure": {
+      "path": "assets/skills/refined-v4/art/fire-fissure.png",
+      "columns": 3,
+      "rows": 3,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "references": [],
+      "art_source": "host_image",
+      "rects": [
+        [
+          12,
+          12,
+          712,
+          229
+        ],
+        [
+          736,
+          12,
+          1436,
+          229
+        ],
+        [
+          1460,
+          12,
+          2160,
+          229
+        ],
+        [
+          12,
+          253,
+          712,
+          471
+        ],
+        [
+          736,
+          253,
+          1436,
+          471
+        ],
+        [
+          1460,
+          253,
+          2160,
+          471
+        ],
+        [
+          12,
+          495,
+          712,
+          712
+        ],
+        [
+          736,
+          495,
+          1436,
+          712
+        ],
+        [
+          1460,
+          495,
+          2160,
+          712
+        ]
+      ],
+      "sha256": "3c6f72098fca34c9fa4d2deabdffa9807bce69c6a32707194dafc85f485a1692",
+      "size": [
+        2172,
+        724
+      ],
+      "source_rects": [
+        [
+          12,
+          12,
+          712,
+          229
+        ],
+        [
+          736,
+          12,
+          1436,
+          229
+        ],
+        [
+          1460,
+          12,
+          2160,
+          229
+        ],
+        [
+          12,
+          253,
+          712,
+          471
+        ],
+        [
+          736,
+          253,
+          1436,
+          471
+        ],
+        [
+          1460,
+          253,
+          2160,
+          471
+        ],
+        [
+          12,
+          495,
+          712,
+          712
+        ],
+        [
+          736,
+          495,
+          1436,
+          712
+        ],
+        [
+          1460,
+          495,
+          2160,
+          712
+        ]
+      ],
+      "common_crop": [
+        6,
+        28,
+        698,
+        201
+      ],
+      "registered_anchor": null,
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    },
+    "seismic": {
+      "path": "assets/skills/refined-v4/art/seismic-padded.png",
+      "columns": 3,
+      "rows": 3,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "references": [],
+      "art_source": "host_image",
+      "rects": [
+        [
+          0,
+          0,
+          418,
+          418
+        ],
+        [
+          418,
+          0,
+          836,
+          418
+        ],
+        [
+          836,
+          0,
+          1254,
+          418
+        ],
+        [
+          0,
+          418,
+          418,
+          836
+        ],
+        [
+          418,
+          418,
+          836,
+          836
+        ],
+        [
+          836,
+          418,
+          1254,
+          836
+        ],
+        [
+          0,
+          836,
+          418,
+          1254
+        ],
+        [
+          418,
+          836,
+          836,
+          1254
+        ],
+        [
+          836,
+          836,
+          1254,
+          1254
+        ]
+      ],
+      "sha256": "1d39c28120203692441ef210d550b9c92a1af66f8bd7879c9a791cffb1c010c5",
+      "size": [
+        1254,
+        1254
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          418,
+          418
+        ],
+        [
+          418,
+          0,
+          836,
+          418
+        ],
+        [
+          836,
+          0,
+          1254,
+          418
+        ],
+        [
+          0,
+          418,
+          418,
+          836
+        ],
+        [
+          418,
+          418,
+          836,
+          836
+        ],
+        [
+          836,
+          418,
+          1254,
+          836
+        ],
+        [
+          0,
+          836,
+          418,
+          1254
+        ],
+        [
+          418,
+          836,
+          836,
+          1254
+        ],
+        [
+          836,
+          836,
+          1254,
+          1254
+        ]
+      ],
+      "common_crop": [
+        40,
+        51,
+        387,
+        377
+      ],
+      "registered_anchor": null,
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    },
+    "martial-punch": {
+      "path": "assets/skills/refined-v4/art/martial-punch-padded.png",
+      "columns": 3,
+      "rows": 2,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "references": [],
+      "art_source": "host_image",
+      "rects": [
+        [
+          0,
+          0,
+          512,
+          512
+        ],
+        [
+          512,
+          0,
+          1024,
+          512
+        ],
+        [
+          1024,
+          0,
+          1536,
+          512
+        ],
+        [
+          0,
+          512,
+          512,
+          1024
+        ],
+        [
+          512,
+          512,
+          1024,
+          1024
+        ],
+        [
+          1024,
+          512,
+          1536,
+          1024
+        ]
+      ],
+      "registration": "front_tip",
+      "sha256": "adcd23ebb639561308512c71c362b3d21779c70edce1e34de40e107031c674ca",
+      "size": [
+        1536,
+        1024
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          512,
+          512
+        ],
+        [
+          512,
+          0,
+          1024,
+          512
+        ],
+        [
+          1024,
+          0,
+          1536,
+          512
+        ],
+        [
+          0,
+          512,
+          512,
+          1024
+        ],
+        [
+          512,
+          512,
+          1024,
+          1024
+        ],
+        [
+          1024,
+          512,
+          1536,
+          1024
+        ]
+      ],
+      "common_crop": [
+        117,
+        302,
+        528,
+        703
+      ],
+      "registered_anchor": [
+        395,
+        210
+      ],
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    },
+    "water-cut": {
+      "path": "assets/skills/refined-v4/art/water-cut.png",
+      "columns": 3,
+      "rows": 3,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "references": [],
+      "art_source": "host_image",
+      "rects": [
+        [
+          0,
+          0,
+          512,
+          341
+        ],
+        [
+          512,
+          0,
+          1024,
+          341
+        ],
+        [
+          1024,
+          0,
+          1536,
+          341
+        ],
+        [
+          0,
+          341,
+          512,
+          683
+        ],
+        [
+          512,
+          341,
+          1024,
+          683
+        ],
+        [
+          1024,
+          341,
+          1536,
+          683
+        ],
+        [
+          0,
+          683,
+          512,
+          1024
+        ],
+        [
+          512,
+          683,
+          1024,
+          1024
+        ],
+        [
+          1024,
+          683,
+          1536,
+          1024
+        ]
+      ],
+      "registration": "front_tip",
+      "sha256": "dc01772af89c71c7bf0ad5d2ef276dff5209c9549f0209ab138b205e95e95d90",
+      "size": [
+        1536,
+        1024
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          512,
+          341
+        ],
+        [
+          512,
+          0,
+          1024,
+          341
+        ],
+        [
+          1024,
+          0,
+          1536,
+          341
+        ],
+        [
+          0,
+          341,
+          512,
+          683
+        ],
+        [
+          512,
+          341,
+          1024,
+          683
+        ],
+        [
+          1024,
+          341,
+          1536,
+          683
+        ],
+        [
+          0,
+          683,
+          512,
+          1024
+        ],
+        [
+          512,
+          683,
+          1024,
+          1024
+        ],
+        [
+          1024,
+          683,
+          1536,
+          1024
+        ]
+      ],
+      "common_crop": [
+        52,
+        196,
+        519,
+        488
+      ],
+      "registered_anchor": [
+        460,
+        146
+      ],
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    },
+    "water-prison": {
+      "path": "assets/skills/refined-v4/art/water-prison.png",
+      "columns": 3,
+      "rows": 3,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "references": [],
+      "art_source": "host_image",
+      "rects": [
+        [
+          0,
+          0,
+          482,
+          362
+        ],
+        [
+          482,
+          0,
+          965,
+          362
+        ],
+        [
+          965,
+          0,
+          1447,
+          362
+        ],
+        [
+          0,
+          362,
+          482,
+          725
+        ],
+        [
+          482,
+          362,
+          965,
+          725
+        ],
+        [
+          965,
+          362,
+          1447,
+          725
+        ],
+        [
+          0,
+          725,
+          482,
+          1087
+        ],
+        [
+          482,
+          725,
+          965,
+          1087
+        ],
+        [
+          965,
+          725,
+          1447,
+          1087
+        ]
+      ],
+      "anchors": [
+        [
+          271.5,
+          344
+        ],
+        [
+          242.0,
+          347
+        ],
+        [
+          240.0,
+          347
+        ],
+        [
+          257.5,
+          316
+        ],
+        [
+          250.5,
+          317
+        ],
+        [
+          223.5,
+          318
+        ],
+        [
+          273.0,
+          285
+        ],
+        [
+          229.5,
+          285
+        ],
+        [
+          222.0,
+          284
+        ]
+      ],
+      "cellCanvas": [
+        768,
+        1024
+      ],
+      "sha256": "2150f5b876a812237f8397b5924d3844934c97802eaab9dea4608d79c99859ca",
+      "size": [
+        1447,
+        1087
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          482,
+          362
+        ],
+        [
+          482,
+          0,
+          965,
+          362
+        ],
+        [
+          965,
+          0,
+          1447,
+          362
+        ],
+        [
+          0,
+          362,
+          482,
+          725
+        ],
+        [
+          482,
+          362,
+          965,
+          725
+        ],
+        [
+          965,
+          362,
+          1447,
+          725
+        ],
+        [
+          0,
+          725,
+          482,
+          1087
+        ],
+        [
+          482,
+          725,
+          965,
+          1087
+        ],
+        [
+          965,
+          725,
+          1447,
+          1087
+        ]
+      ],
+      "common_crop": [
+        163,
+        230,
+        591,
+        528
+      ],
+      "registered_anchor": null,
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    },
+    "water-vortex": {
+      "path": "assets/skills/refined-v4/art/water-vortex-padded.png",
+      "columns": 3,
+      "rows": 3,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "references": [],
+      "art_source": "host_image",
+      "rects": [
+        [
+          0,
+          0,
+          458,
+          410
+        ],
+        [
+          458,
+          0,
+          916,
+          410
+        ],
+        [
+          916,
+          0,
+          1374,
+          410
+        ],
+        [
+          0,
+          410,
+          458,
+          780
+        ],
+        [
+          458,
+          410,
+          916,
+          780
+        ],
+        [
+          916,
+          410,
+          1374,
+          780
+        ],
+        [
+          0,
+          780,
+          458,
+          1145
+        ],
+        [
+          458,
+          780,
+          916,
+          1145
+        ],
+        [
+          916,
+          780,
+          1374,
+          1145
+        ]
+      ],
+      "anchors": [
+        [
+          258.5,
+          381
+        ],
+        [
+          238.0,
+          382
+        ],
+        [
+          218.5,
+          383
+        ],
+        [
+          259.0,
+          342
+        ],
+        [
+          239.5,
+          342
+        ],
+        [
+          215.5,
+          342
+        ],
+        [
+          259.5,
+          307
+        ],
+        [
+          238.0,
+          307
+        ],
+        [
+          226.0,
+          307
+        ]
+      ],
+      "cellCanvas": [
+        768,
+        1024
+      ],
+      "sha256": "7d204fe0c4073a4ee3db41a9338d9f4f3871dbb6b2ca6d0e7b4e109e795e6617",
+      "size": [
+        1374,
+        1145
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          458,
+          410
+        ],
+        [
+          458,
+          0,
+          916,
+          410
+        ],
+        [
+          916,
+          0,
+          1374,
+          410
+        ],
+        [
+          0,
+          410,
+          458,
+          780
+        ],
+        [
+          458,
+          410,
+          916,
+          780
+        ],
+        [
+          916,
+          410,
+          1374,
+          780
+        ],
+        [
+          0,
+          780,
+          458,
+          1145
+        ],
+        [
+          458,
+          780,
+          916,
+          1145
+        ],
+        [
+          916,
+          780,
+          1374,
+          1145
+        ]
+      ],
+      "common_crop": [
+        220,
+        199,
+        542,
+        524
+      ],
+      "registered_anchor": null,
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    },
+    "water-dash": {
+      "path": "assets/skills/refined-v4/art/water-dash.png",
+      "columns": 3,
+      "rows": 3,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "references": [],
+      "art_source": "host_image",
+      "rects": [
+        [
+          0,
+          0,
+          724,
+          241
+        ],
+        [
+          724,
+          0,
+          1448,
+          241
+        ],
+        [
+          1448,
+          0,
+          2172,
+          241
+        ],
+        [
+          0,
+          241,
+          724,
+          483
+        ],
+        [
+          724,
+          241,
+          1448,
+          483
+        ],
+        [
+          1448,
+          241,
+          2172,
+          483
+        ],
+        [
+          0,
+          483,
+          724,
+          724
+        ],
+        [
+          724,
+          483,
+          1448,
+          724
+        ],
+        [
+          1448,
+          483,
+          2172,
+          724
+        ]
+      ],
+      "registration": "front_tip",
+      "sha256": "606e144d5bf923a2f325d469207628a43af8d4134e507cc075db9da18f9e95ab",
+      "size": [
+        2172,
+        724
+      ],
+      "source_rects": [
+        [
+          0,
+          0,
+          724,
+          241
+        ],
+        [
+          724,
+          0,
+          1448,
+          241
+        ],
+        [
+          1448,
+          0,
+          2172,
+          241
+        ],
+        [
+          0,
+          241,
+          724,
+          483
+        ],
+        [
+          724,
+          241,
+          1448,
+          483
+        ],
+        [
+          1448,
+          241,
+          2172,
+          483
+        ],
+        [
+          0,
+          483,
+          724,
+          724
+        ],
+        [
+          724,
+          483,
+          1448,
+          724
+        ],
+        [
+          1448,
+          483,
+          2172,
+          724
+        ]
+      ],
+      "common_crop": [
+        62,
+        122,
+        731,
+        305
+      ],
+      "registered_anchor": [
+        662,
+        120
+      ],
+      "framing_alpha_threshold": 8,
+      "strong_alpha_boundary_pixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "originals": [],
+      "generation": {
+        "route": "image_gen",
+        "model": null,
+        "estimateUsd": null
+      }
+    }
+  },
+  "clips": [
+    {
+      "id": "impact",
+      "file": "impact.png",
+      "source": "impact",
+      "sha256": "721c832b953c903791ae8f2cc574b8c9d58341b3a76e5b9152c8496ad05a88d4",
+      "metadata": {
+        "path": "assets/skills/refined-v4/impact.png",
+        "frameWidth": 128,
+        "frameHeight": 128,
+        "columns": 6,
+        "frames": 6,
+        "frameMillis": 50,
+        "drawWidth": 64,
+        "drawHeight": 64,
+        "pivotX": 64,
+        "pivotY": 65
+      },
+      "mode": "single"
+    },
+    {
+      "id": "fire_2",
+      "file": "fire_2.png",
+      "source": "fire-fissure",
+      "sha256": "5242f45f73ad1238fd6965e3f6bfab220f5ecf35f1093c7ef2f0fc67c9bd03b1",
+      "metadata": {
+        "path": "assets/skills/refined-v4/fire_2.png",
+        "frameWidth": 384,
+        "frameHeight": 160,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 80,
+        "drawWidth": 288,
+        "drawHeight": 120,
+        "pivotX": 8,
+        "pivotY": 95
+      },
+      "mode": "ground"
+    },
+    {
+      "id": "martial_3",
+      "file": "martial_3.png",
+      "source": "seismic",
+      "sha256": "df1e6f01cc53d6cfebe7c6fb9039a4dcf776fcf653677d3c4875b189d5674769",
+      "metadata": {
+        "path": "assets/skills/refined-v4/martial_3.png",
+        "frameWidth": 384,
+        "frameHeight": 384,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 85,
+        "drawWidth": 320,
+        "drawHeight": 320,
+        "pivotX": 187,
+        "pivotY": 237
+      },
+      "mode": "single"
+    },
+    {
+      "id": "martial_1",
+      "file": "martial_1.png",
+      "source": "martial-punch",
+      "sha256": "f42b4274ce1af04f4e1166489ff0be47e7b52855d511f786f95bb12201fe768b",
+      "metadata": {
+        "path": "assets/skills/refined-v4/martial_1.png",
+        "frameWidth": 192,
+        "frameHeight": 128,
+        "columns": 6,
+        "frames": 6,
+        "frameMillis": 40,
+        "drawWidth": 96,
+        "drawHeight": 64,
+        "pivotX": 149,
+        "pivotY": 67
+      },
+      "mode": "single"
+    },
+    {
+      "id": "water_1",
+      "file": "water_1.png",
+      "source": "water-cut",
+      "sha256": "41fad09fb03ed372f4f0ff5096abae83ad241285688818e832049fff10a5b0b5",
+      "metadata": {
+        "path": "assets/skills/refined-v4/water_1.png",
+        "frameWidth": 256,
+        "frameHeight": 160,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 65,
+        "drawWidth": 128,
+        "drawHeight": 80,
+        "pivotX": 240,
+        "pivotY": 80
+      },
+      "mode": "single"
+    },
+    {
+      "id": "water_2",
+      "file": "water_2.png",
+      "source": "water-cut",
+      "sha256": "ee1d35fb9c85ea95e3d7960c4795b830ffc7c1f718fd7c3d1908aafc1065fe6d",
+      "metadata": {
+        "path": "assets/skills/refined-v4/water_2.png",
+        "frameWidth": 256,
+        "frameHeight": 256,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 65,
+        "drawWidth": 200,
+        "drawHeight": 200,
+        "pivotX": 128,
+        "pivotY": 128
+      },
+      "mode": "spin"
+    },
+    {
+      "id": "water_3",
+      "file": "water_3.png",
+      "source": "water-prison",
+      "sha256": "f4774197fae52f25687435d892f0fa02a0b1c88cd6e3568e1ffcf80a5d48ead3",
+      "metadata": {
+        "path": "assets/skills/refined-v4/water_3.png",
+        "frameWidth": 256,
+        "frameHeight": 256,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 100,
+        "drawWidth": 128,
+        "drawHeight": 128,
+        "pivotX": 132,
+        "pivotY": 202
+      },
+      "mode": "single"
+    },
+    {
+      "id": "water_4",
+      "file": "water_4.png",
+      "source": "water-vortex",
+      "sha256": "d59ecc4a8e291c2a045244a9ffe94b60d7f3c7906f95871d8c4e071e16dcf191",
+      "metadata": {
+        "path": "assets/skills/refined-v4/water_4.png",
+        "frameWidth": 256,
+        "frameHeight": 320,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 85,
+        "drawWidth": 192,
+        "drawHeight": 240,
+        "pivotX": 130,
+        "pivotY": 272
+      },
+      "mode": "single"
+    },
+    {
+      "id": "water_5",
+      "file": "water_5.png",
+      "source": "water-dash",
+      "sha256": "f7055701664f02a6e8c1f538609743d4e2a9d4222365333f5fd1a515d2bf3739",
+      "metadata": {
+        "path": "assets/skills/refined-v4/water_5.png",
+        "frameWidth": 320,
+        "frameHeight": 128,
+        "columns": 9,
+        "frames": 9,
+        "frameMillis": 45,
+        "drawWidth": 240,
+        "drawHeight": 96,
+        "pivotX": 309,
+        "pivotY": 76
+      },
+      "mode": "single"
+    }
+  ],
+  "aliases": {
+    "fire_2": {
+      "path": "assets/skills/refined-v4/fire_2.png",
+      "frameWidth": 384,
+      "frameHeight": 160,
+      "columns": 9,
+      "frames": 9,
+      "frameMillis": 80,
+      "drawWidth": 288,
+      "drawHeight": 120,
+      "pivotX": 8,
+      "pivotY": 95
+    },
+    "martial_3": {
+      "path": "assets/skills/refined-v4/martial_3.png",
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "columns": 9,
+      "frames": 9,
+      "frameMillis": 85,
+      "drawWidth": 320,
+      "drawHeight": 320,
+      "pivotX": 187,
+      "pivotY": 237
+    },
+    "martial_1": {
+      "path": "assets/skills/refined-v4/martial_1.png",
+      "frameWidth": 192,
+      "frameHeight": 128,
+      "columns": 6,
+      "frames": 6,
+      "frameMillis": 40,
+      "drawWidth": 96,
+      "drawHeight": 64,
+      "pivotX": 149,
+      "pivotY": 67
+    },
+    "water_1": {
+      "path": "assets/skills/refined-v4/water_1.png",
+      "frameWidth": 256,
+      "frameHeight": 160,
+      "columns": 9,
+      "frames": 9,
+      "frameMillis": 65,
+      "drawWidth": 128,
+      "drawHeight": 80,
+      "pivotX": 240,
+      "pivotY": 80
+    },
+    "water_2": {
+      "path": "assets/skills/refined-v4/water_2.png",
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "columns": 9,
+      "frames": 9,
+      "frameMillis": 65,
+      "drawWidth": 200,
+      "drawHeight": 200,
+      "pivotX": 128,
+      "pivotY": 128
+    },
+    "water_3": {
+      "path": "assets/skills/refined-v4/water_3.png",
+      "frameWidth": 256,
+      "frameHeight": 256,
+      "columns": 9,
+      "frames": 9,
+      "frameMillis": 100,
+      "drawWidth": 128,
+      "drawHeight": 128,
+      "pivotX": 132,
+      "pivotY": 202
+    },
+    "water_4": {
+      "path": "assets/skills/refined-v4/water_4.png",
+      "frameWidth": 256,
+      "frameHeight": 320,
+      "columns": 9,
+      "frames": 9,
+      "frameMillis": 85,
+      "drawWidth": 192,
+      "drawHeight": 240,
+      "pivotX": 130,
+      "pivotY": 272
+    },
+    "water_5": {
+      "path": "assets/skills/refined-v4/water_5.png",
+      "frameWidth": 320,
+      "frameHeight": 128,
+      "columns": 9,
+      "frames": 9,
+      "frameMillis": 45,
+      "drawWidth": 240,
+      "drawHeight": 96,
+      "pivotX": 309,
+      "pivotY": 76
+    },
+    "martial_2": {
+      "path": "assets/skills/refined-v4/martial_1.png",
+      "frameWidth": 192,
+      "frameHeight": 128,
+      "columns": 6,
+      "frames": 6,
+      "frameMillis": 40,
+      "drawWidth": 96,
+      "drawHeight": 64,
+      "pivotX": 149,
+      "pivotY": 67
+    },
+    "fire_2.ground": {
+      "path": "assets/skills/refined-v4/fire_2.png",
+      "frameWidth": 384,
+      "frameHeight": 160,
+      "columns": 9,
+      "frames": 9,
+      "frameMillis": 80,
+      "drawWidth": 288,
+      "drawHeight": 120,
+      "pivotX": 8,
+      "pivotY": 95
+    },
+    "fire_4.ground": {
+      "path": "assets/skills/refined-v4/fire_2.png",
+      "frameWidth": 384,
+      "frameHeight": 160,
+      "columns": 9,
+      "frames": 9,
+      "frameMillis": 80,
+      "drawWidth": 288,
+      "drawHeight": 120,
+      "pivotX": 8,
+      "pivotY": 95
+    },
+    "water_1.impact": {
+      "path": "assets/skills/refined-v4/impact.png",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frames": 6,
+      "frameMillis": 50,
+      "drawWidth": 64,
+      "drawHeight": 64,
+      "pivotX": 64,
+      "pivotY": 65
+    },
+    "wind_1.impact": {
+      "path": "assets/skills/refined-v4/impact.png",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frames": 6,
+      "frameMillis": 50,
+      "drawWidth": 64,
+      "drawHeight": 64,
+      "pivotX": 64,
+      "pivotY": 65
+    },
+    "wind_2.impact": {
+      "path": "assets/skills/refined-v4/impact.png",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frames": 6,
+      "frameMillis": 50,
+      "drawWidth": 64,
+      "drawHeight": 64,
+      "pivotX": 64,
+      "pivotY": 65
+    },
+    "thunder_1.impact": {
+      "path": "assets/skills/refined-v4/impact.png",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frames": 6,
+      "frameMillis": 50,
+      "drawWidth": 64,
+      "drawHeight": 64,
+      "pivotX": 64,
+      "pivotY": 65
+    },
+    "thunder_2.impact": {
+      "path": "assets/skills/refined-v4/impact.png",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frames": 6,
+      "frameMillis": 50,
+      "drawWidth": 64,
+      "drawHeight": 64,
+      "pivotX": 64,
+      "pivotY": 65
+    },
+    "fire_1.impact": {
+      "path": "assets/skills/refined-v4/impact.png",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frames": 6,
+      "frameMillis": 50,
+      "drawWidth": 64,
+      "drawHeight": 64,
+      "pivotX": 64,
+      "pivotY": 65
+    },
+    "spirit_2.impact": {
+      "path": "assets/skills/refined-v4/impact.png",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frames": 6,
+      "frameMillis": 50,
+      "drawWidth": 64,
+      "drawHeight": 64,
+      "pivotX": 64,
+      "pivotY": 65
+    },
+    "spirit_3.impact": {
+      "path": "assets/skills/refined-v4/impact.png",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frames": 6,
+      "frameMillis": 50,
+      "drawWidth": 64,
+      "drawHeight": 64,
+      "pivotX": 64,
+      "pivotY": 65
+    },
+    "aetheri_1.impact": {
+      "path": "assets/skills/refined-v4/impact.png",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frames": 6,
+      "frameMillis": 50,
+      "drawWidth": 64,
+      "drawHeight": 64,
+      "pivotX": 64,
+      "pivotY": 65
+    },
+    "aetheri_2.impact": {
+      "path": "assets/skills/refined-v4/impact.png",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frames": 6,
+      "frameMillis": 50,
+      "drawWidth": 64,
+      "drawHeight": 64,
+      "pivotX": 64,
+      "pivotY": 65
+    },
+    "aetheri_3.impact": {
+      "path": "assets/skills/refined-v4/impact.png",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frames": 6,
+      "frameMillis": 50,
+      "drawWidth": 64,
+      "drawHeight": 64,
+      "pivotX": 64,
+      "pivotY": 65
+    },
+    "aetheri_4.impact": {
+      "path": "assets/skills/refined-v4/impact.png",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frames": 6,
+      "frameMillis": 50,
+      "drawWidth": 64,
+      "drawHeight": 64,
+      "pivotX": 64,
+      "pivotY": 65
+    },
+    "aetheri_5.impact": {
+      "path": "assets/skills/refined-v4/impact.png",
+      "frameWidth": 128,
+      "frameHeight": 128,
+      "columns": 6,
+      "frames": 6,
+      "frameMillis": 50,
+      "drawWidth": 64,
+      "drawHeight": 64,
+      "pivotX": 64,
+      "pivotY": 65
+    },
+    "wind_2": {
+      "path": "assets/skills/wind_1.png",
+      "image": "assets/skills/wind_1.png",
+      "frameWidth": "128",
+      "frameHeight": "128",
+      "columns": "9",
+      "frames": "9",
+      "frameMillis": "80",
+      "drawWidth": "128",
+      "drawHeight": "128",
+      "pivotX": "64",
+      "pivotY": "64",
+      "loop": "false"
+    },
+    "wind_2.travel": {
+      "path": "assets/skills/wind_1.png",
+      "image": "assets/skills/wind_1.png",
+      "frameWidth": "128",
+      "frameHeight": "128",
+      "columns": "9",
+      "frames": "9",
+      "frameMillis": "80",
+      "drawWidth": "128",
+      "drawHeight": "128",
+      "pivotX": "64",
+      "pivotY": "64",
+      "loop": "false"
+    },
+    "aetheri_3.travel": {
+      "path": "assets/skills/refined-v3/aetheri_1.png",
+      "frameWidth": "256",
+      "frameHeight": "96",
+      "columns": "9",
+      "frames": "9",
+      "frameMillis": "70",
+      "drawWidth": 64,
+      "drawHeight": 24,
+      "pivotX": "208",
+      "pivotY": "48"
+    }
+  },
+  "packaging": "Recorte e registro expl\u00edcitos; redu\u00e7\u00e3o nearest sem amplia\u00e7\u00e3o, sem repintura/recolora\u00e7\u00e3o por c\u00f3digo."
+}

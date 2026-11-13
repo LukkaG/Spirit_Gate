@@ -19,12 +19,26 @@ public record WorldDocument(int schema,String id,String name,String region,int w
     /** Elemento visual ou marcador de entidade real; propriedades sao dados, nunca codigo. */
     public record Element(String id,Kind kind,String asset,String sha,Crop crop,int x,int y,int width,int height,
             String layer,boolean visible,boolean locked,String reference,String direction,Map<String,String> properties) {
-        public Element {properties=Map.copyOf(properties);Objects.requireNonNull(crop);if(reference.length()>80||(!asset.isEmpty()&&!asset.matches("[a-f0-9]{64}"))||(!sha.isEmpty()&&!sha.matches("[a-f0-9]{64}"))||properties.size()>32||properties.entrySet().stream().anyMatch(e->e.getKey().length()>64||e.getValue().length()>4096))throw new IllegalArgumentException("Propriedades/referencia excessivas ou invalidas");}
+        public Element {validateDepth(properties,height);properties=Map.copyOf(properties);Objects.requireNonNull(crop);if(reference.length()>80||(!asset.isEmpty()&&!asset.matches("[a-f0-9]{64}"))||(!sha.isEmpty()&&!sha.matches("[a-f0-9]{64}"))||properties.size()>32||properties.entrySet().stream().anyMatch(e->e.getKey().length()>64||e.getValue().length()>4096))throw new IllegalArgumentException("Propriedades/referencia excessivas ou invalidas");}
+        /** Valida o pivô antes da revisão chegar ao renderizador. */
+        private static void validateDepth(Map<String,String> properties,int height){
+            String value=properties.get("depth.pivot");if(value==null)return;
+            try{int pivot=Integer.parseInt(value);if(pivot<0||pivot>height)throw new NumberFormatException();}
+            catch(NumberFormatException invalid){throw new IllegalArgumentException("Pivo de profundidade fora da altura do elemento",invalid);}
+        }
         /** Copia posicionada com identificador proprio para duplicacao segura. */
         public Element at(String nextId,int nx,int ny){return new Element(nextId,kind,asset,sha,crop,nx,ny,width,height,layer,visible,locked,reference,direction,properties);}
     }
     /** Retangulo fisico explicito; transitavel e anotacao, nao um furo em outro solido. */
-    public record Hitbox(String id,int x,int y,int width,int height,boolean solid,String layer) { }
+    public record Hitbox(String id,int x,int y,int width,int height,boolean solid,String layer,int edges) {
+        public static final int UP=1, RIGHT=2, DOWN=4, LEFT=8, ALL=15;
+        /** Conserva o volume sólido integral dos mapas anteriores. */
+        public Hitbox(String id,int x,int y,int width,int height,boolean solid,String layer){this(id,x,y,width,height,solid,layer,ALL);}
+        /** Máscara limitada aos quatro lados; nenhum lado permite passagem livre. */
+        public Hitbox {if(edges<0||edges>ALL)throw new IllegalArgumentException("Direções de colisão inválidas");}
+        /** Indica uma borda fisicamente ativa, independentemente da arte. */
+        public boolean blocks(int side){return solid&&(edges&side)!=0;}
+    }
     /** Conexao por ID de documento; destino e chegada sao validados em conjunto. */
     public record Portal(String id,int x,int y,String destination,int arrivalX,int arrivalY,String quest,String direction) { }
     /** Gatilho com acao cadastrada; referencia a outro gatilho permite diagnosticar ciclos. */

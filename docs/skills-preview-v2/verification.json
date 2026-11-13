@@ -1,0 +1,222 @@
+{
+  "status": "PASS",
+  "baseline_file_count": 120,
+  "baseline_unchanged": 119,
+  "allowed_script_changes": [
+    {
+      "path": "tools/prepare_skill_assets.py",
+      "before": "95ae63ab9d6b1ac51b59482436a7783c8cffa79b3e0fc88a63cc01478d4f2646",
+      "after": "603f1685cf25d8bf1289b52a8da7367331af2d6e716ce7c4dcee8e71dcbd2c32"
+    }
+  ],
+  "v1_pngs_unchanged": 49,
+  "v1_assets_changed": [],
+  "clips": 18,
+  "frames": 170,
+  "reproduced_png_count": 18,
+  "metadata_reproduced": true,
+  "gif_checks": [
+    {
+      "id": "water_3",
+      "duration_ms": 900,
+      "expected_preview_ms": 900
+    },
+    {
+      "id": "water_4",
+      "duration_ms": 720,
+      "expected_preview_ms": 720
+    },
+    {
+      "id": "water_5",
+      "duration_ms": 360,
+      "expected_preview_ms": 360
+    },
+    {
+      "id": "thunder_1",
+      "duration_ms": 420,
+      "expected_preview_ms": 420
+    },
+    {
+      "id": "thunder_2",
+      "duration_ms": 540,
+      "expected_preview_ms": 540
+    },
+    {
+      "id": "thunder_3",
+      "duration_ms": 480,
+      "expected_preview_ms": 480
+    },
+    {
+      "id": "thunder_4",
+      "duration_ms": 360,
+      "expected_preview_ms": 360
+    },
+    {
+      "id": "thunder_5",
+      "duration_ms": 990,
+      "expected_preview_ms": 990
+    },
+    {
+      "id": "fire_2",
+      "duration_ms": 900,
+      "expected_preview_ms": 900
+    },
+    {
+      "id": "fire_2.travel",
+      "duration_ms": 540,
+      "expected_preview_ms": 540
+    },
+    {
+      "id": "fire_4",
+      "duration_ms": 1280,
+      "expected_preview_ms": 1280
+    },
+    {
+      "id": "fire_4.travel",
+      "duration_ms": 540,
+      "expected_preview_ms": 540
+    },
+    {
+      "id": "fire_4.ground",
+      "duration_ms": 900,
+      "expected_preview_ms": 900
+    },
+    {
+      "id": "fire_4.impact",
+      "duration_ms": 1280,
+      "expected_preview_ms": 1280
+    },
+    {
+      "id": "aetheri_4",
+      "duration_ms": 540,
+      "expected_preview_ms": 540
+    },
+    {
+      "id": "aetheri_5",
+      "duration_ms": 630,
+      "expected_preview_ms": 630
+    },
+    {
+      "id": "aetheri_5.travel",
+      "duration_ms": 630,
+      "expected_preview_ms": 630
+    },
+    {
+      "id": "martial_3",
+      "duration_ms": 810,
+      "expected_preview_ms": 810
+    }
+  ],
+  "source_count": 415,
+  "source_reference_checks": [
+    {
+      "source": "water_prison_v2",
+      "file": "292.png",
+      "matches": true
+    },
+    {
+      "source": "water_prison_v2",
+      "file": "91.png",
+      "matches": true
+    },
+    {
+      "source": "water_vortex_v2",
+      "file": "231.png",
+      "matches": true
+    },
+    {
+      "source": "water_vortex_v2",
+      "file": "134.png",
+      "matches": true
+    },
+    {
+      "source": "water_dash_v2",
+      "file": "97.png",
+      "matches": true
+    },
+    {
+      "source": "water_dash_v2",
+      "file": "394.png",
+      "matches": true
+    },
+    {
+      "source": "martial_crater_v2",
+      "file": "102.png",
+      "matches": true
+    },
+    {
+      "source": "martial_crater_v2",
+      "file": "53.png",
+      "matches": true
+    },
+    {
+      "source": "martial_crater_v2",
+      "file": "373.png",
+      "matches": true
+    },
+    {
+      "source": "thunder_bolt_v2",
+      "file": "96.png",
+      "matches": true
+    },
+    {
+      "source": "thunder_lance_v2",
+      "file": "34.png",
+      "matches": true
+    },
+    {
+      "source": "thunder_dash_v2",
+      "file": "307.png",
+      "matches": true
+    },
+    {
+      "source": "thunder_dash_v2",
+      "file": "96.png",
+      "matches": true
+    },
+    {
+      "source": "thunder_ultimate_v2",
+      "file": "96.png",
+      "matches": true
+    },
+    {
+      "source": "thunder_ultimate_v2",
+      "file": "383.png",
+      "matches": true
+    },
+    {
+      "source": "fire_fissure_v2",
+      "file": "53.png",
+      "matches": true
+    },
+    {
+      "source": "fire_fissure_v2",
+      "file": "343.png",
+      "matches": true
+    },
+    {
+      "source": "ice_arrow_v2",
+      "file": "341.png",
+      "matches": true
+    },
+    {
+      "source": "fire_cut_v1",
+      "file": "252.png",
+      "matches": true
+    },
+    {
+      "source": "fire_eruption_original",
+      "file": "249.png",
+      "matches": true
+    }
+  ],
+  "native_edited_sources": 10,
+  "runtime_png_bytes": 3831236,
+  "warnings": [],
+  "errors": [],
+  "model": null,
+  "estimateUsd": null,
+  "route": "image_gen",
+  "v1_compatibility_reproduced_pngs": 40,
+  "v1_compatibility_errors": []
+}

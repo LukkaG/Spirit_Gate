@@ -1,0 +1,280 @@
+{
+  "route": "image_gen",
+  "model": null,
+  "estimateUsd": null,
+  "jobs": [
+    {
+      "key": "water_prison_v2",
+      "family": "water",
+      "sources": [
+        292,
+        91
+      ],
+      "grid": [
+        3,
+        3
+      ],
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "prompt": "Use case: precise-object-edit. Asset type: Spirit Gate 2D top-down/three-quarter RPG combat VFX spritesheet. Edit and adapt the attached existing effect art, preserving its crisp, readable raster/pixel-art language while making the explicitly described new effect. True transparent alpha background throughout all gutters and empty interiors. No painted checkerboard, black/white/gray backdrop, text, labels, grid lines, characters, bodies, hands, weapons held by a character, scenery or logos. Each frame entirely inside its cell with at least 12% transparent padding on all four sides. Fixed registration, fixed effect scale and center across the sequence; no frame crosses a cell boundary. No soft bloom fog, blur, antialiasing wash, gradients across the sheet or oversized glow. Create EXACTLY 3 columns by 3 rows, nine equally sized square cells, row-major. Transform the bubble reference into a clearly WATER prison around an invisible enemy: a stable round transparent hollow bubble/cupola, azure fluid shell with cyan-white flowing ripples around its rim, a small elliptical pool at its foot and a few blue water droplets. The center must stay genuinely alpha-transparent so the enemy remains visible, not an opaque orb or glass mirror. No gold, yellow, metallic bands, planet rings, rocks, ice crystals or magic runes. All nine frames depict the SAME full-size bubble held in place while watery highlights circulate gently; no shrinking, bursting or disappearing. Small variations form a seamless hold loop. Overall sheet aspect 1:1.",
+      "references": [
+        "C:\\Users\\lucas\\Downloads\\animations\\292.png",
+        "C:\\Users\\lucas\\Downloads\\animations\\91.png"
+      ]
+    },
+    {
+      "key": "water_vortex_v2",
+      "family": "water",
+      "sources": [
+        231,
+        134
+      ],
+      "grid": [
+        3,
+        3
+      ],
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "prompt": "Use case: precise-object-edit. Asset type: Spirit Gate 2D top-down/three-quarter RPG combat VFX spritesheet. Edit and adapt the attached existing effect art, preserving its crisp, readable raster/pixel-art language while making the explicitly described new effect. True transparent alpha background throughout all gutters and empty interiors. No painted checkerboard, black/white/gray backdrop, text, labels, grid lines, characters, bodies, hands, weapons held by a character, scenery or logos. Each frame entirely inside its cell with at least 12% transparent padding on all four sides. Fixed registration, fixed effect scale and center across the sequence; no frame crosses a cell boundary. No soft bloom fog, blur, antialiasing wash, gradients across the sheet or oversized glow. Create EXACTLY 3 columns by 3 rows, nine square cells, row-major. Adapt the references into a self-cast WATER CYCLONE, an upright short swirling funnel of water with a broad circular ground whirlpool base and spiraling blue water bands rising around an invisible player. It must read as a spinning water tornado, NOT a sphere, bubble, planet or floating jewel. Use deep azure water edges, cyan swirls and sparse white foam, no gold or purple base disk. Hollow mostly transparent center and transparent gaps between spiral bands keep the player visible. Root/ground-contact point stays fixed at center-x,80% of each cell's height. Nine continuous rotation phases, constant height/width, loop first-to-last naturally. Overall square sheet.",
+      "references": [
+        "C:\\Users\\lucas\\Downloads\\animations\\231.png",
+        "C:\\Users\\lucas\\Downloads\\animations\\134.png"
+      ]
+    },
+    {
+      "key": "water_dash_v2",
+      "family": "water",
+      "sources": [
+        97,
+        394
+      ],
+      "grid": [
+        3,
+        3
+      ],
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "prompt": "Use case: precise-object-edit. Asset type: Spirit Gate 2D top-down/three-quarter RPG combat VFX spritesheet. Edit and adapt the attached existing effect art, preserving its crisp, readable raster/pixel-art language while making the explicitly described new effect. True transparent alpha background throughout all gutters and empty interiors. No painted checkerboard, black/white/gray backdrop, text, labels, grid lines, characters, bodies, hands, weapons held by a character, scenery or logos. Each frame entirely inside its cell with at least 12% transparent padding on all four sides. Fixed registration, fixed effect scale and center across the sequence; no frame crosses a cell boundary. No soft bloom fog, blur, antialiasing wash, gradients across the sheet or oversized glow. Create EXACTLY 3 columns by 3 rows, nine square cells, row-major. Convert the ice and water-ripple references into a horizontal flowing WATER DASH WAKE, all moving RIGHT. A rounded watery surge at the right wraps an invisible player's center; a long thin azure/cyan rushing stream with white foam streaks trails LEFT behind it. No ice spikes, snowflakes, fire, crescent-only slashes, circles of three cuts, arrows or character. Keep a long low silhouette about 4:1, full-size and in the same position in all nine cells; subtle ripple flow changes rather than growing from a dot. Root near the rounded leading water surge at75% width. Transparent center at the surge allows player to remain visible. Square sheet.",
+      "references": [
+        "C:\\Users\\lucas\\Downloads\\animations\\97.png",
+        "C:\\Users\\lucas\\Downloads\\animations\\394.png"
+      ]
+    },
+    {
+      "key": "martial_crater_v2",
+      "family": "martial",
+      "sources": [
+        102,
+        53,
+        373
+      ],
+      "grid": [
+        3,
+        3
+      ],
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "prompt": "Use case: precise-object-edit. Asset type: Spirit Gate 2D top-down/three-quarter RPG combat VFX spritesheet. Edit and adapt the attached existing effect art, preserving its crisp, readable raster/pixel-art language while making the explicitly described new effect. True transparent alpha background throughout all gutters and empty interiors. No painted checkerboard, black/white/gray backdrop, text, labels, grid lines, characters, bodies, hands, weapons held by a character, scenery or logos. Each frame entirely inside its cell with at least 12% transparent padding on all four sides. Fixed registration, fixed effect scale and center across the sequence; no frame crosses a cell boundary. No soft bloom fog, blur, antialiasing wash, gradients across the sheet or oversized glow. Create EXACTLY 3 columns by 3 rows, nine square cells, row-major, a physical GROUND-SHATTERING STOMP IMPACT seen top-down/three-quarter. Use the cracked earth and dust references: first a strong circular dust shock at ground center, then the ground splits into a LARGE broad shallow crater with jagged radial cracks, flying small stone fragments and outward rolling tan dust. The final frames leave broken cracked brown earth with dust fading. The crater remains broad and horizontal, no vertical columns or props. Absolutely NO HAND, FIST, FOOT, ARM, HUMAN, ANIME CHARACTER, ROCK FIST, PILLAR, SPIKE TOWER OR BEAM. Keep the impact centered and a constant maximum envelope; all radial cracks/fragments fit within the cell. Dark brown cracks, tan/ochre stone, pale dust, a brief white impact highlight. Square sheet.",
+      "references": [
+        "C:\\Users\\lucas\\Downloads\\animations\\102.png",
+        "C:\\Users\\lucas\\Downloads\\animations\\53.png",
+        "C:\\Users\\lucas\\Downloads\\animations\\373.png"
+      ]
+    },
+    {
+      "key": "thunder_bolt_v2",
+      "family": "thunder",
+      "sources": [
+        96
+      ],
+      "grid": [
+        6,
+        1
+      ],
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "prompt": "Use case: precise-object-edit. Asset type: Spirit Gate 2D top-down/three-quarter RPG combat VFX spritesheet. Edit and adapt the attached existing effect art, preserving its crisp, readable raster/pixel-art language while making the explicitly described new effect. True transparent alpha background throughout all gutters and empty interiors. No painted checkerboard, black/white/gray backdrop, text, labels, grid lines, characters, bodies, hands, weapons held by a character, scenery or logos. Each frame entirely inside its cell with at least 12% transparent padding on all four sides. Fixed registration, fixed effect scale and center across the sequence; no frame crosses a cell boundary. No soft bloom fog, blur, antialiasing wash, gradients across the sheet or oversized glow. Keep EXACTLY the reference's SIX narrow vertical lightning frames in SIX columns and ONE row, same progression and placement: first thin bolt, growing jagged bolts, then fragmented dissipation. Preserve each lightning shape and change its palette coherently to icy WHITE core, bright CYAN and ELECTRIC BLUE borders, with only a very thin subtle VIOLET edge. No yellow, gold, fire orange, or green plasma. Sharpen a few angular branches, maintaining visible long lightning silhouettes even at small display size. Keep generous transparent gutters. Overall sheet near-square.",
+      "references": [
+        "C:\\Users\\lucas\\Downloads\\animations\\96.png"
+      ]
+    },
+    {
+      "key": "thunder_lance_v2",
+      "family": "thunder",
+      "sources": [
+        34
+      ],
+      "grid": [
+        2,
+        5
+      ],
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "prompt": "Use case: precise-object-edit. Asset type: Spirit Gate 2D top-down/three-quarter RPG combat VFX spritesheet. Edit and adapt the attached existing effect art, preserving its crisp, readable raster/pixel-art language while making the explicitly described new effect. True transparent alpha background throughout all gutters and empty interiors. No painted checkerboard, black/white/gray backdrop, text, labels, grid lines, characters, bodies, hands, weapons held by a character, scenery or logos. Each frame entirely inside its cell with at least 12% transparent padding on all four sides. Fixed registration, fixed effect scale and center across the sequence; no frame crosses a cell boundary. No soft bloom fog, blur, antialiasing wash, gradients across the sheet or oversized glow. Preserve EXACTLY TWO columns and FIVE rows of the reference, nine lance frames and the last bottom-right cell EMPTY. Every lance points RIGHT in a low horizontal silhouette. Make the cyan sword-energy lance clearly an ELECTRIC LANCE: icy white core, bright cyan/electric-blue sharp point, a few short jagged electric branches near the head, very thin violet edge. Keep the same birth-to-fade progression and fixed center/length, high contrast with real alpha. No actual hand/sword, yellow or green. Each cell is wide and shallow as in the reference; overall sheet about2:1.",
+      "references": [
+        "C:\\Users\\lucas\\Downloads\\animations\\34.png"
+      ]
+    },
+    {
+      "key": "thunder_dash_v2",
+      "family": "thunder",
+      "sources": [
+        307,
+        96
+      ],
+      "grid": [
+        3,
+        3
+      ],
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "prompt": "Use case: precise-object-edit. Asset type: Spirit Gate 2D top-down/three-quarter RPG combat VFX spritesheet. Edit and adapt the attached existing effect art, preserving its crisp, readable raster/pixel-art language while making the explicitly described new effect. True transparent alpha background throughout all gutters and empty interiors. No painted checkerboard, black/white/gray backdrop, text, labels, grid lines, characters, bodies, hands, weapons held by a character, scenery or logos. Each frame entirely inside its cell with at least 12% transparent padding on all four sides. Fixed registration, fixed effect scale and center across the sequence; no frame crosses a cell boundary. No soft bloom fog, blur, antialiasing wash, gradients across the sheet or oversized glow. Rearrange/adapt into EXACTLY3 columns by3 rows, nine square cells. A horizontal ELECTRIC DASH STREAM pointing RIGHT in all frames, a fast jagged white/cyan/electric-blue wake behind an invisible player's position, no green plasma column. A few angular side forks and crisp blue motes; subtle thin violet edging unifies with lightning bolts. Low long silhouette about3:1; full consistent length and fixed registration in every frame, with changing jagged streaks. The leading surge is at75% cell width, trailing left. No character or vertical beam. All nine stages energetic and readable; square overall sheet.",
+      "references": [
+        "C:\\Users\\lucas\\Downloads\\animations\\307.png",
+        "C:\\Users\\lucas\\Downloads\\animations\\96.png"
+      ]
+    },
+    {
+      "key": "thunder_ultimate_v2",
+      "family": "thunder",
+      "sources": [
+        96,
+        383
+      ],
+      "grid": [
+        3,
+        3
+      ],
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "prompt": "Use case: precise-object-edit. Asset type: Spirit Gate 2D top-down/three-quarter RPG combat VFX spritesheet. Edit and adapt the attached existing effect art, preserving its crisp, readable raster/pixel-art language while making the explicitly described new effect. True transparent alpha background throughout all gutters and empty interiors. No painted checkerboard, black/white/gray backdrop, text, labels, grid lines, characters, bodies, hands, weapons held by a character, scenery or logos. Each frame entirely inside its cell with at least 12% transparent padding on all four sides. Fixed registration, fixed effect scale and center across the sequence; no frame crosses a cell boundary. No soft bloom fog, blur, antialiasing wash, gradients across the sheet or oversized glow. Create EXACTLY3 columns by3 rows, nine square cells. A LARGE top-down CIRCULAR FOUR-DASH LIGHTNING ULTIMATE trail around an invisible player. Use the lightning shapes/colors from image1 and only the circular motion/composition idea of image2. Four broad angular electric arc trails successively sweep around a full circle clockwise, each with a bright comet-like jagged surge, leaving a connected crackling ring; short lightning sparks radiate outward. Nine stages clearly convey four electric dashes circling the same center. Hollow transparent center at least half the ring diameter keeps caster visible. Strong icy-white cores and cyan/electric-blue arcs, tiny violet edge, NO yellow, green, water foam or opaque filled disk. A bold wide circular footprint, not a tiny plus sign of four straight lines. Entire ring and sparks fit inside each cell. Square sheet.",
+      "references": [
+        "C:\\Users\\lucas\\Downloads\\animations\\96.png",
+        "C:\\Users\\lucas\\Downloads\\animations\\383.png"
+      ]
+    },
+    {
+      "key": "fire_fissure_v2",
+      "family": "fire",
+      "sources": [
+        53,
+        343
+      ],
+      "grid": [
+        3,
+        3
+      ],
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "prompt": "Use case: precise-object-edit. Asset type: Spirit Gate 2D top-down/three-quarter RPG combat VFX spritesheet. Edit and adapt the attached existing effect art, preserving its crisp, readable raster/pixel-art language while making the explicitly described new effect. True transparent alpha background throughout all gutters and empty interiors. No painted checkerboard, black/white/gray backdrop, text, labels, grid lines, characters, bodies, hands, weapons held by a character, scenery or logos. Each frame entirely inside its cell with at least 12% transparent padding on all four sides. Fixed registration, fixed effect scale and center across the sequence; no frame crosses a cell boundary. No soft bloom fog, blur, antialiasing wash, gradients across the sheet or oversized glow. Create EXACTLY3 columns by3 rows, nine square cells. A LOW HORIZONTAL ground FIRE FISSURE extending LEFT TO RIGHT, a clearly broken dark earth crack with glowing red-orange molten seams and small upright flame tongues along the fissure. Adapt the reference crack and fire plume art. Frames1–4 show the crack progressively extending rightward, frames5–7 show the full jagged fiery crack, frames8–9 show embers starting to settle. Keep the start point at15% cell width and end at85%, same y-center in every frame. Thin long footprint about4:1, transparent outside the crack/individual flames, NO rectangular ground tile or backdrop, no free-floating fire sphere, hand, pillar, character or eruption cloud; endpoint eruption is a separate effect. Square sheet.",
+      "references": [
+        "C:\\Users\\lucas\\Downloads\\animations\\53.png",
+        "C:\\Users\\lucas\\Downloads\\animations\\343.png"
+      ]
+    },
+    {
+      "key": "ice_arrow_v2",
+      "family": "aetheri",
+      "sources": [
+        341
+      ],
+      "grid": [
+        3,
+        3
+      ],
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "prompt": "Use case: precise-object-edit. Asset type: Spirit Gate 2D top-down/three-quarter RPG combat VFX spritesheet. Edit and adapt the attached existing effect art, preserving its crisp, readable raster/pixel-art language while making the explicitly described new effect. True transparent alpha background throughout all gutters and empty interiors. No painted checkerboard, black/white/gray backdrop, text, labels, grid lines, characters, bodies, hands, weapons held by a character, scenery or logos. Each frame entirely inside its cell with at least 12% transparent padding on all four sides. Fixed registration, fixed effect scale and center across the sequence; no frame crosses a cell boundary. No soft bloom fog, blur, antialiasing wash, gradients across the sheet or oversized glow. Create EXACTLY3 columns by3 rows, nine square cells. Adapt the arrow reference into ONE ORIGINAL LARGE GLACIAL ARROW PROJECTILE in each frame, always facing RIGHT. Broad faceted triangular ice-crystal arrowhead at the RIGHT, short sharply angled backward frost barbs, a long crystalline cyan-white shaft and thin small icy motes trailing LEFT. The arrowhead itself occupies35–40% of total projectile length and is thick/readable, not a tiny dot; total silhouette about3:1. Palette pale icy cyan/white core with dark cobalt-blue outlines and transparent crystal cutouts, no gold/yellow/metal wood. Full arrow at the SAME large size and exact location in all nine cells; only cold energy shimmer and small tail particles vary, no growing-from-dot phases. Use a distinct original angular design, no logos, no recognizable champion/game weapon, no bow or character. Square sheet.",
+      "references": [
+        "C:\\Users\\lucas\\Downloads\\animations\\341.png"
+      ]
+    }
+  ]
+}
