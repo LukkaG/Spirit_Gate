@@ -157,7 +157,7 @@ public final class RpgSkillEngine {
             aim = enemy.getPosition();
         } else if (skill.targeting() == Targeting.SELF) aim = origin;
         else if (skill.targeting() == Targeting.LINE || skill.targeting() == Targeting.CONE)
-            aim = endpoint(world, origin, cardinal(world.combatFacing()), skill.range());
+            aim = endpoint(world, origin, eightDirections(world.combatFacing()), skill.range());
         else {
             if (!inside(world, aim) || !reachable(world, origin, aim, skill.range()) || distance(origin, aim) < .001) return false;
         }
@@ -693,7 +693,23 @@ public final class RpgSkillEngine {
     }
     /** Libera a imobilidade voluntária sem remover controles negativos independentes. */
     private static void stopSentry(Session s) { s.sentryShots=0; s.sentryUntil=0; s.world.skillSentry(false); }
-    /** Espelha as quatro poses do personagem, inclusive o empate vertical do atlas. */
+    /** Seleciona a direção de skill mais próxima em passos de 45 graus, com alcance unitário. */
+    public static Position eightDirections(Position heading) {
+        if(heading.x()==0&&heading.y()==0)return new Position(1,0);
+        int octant=Math.floorMod((int)Math.round(Math.atan2(heading.y(),heading.x())/(Math.PI/4)),8);
+        float diagonal=(float)Math.sqrt(.5);
+        return switch(octant){
+            case 0->new Position(1,0);
+            case 1->new Position(diagonal,diagonal);
+            case 2->new Position(0,1);
+            case 3->new Position(-diagonal,diagonal);
+            case 4->new Position(-1,0);
+            case 5->new Position(-diagonal,-diagonal);
+            case 6->new Position(0,-1);
+            default->new Position(diagonal,-diagonal);
+        };
+    }
+    /** Espelha as quatro poses do ataque básico, inclusive o empate vertical do atlas. */
     public static Position cardinal(Position heading) {
         if (Math.abs(heading.x()) > Math.abs(heading.y())) return new Position(heading.x()<0?-1:1,0);
         if(heading.x()==0&&heading.y()==0)return new Position(1,0);

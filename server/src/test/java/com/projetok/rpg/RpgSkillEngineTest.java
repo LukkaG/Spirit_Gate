@@ -324,11 +324,26 @@ class RpgSkillEngineTest {
         }
         assertEquals(12,counts[0]);assertTrue(counts[1]>counts[0],java.util.Arrays.toString(counts));
     }
-    @Test void smartcastUsesOnlyFourDirectionsEvenAfterDiagonalFacing() {
-        for(var heading:List.of(new Position(1,1),new Position(-1,1),new Position(.2f,1),new Position(.2f,-1))){
-            var f=new Fixture("thunder");f.world.faceSyntheticDirection(heading.x(),heading.y());assertTrue(f.cast(2));
-            var event=f.engine.events().get(0);assertTrue(event.fromX()==event.x()||event.fromY()==event.y());
-            assertTrue(Math.hypot(event.x()-event.fromX(),event.y()-event.fromY())>0);
+    @Test void smartcastUsesEightServerDirectionsWithEqualRangeAndIgnoresRequestedAim() {
+        for(int x=-1;x<=1;x++)for(int y=-1;y<=1;y++){
+            if(x==0&&y==0)continue;
+            var f=new Fixture("thunder",List.of(),Map.of("a_target","slime|forest|900|500"));
+            assertTrue(f.world.skillMove(new Position(480,320)));f.world.faceSyntheticDirection(x,y);
+            // Um tick parado conserva a última diagonal confirmada pelo movimento.
+            f.advance(1);assertTrue(f.engine.cast(1,f.world,new RpgSkillEngine.Cast(2,0,0,900,600),f.players));
+            var event=f.engine.events().get(0);double length=Math.hypot(x,y),range=RpgSkillCatalog.get("thunder_2").range();
+            assertEquals(x/length*range,event.x()-event.fromX(),.001);
+            assertEquals(y/length*range,event.y()-event.fromY(),.001);
+            assertEquals(range,Math.hypot(event.x()-event.fromX(),event.y()-event.fromY()),.001);
+        }
+    }
+    @Test void diagonalSkillshotHitsOnlyWhenTheFrontArrives() {
+        for(int x:List.of(-1,1))for(int y:List.of(-1,1)){
+            var f=new Fixture("thunder",List.of(),Map.of("a_target","slime|forest|"+(140+x*70)+"|"+(300+y*70)));
+            f.world.faceSyntheticDirection(x,y);assertTrue(f.cast(2));
+            assertEquals(1000,f.enemy.hp);f.advance(2);assertEquals(1000,f.enemy.hp);
+            for(int tick=0;tick<10&&f.enemy.hp==1000;tick++)f.advance(1);
+            assertEquals(976,f.enemy.hp);assertTrue(f.enemy.skillStunUntil>f.tick);
         }
     }
     @Test void martialComboReachesFurtherWhileKeepingItsFrontalCone() {

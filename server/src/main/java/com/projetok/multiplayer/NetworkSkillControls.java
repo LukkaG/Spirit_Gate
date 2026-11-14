@@ -161,7 +161,7 @@ final class NetworkSkillControls {
     }
     /** Smartcast preserva a direção confirmada pelo servidor e encurta o raio somente nas bordas. */
     static Point2D.Float facingPoint(Protocol.Actor actor,float range){
-        var heading=com.projetok.rpg.RpgSkillEngine.cardinal(new com.projetok.domain.entity.Position(actor.facingX(),actor.facingY()));
+        var heading=com.projetok.rpg.RpgSkillEngine.eightDirections(new com.projetok.domain.entity.Position(actor.facingX(),actor.facingY()));
         float fx=heading.x(),fy=heading.y();
         float distance=range;if(fx>0)distance=Math.min(distance,(942-actor.x())/fx);else if(fx<0)distance=Math.min(distance,(18-actor.x())/fx);
         if(fy>0)distance=Math.min(distance,(622-actor.y())/fy);else if(fy<0)distance=Math.min(distance,(18-actor.y())/fy);

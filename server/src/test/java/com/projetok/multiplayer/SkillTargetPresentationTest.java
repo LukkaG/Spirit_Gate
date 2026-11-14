@@ -21,7 +21,19 @@ class SkillTargetPresentationTest {
         var up=new Protocol.Actor(1,"Jogador",140,300,100,100,1000,0,false,0,-1,0);
         var upward=NetworkSkillControls.facingPoint(up,320);assertEquals(140,upward.x,.001);assertEquals(18,upward.y,.001);
         var diagonal=new Protocol.Actor(1,"Jogador",140,300,100,100,1000,0,false,.70710677f,.70710677f,0);
-        var tied=NetworkSkillControls.facingPoint(diagonal,200);assertEquals(140,tied.x,.001);assertEquals(500,tied.y,.001);
+        var tied=NetworkSkillControls.facingPoint(diagonal,200);assertEquals(140+200/Math.sqrt(2),tied.x,.001);assertEquals(300+200/Math.sqrt(2),tied.y,.001);
         assertEquals(com.projetok.prototype.DirectionalAnimation.Direction.FRONT,com.projetok.prototype.DirectionalAnimation.facing(1,1,com.projetok.prototype.DirectionalAnimation.Direction.RIGHT));
+    }
+    @Test void diagonalSmartcastKeepsEqualRangeAndClipsAlongTheSameRay(){
+        for(int x:List.of(-1,1))for(int y:List.of(-1,1)){
+            float diagonal=(float)Math.sqrt(.5);
+            var actor=new Protocol.Actor(1,"Jogador",480,320,100,100,1000,0,false,x*diagonal,y*diagonal,0);
+            var point=NetworkSkillControls.facingPoint(actor,200);
+            assertEquals(200,Math.hypot(point.x-480,point.y-320),.001);
+            assertEquals(x*200/Math.sqrt(2),point.x-480,.001);assertEquals(y*200/Math.sqrt(2),point.y-320,.001);
+            var edge=NetworkSkillControls.facingPoint(actor,1000);
+            assertEquals(Math.abs(edge.x-480),Math.abs(edge.y-320),.001);
+            assertTrue(edge.x>=18&&edge.x<=942&&edge.y>=18&&edge.y<=622);
+        }
     }
 }

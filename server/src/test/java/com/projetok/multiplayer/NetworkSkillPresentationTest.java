@@ -103,6 +103,20 @@ class NetworkSkillPresentationTest {
         assertEquals(0xff00ffff,output.getRGB(250,222));assertEquals(0,output.getRGB(250,250));
     }
     private NetworkSkillPresentation.Clip solid(int color,int width,int pivot){var bitmap=new BufferedImage(width,8,BufferedImage.TYPE_INT_ARGB);for(int y=0;y<8;y++)for(int x=0;x<width;x++)bitmap.setRGB(x,y,color);return new NetworkSkillPresentation.Clip(bitmap,width,8,1,1,100,width,8,pivot,4);}
+    @Test void diagonalProjectilesRotateTheirAnimationAndTravelAlongAllFourDiagonals(){
+        for(int dx:new int[]{-1,1})for(int dy:new int[]{-1,1}){
+            var time=new AtomicLong();var view=new NetworkSkillPresentation(time::get);
+            view.clips(Map.of("aetheri_4",solid(0xff00ffff,24,12)));
+            view.update(state(HASH,0,new SkillProtocol.Event(1,0,1,"aetheri_4",250,250,250+dx*120,250+dy*120)));
+            time.set(100);var output=paint(view);
+            // A flecha percorre 54 unidades em 100 ms, com o mesmo deslocamento nos dois eixos.
+            int x=(int)Math.round(250+dx*54/Math.sqrt(2)),y=(int)Math.round(222+dy*54/Math.sqrt(2));
+            assertEquals(0xff00ffff,output.getRGB(x,y));
+            assertEquals(0xff00ffff,output.getRGB(x+dx*6,y+dy*6),"O eixo longo deve girar com o trajeto");
+            assertEquals(0,output.getRGB(x+dx*6,y-dy*6),"A largura não deve virar uma flecha horizontal");
+            assertEquals(0,output.getRGB(250+dx*120,222+dy*120),"O destino não pode aparecer antes da chegada");
+        }
+    }
     @Test void contactReplacesTheProjectileWithAnImpactThatDoesNotLoop(){
         var time=new AtomicLong();var view=new NetworkSkillPresentation(time::get);
         view.clips(Map.of("aetheri_4",solid(0xff00ff00,8,4),"aetheri_4.impact",solid(0xffff0000,8,4)));
