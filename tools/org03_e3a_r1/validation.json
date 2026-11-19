@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-15",
+  "preserved_files": 4005,
+  "changed": [],
+  "original_e3_sources": 6,
+  "source_errors": [],
+  "e2_manifest_entries": 250,
+  "e2_errors": [],
+  "ast_files": [
+    "lab_runtime.py",
+    "lifecycle.py",
+    "relay.py",
+    "test_harness.py",
+    "validate.py"
+  ],
+  "tests": 23,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "execution": "PURE_MOCKS_NO_CLUSTER_NO_SQL",
+  "passed": true
+}

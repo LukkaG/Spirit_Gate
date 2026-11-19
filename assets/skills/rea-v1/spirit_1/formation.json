@@ -1,0 +1,181 @@
+{
+  "id": "SPIRIT_1_formation",
+  "name": "Essência invade e demarca o território",
+  "cell": 192,
+  "frames": 6,
+  "directional": false,
+  "loop": false,
+  "durations_ms": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80
+  ],
+  "attachment": "selected_fixed_ground_feet",
+  "show_character": true,
+  "depth_split": true,
+  "depth_split_y": 96,
+  "source_file": "formation.png",
+  "source_grid": [
+    6,
+    1
+  ],
+  "alpha_threshold": 0.5,
+  "monotonic_end": false,
+  "registration": "none",
+  "phase": "formation",
+  "ability": "SPIRIT_1",
+  "ability_name": "Poça espiritual",
+  "phase_name": "Essência invade e demarca o território",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/formation.png",
+  "sheet_size": [
+    1152,
+    192
+  ],
+  "pivot_px": [
+    96,
+    96
+  ],
+  "duration_ms": 480,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        65,
+        83,
+        127,
+        111
+      ],
+      "opaque_px": 330,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "09ca7a3d6a848c3e789a7df793a5cc3c2c841a65fa3a249882811f016eb25e0c"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        34,
+        77,
+        148,
+        120
+      ],
+      "opaque_px": 1106,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "3e8995031b057f6de88753f963e274256dd501ea04c8e52c2e3e8f875fb6be08"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        26,
+        66,
+        163,
+        127
+      ],
+      "opaque_px": 4569,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "cb07ddb6ebeeaf5d8c6e1af12bdb460ef514dcd7c3ee717f58d66dee3de42b8d"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        22,
+        62,
+        165,
+        128
+      ],
+      "opaque_px": 5903,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "e618bbb1b4f096725189ef2cbd1bf9991df2c3f0a9de4772ef7560aa41e4440f"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        21,
+        53,
+        170,
+        128
+      ],
+      "opaque_px": 6949,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "16e1e52dd500c1e587beca1602e32ceeb23460244e439a0c52f7ba12a2a12bcb"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        21,
+        48,
+        169,
+        129
+      ],
+      "opaque_px": 7550,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "ab8f34deb772beff292855f9d989ba61028e3c6a38cd912ee777dcf7e5b18a8f"
+    }
+  ],
+  "source": "Sources/formation.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "visual_markers": [],
+  "depth_layers": {
+    "rear": "Layers/formation_rear.png",
+    "front": "Layers/formation_front.png",
+    "screen_split_y": 96
+  },
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

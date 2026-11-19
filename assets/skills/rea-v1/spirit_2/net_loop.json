@@ -1,0 +1,181 @@
+{
+  "id": "SPIRIT_2_net_loop",
+  "name": "Rede óssea sustentada",
+  "cell": 128,
+  "frames": 6,
+  "directional": false,
+  "loop": true,
+  "durations_ms": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80
+  ],
+  "attachment": "target_feet",
+  "pivot_px": [
+    64,
+    96
+  ],
+  "show_character": true,
+  "depth_split": true,
+  "depth_split_y": 96,
+  "source_file": "net_loop.png",
+  "source_grid": [
+    6,
+    1
+  ],
+  "alpha_threshold": 0.5,
+  "monotonic_end": false,
+  "registration": "none",
+  "phase": "net_loop",
+  "ability": "SPIRIT_2",
+  "ability_name": "Teia espiritual",
+  "phase_name": "Rede óssea sustentada",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/net_loop.png",
+  "sheet_size": [
+    768,
+    128
+  ],
+  "duration_ms": 480,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        26,
+        29,
+        102,
+        110
+      ],
+      "opaque_px": 2433,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "4d1ce3447b6509f1baa4c571be171bd9b0fd6838976ef2d817f72f7c9b2ebb58"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        26,
+        29,
+        102,
+        110
+      ],
+      "opaque_px": 2433,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "6e0b4cb0ef6bea0b779530f817a3090e5f6bb388beaac0dfc05d70eab3d9e2f4"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        26,
+        29,
+        102,
+        110
+      ],
+      "opaque_px": 2433,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "9686bdfef133164e90c6e5a159e02cf3ce2398c25d6a06be33c4cdedb861ffaf"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        26,
+        29,
+        102,
+        110
+      ],
+      "opaque_px": 2433,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "7976bf0b100604c93eb4e4a11d8240a46f489a670546620fd16f7e40c7949cb3"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        26,
+        29,
+        102,
+        110
+      ],
+      "opaque_px": 2433,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "96c31b0b775e15ef040a897f41632d337eabfcab1834e1a2f64c084685672681"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        26,
+        29,
+        102,
+        110
+      ],
+      "opaque_px": 2433,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "4d1ce3447b6509f1baa4c571be171bd9b0fd6838976ef2d817f72f7c9b2ebb58"
+    }
+  ],
+  "source": "Sources/net_loop.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "visual_markers": [],
+  "depth_layers": {
+    "rear": "Layers/net_loop_rear.png",
+    "front": "Layers/net_loop_front.png",
+    "screen_split_y": 96
+  },
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

@@ -1,0 +1,237 @@
+{
+  "id": "LIGHT_5_hostile_burst",
+  "name": "Monstro — impacto radiante único",
+  "cell": 128,
+  "frames": 8,
+  "directional": false,
+  "loop": false,
+  "durations_ms": [
+    90,
+    90,
+    80,
+    80,
+    90,
+    80,
+    70,
+    70
+  ],
+  "attachment": "eligible_monster_body_center",
+  "pivot_px": [
+    64,
+    64
+  ],
+  "show_character": true,
+  "source_file": "superior_variants.png",
+  "source_grid": [
+    4,
+    4
+  ],
+  "source_start_index": 8,
+  "alpha_threshold": 0.5,
+  "monotonic_end": true,
+  "stages": [
+    {
+      "id": "charge",
+      "first_frame": 1,
+      "last_frame": 2
+    },
+    {
+      "id": "convergence",
+      "first_frame": 3,
+      "last_frame": 4
+    },
+    {
+      "id": "major_pulse",
+      "first_frame": 5,
+      "last_frame": 5
+    },
+    {
+      "id": "afterglow",
+      "first_frame": 6,
+      "last_frame": 8
+    }
+  ],
+  "visual_markers": [
+    {
+      "frame": 5,
+      "label": "Único pulso principal — evento real do motor"
+    }
+  ],
+  "phase": "hostile_burst",
+  "ability": "LIGHT_5",
+  "ability_name": "Cura superior",
+  "phase_name": "Monstro — impacto radiante único",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/hostile_burst.png",
+  "sheet_size": [
+    1024,
+    128
+  ],
+  "duration_ms": 650,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        63,
+        62,
+        65,
+        65
+      ],
+      "opaque_px": 6,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "4b98a586bc43395f3464857609eb6039401b6d962f55f137690886ea4c18ba07"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        51,
+        51,
+        76,
+        75
+      ],
+      "opaque_px": 94,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "41757a35cd8f0188555ab69042e666075566e44e2a3133ac7461e6c1c93dd30a"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        54,
+        54,
+        74,
+        73
+      ],
+      "opaque_px": 114,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "1a8e74b9f3917a5db5f10957535ce5b1f2760d218e593fa12c627846070170fa"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        54,
+        53,
+        74,
+        73
+      ],
+      "opaque_px": 170,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "f739ddbf7f51e478bee237a906e1f10073dd6a479c66d38859c582e70b7b68ff"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        39,
+        38,
+        89,
+        89
+      ],
+      "opaque_px": 662,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "5cbdde532506e7af023a0a8667f1e6e86ec45755d8945084e7296285e3c04014"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        49,
+        50,
+        78,
+        78
+      ],
+      "opaque_px": 72,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "96cd03a95f0b9b2ae76d2fce3e794dbe4e09149395e1732f4e830fa960c53088"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 6,
+      "source_frame_index": 6,
+      "bbox": [
+        50,
+        61,
+        78,
+        68
+      ],
+      "opaque_px": 14,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "c978e66afe5ca199ca8012bb7a61f64aa2dd85032c13581164984fa85dcf3520"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 7,
+      "source_frame_index": 7,
+      "bbox": null,
+      "opaque_px": 0,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "de2f256064a0af797747c2b97505dc0b9f3df0de4f489eac731c23ae9ca9cc31"
+    }
+  ],
+  "source": "Sources/superior_variants.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "depth_layers": null,
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

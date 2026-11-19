@@ -1,0 +1,186 @@
+{
+  "id": "FIRE_3_flare_2",
+  "name": "Intensificação visual 2/4",
+  "cell": 192,
+  "frames": 6,
+  "directional": false,
+  "loop": false,
+  "durations_ms": [
+    40,
+    50,
+    50,
+    40,
+    40,
+    40
+  ],
+  "attachment": "caster_feet",
+  "show_character": true,
+  "depth_split": true,
+  "source_file": "four_flares_registered.png",
+  "source_grid": [
+    6,
+    4
+  ],
+  "source_start_index": 6,
+  "alpha_threshold": 0.5,
+  "authoritative_flare_slot": 2,
+  "layer_role": "replace quiet ring during this ONE cosmetic pulse visual; return at exact shared boundary cels",
+  "visual_markers": [
+    {
+      "frame": 2,
+      "label": "Intensificação 2/4 — pulso existente do motor"
+    }
+  ],
+  "phase": "flare_2",
+  "ability": "FIRE_3",
+  "ability_name": "Vórtice de fogo",
+  "phase_name": "Intensificação visual 2/4",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/flare_2.png",
+  "sheet_size": [
+    1152,
+    192
+  ],
+  "pivot_px": [
+    96,
+    96
+  ],
+  "duration_ms": 260,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        26,
+        51,
+        167,
+        141
+      ],
+      "opaque_px": 4448,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "cae78ed00ee0b41449aff25b10e46c89819809168791cef428c1c904e764b1f5"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        23,
+        50,
+        167,
+        141
+      ],
+      "opaque_px": 5458,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "a4e5c6bcfb5d154d7a3ce5bb9bc6022497bc2e5b7c00c68da685f5c84cd9dff9"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        24,
+        51,
+        167,
+        141
+      ],
+      "opaque_px": 4860,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "d174b083c086d87c7b96112c73d646f1d6244dfdd26a19c8f4d2afc8f8727692"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        24,
+        51,
+        167,
+        141
+      ],
+      "opaque_px": 4728,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "427130ed832c0ce34884934bf3855ebdc1fca3cc848aa832893314d149a1a8cf"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        24,
+        52,
+        167,
+        141
+      ],
+      "opaque_px": 4660,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "cc2a46ff18e5c5bc04ad951dc416ce0ffa14849387c59a483a837d78c8f703aa"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        26,
+        51,
+        167,
+        141
+      ],
+      "opaque_px": 4448,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "cae78ed00ee0b41449aff25b10e46c89819809168791cef428c1c904e764b1f5"
+    }
+  ],
+  "source": "Sources/four_flares_registered.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "depth_layers": {
+    "rear": "Layers/flare_2_rear.png",
+    "front": "Layers/flare_2_front.png",
+    "screen_split_y": 96
+  },
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

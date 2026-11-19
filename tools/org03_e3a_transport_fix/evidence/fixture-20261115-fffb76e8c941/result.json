@@ -1,0 +1,39 @@
+{
+  "report": {
+    "status": "PASSOU",
+    "case": "UNEXPECTED_RESET",
+    "terminal": {
+      "event": "RELAY_ERROR",
+      "paused": true,
+      "forwarded_server_bytes": 8,
+      "received_server_bytes": 18,
+      "held_bytes": 10,
+      "received_client_bytes": 13,
+      "forwarded_client_bytes": 13,
+      "termination_requested": false,
+      "permit_sha256": null,
+      "transport_result": "UNEXPECTED_CONNECTION_RESET",
+      "source": "client",
+      "operation": "recv_client",
+      "error": "ConnectionResetError",
+      "errno": 10054
+    },
+    "completion": {
+      "transport_result": "UNEXPECTED_CONNECTION_RESET",
+      "process_result": "RELAY_EXITED_CONFIRMED",
+      "economic_test": "NOT_EVALUATED",
+      "exit_code": 1
+    }
+  },
+  "ports": [
+    65121,
+    65122
+  ],
+  "cleanup_errors": [],
+  "listeners_after": [],
+  "own_handles_exited": true,
+  "elapsed_s": 2.516,
+  "postgresql": false,
+  "sql": false,
+  "relay_terminate_count": 0
+}

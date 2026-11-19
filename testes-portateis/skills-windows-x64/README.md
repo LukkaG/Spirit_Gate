@@ -1,8 +1,18 @@
 # Teste portátil das 40 skills — Windows x64
 
-[Baixar ZIP (52,48 MiB)](SpiritGate-Skills-Windows64-20261113T003427Z-e989a97f.zip?raw=true) ·
-[SHA-256](SpiritGate-Skills-Windows64-20261113T003427Z-e989a97f.zip.sha256) ·
-[Validação local](VALIDACAO.json)
+[Baixar ZIP atual — sprites REA (54,58 MiB)](SpiritGate-Skills-Windows64-20261119T030548Z-91f83ee2.zip?raw=true) ·
+[SHA-256](SpiritGate-Skills-Windows64-20261119T030548Z-91f83ee2.zip.sha256) ·
+[Validação local atual](VALIDACAO-20261119.json)
+
+Pacote de **19/11/2026**: inclui as alterações locais de servidor/combate e os
+novos VFX das 40 habilidades, com as revisões mais recentes dos pacotes REA.
+São 219 fases REA e 5.766 frames conferidos na origem, além dos assets
+anteriores de fallback. [Detalhes da integração](../../docs/SKILLS-INTEGRACAO-REA.md).
+
+O ZIP foi extraído e seus 667 arquivos foram conferidos por SHA-256. Os dois
+probes gráficos passaram usando somente o Java embutido. A suíte geral tem
+19 casos pendentes de conciliação com o comportamento atual do raio; consulte
+o [relatório do envio](../../docs/VALIDACAO-ENVIO-GIT-2026-11-19.md).
 
 Este diretório contém um ZIP de teste com Java integrado, os sprites efetivamente
 usados e a mesma prévia `SkillsLocalPreview` do desenvolvimento. Não é uma
@@ -11,7 +21,7 @@ instalados e não usa conta ou save pessoal.
 
 ## Abrir em outro computador
 
-1. Baixe o arquivo `SpiritGate-Skills-Windows64-*.zip` desta pasta. No GitHub,
+1. Baixe o ZIP atual pelo link no topo desta página. No GitHub,
    abra o arquivo e use **Download raw**; o navegador não mostra seu conteúdo.
    Baixe também o `.zip.sha256` correspondente.
 2. Compare o SHA-256, no PowerShell: `Get-FileHash -Algorithm SHA256 .\NOME-DO-ARQUIVO.zip`.
@@ -33,8 +43,9 @@ proteções do Windows e confira a origem/hash antes de abri-lo.
   O roteiro completo `ROTEIRO-SKILLS.md` acompanha o ZIP.
 - Confira direção, pivô, formação/dissipação, impactos, rastros e apresentação
   no auxiliar. Faça a troca de kit e teste foco, teclado e fechamento.
-- Em Luz, teste aliado ferido, aliado derrotado e revive. Em Raio, observe as
-  quatro fases da quinta técnica; o timeout A-04 não foi implementado.
+- Em Luz, teste aliado ferido, aliado derrotado e revive. Em Raio, observe a
+  quinta técnica: ocultação/imunidade por tempo finito, corpo com colisão
+  normal e quatro cortes ao final. Não deve depender de abrir espaço para reaparecer.
 - `Verificar-Pacote.cmd` executa os dois probes gráficos: abre/fecha janelas
   automaticamente e grava resultados/capturas locais em `.task-checkpoints`.
   Esses arquivos não são enviados automaticamente.
@@ -43,6 +54,11 @@ Para reportar: nome completo do ZIP/build-id, versão do Windows, kit/técnica,
 passos, esperado/obtido e captura. Não envie credenciais nem saves pessoais.
 Sprites e gameplay ainda exigem avaliação humana; execução automática local
 não comprova homologação física em outro PC.
+
+## Pacote anterior preservado
+
+[ZIP de 12/11/2026, anterior às sprites REA](SpiritGate-Skills-Windows64-20261113T003427Z-e989a97f.zip?raw=true) ·
+[Validação anterior](VALIDACAO.json).
 
 Validação de 12/11/2026: 446 arquivos do manifest conferidos por SHA-256;
 o `Verificar-Pacote.cmd` distribuído executou os dois probes com sucesso numa
@@ -56,8 +72,8 @@ e revisão de sprites aprovados. O teste físico em outro computador está pende
 Na raiz de um checkout completo, com JDK 17 contendo javac, jar, jdeps, jlink e
 jpackage: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/build-skills-portable.ps1`.
 Não instala dependências nem publica. Cria uma saída nova, manifest de arquivos
-e SHA-256; os manifests V1–V8 selecionam o conjunto visual efetivo. O refinamento
-de comportamento V9 já está nos fontes compilados.
+e SHA-256; inclui os manifests V1–V8 e o conjunto `rea-v1`, com seus PNGs e
+proveniência. Os refinamentos de comportamento estão nos fontes compilados.
 
 Para abrir pelos fontes: `tools\testar-skills.cmd`, sem Maven/cache local.
 Os demais testes reproduzíveis e scripts de empacotamento também acompanham o

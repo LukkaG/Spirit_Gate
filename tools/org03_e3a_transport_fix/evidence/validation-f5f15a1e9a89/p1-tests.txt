@@ -1,0 +1,64 @@
+test_23_valid_utf8_count_hash (test_transport_fix.CaptureTests.test_23_valid_utf8_count_hash) ... ok
+test_24_invalid_utf8_survives (test_transport_fix.CaptureTests.test_24_invalid_utf8_survives) ... ok
+test_25_mixed_accents_no_codepage_assumption (test_transport_fix.CaptureTests.test_25_mixed_accents_no_codepage_assumption) ... ok
+test_26_limit_keeps_draining_and_hashes_all (test_transport_fix.CaptureTests.test_26_limit_keeps_draining_and_hashes_all) ... ok
+test_27_read_failure_in_thread_propagates (test_transport_fix.CaptureTests.test_27_read_failure_in_thread_propagates) ... ok
+test_28_sensitive_values_and_sql_never_persist (test_transport_fix.CaptureTests.test_28_sensitive_values_and_sql_never_persist) ... ok
+test_29_split_utf8_sequence (test_transport_fix.CaptureTests.test_29_split_utf8_sequence) ... ok
+test_30_literal_replacement_not_counted_as_invalid (test_transport_fix.CaptureTests.test_30_literal_replacement_not_counted_as_invalid) ... ok
+test_31_trailing_invalid_sequence_is_recorded (test_transport_fix.CaptureTests.test_31_trailing_invalid_sequence_is_recorded) ... ok
+test_32_without_eof_capture_is_incomplete (test_transport_fix.CaptureTests.test_32_without_eof_capture_is_incomplete) ... ok
+test_33_zero_spontaneous_exit_is_not_success (test_transport_fix.CompletionTests.test_33_zero_spontaneous_exit_is_not_success) ... ok
+test_34_nonzero_exit_is_failure (test_transport_fix.CompletionTests.test_34_nonzero_exit_is_failure) ... ok
+test_35_close_twice_no_extra_action (test_transport_fix.CompletionTests.test_35_close_twice_no_extra_action) ... ok
+test_36_capture_error_invalidates_completion (test_transport_fix.CompletionTests.test_36_capture_error_invalidates_completion) ... ok
+test_37_no_new_worker_cannot_pass_c02 (test_transport_fix.CompletionTests.test_37_no_new_worker_cannot_pass_c02) ... ok
+test_38_changed_snapshot_is_rejected (test_transport_fix.CompletionTests.test_38_changed_snapshot_is_rejected) ... ok
+test_39_complete_mock_proof_only (test_transport_fix.CompletionTests.test_39_complete_mock_proof_only) ... ok
+test_40_wrong_operation_id_is_rejected (test_transport_fix.CompletionTests.test_40_wrong_operation_id_is_rejected) ... ok
+test_41_terminal_permit_mismatch_rejected (test_transport_fix.CompletionTests.test_41_terminal_permit_mismatch_rejected) ... ok
+test_42_reused_worker_is_rejected (test_transport_fix.CompletionTests.test_42_reused_worker_is_rejected) ... ok
+test_43_process_guards_are_original_class (test_transport_fix.CompletionTests.test_43_process_guards_are_original_class) ... ok
+test_44_no_r3_authorization_no_dependencies_called (test_transport_fix.IntegrationTests.test_44_no_r3_authorization_no_dependencies_called) ... ok
+test_45_adapter_retains_uncertain_until_full_reconciliation (test_transport_fix.IntegrationTests.test_45_adapter_retains_uncertain_until_full_reconciliation) ... ok
+test_46_adapter_partial_reconciliation_never_persists_success (test_transport_fix.IntegrationTests.test_46_adapter_partial_reconciliation_never_persists_success) ... ok
+test_01_expected_10054_requires_full_permit (test_transport_fix.TransportTests.test_01_expected_10054_requires_full_permit) ... ok
+test_02_unexpected_10054_without_request (test_transport_fix.TransportTests.test_02_unexpected_10054_without_request) ... ok
+test_03_reset_server_recv_never_expected (test_transport_fix.TransportTests.test_03_reset_server_recv_never_expected) ... ok
+test_04_unknown_client_endpoint (test_transport_fix.TransportTests.test_04_unknown_client_endpoint) ... ok
+test_05_wrong_identity_blocks (test_transport_fix.TransportTests.test_05_wrong_identity_blocks) ... ok
+test_06_eof_with_held_response (test_transport_fix.TransportTests.test_06_eof_with_held_response) ... ok
+test_07_reset_before_barrier (test_transport_fix.TransportTests.test_07_reset_before_barrier) ... ok
+test_08_termination_for_another_client (test_transport_fix.TransportTests.test_08_termination_for_another_client) ... ok
+test_09_incompatible_phase (test_transport_fix.TransportTests.test_09_incompatible_phase) ... ok
+test_10_forwarded_response_is_failure (test_transport_fix.TransportTests.test_10_forwarded_response_is_failure) ... FAIL
+test_11_unknown_socket_owner (test_transport_fix.TransportTests.test_11_unknown_socket_owner) ... ok
+test_12_missing_observer_in_c02 (test_transport_fix.TransportTests.test_12_missing_observer_in_c02) ... ok
+test_13_counter_corruption (test_transport_fix.TransportTests.test_13_counter_corruption) ... ok
+test_14_connection_abort_still_fails (test_transport_fix.TransportTests.test_14_connection_abort_still_fails) ... ok
+test_15_timeout_still_fails (test_transport_fix.TransportTests.test_15_timeout_still_fails) ... ok
+test_16_send_server_error_not_mislabelled_client (test_transport_fix.TransportTests.test_16_send_server_error_not_mislabelled_client) ... ok
+test_17_send_client_error_is_not_recv_disconnect (test_transport_fix.TransportTests.test_17_send_client_error_is_not_recv_disconnect) ... ok
+test_18_unexpected_eof_fails (test_transport_fix.TransportTests.test_18_unexpected_eof_fails) ... ok
+test_19_arm_is_one_use_and_frozen (test_transport_fix.TransportTests.test_19_arm_is_one_use_and_frozen) ... ok
+test_20_guard_emits_request_before_arm_and_terminate (test_transport_fix.TransportTests.test_20_guard_emits_request_before_arm_and_terminate) ... ok
+test_21_bad_ack_prevents_terminate (test_transport_fix.TransportTests.test_21_bad_ack_prevents_terminate) ... ok
+test_22_mismatch_prevents_arm (test_transport_fix.TransportTests.test_22_mismatch_prevents_arm) ... ok
+
+======================================================================
+FAIL: test_10_forwarded_response_is_failure (test_transport_fix.TransportTests.test_10_forwarded_response_is_failure)
+----------------------------------------------------------------------
+RuntimeError: PAUSE_COUNTER_DIVERGENCE
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\lucas\Documents\GitHub\Projeto-K\tools\org03_e3a_transport_fix\test_transport_fix.py", line 116, in test_10_forwarded_response_is_failure
+    with self.assertRaisesRegex(RuntimeError,'NOT_RETAINED'): self.exercise(p)
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "NOT_RETAINED" does not match "PAUSE_COUNTER_DIVERGENCE"
+
+----------------------------------------------------------------------
+Ran 46 tests in 0.024s
+
+FAILED (failures=1)

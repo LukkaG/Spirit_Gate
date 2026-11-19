@@ -1,0 +1,176 @@
+{
+  "id": "SPIRIT_5_slow_release",
+  "name": "O peso se dispersa",
+  "cell": 128,
+  "frames": 6,
+  "directional": false,
+  "loop": false,
+  "durations_ms": [
+    90,
+    90,
+    90,
+    90,
+    90,
+    90
+  ],
+  "attachment": "target_feet",
+  "pivot_px": [
+    64,
+    96
+  ],
+  "show_character": true,
+  "depth_split": true,
+  "depth_split_y": 96,
+  "source_file": "slow_release.png",
+  "source_grid": [
+    6,
+    1
+  ],
+  "alpha_threshold": 0.5,
+  "monotonic_end": true,
+  "registration": "none",
+  "phase": "slow_release",
+  "ability": "SPIRIT_5",
+  "ability_name": "Areia movediça",
+  "phase_name": "O peso se dispersa",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/slow_release.png",
+  "sheet_size": [
+    768,
+    128
+  ],
+  "duration_ms": 540,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        22,
+        92,
+        107,
+        110
+      ],
+      "opaque_px": 519,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "e6fb8ef21bd85a42b73273c2ba768a4ea4093ab1d2db0e1b35a5a492b51717b9"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        21,
+        64,
+        109,
+        106
+      ],
+      "opaque_px": 553,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "955d70bed3d451f3f1ad8c5e6a091ccaa5b5b001a0bda2404ec2c71e95313491"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        22,
+        46,
+        110,
+        104
+      ],
+      "opaque_px": 442,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "a9454549f76c9d663622b4dc92b3106d96342502ff1e70d70a142488cb04d1a9"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        30,
+        39,
+        103,
+        101
+      ],
+      "opaque_px": 153,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "c72bf9528328b8a10815b16cb4eb9ae98c8d4bfa625c2b36f54203ea8aad5464"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        27,
+        57,
+        93,
+        97
+      ],
+      "opaque_px": 43,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "036442b9c10a156e98db2d99ed60b325a9d92f0a028a7092d963122993438666"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": null,
+      "opaque_px": 0,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "de2f256064a0af797747c2b97505dc0b9f3df0de4f489eac731c23ae9ca9cc31"
+    }
+  ],
+  "source": "Sources/slow_release.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "visual_markers": [],
+  "depth_layers": {
+    "rear": "Layers/slow_release_rear.png",
+    "front": "Layers/slow_release_front.png",
+    "screen_split_y": 96
+  },
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

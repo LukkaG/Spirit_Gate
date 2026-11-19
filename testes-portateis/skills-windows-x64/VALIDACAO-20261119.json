@@ -1,0 +1,197 @@
+{
+  "dataLocal": "2026-11-19",
+  "artefato": "SpiritGate-Skills-Windows64-20261119T030548Z-91f83ee2.zip",
+  "sha256": "eac64ac0717e0d456d4dc393e5014533c3003980e496bbe692baab8ea09a2bd9",
+  "bytes": 57235024,
+  "arquivosDoManifestoConferidos": 667,
+  "imagensEfetivasDeSkills": 264,
+  "rea": {
+    "skills": 40,
+    "fases": 219,
+    "framesVerificadosNaOrigem": 5766
+  },
+  "extracao": "server/target/skills-validation-20261119T030548Z-91f83ee2",
+  "probesDoRuntimeEmbutido": {
+    "exitCode": 0,
+    "SkillsLocalPreviewProbe": "APROVADO",
+    "SkillsLiveSwitchProbe": "APROVADO",
+    "Verificar-Pacote.cmd": "SKILLS_PACKAGE_PASS",
+    "oitoKits": true,
+    "dezDominios": true,
+    "comESemAuxiliar": true
+  },
+  "outrosComputadoresFisicos": "PENDENTE",
+  "radminEntreMaquinas": "NAO_EXECUTADO",
+  "aprovacaoVisualHumana": "PENDENTE",
+  "javaHeadless": {
+    "reported": 1290,
+    "failures": 16,
+    "errors": 3,
+    "skipped": 57,
+    "classes": 284,
+    "executed": 1233,
+    "passed": 1214,
+    "exitCode": 1,
+    "falhas": [
+      {
+        "classe": "com.projetok.multiplayer.LightningFieldServerTest",
+        "teste": "allyCrossesInvisibleCasterAndBothClientsReceiveTheEnd",
+        "tipo": "failure",
+        "mensagem": "Condicao TCP nao atingida no prazo ==> expected: <true> but was: <false>"
+      },
+      {
+        "classe": "com.projetok.multiplayer.OwnerCharacterCaptureTest",
+        "teste": "absentReadyActiveAndRemovedSkillSessionsRemainDistinct",
+        "tipo": "error",
+        "mensagem": "org.opentest4j.AssertionFailedError: expected: <true> but was: <false>"
+      },
+      {
+        "classe": "com.projetok.multiplayer.SkillTooltipTest",
+        "teste": "advancedSkillsExplainTheirSpecificInputsAndImmunity",
+        "tipo": "failure",
+        "mensagem": "expected: <true> but was: <false>"
+      },
+      {
+        "classe": "com.projetok.multiplayer.Task225R1PhaseObserversTest",
+        "teste": "twoSerializedObserversExposeMissingTerminalAndExistingFiveSecondFuse",
+        "tipo": "failure",
+        "mensagem": "expected: <true> but was: <false>"
+      },
+      {
+        "classe": "com.projetok.multiplayer.Task225R2ShutdownTcpLabTest",
+        "teste": "coordinatedExitAndReadmissionUseExistingTransport(int)[2]",
+        "tipo": "error",
+        "mensagem": "org.opentest4j.AssertionFailedError: expected: <true> but was: <false>"
+      },
+      {
+        "classe": "com.projetok.multiplayer.Task225R2ShutdownTcpLabTest",
+        "teste": "spontaneousDisconnectDuringPhaseDoesNotRepeatLogicalDeparture",
+        "tipo": "failure",
+        "mensagem": "expected: <true> but was: <false>"
+      },
+      {
+        "classe": "com.projetok.rpg.CharacterReadModelsTest",
+        "teste": "intangibilityRemainsObservationOnly",
+        "tipo": "failure",
+        "mensagem": "expected: <true> but was: <false>"
+      },
+      {
+        "classe": "com.projetok.rpg.CharacterSnapshotCaptureTest",
+        "teste": "actualLightningPhaseRemainsActiveButIsNotInTheCandidate",
+        "tipo": "error",
+        "mensagem": "org.opentest4j.AssertionFailedError: expected: <true> but was: <false>"
+      },
+      {
+        "classe": "com.projetok.rpg.Task225R1MaterializationTest",
+        "teste": "fatalDamageIsIgnoredDuringPhaseAndAcceptedAfterLifecycleCleanup",
+        "tipo": "failure",
+        "mensagem": "expected: <true> but was: <false>"
+      },
+      {
+        "classe": "com.projetok.rpg.Task225R1MaterializationTest",
+        "teste": "isolatedNinetyTwoTickCandidateRemovesParticipationWithoutChangingRuntimePolicy",
+        "tipo": "failure",
+        "mensagem": "expected: <true> but was: <false>"
+      },
+      {
+        "classe": "com.projetok.rpg.Task225R1MaterializationTest",
+        "teste": "cumulativeConsecutiveSearchesWriteRawEvidenceWithoutPerformanceGuarantees",
+        "tipo": "failure",
+        "mensagem": "expected: <true> but was: <false>"
+      },
+      {
+        "classe": "com.projetok.rpg.Task225R1MaterializationTest",
+        "teste": "lifecycleCleanupDuringBlockedWaitingDoesNotTransferPhase()[1]",
+        "tipo": "failure",
+        "mensagem": "expected: <true> but was: <false>"
+      },
+      {
+        "classe": "com.projetok.rpg.Task225R1MaterializationTest",
+        "teste": "lifecycleCleanupDuringBlockedWaitingDoesNotTransferPhase()[2]",
+        "tipo": "failure",
+        "mensagem": "expected: <true> but was: <false>"
+      },
+      {
+        "classe": "com.projetok.rpg.Task225R1MaterializationTest",
+        "teste": "lifecycleCleanupDuringBlockedWaitingDoesNotTransferPhase()[3]",
+        "tipo": "failure",
+        "mensagem": "expected: <true> but was: <false>"
+      },
+      {
+        "classe": "com.projetok.rpg.Task225R1MaterializationTest",
+        "teste": "lifecycleCleanupDuringBlockedWaitingDoesNotTransferPhase()[4]",
+        "tipo": "failure",
+        "mensagem": "expected: <true> but was: <false>"
+      },
+      {
+        "classe": "com.projetok.rpg.Task225R1MaterializationTest",
+        "teste": "lifecycleCleanupDuringBlockedWaitingDoesNotTransferPhase()[5]",
+        "tipo": "failure",
+        "mensagem": "expected: <true> but was: <false>"
+      },
+      {
+        "classe": "com.projetok.rpg.Task225R1MaterializationTest",
+        "teste": "normalMaterializationAndReleasedSupportKeepFourUniqueCuts",
+        "tipo": "failure",
+        "mensagem": "expected: <true> but was: <false>"
+      },
+      {
+        "classe": "com.projetok.rpg.Task225R2DeadlineLabTest",
+        "teste": "unchangedRuntimeStillWaitsPastCandidateDeadline",
+        "tipo": "failure",
+        "mensagem": "expected: <true> but was: <false>"
+      },
+      {
+        "classe": "com.projetok.rpg.Task225R2DeadlineLabTest",
+        "teste": "blockedDeadlineHasOneRemovalAndNoLateDamageOrReward",
+        "tipo": "failure",
+        "mensagem": "expected: <true> but was: <false>"
+      }
+    ]
+  },
+  "testesContratoAtual": {
+    "RpgSkillEngineTest": {
+      "tests": 104,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "Task225MaterializationTest": {
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "Alpha002LightningTest": {
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "Alpha002LightningSessionTest": {
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "Alpha002LightningTcpTest": {
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "ServerHandshakeDeadlineTest": {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "carregamentoReaNoRuntimeEmbutido": {
+    "resultado": "PORTABLE_REA_ASSETS_PASS",
+    "skills": 40,
+    "fases": 219,
+    "frames": 5766,
+    "exitCode": 0
+  }
+}

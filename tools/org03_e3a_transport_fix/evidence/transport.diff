@@ -1,0 +1,353 @@
+--- R2/lifecycle.py
++++ P1/lifecycle.py
+@@ -1,128 +1,89 @@
+-"""Classificação conservadora, sem descoberta ou encerramento por PID genérico."""
+-import re
+-import subprocess
++"""Guardas R1 intactas e captura binária limitada, sem stderr bruto persistido."""
++import codecs
++import hashlib
++import json
+ import threading
++from legacy.lifecycle import OwnedProcess
+ 
+ 
+-def sanitize(text):
+-    """Remove valores potencialmente sensíveis; não registra payload TCP."""
+-    text = re.sub(r'(?i)(password|pgpassword|secret|token)(\s*[=:]\s*)([^\s,;]+)',
+-                  r'\1\2[REDACTED]', text)
+-    return re.sub(r'(?i)(postgres(?:ql)?://)[^\s]+', r'\1[REDACTED]', text)
++def safe_diagnostic(text,limit):
++    """Projeta só diagnóstico JSON conhecido; texto livre/SQL/segredos são omitidos."""
++    lines=[]; size=0
++    for line in text.splitlines():
++        try: value=json.loads(line)
++        except ValueError: value=None
++        if isinstance(value,dict) and value.get('event') in ('RELAY_ERROR','RELAY_DIAGNOSTIC'):
++            error=value.get('error')
++            error=error if error in ('ConnectionResetError','ConnectionAbortedError','TimeoutError','OSError','ValueError','RuntimeError','AssertionError','BrokenPipeError') else 'UNCLASSIFIED_ERROR'
++            errno=value.get('errno')
++            rendered=json.dumps(dict(event=value['event'],error=error,errno=errno if type(errno) is int else None))
++        elif line:
++            rendered='[UNSTRUCTURED_STDERR_REDACTED]'
++        else: continue
++        size+=len(rendered.encode('utf8'))+(1 if lines else 0)
++        if size>limit: return '[SANITIZED_TEXT_LIMIT]',True
++        lines.append(rendered)
++    return '\n'.join(lines),False
+ 
+ 
+ class StderrCapture:
+-    """Drena pipe continuamente e conserva diagnóstico limitado e sanitizado."""
+-    def __init__(self, stream, emit, limit=65536):
+-        self.stream, self.emit, self.limit = stream, emit, limit
+-        self.text = ''
+-        self.truncated = False
+-        self.lock = threading.Lock()
++    """Drena bytes em blocos de 4 KiB; prefixo de 64 KiB fica só em memória."""
++    def __init__(self,stream,emit,limit=65536):
++        if not 1<=limit<=65536: raise ValueError('STDERR_LIMIT')
++        self.stream,self.emit,self.limit=stream,emit,limit
++        self._prefix=bytearray()
++        self._hash=hashlib.sha256()
++        self._decoder=codecs.getincrementaldecoder('utf8')('surrogateescape')
++        self.total_bytes=self.invalid_utf8_bytes=0
++        self.eof=False
++        self.read_error=None
++        self.lock=threading.Lock()
++
++    def _count_invalid(self,text):
++        """Conta bytes inválidos; U+FFFD válido não conta como substituição."""
++        self.invalid_utf8_bytes+=sum(0xdc80<=ord(c)<=0xdcff for c in text)
+ 
+     def drain(self):
+-        """Consome até EOF; erro de leitura também fica explícito na evidência."""
++        """Erros ficam no estado compartilhado; validate os propaga ao controlador."""
+         try:
+-            for line in self.stream:
++            while True:
++                chunk=self.stream.read(4096)
++                if not isinstance(chunk,bytes): raise TypeError('BINARY_STDERR_REQUIRED')
+                 with self.lock:
+-                    value = sanitize(line)
+-                    remaining = self.limit - len(self.text)
+-                    self.text += value[:remaining]
+-                    self.truncated |= len(value) > remaining
+-        except (OSError, UnicodeError) as exc:
+-            self.emit('RELAY_STDERR_READ_ERROR', error=type(exc).__name__)
+-            raise
++                    if not chunk:
++                        self._count_invalid(self._decoder.decode(b'',final=True))
++                        self.eof=True
++                        break
++                    self.total_bytes+=len(chunk)
++                    self._hash.update(chunk)
++                    self._count_invalid(self._decoder.decode(chunk))
++                    self._prefix.extend(chunk[:max(0,self.limit-len(self._prefix))])
++        except Exception as error:
++            with self.lock: self.read_error=type(error).__name__
++            self.emit('RELAY_STDERR_READ_ERROR',error=self.read_error)
+         finally:
+-            self.emit('RELAY_STDERR', **self.snapshot())
++            self.emit('RELAY_STDERR',**self.snapshot())
+ 
+     def snapshot(self):
+-        """Obtém o trecho já drenado sem depender de EOF do processo."""
++        """Retorna hash de tudo que foi lido e apenas projeção textual sanitizada."""
+         with self.lock:
+-            return dict(stderr=self.text, truncated=self.truncated)
++            truncated=self.total_bytes>self.limit
++            decoder=codecs.getincrementaldecoder('utf8')('surrogateescape')
++            text=decoder.decode(bytes(self._prefix),final=self.eof and not truncated)
++            text=''.join('\ufffd' if 0xdc80<=ord(c)<=0xdcff else c for c in text)
++            omitted=not (self.eof and not truncated) and bool(text) and not text.endswith('\n')
++            if omitted: text=text.rpartition('\n')[0]
++            sanitized,text_truncated=safe_diagnostic(text,self.limit)
++            return dict(stderr=sanitized,bytes_read=self.total_bytes,retained_bytes=len(self._prefix),
++                        sha256=self._hash.hexdigest(),hash_scope='ALL_OBSERVED_BYTES',
++                        invalid_utf8_bytes=self.invalid_utf8_bytes,decode_replacements=self.invalid_utf8_bytes,
++                        text_lossy=bool(self.invalid_utf8_bytes),truncated=truncated,
++                        text_truncated=text_truncated,text_fragment_omitted=omitted,
++                        stream_complete=self.eof,capture_complete=self.eof and not self.read_error and not truncated and not text_truncated,
++                        read_error=self.read_error,raw_bytes_persisted=False)
+ 
+-
+-class OwnedProcess:
+-    """Vincula manifesto ao objeto Popen original; dúvidas bloqueiam a ação."""
+-    fields = ('ProcessId', 'ParentProcessId', 'ExecutablePath', 'CommandLine', 'Created')
+-
+-    def __init__(self, proc, expected, inspect, emit, barrier=lambda: None,
+-                 stderr=lambda: {}, controller_pid=None):
+-        self.proc, self.expected = proc, dict(expected)
+-        self.inspect, self.emit = inspect, emit
+-        self.barrier, self.stderr = barrier, stderr
+-        self.controller_pid = controller_pid
+-        self.lock = threading.Lock()
+-        self.blocked = None
+-
+-    def observe(self):
+-        """Verifica handle antes/depois de CIM; ausência sozinha nunca basta."""
+-        before = after = None
+-        observed = None
+-        error = None
+-        try:
+-            linked = (self.proc.pid == self.expected.get('ProcessId') and
+-                      self.controller_pid is not None and
+-                      self.expected.get('ParentProcessId') == self.controller_pid and
+-                      all(self.expected.get(k) for k in self.fields))
+-            if not linked:
+-                state = 'UNKNOWN'
+-            else:
+-                before = self.proc.poll()
+-                if before is not None:
+-                    state = 'EXITED_CONFIRMED'
+-                    after = before
+-                else:
+-                    try:
+-                        observed = self.inspect(self.proc.pid)
+-                    except Exception as exc:
+-                        # Exceção desconhecida bloqueia e é preservada, nunca vira ausência.
+-                        error = type(exc).__name__ + ': ' + sanitize(str(exc))
+-                    after = self.proc.poll()
+-                    if observed is not None and observed != self.expected:
+-                        state = 'IDENTITY_MISMATCH'
+-                    elif error:
+-                        state = 'UNKNOWN'
+-                    elif after is not None:
+-                        state = 'EXITED_CONFIRMED'
+-                    elif observed == self.expected:
+-                        state = 'RUNNING_MATCH'
+-                    else:
+-                        state = 'UNKNOWN'
+-        except Exception as exc:
+-            state = 'UNKNOWN'
+-            error = type(exc).__name__ + ': ' + sanitize(str(exc))
+-        record = dict(state=state, expected=self.expected, observed=observed,
+-                      poll_before=before, poll_after=after, exit_code=after,
+-                      error=error, last_tcp_barrier=self.barrier(), **self.stderr())
+-        self.emit('PROCESS_OBSERVATION', **record)
+-        return record
+-
+-    def stop(self, timeout=5):
+-        """Encerra só RUNNING_MATCH pelo handle original, sem fallback ou retry."""
+-        with self.lock:
+-            if self.blocked:
+-                raise RuntimeError(self.blocked)
+-            record = self.observe()
+-            state = record['state']
+-            if state == 'EXITED_CONFIRMED':
+-                return record
+-            if state != 'RUNNING_MATCH':
+-                self.blocked = state
+-                raise RuntimeError(state)
+-            # Fecha a janela após a consulta sem selecionar outro processo por PID.
+-            code = self.proc.poll()
+-            if code is not None:
+-                self.emit('PROCESS_EXIT_BEFORE_TERMINATE', exit_code=code)
+-                return self.observe()
+-            self.emit('PROCESS_TERMINATE', expected=self.expected)
+-            try:
+-                self.proc.terminate()
+-                code = self.proc.wait(timeout=timeout)
+-            except (OSError, subprocess.TimeoutExpired) as exc:
+-                self.blocked = 'UNKNOWN'
+-                self.emit('PROCESS_STOP_ERROR', error=type(exc).__name__,
+-                          diagnostic=self.observe())
+-                raise
+-            self.emit('PROCESS_EXIT', exit_code=code)
+-            result = self.observe()
+-            result['terminated_by_controller'] = True
+-            return result
++    def validate(self):
++        """Recusa erro, ausência de EOF e truncamento; UTF-8 inválido é explícito."""
++        value=self.snapshot()
++        if not value['capture_complete']: raise RuntimeError('STDERR_CAPTURE_INCOMPLETE')
++        return value
+--- R2/relay.py
++++ P1/relay.py
+@@ -1,90 +1,76 @@
+-"""Cópia R1 do relay E3-A: fluxo opaco com diagnóstico e falhas explícitas."""
++"""Pump opaco P1; CLI operacional SQL deliberadamente indisponível."""
+ import json
+ import queue
+ import select
+-import socket
+ import sys
+-import threading
++from transport import TransportContext, require, digest
+ 
+ 
+-def pump(client, server, commands, reply, select_ready=select.select):
+-    """Encaminha bytes sem conteúdo em logs; EOF não prova sucesso econômico."""
+-    paused = False
+-    buffered = bytearray()
+-    sent = received = 0
+-    source_name = 'control'
++def pump(client,server,commands,reply,context,select_ready=select.select):
++    """Só recv no cliente armado pode concluir como desconexão esperada."""
++    paused=False
++    buffered=bytearray()
++    sent=received=client_received=client_forwarded=0
++    source='control'; operation='control'
+ 
+-    def report(kind, **extra):
+-        reply(kind, paused=paused, forwarded_server_bytes=sent,
+-              received_server_bytes=received, held_bytes=len(buffered), **extra)
++    def report(kind,**extra):
++        reply(kind,paused=paused,forwarded_server_bytes=sent,received_server_bytes=received,
++              held_bytes=len(buffered),received_client_bytes=client_received,
++              forwarded_client_bytes=client_forwarded,termination_requested=context.permit is not None,
++              permit_sha256=digest(context.permit) if context.permit else None,**extra)
++
++    def disconnect(error):
++        if context.expected(source,operation,error,paused,sent,received,len(buffered)):
++            report('EXPECTED_CLIENT_DISCONNECT',transport_result='TRANSPORT_EXPECTED_DISCONNECT',
++                   source=source,operation=operation,error=type(error).__name__ if error else 'EOF',
++                   errno=getattr(error,'errno',None))
++            return True
++        return False
+ 
+     try:
+         while True:
+-            try:
+-                cmd = commands.get_nowait()
+-            except queue.Empty:
+-                cmd = None
++            source='control'; operation='control'
++            try: cmd=commands.get_nowait()
++            except queue.Empty: cmd=None
+             if cmd is not None:
+-                if cmd not in ('pause', 'stats'):
+-                    raise ValueError('RELAY_UNKNOWN_COMMAND')
+-                if cmd == 'pause':
+-                    paused = True
+-                report(cmd.upper())
+-            ready, _, _ = select_ready([client, server], [], [], .01)
+-            for source in ready:
+-                source_name = 'client' if source is client else 'server'
+-                data = source.recv(65536)
++                name=cmd if isinstance(cmd,str) else cmd['command']
++                if name=='pause':
++                    require(not paused,'RELAY_ALREADY_PAUSED')
++                    paused=True
++                elif name=='expect_disconnect':
++                    context.arm(cmd['permit'],paused,sent,received,len(buffered))
++                else: require(name=='stats','RELAY_UNKNOWN_COMMAND')
++                report({'pause':'PAUSE','stats':'STATS','expect_disconnect':'EXPECT_DISCONNECT'}[name])
++            operation='select'; source='multiplexer'
++            ready,_,_=select_ready([client,server],[],[],.01)
++            for sock in ready:
++                source='client' if sock is client else 'server'
++                operation='recv_'+source
++                try: data=sock.recv(4096)
++                except ConnectionResetError as error:
++                    if disconnect(error): return 'EXPECTED_CLIENT_DISCONNECT'
++                    raise
+                 if not data:
+-                    report('EOF', source=source_name)
+-                    return 'EOF'
+-                if source is client:
++                    if disconnect(None): return 'EXPECTED_CLIENT_DISCONNECT'
++                    raise RuntimeError('UNEXPECTED_EOF')
++                if sock is client:
++                    client_received+=len(data)
++                    source='server'; operation='send_server'
+                     server.sendall(data)
++                    client_forwarded+=len(data)
+                 else:
+-                    received += len(data)
++                    received+=len(data)
+                     if paused:
++                        require(len(buffered)+len(data)<=16384,'RELAY_BUFFER_LIMIT')
+                         buffered.extend(data)
+                     else:
++                        source='client'; operation='send_client'
+                         client.sendall(data)
+-                        sent += len(data)
+-                if len(buffered) > 1024 * 1024:
+-                    raise RuntimeError('RELAY_BUFFER_LIMIT')
+-    except Exception as exc:
+-        # Conserva tipo/errno e barreira, sem SQL, autenticação ou mensagem arbitrária.
+-        report('RELAY_ERROR', source=source_name, error=type(exc).__name__,
+-               errno=getattr(exc, 'errno', None))
+-        print(json.dumps(dict(event='RELAY_ERROR', error=type(exc).__name__,
+-                              errno=getattr(exc, 'errno', None))), file=sys.stderr, flush=True)
++                        sent+=len(data)
++    except Exception as error:
++        report('RELAY_ERROR',transport_result='UNEXPECTED_CONNECTION_RESET' if isinstance(error,ConnectionResetError) else 'TRANSPORT_FAILED',source=source,operation=operation,error=type(error).__name__,errno=getattr(error,'errno',None))
+         raise
+ 
+ 
+-def main():
+-    """Ativa exclusivamente o listener e upstream fixos deste run autorizado."""
+-    from pathlib import Path
+-    run = Path(__file__).resolve().parents[1]
+-    assert run.name == '20261115-lucas-e3a-r2-8c71d4a902'
+-    assert len(sys.argv) == 2 and sys.argv[1] == run.name
+-    auth = json.loads((run/'evidence/authorization.json').read_text(encoding='utf8'))
+-    assert auth['run_id'] == run.name and auth['items']['R2-03'] == 'AUTORIZADO'
+-    assert (run/'execution.claim').is_file()
+-    commands = queue.Queue()
+-    def read_commands():
+-        for line in sys.stdin:
+-            commands.put(line.strip())
+-    threading.Thread(target=read_commands,daemon=True).start()
+-    def reply(kind, **data):
+-        print(json.dumps(dict(event=kind, **data)),flush=True)
+-    with socket.socket() as listener:
+-        listener.setsockopt(socket.SOL_SOCKET,socket.SO_EXCLUSIVEADDRUSE,1)
+-        listener.bind(('127.0.0.1',55434))
+-        listener.listen(1)
+-        reply('LISTENING')
+-        client, address = listener.accept()
+-        assert address[0] == '127.0.0.1'
+-        with client, socket.create_connection(('127.0.0.1',55433),timeout=3) as server:
+-            client.settimeout(2)
+-            server.settimeout(2)
+-            pump(client,server,commands,reply)
+-
+-
+-if __name__ == '__main__':
+-    main()
++if __name__=='__main__':
++    raise SystemExit('P1_PREPARATION_ONLY: usar fixture isolada; PostgreSQL/R3 não autorizados')

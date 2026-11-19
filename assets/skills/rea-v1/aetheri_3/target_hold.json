@@ -1,0 +1,181 @@
+{
+  "id": "AETHERI_3_target_hold",
+  "name": "Pausa antes da primeira onda",
+  "cell": 256,
+  "frames": 6,
+  "directional": false,
+  "loop": true,
+  "durations_ms": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80
+  ],
+  "attachment": "selected_fixed_ground_feet",
+  "pivot_px": [
+    128,
+    176
+  ],
+  "show_character": true,
+  "depth_split": true,
+  "depth_split_y": 176,
+  "source_file": "target_lifecycle.png",
+  "source_grid": [
+    6,
+    3
+  ],
+  "source_start_index": 6,
+  "alpha_threshold": 0.5,
+  "monotonic_end": false,
+  "phase": "target_hold",
+  "ability": "AETHERI_3",
+  "ability_name": "Chuva de flechas",
+  "phase_name": "Pausa antes da primeira onda",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/target_hold.png",
+  "sheet_size": [
+    1536,
+    256
+  ],
+  "duration_ms": 480,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        28,
+        143,
+        228,
+        211
+      ],
+      "opaque_px": 1052,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "35ba98cd72e45f38ca6468c393c62c123a9204dceaa8a310f7da234041b4a7de"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        28,
+        143,
+        229,
+        212
+      ],
+      "opaque_px": 1095,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "f63076a44e659e9dfdc9daa24fb697250de6326f87e00d037f0acbc330a8b0ca"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        28,
+        143,
+        229,
+        212
+      ],
+      "opaque_px": 1079,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "e6e06dbb575e218a4dbdaf884cf18e8c05fe38755d48bb6f59d806ef14e1f793"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        28,
+        143,
+        227,
+        212
+      ],
+      "opaque_px": 1092,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "a7565df90d4560bce41e1877b6f1853fe5a2134b890b99c30f16892bf639d703"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        28,
+        143,
+        229,
+        212
+      ],
+      "opaque_px": 1105,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "8290c3fd8ad963d99baa65422c944dfd60bb396376cff7ff1ddca754c73799d9"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        28,
+        143,
+        229,
+        212
+      ],
+      "opaque_px": 1066,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "498056c69838c87eda0d50fbce26fda02980e84b1ff8dd07530ad6ede85d2d3a"
+    }
+  ],
+  "source": "Sources/target_lifecycle.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "visual_markers": [],
+  "depth_layers": {
+    "rear": "Layers/target_hold_rear.png",
+    "front": "Layers/target_hold_front.png",
+    "screen_split_y": 176
+  },
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

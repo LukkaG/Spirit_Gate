@@ -1,0 +1,229 @@
+{
+  "id": "FIRE_5_wave_3",
+  "name": "Onda de cortes em queda 3/5",
+  "cell": 256,
+  "frames": 8,
+  "directional": false,
+  "loop": false,
+  "durations_ms": [
+    40,
+    40,
+    50,
+    60,
+    45,
+    35,
+    30,
+    30
+  ],
+  "attachment": "selected_fixed_ground",
+  "pivot_px": [
+    128,
+    176
+  ],
+  "source_file": "wave_3.png",
+  "source_grid": [
+    8,
+    1
+  ],
+  "source_start_index": 0,
+  "alpha_threshold": 0.5,
+  "depth_split": true,
+  "show_character": true,
+  "authoritative_wave_slot": 3,
+  "visual_markers": [
+    {
+      "frame": 4,
+      "label": "Contato conjunto da onda 3/5 — um pulso de área"
+    }
+  ],
+  "depth_split_y": 176,
+  "layer_role": "Complete fixed-area composition replaces target_boundary; all five decorative falling blades combine into ONE authorized area pulse",
+  "registration": "none",
+  "visual_projectiles_only": true,
+  "phase": "wave_3",
+  "ability": "FIRE_5",
+  "ability_name": "Chuva de cortes de fogo",
+  "phase_name": "Onda de cortes em queda 3/5",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/wave_3.png",
+  "sheet_size": [
+    2048,
+    256
+  ],
+  "duration_ms": 330,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        24,
+        126,
+        232,
+        226
+      ],
+      "opaque_px": 1663,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "37881ef4ff9b80012082935b5d994f8e648cd14b3ad418ff274fcb8d0f571301"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        13,
+        113,
+        232,
+        226
+      ],
+      "opaque_px": 2693,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "85a4144fb94e9e19f0f53cad360bd919196cb4c16f580d6f308cb260e19053ce"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        24,
+        125,
+        232,
+        226
+      ],
+      "opaque_px": 2658,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "7ce87be394196f9e470865e88566b0f4fde2abf616235fda6e8a1ed5a39c98fa"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        24,
+        126,
+        232,
+        226
+      ],
+      "opaque_px": 2698,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "089d86e668fa679ac54020da1b2aad0c066dc35e290493f98a08600b5f561d27"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        24,
+        126,
+        232,
+        226
+      ],
+      "opaque_px": 2008,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "9011985b7fad16ad9a77ef1d49a1fe7f63e02c658602cc41a38bede95b886920"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        24,
+        126,
+        232,
+        226
+      ],
+      "opaque_px": 1718,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "870b8aef5861c0e722e0bdc9a09bae77f6a277052170b89cb1f3fda0f9b77a17"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 6,
+      "source_frame_index": 6,
+      "bbox": [
+        24,
+        126,
+        232,
+        226
+      ],
+      "opaque_px": 1668,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "c72379ccdcc2bb31a8ed581fcb700152a3207913fbbf30bda4230005d33a226a"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 7,
+      "source_frame_index": 7,
+      "bbox": [
+        24,
+        126,
+        232,
+        226
+      ],
+      "opaque_px": 1663,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "37881ef4ff9b80012082935b5d994f8e648cd14b3ad418ff274fcb8d0f571301"
+    }
+  ],
+  "source": "Sources/wave_3.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "depth_layers": {
+    "rear": "Layers/wave_3_rear.png",
+    "front": "Layers/wave_3_front.png",
+    "screen_split_y": 176
+  },
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

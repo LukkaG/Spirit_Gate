@@ -1,0 +1,176 @@
+{
+  "id": "MARTIAL_4_stun_loop",
+  "name": "Atordoamento mantém",
+  "cell": 64,
+  "frames": 6,
+  "directional": false,
+  "loop": true,
+  "durations_ms": [
+    70,
+    70,
+    70,
+    70,
+    70,
+    70
+  ],
+  "source_file": "stun_loop.png",
+  "source_grid": [
+    6,
+    1
+  ],
+  "source_start_index": 0,
+  "alpha_threshold": 0.5,
+  "registration": "none",
+  "attachment": "target_status_socket",
+  "pivot_px": [
+    32,
+    32
+  ],
+  "rotation_safe": true,
+  "monotonic_end": false,
+  "phase": "stun_loop",
+  "ability": "MARTIAL_4",
+  "ability_name": "Body slam",
+  "phase_name": "Atordoamento mantém",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/stun_loop.png",
+  "sheet_size": [
+    384,
+    64
+  ],
+  "duration_ms": 420,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        18,
+        24,
+        46,
+        37
+      ],
+      "opaque_px": 179,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "3cd9ff6602e34627af4c3b804c6903d3d19578d4bc60c30f8dff1dbcf3f9c47d"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        17,
+        24,
+        46,
+        38
+      ],
+      "opaque_px": 176,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "82d4d3105f74c50220a5d3935f5db511fd701ce49d93d48e2cd315cab222bb49"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        16,
+        24,
+        46,
+        38
+      ],
+      "opaque_px": 175,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "cbce7469832636ab950638b4d37f08095f3362c98b250cef4aa99418c8524fe7"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        18,
+        25,
+        47,
+        38
+      ],
+      "opaque_px": 166,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "3b278e360052d0ff03a81e9286d8b2708b0bb5fedf5e10ccf760896d6a208945"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        17,
+        25,
+        45,
+        38
+      ],
+      "opaque_px": 168,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "b74494d3ada2330c6f347bd4fb96c5af173fce92e9c00319b9483eb1f696b588"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        17,
+        24,
+        45,
+        37
+      ],
+      "opaque_px": 175,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "57b598af7e89405dd66fea08bc8a905431dcde7e3f4145679367a9b1e070d11f"
+    }
+  ],
+  "source": "Sources/stun_loop.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "visual_markers": [],
+  "depth_layers": null,
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

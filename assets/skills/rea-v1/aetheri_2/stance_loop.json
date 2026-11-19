@@ -1,0 +1,181 @@
+{
+  "id": "AETHERI_2_stance_loop",
+  "name": "Estado ativo — símbolo aos pés",
+  "cell": 128,
+  "frames": 6,
+  "directional": false,
+  "loop": true,
+  "durations_ms": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+  ],
+  "attachment": "caster_stationary_feet",
+  "pivot_px": [
+    64,
+    96
+  ],
+  "show_character": true,
+  "source_file": "stance_lifecycle.png",
+  "source_grid": [
+    6,
+    3
+  ],
+  "source_start_index": 6,
+  "alpha_threshold": 0.5,
+  "monotonic_end": false,
+  "depth_split": true,
+  "depth_split_y": 96,
+  "phase": "stance_loop",
+  "ability": "AETHERI_2",
+  "ability_name": "Sentinela",
+  "phase_name": "Estado ativo — símbolo aos pés",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/stance_loop.png",
+  "sheet_size": [
+    768,
+    128
+  ],
+  "duration_ms": 600,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        39,
+        79,
+        89,
+        113
+      ],
+      "opaque_px": 277,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "5cffb4d2d9df3cda54c19a8522b5ae8e22bab99cd580b0ffaa5906f4c82c8010"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        39,
+        79,
+        89,
+        113
+      ],
+      "opaque_px": 263,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "118bdb2a1c86b1d010c5311e915af577c0f8b45c70cbb11222eefebd1dce83e1"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        39,
+        77,
+        89,
+        113
+      ],
+      "opaque_px": 268,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "753dc2805a7dc435013440c7c04d86da5b710a32809db1f6dfa2efe5651648c7"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        39,
+        78,
+        89,
+        113
+      ],
+      "opaque_px": 272,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "94a00b703269b74d34409c981df2cbd214346eb40b21fd71026949a78d9a368e"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        39,
+        79,
+        89,
+        113
+      ],
+      "opaque_px": 263,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "7505d80a6d4b0b74ec0dfdf87ed9d381a7e67dfe988bf3f8237f196f82c0b3a4"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        39,
+        77,
+        89,
+        113
+      ],
+      "opaque_px": 267,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "908a3b06d511569c30224f3bfa28e15cf1dd6ed03b96e1013b5be6ddf2d1382a"
+    }
+  ],
+  "source": "Sources/stance_lifecycle.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "visual_markers": [],
+  "depth_layers": {
+    "rear": "Layers/stance_loop_rear.png",
+    "front": "Layers/stance_loop_front.png",
+    "screen_split_y": 96
+  },
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

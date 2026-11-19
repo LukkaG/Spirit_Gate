@@ -1,0 +1,180 @@
+{
+  "id": "FIRE_4_eruption",
+  "name": "Etapa 2 — coluna e colapso",
+  "cell": 192,
+  "frames": 6,
+  "directional": false,
+  "loop": false,
+  "durations_ms": [
+    40,
+    50,
+    60,
+    50,
+    40,
+    40
+  ],
+  "attachment": "confirmed_endpoint_ground",
+  "pivot_px": [
+    96,
+    160
+  ],
+  "source_file": "eruption_registered.png",
+  "source_grid": [
+    6,
+    3
+  ],
+  "source_start_index": 6,
+  "alpha_threshold": 0.5,
+  "monotonic_end": false,
+  "authoritative_contact_role": "endpoint",
+  "visual_markers": [
+    {
+      "frame": 3,
+      "label": "Pico da erupção — segundo contato já autorizado"
+    }
+  ],
+  "phase": "eruption",
+  "ability": "FIRE_4",
+  "ability_name": "Erupção de fogo",
+  "phase_name": "Etapa 2 — coluna e colapso",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/eruption.png",
+  "sheet_size": [
+    1152,
+    192
+  ],
+  "duration_ms": 280,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        45,
+        106,
+        147,
+        171
+      ],
+      "opaque_px": 2434,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "f85858e3d51052dca103fc58be5824383a4f854247b136285bc6b8d631f4b399"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        44,
+        55,
+        147,
+        171
+      ],
+      "opaque_px": 5989,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "7b50a25cf10dc0d83e5b1a86160a8dd2d6e78c18ca1426b088f127b317301c7c"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        29,
+        17,
+        161,
+        171
+      ],
+      "opaque_px": 12878,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "648236ad962d63d113875aa8b622cf5f52461bf7c3a096ffc36804ae40ad42c8"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        39,
+        55,
+        151,
+        171
+      ],
+      "opaque_px": 6133,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "a7d6f6c868671bf9c55116a67ed944d632095679e0e43ed7d89163e80a1ec8a0"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        45,
+        98,
+        147,
+        171
+      ],
+      "opaque_px": 2262,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "6569679647e5cbb645bead777a5ba9f59639e9ac4d985a25bfc3061c63fff023"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        45,
+        124,
+        147,
+        171
+      ],
+      "opaque_px": 1576,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "db2775e7a9f3b3ed33ad47fd618b2288fd9643efc6ce90e0c5d8f2f65564ab38"
+    }
+  ],
+  "source": "Sources/eruption_registered.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "depth_layers": null,
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

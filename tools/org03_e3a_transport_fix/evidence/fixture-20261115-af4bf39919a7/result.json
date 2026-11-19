@@ -1,0 +1,19 @@
+{
+  "report": {
+    "status": "FALHOU",
+    "case": "EXPECTED_RESET",
+    "error": "Empty",
+    "reason": ""
+  },
+  "ports": [
+    65087,
+    65088
+  ],
+  "cleanup_errors": [],
+  "listeners_after": [],
+  "own_handles_exited": true,
+  "elapsed_s": 8.44,
+  "postgresql": false,
+  "sql": false,
+  "relay_terminate_count": 0
+}

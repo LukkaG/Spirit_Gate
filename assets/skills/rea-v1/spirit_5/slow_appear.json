@@ -1,0 +1,181 @@
+{
+  "id": "SPIRIT_5_slow_appear",
+  "name": "Peso espiritual nos passos",
+  "cell": 128,
+  "frames": 6,
+  "directional": false,
+  "loop": false,
+  "durations_ms": [
+    90,
+    90,
+    90,
+    90,
+    90,
+    90
+  ],
+  "attachment": "target_feet",
+  "pivot_px": [
+    64,
+    96
+  ],
+  "show_character": true,
+  "depth_split": true,
+  "depth_split_y": 96,
+  "source_file": "slow_appear.png",
+  "source_grid": [
+    6,
+    1
+  ],
+  "alpha_threshold": 0.5,
+  "monotonic_end": false,
+  "registration": "none",
+  "phase": "slow_appear",
+  "ability": "SPIRIT_5",
+  "ability_name": "Areia movediça",
+  "phase_name": "Peso espiritual nos passos",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/slow_appear.png",
+  "sheet_size": [
+    768,
+    128
+  ],
+  "duration_ms": 540,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        30,
+        100,
+        100,
+        111
+      ],
+      "opaque_px": 121,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "994a2807b7efd7c3b8f51ae0e9b1c1b58f2833b4927078b1a43f388d4e80c23c"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        25,
+        77,
+        107,
+        111
+      ],
+      "opaque_px": 334,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "321954b675810cabdad0c2b526740830cab61119380311070adc802dccad5221"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        22,
+        72,
+        110,
+        111
+      ],
+      "opaque_px": 590,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "adb0754af159672cb7c87a7ccf99ff75255b0163177bcfac90c75f05a733b700"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        21,
+        72,
+        110,
+        112
+      ],
+      "opaque_px": 810,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "b33e261ff48cd31315d69048d5e4ef0f686700c14e6e270635752da02e02670e"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        22,
+        87,
+        106,
+        115
+      ],
+      "opaque_px": 579,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "300c8e03df48bb67f393673b7709d535b6972a1c4ba802a3a19986fd7b8d38ca"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        22,
+        92,
+        107,
+        110
+      ],
+      "opaque_px": 519,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "e6fb8ef21bd85a42b73273c2ba768a4ea4093ab1d2db0e1b35a5a492b51717b9"
+    }
+  ],
+  "source": "Sources/slow_appear.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "visual_markers": [],
+  "depth_layers": {
+    "rear": "Layers/slow_appear_rear.png",
+    "front": "Layers/slow_appear_front.png",
+    "screen_split_y": 96
+  },
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

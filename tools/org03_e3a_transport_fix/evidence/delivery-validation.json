@@ -1,0 +1,41 @@
+{
+  "preservation": {
+    "files": 4081,
+    "changed": [],
+    "passed": true
+  },
+  "tests": 71,
+  "fixture_final": "PASSOU",
+  "own_fixture_processes_remaining": [],
+  "pids_checked": [
+    1788,
+    3092,
+    9260,
+    11292,
+    18952,
+    22500,
+    24452,
+    27564,
+    27808,
+    32248,
+    38560,
+    40988,
+    43164,
+    45352,
+    46568,
+    50580,
+    50772,
+    51580
+  ],
+  "current_pid_metadata": [],
+  "process_action": "READ_ONLY_NO_CONTROL",
+  "prior_r2_artifact_errors": [],
+  "legacy_copy_errors": [],
+  "documents": 5,
+  "broken_links": [],
+  "postgresql": false,
+  "sql": false,
+  "cluster_created": false,
+  "e3_gate_approved": false,
+  "passed": true
+}

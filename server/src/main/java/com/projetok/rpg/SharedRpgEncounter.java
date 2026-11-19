@@ -102,6 +102,9 @@ public final class SharedRpgEncounter {
         var dynamic=new CollisionService.Space(space.width(),space.height(),space.obstacles(),bodies);
         population.respawn(tick,region,dynamic);
         for(var enemy:population.current(region)) {
+            // Assim como STUN na IA, suspende movimento e toda ação ofensiva. A contribuição
+            // existe apenas enquanto uma execução válida cobre o corpo, sem apagar outros controles.
+            if(players.keySet().stream().anyMatch(world->world.skillLightningControls(enemy)))continue;
             var target=players.keySet().stream().filter(w->w.networkState().hp()>0&&!w.skillIntangible()&&w.networkState().region().equals(region))
                 .min(Comparator.<RpgWorld>comparingDouble(w->{var v=w.networkState();return Math.hypot(v.x()-enemy.getPosition().x(),v.y()-enemy.getPosition().y());})
                     .thenComparingInt(players::get)).orElse(null);

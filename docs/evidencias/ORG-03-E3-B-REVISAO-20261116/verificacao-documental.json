@@ -1,0 +1,25 @@
+{
+  "documentos": 6,
+  "links_locais": 42,
+  "sintaxe_importacao_auditor": "PASSOU_SEM_CHAMAR_MAIN",
+  "preservacao_final": {
+    "artifact-sha256.json": {
+      "arquivos": 176,
+      "divergencias": []
+    },
+    "preservation-after.json": {
+      "arquivos": 4147,
+      "divergencias": []
+    }
+  },
+  "arvore_run_inalterada": true,
+  "erros": [],
+  "hashes_documentos": {
+    "docs/ORG-03-E3-A-ENCERRAMENTO.md": "de4a3a09b1c3333aa850310a4dc038c08260dd5e6794bbede2c067ec2f397a81",
+    "docs/ORG-03-E3-B-PLANO.md": "5e12cb3cb1501432ccdb53f3ff7c8c52a6f6429f2d8d8c2551442eaa371fa8fb",
+    "docs/ORG-03-E3-B-MATRIZ-RISCOS.md": "d134f036b00a21e06a0986c77b56738128794f63144f49aec19184386720308b",
+    "docs/ORG-03-E3-B-CRITERIOS-ACEITE.md": "af18a10b6d5b857dafb335fa00dbcd5f278ff2877699075f8c8eec360f0871b7",
+    "docs/ORG-03-E3-B-PENDENCIAS.md": "72a603fb875889697aef7af05636cb4790dd93559828605fccc780d6bee6dc6d",
+    "docs/ORG-03-E3-B-RELATORIO-PREPARACAO.md": "1f168047a8c59702a8479db6ac963c279ac6565d2d07925a6c16613ae6acf7cc"
+  }
+}

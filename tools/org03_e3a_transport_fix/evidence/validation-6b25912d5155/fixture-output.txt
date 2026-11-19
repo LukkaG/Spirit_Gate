@@ -1,0 +1,24 @@
+{
+  "trials": [
+    {
+      "path": "evidence/fixture-20261115-c0897ddb063a",
+      "status": "PASSOU",
+      "case": "EXPECTED_RESET",
+      "ports": [
+        65347,
+        65348
+      ],
+      "elapsed_s": 2.628
+    },
+    {
+      "path": "evidence/fixture-20261115-cd7d1c597fd0",
+      "status": "PASSOU",
+      "case": "UNEXPECTED_RESET",
+      "ports": [
+        65358,
+        65359
+      ],
+      "elapsed_s": 2.562
+    }
+  ]
+}

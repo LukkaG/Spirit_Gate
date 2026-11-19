@@ -43,11 +43,40 @@ public final class LocalSimulationServer implements AutoCloseable {
     public Protocol.State snapshot(){return state;}public Throwable failure(){return failure;}public boolean running(){return running.get();}
     public int pendingCommands(){return commands.size();}public int connections(){return connections.size();}
     public int players(){return peers.size();}
+
+    /** Aplica um unico prazo de leitura a toda a negociacao, mesmo com fragmentos frequentes. */
+    private static final class NegotiationInput extends FilterInputStream {
+        private final Socket socket;
+        private final long deadline;
+
+        /** Compartilha o prazo da reserva do peer entre Hello e escolha de personagem. */
+        NegotiationInput(InputStream input,Socket socket,long deadline){
+            super(input);this.socket=socket;this.deadline=deadline;
+        }
+
+        /** Recalcula SO_TIMEOUT antes de cada leitura bloqueante, sem renovar o prazo total. */
+        private void prepareRead()throws IOException{
+            long remaining=deadline-System.nanoTime();
+            if(remaining<=0)throw new SocketTimeoutException("Prazo de negociacao esgotado");
+            socket.setSoTimeout((int)Math.max(1,TimeUnit.NANOSECONDS.toMillis(remaining)
+                    +(remaining%1_000_000==0?0:1)));
+        }
+
+        /** Limita inclusive leituras do prefixo de tamanho de um frame. */
+        @Override public int read()throws IOException{prepareRead();return in.read();}
+
+        /** Limita o tempo restante de cada parcela do corpo do frame. */
+        @Override public int read(byte[] bytes,int offset,int length)throws IOException{
+            prepareRead();return in.read(bytes,offset,length);
+        }
+    }
+
     private final class Peer {
         final Semaphore ready=new Semaphore(0);
         synchronized void signal(){if(ready.availablePermits()==0)ready.release();}
         final ArrayBlockingQueue<Protocol.Message> controls=new ArrayBlockingQueue<>(4);
         final int id;final Socket socket;final ArrayBlockingQueue<Protocol.Message> outgoing=new ArrayBlockingQueue<>(1);final AtomicBoolean closed=new AtomicBoolean();
+        final long negotiationDeadline=System.nanoTime()+TimeUnit.SECONDS.toNanos(2);
         Thread reader,writer;boolean cosmetics,combat,content,gameplay,skills;
         volatile SkillProtocol.State skillSnapshot;
         Peer(int id,Socket socket){this.id=id;this.socket=socket;}
@@ -55,10 +84,11 @@ public final class LocalSimulationServer implements AutoCloseable {
         void read(){try{
             socket.setSoTimeout(2000);socket.setTcpNoDelay(true);
             var input=new BufferedInputStream(socket.getInputStream(),8192);var output=new BufferedOutputStream(socket.getOutputStream(),8192);
-            var hello=Protocol.read(input);if(!(hello instanceof Protocol.Hello h)||(h.version()!=Protocol.VERSION&&(h.version()!=Protocol.COSMETIC_APPLICATION||!world.supportsCosmetics())&&(h.version()!=Protocol.COMBAT_APPLICATION||!world.supportsCombat())&&(h.version()!=Protocol.CONTENT_APPLICATION||!world.supportsContent())&&(h.version()!=Protocol.CHARACTER_APPLICATION||!world.supportsCharacterCreation())&&(h.version()!=Protocol.GAMEPLAY_APPLICATION||!world.supportsGameplay())&&(h.version()!=Protocol.SKILL_APPLICATION||!world.supportsSkills()))){Protocol.write(output,new Protocol.Error("Protocolo incompativel"));return;}
+            var negotiation=new NegotiationInput(input,socket,negotiationDeadline);
+            var hello=Protocol.read(negotiation);if(!(hello instanceof Protocol.Hello h)||(h.version()!=Protocol.VERSION&&(h.version()!=Protocol.COSMETIC_APPLICATION||!world.supportsCosmetics())&&(h.version()!=Protocol.COMBAT_APPLICATION||!world.supportsCombat())&&(h.version()!=Protocol.CONTENT_APPLICATION||!world.supportsContent())&&(h.version()!=Protocol.CHARACTER_APPLICATION||!world.supportsCharacterCreation())&&(h.version()!=Protocol.GAMEPLAY_APPLICATION||!world.supportsGameplay())&&(h.version()!=Protocol.SKILL_APPLICATION||!world.supportsSkills()))){Protocol.write(output,new Protocol.Error("Protocolo incompativel"));return;}
             SessionCharacterSelection selected=null;
             if(Protocol.supportsCharacterApplication(h.version())){
-                var request=Protocol.read(input);
+                var request=Protocol.read(negotiation);
                 if(!(request instanceof Protocol.CharacterCreate create)){Protocol.write(output,new Protocol.Error("Escolha de personagem obrigatoria"));return;}
                 try{selected=new SessionCharacterSelection(h.name(),create.race(),create.hair(),create.clothing());}
                 catch(IllegalArgumentException invalid){Protocol.write(output,new Protocol.Error("Escolha de personagem invalida"));return;}
@@ -66,7 +96,9 @@ public final class LocalSimulationServer implements AutoCloseable {
             skills=h.version()==Protocol.SKILL_APPLICATION;gameplay=Protocol.supportsGameplayApplication(h.version());content=Protocol.supportsContentApplication(h.version());combat=h.version()==Protocol.COMBAT_APPLICATION||content;cosmetics=h.version()==Protocol.COSMETIC_APPLICATION||combat&&world.supportsCosmetics();
             var selection=selected;var admitted=new CompletableFuture<Boolean>();
             if(!commands.offer(()->{if(closed.get()||!running.get()){admitted.complete(false);return;}try{admitted.complete(selection==null?world.join(id,h.name(),h.version()):world.join(id,selection,h.version()));}catch(IllegalArgumentException invalid){admitted.complete(false);}}))return;
-            if(!admitted.get(2,TimeUnit.SECONDS)){Protocol.write(output,new Protocol.Error(world.admissionFailure()));return;}
+            long remaining=negotiationDeadline-System.nanoTime();
+            if(remaining<=0)throw new SocketTimeoutException("Prazo de negociacao esgotado");
+            if(!admitted.get(remaining,TimeUnit.NANOSECONDS)){Protocol.write(output,new Protocol.Error(world.admissionFailure()));return;}
             Protocol.write(output,new Protocol.Welcome(id));peers.put(id,this);socket.setSoTimeout(5000);
             writer=new Thread(()->{try{while(!closed.get()){ready.acquire();ready.drainPermits();var next=controls.poll();if(next==null)next=outgoing.poll();if(next!=null){long start=System.nanoTime();diagnostics.write(output,next);if(skills&&next instanceof GameplayProtocol.State){var skillFrame=skillSnapshot;if(skillFrame!=null)diagnostics.write(output,skillFrame);}if(diagnostics.enabled)diagnostics.writes.add(System.nanoTime()-start);}if(!controls.isEmpty()||!outgoing.isEmpty())signal();}}catch(IOException|InterruptedException ignored){}finally{closePeer();}},"coop-writer-"+id);writer.setDaemon(true);writer.start();
             long window=System.nanoTime(),deadline=window+TimeUnit.MINUTES.toNanos(30);int count=0;

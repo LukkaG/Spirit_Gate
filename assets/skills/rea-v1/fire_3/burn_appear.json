@@ -1,0 +1,176 @@
+{
+  "id": "FIRE_3_burn_appear",
+  "name": "Queimadura — surgimento discreto",
+  "cell": 64,
+  "frames": 6,
+  "directional": false,
+  "loop": false,
+  "durations_ms": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+  ],
+  "attachment": "target_body_center",
+  "show_character": true,
+  "source_file": "burn_lifecycle.png",
+  "source_grid": [
+    6,
+    3
+  ],
+  "source_start_index": 0,
+  "alpha_threshold": 0.6,
+  "monotonic_end": false,
+  "status_design_id": "SPIRIT_GATE_BURN_V1",
+  "phase": "burn_appear",
+  "ability": "FIRE_3",
+  "ability_name": "Vórtice de fogo",
+  "phase_name": "Queimadura — surgimento discreto",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/burn_appear.png",
+  "sheet_size": [
+    384,
+    64
+  ],
+  "pivot_px": [
+    32,
+    32
+  ],
+  "duration_ms": 600,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        21,
+        51,
+        42,
+        53
+      ],
+      "opaque_px": 8,
+      "alpha_threshold": 0.6,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "09ef07dc504b6a83884df842ff7f662e3bdda4c4aeaf9655cf1674f3b65bf2c0"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        20,
+        50,
+        43,
+        53
+      ],
+      "opaque_px": 9,
+      "alpha_threshold": 0.6,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "c50888e83340d544b500d7e3b447b79a76851cb325d72dfcc609235bba7a7c43"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        19,
+        46,
+        45,
+        53
+      ],
+      "opaque_px": 29,
+      "alpha_threshold": 0.6,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "f6858633c5ac45782978e095fe4474b37d71839dbbf888bc103d121891792eec"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        19,
+        47,
+        45,
+        53
+      ],
+      "opaque_px": 35,
+      "alpha_threshold": 0.6,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "a37fa105878b8b02b567f352e8d5e056c19d067b3ff05d5d53cc315b7ce2a4cd"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        19,
+        42,
+        45,
+        53
+      ],
+      "opaque_px": 50,
+      "alpha_threshold": 0.6,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "03b6454e894ba26b8fc7d2ebac71a9c8650d2ef9405d221c487fb1c8d0edf367"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        19,
+        42,
+        45,
+        53
+      ],
+      "opaque_px": 49,
+      "alpha_threshold": 0.6,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "a68a34ac8fc8a42689292a0148c3011b99428fce41e1c036d93df1cde6b71c19"
+    }
+  ],
+  "source": "Sources/burn_lifecycle.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "visual_markers": [],
+  "depth_layers": null,
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

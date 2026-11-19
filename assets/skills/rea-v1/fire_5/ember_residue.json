@@ -1,0 +1,182 @@
+{
+  "id": "FIRE_5_ember_residue",
+  "name": "Brasas residuais",
+  "cell": 256,
+  "frames": 6,
+  "directional": false,
+  "loop": false,
+  "durations_ms": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80
+  ],
+  "attachment": "selected_fixed_ground",
+  "pivot_px": [
+    128,
+    176
+  ],
+  "source_file": "ember_residue.png",
+  "source_grid": [
+    6,
+    1
+  ],
+  "source_start_index": 0,
+  "alpha_threshold": 0.5,
+  "depth_split": true,
+  "show_character": true,
+  "monotonic_end": false,
+  "depth_split_y": 176,
+  "registration": "none",
+  "phase": "ember_residue",
+  "ability": "FIRE_5",
+  "ability_name": "Chuva de cortes de fogo",
+  "phase_name": "Brasas residuais",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/ember_residue.png",
+  "sheet_size": [
+    1536,
+    256
+  ],
+  "duration_ms": 480,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        24,
+        95,
+        232,
+        194
+      ],
+      "opaque_px": 1852,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "2c03580277f64d60e6c85172841177d044b173184d3b02b56802276600a87daf"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        25,
+        95,
+        231,
+        194
+      ],
+      "opaque_px": 1663,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "a24f10cd27de588f7aa3bd62bc9859009853efb87f69d0a984484dc78981c18e"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        25,
+        95,
+        232,
+        194
+      ],
+      "opaque_px": 1661,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "7138a820073be136facb055793b07c7d07cfb53d1ee27a050d6e624fbddf0a99"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        24,
+        95,
+        232,
+        194
+      ],
+      "opaque_px": 1628,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "11d2f7e5287611d2b3e0b099d7336ce7e7870df5bd3517da0a163280220d68e5"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        25,
+        95,
+        232,
+        194
+      ],
+      "opaque_px": 1618,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "d80c4054734009b178582eee8536d3e26f02c3af155e903047b5b2f35a36c7b6"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        25,
+        95,
+        232,
+        194
+      ],
+      "opaque_px": 1629,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "7f140285df23ea28702ec3271bf3222881ed98b10b3dfc4556ed127bc0706850"
+    }
+  ],
+  "source": "Sources/ember_residue.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "visual_markers": [],
+  "depth_layers": {
+    "rear": "Layers/ember_residue_rear.png",
+    "front": "Layers/ember_residue_front.png",
+    "screen_split_y": 176
+  },
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

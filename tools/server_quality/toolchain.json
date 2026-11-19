@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "policy": {
+    "project": "closed",
+    "codeqlAnalysis": "disabled"
+  },
+  "skills": {
+    "repository": "trailofbits/skills",
+    "ref": "149d7b21f4067765b82e67029730b42d228ef4b4",
+    "names": [
+      "audit-context-building",
+      "property-based-testing",
+      "variant-analysis",
+      "codeql"
+    ]
+  },
+  "tools": [
+    {
+      "name": "spotbugs",
+      "version": "4.10.5",
+      "archive": "spotbugs-4.10.5.zip",
+      "url": "https://github.com/spotbugs/spotbugs/releases/download/4.10.5/spotbugs-4.10.5.zip",
+      "sha256": "f8eb9cf4ac8e1b29b3e29567541eef3f30b3bf49ff3880670a7963092cd8a859",
+      "format": "zip"
+    },
+    {
+      "name": "jazzer",
+      "version": "0.30.0",
+      "archive": "jazzer-windows.tar.gz",
+      "url": "https://github.com/CodeIntelligenceTesting/jazzer/releases/download/v0.30.0/jazzer-windows.tar.gz",
+      "sha256": "959b04d6b773c901aa2a2e367b06841a346111eb76d3437dfb8b16b574091f61",
+      "format": "tar"
+    },
+    {
+      "name": "findsecbugs",
+      "version": "1.14.0",
+      "archive": "findsecbugs-cli-1.14.0.zip",
+      "url": "https://github.com/find-sec-bugs/find-sec-bugs/releases/download/version-1.14.0/findsecbugs-cli-1.14.0.zip",
+      "sha256": "ff546e16e596ade5b6534a6da87881e569429bf46dfd8faed63ca63cdd69b4f8",
+      "format": "zip"
+    },
+    {
+      "name": "codeql",
+      "enabled": false,
+      "version": "2.27.4",
+      "archive": "codeql-win64.zip",
+      "url": "https://github.com/github/codeql-cli-binaries/releases/download/v2.27.4/codeql-win64.zip",
+      "sha256": "a7ab5f73a8f440c3269f6660deb1d34f76005e756ccdf58c84c5ff88355453db",
+      "format": "zip"
+    },
+    {
+      "name": "pmd",
+      "version": "7.29.0",
+      "archive": "pmd-dist-7.29.0-bin.zip",
+      "url": "https://github.com/pmd/pmd/releases/download/pmd_releases/7.29.0/pmd-dist-7.29.0-bin.zip",
+      "sha256": "d27177c185b837fa57f097e482d1253468aa035379c5eb2671fa0a279109b179",
+      "format": "zip"
+    }
+  ],
+  "java": {
+    "release": 17,
+    "junit": "5.11.4",
+    "jazzer": "0.30.0",
+    "netty": "4.1.141.Final"
+  }
+}

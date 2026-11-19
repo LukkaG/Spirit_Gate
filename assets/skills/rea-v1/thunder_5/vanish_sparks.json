@@ -1,0 +1,184 @@
+{
+  "id": "THUNDER_5_vanish_sparks",
+  "name": "Etapa A — fragmentação elétrica do corpo",
+  "cell": 64,
+  "frames": 6,
+  "directional": false,
+  "loop": false,
+  "durations_ms": [
+    60,
+    60,
+    60,
+    60,
+    60,
+    60
+  ],
+  "attachment": "caster_body_center",
+  "source_file": "body_sparks.png",
+  "source_grid": [
+    6,
+    3
+  ],
+  "source_start_index": 0,
+  "alpha_threshold": 0.6,
+  "character_alpha_mask": "Masks/vanish_mask.png",
+  "character_mask_direction_order": [
+    "N",
+    "NE",
+    "E",
+    "SE",
+    "S",
+    "SW",
+    "W",
+    "NW"
+  ],
+  "phase": "vanish_sparks",
+  "ability": "THUNDER_5",
+  "ability_name": "Quatro relâmpagos",
+  "phase_name": "Etapa A — fragmentação elétrica do corpo",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/vanish_sparks.png",
+  "sheet_size": [
+    384,
+    64
+  ],
+  "pivot_px": [
+    32,
+    32
+  ],
+  "duration_ms": 360,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        21,
+        25,
+        47,
+        55
+      ],
+      "opaque_px": 41,
+      "alpha_threshold": 0.6,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "25099d0aaf13bcaca9a86dac9f8a0e93b6dc5dc2269f39799b7f0b2a6abdba38"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        20,
+        23,
+        46,
+        56
+      ],
+      "opaque_px": 62,
+      "alpha_threshold": 0.6,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "00af47485108d0a69d5893225372136a1e9b3b9eeb7c45ed831e7c834ed09cc7"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        20,
+        19,
+        46,
+        57
+      ],
+      "opaque_px": 34,
+      "alpha_threshold": 0.6,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "277571b2bcc9553cfea6818e76db3c2bffd7cca5df55cd012c95b5644281eb1f"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        20,
+        24,
+        45,
+        54
+      ],
+      "opaque_px": 16,
+      "alpha_threshold": 0.6,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "4ba3cb7ef78e80c22ca19bbb98f0507bef9289fe479eb22ce419454a5e7451b7"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        22,
+        26,
+        43,
+        54
+      ],
+      "opaque_px": 9,
+      "alpha_threshold": 0.6,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "9e08baf67faee8241e425434fc3b5110e9e767f79cd115e7452b3afba1669732"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        37,
+        53,
+        38,
+        55
+      ],
+      "opaque_px": 2,
+      "alpha_threshold": 0.6,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "3ab95bc2100f07fba9846b80ed413a4c0483b7337ea77b2080a5d5cc0e08c8c4"
+    }
+  ],
+  "source": "Sources/body_sparks.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "visual_markers": [],
+  "depth_layers": null,
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

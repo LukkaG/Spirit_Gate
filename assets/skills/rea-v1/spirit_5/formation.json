@@ -1,0 +1,181 @@
+{
+  "id": "SPIRIT_5_formation",
+  "name": "Pressão espiritual satura o terreno",
+  "cell": 256,
+  "frames": 6,
+  "directional": false,
+  "loop": false,
+  "durations_ms": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+  ],
+  "attachment": "selected_fixed_ground_feet",
+  "pivot_px": [
+    128,
+    128
+  ],
+  "show_character": true,
+  "depth_split": true,
+  "depth_split_y": 128,
+  "source_file": "formation.png",
+  "source_grid": [
+    6,
+    1
+  ],
+  "alpha_threshold": 0.5,
+  "monotonic_end": false,
+  "registration": "none",
+  "phase": "formation",
+  "ability": "SPIRIT_5",
+  "ability_name": "Areia movediça",
+  "phase_name": "Pressão espiritual satura o terreno",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/formation.png",
+  "sheet_size": [
+    1536,
+    256
+  ],
+  "duration_ms": 600,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        27,
+        91,
+        222,
+        177
+      ],
+      "opaque_px": 475,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "6575006cec005b1b0aacd2f72a4b04d0cc08e46eb567b458104789d75bd00351"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        8,
+        100,
+        202,
+        184
+      ],
+      "opaque_px": 307,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "49e242c68d15662498adb837e0f853b7b32ae9f617a708b0b5d57efdd8d449a4"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        27,
+        85,
+        228,
+        171
+      ],
+      "opaque_px": 11135,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "302901b43d319a2b7db0dc66109a3d9477df0f4b3439afb34a97a95cc2668b03"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        27,
+        85,
+        228,
+        171
+      ],
+      "opaque_px": 11784,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "8ec1c6fed939f193a5ee5f2bc38c37bd9da495c6261918a6b9b385c26bedfbb4"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        26,
+        84,
+        227,
+        171
+      ],
+      "opaque_px": 12168,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "76bff3635b48c90d058b3fb16ee1c2c7e84ed9f2413e335fc321ccad27cda198"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        26,
+        84,
+        227,
+        172
+      ],
+      "opaque_px": 12180,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "f207fd85d188dd0fca0d149d7df5cfcee0901896bede2896ec85cc42f72f47a9"
+    }
+  ],
+  "source": "Sources/formation.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "visual_markers": [],
+  "depth_layers": {
+    "rear": "Layers/formation_rear.png",
+    "front": "Layers/formation_front.png",
+    "screen_split_y": 128
+  },
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

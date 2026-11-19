@@ -1,0 +1,182 @@
+{
+  "id": "THUNDER_3_impact_2",
+  "name": "Descarga 2 de 4 — alvo autorizado",
+  "cell": 64,
+  "frames": 6,
+  "directional": false,
+  "loop": false,
+  "durations_ms": [
+    30,
+    40,
+    40,
+    40,
+    30,
+    30
+  ],
+  "attachment": "target_body_center",
+  "source_file": "target_beats.png",
+  "source_grid": [
+    6,
+    5
+  ],
+  "source_start_index": 12,
+  "registration": "first_frame_mass",
+  "alpha_threshold": 0.6,
+  "monotonic_end": true,
+  "authoritative_impact_slot": 2,
+  "show_character": true,
+  "visual_markers": [
+    {
+      "frame": 2,
+      "label": "Impacto visual 2/4; evento comandado pelo motor"
+    }
+  ],
+  "phase": "impact_2",
+  "ability": "THUNDER_3",
+  "ability_name": "Corrente de raio",
+  "phase_name": "Descarga 2 de 4 — alvo autorizado",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/impact_2.png",
+  "sheet_size": [
+    384,
+    64
+  ],
+  "pivot_px": [
+    32,
+    32
+  ],
+  "duration_ms": 210,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        29,
+        29,
+        35,
+        35
+      ],
+      "opaque_px": 17,
+      "alpha_threshold": 0.6,
+      "registration_shift_px": [
+        -1,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "5b1774c5fec427e25c783f9fa9d43dd49d44752207c8f20bddbc16d51af265cf"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        16,
+        19,
+        47,
+        47
+      ],
+      "opaque_px": 222,
+      "alpha_threshold": 0.6,
+      "registration_shift_px": [
+        -1,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "be25784b2c40eee1410df5e3b040dbede8254333a45f5bc20fb4915cb3b17b93"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        18,
+        18,
+        44,
+        45
+      ],
+      "opaque_px": 121,
+      "alpha_threshold": 0.6,
+      "registration_shift_px": [
+        -1,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "fb20d09bc588d38d5f38f7ba5bca29ce4748c9c367979a066f2da7fbc63158b1"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        18,
+        21,
+        41,
+        41
+      ],
+      "opaque_px": 53,
+      "alpha_threshold": 0.6,
+      "registration_shift_px": [
+        -1,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "81d27cbcef3d23e865b7355e0e378c9291a71029383422c884ab29133ef74ee4"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        18,
+        25,
+        38,
+        39
+      ],
+      "opaque_px": 26,
+      "alpha_threshold": 0.6,
+      "registration_shift_px": [
+        -1,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "f061352f7b8527faf22c7b539ce9c3c93db344a29672c342f6389d371a745fcf"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        24,
+        30,
+        35,
+        37
+      ],
+      "opaque_px": 7,
+      "alpha_threshold": 0.6,
+      "registration_shift_px": [
+        -1,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "4c458febe92b419f88fa5ab7f07b12989aafeefebab71792448c084ede707c0d"
+    }
+  ],
+  "source": "Sources/target_beats.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "depth_layers": null,
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

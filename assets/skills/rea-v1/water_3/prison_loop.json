@@ -1,0 +1,156 @@
+{
+  "ability": "WATER_3",
+  "phase": "prison_loop",
+  "cell": 128,
+  "frames": 6,
+  "directional": false,
+  "loop": true,
+  "sheet": "Sheets/prison_loop.png",
+  "sheet_size": [
+    768,
+    128
+  ],
+  "rows": [
+    "RADIAL"
+  ],
+  "pivot_px": [
+    64,
+    106
+  ],
+  "preview_frame_ms": 80,
+  "source": "Sources\\WATER_3_prison_loop.png",
+  "finish": "premultiplied area reduction; shared palette; binary alpha; no dither",
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "bbox": [
+        24,
+        23,
+        105,
+        107
+      ],
+      "opaque_px": 3403,
+      "registration_shift_px": [
+        -4,
+        3
+      ],
+      "source_scale": 1,
+      "sha256_rgba": "15f312264663c9436354c65893f5175a81cf1bab67ba0e4bfb2ad53e225be4df"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "bbox": [
+        24,
+        23,
+        106,
+        107
+      ],
+      "opaque_px": 3298,
+      "registration_shift_px": [
+        2,
+        3
+      ],
+      "source_scale": 1,
+      "sha256_rgba": "70917ddb1fca40eb37ab78a42b5dc915487409c8fde6b7424e4dc2e422b38516"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "bbox": [
+        23,
+        23,
+        106,
+        107
+      ],
+      "opaque_px": 3242,
+      "registration_shift_px": [
+        6,
+        3
+      ],
+      "source_scale": 1,
+      "sha256_rgba": "0be095f1680a3856b900fff2fb1a1bf65c052287c91e3babd2df7c8b5b5079d1"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "bbox": [
+        23,
+        23,
+        107,
+        107
+      ],
+      "opaque_px": 3190,
+      "registration_shift_px": [
+        -4,
+        3
+      ],
+      "source_scale": 1,
+      "sha256_rgba": "93673be4b9d333c766b15d98007694d8c60d51a326657d5c3b855c9406b235be"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "bbox": [
+        24,
+        23,
+        106,
+        107
+      ],
+      "opaque_px": 3354,
+      "registration_shift_px": [
+        2,
+        3
+      ],
+      "source_scale": 1,
+      "sha256_rgba": "7a375c1207dfa59a51938aba564bf450a8ef2078c89966c10ac5389c67195e14"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "bbox": [
+        23,
+        23,
+        106,
+        107
+      ],
+      "opaque_px": 3386,
+      "registration_shift_px": [
+        6,
+        3
+      ],
+      "source_scale": 1,
+      "sha256_rgba": "b92dd9a52be0dff8a06950eb1d15912197493884b77c8b06235ddfc8d6ecef80"
+    }
+  ],
+  "id": "WATER_3_prison_loop",
+  "ability_name": "Prisão de água",
+  "phase_name": "Prisão estável",
+  "durations_ms": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+  ],
+  "duration_ms": 600,
+  "timing_policy": "Suggested art preview only. Bind playback and lifetime to existing authoritative gameplay; these durations do not define attacks, pulse intervals, speed, slow duration, collisions or damage.",
+  "attachment": "target_feet",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "visual_markers": [],
+  "direct_damage": false,
+  "depth_layers": null
+}

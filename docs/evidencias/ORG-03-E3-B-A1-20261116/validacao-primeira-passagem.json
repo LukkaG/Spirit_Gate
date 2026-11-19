@@ -1,0 +1,93 @@
+{
+  "data_contexto_conclusao": "2026-11-17",
+  "captura_utc": "2026-11-17T03:03:11.028769+00:00",
+  "metodo": "LEITURA_E_VERIFICACAO_DOCUMENTAL_ESTATICAS; SEM SQL/SOCKETS/PROCESSOS OPERACIONAIS",
+  "documentos": 7,
+  "links_locais": 49,
+  "total_verificacoes": 13,
+  "falhas": 2,
+  "verificacoes": [
+    {
+      "verificacao": "4343_arquivos_anteriores_preservados",
+      "passou": true
+    },
+    {
+      "verificacao": "sete_documentos_novos_presentes_UTF8",
+      "passou": true
+    },
+    {
+      "verificacao": "links_locais_resolvidos",
+      "passou": false
+    },
+    {
+      "verificacao": "dez_cenarios_mantidos_com_secao_propria",
+      "passou": true
+    },
+    {
+      "verificacao": "quatorze_riscos_mantidos",
+      "passou": true
+    },
+    {
+      "verificacao": "dez_campos_documentais_por_cenario",
+      "passou": false
+    },
+    {
+      "verificacao": "quatro_eixos_independentes_e_tres_perfis",
+      "passou": true
+    },
+    {
+      "verificacao": "onze_decisoes_com_opcoes",
+      "passou": true
+    },
+    {
+      "verificacao": "decisoes_de_governanca_rastreadas",
+      "passou": true
+    },
+    {
+      "verificacao": "manifestos_176_e_4147_sem_divergencias",
+      "passou": true
+    },
+    {
+      "verificacao": "auditoria_historica_34_preservada",
+      "passou": true
+    },
+    {
+      "verificacao": "branch_HEAD_diff_rastreado_preservados",
+      "passou": true
+    },
+    {
+      "verificacao": "nenhum_diretorio_operacional_E3B_criado",
+      "passou": true
+    }
+  ],
+  "arquivos_anteriores": 4343,
+  "divergencias_anteriores": [],
+  "manifestos_historicos": {
+    "artifact-sha256.json": {
+      "arquivos": 176,
+      "divergencias": []
+    },
+    "preservation-after.json": {
+      "arquivos": 4147,
+      "divergencias": []
+    }
+  },
+  "links_quebrados": [
+    {
+      "documento": "ORG-03-E3-B-A1-RELATORIO-FINAL.md",
+      "link": "evidencias/ORG-03-E3-B-A1-20261116/validacao-final.json"
+    }
+  ],
+  "branch": "beco",
+  "HEAD": "c3d484e76f17c2d93bf0c68ad3ff54280ee8ad39",
+  "hashes_documentos": {
+    "docs/ORG-03-E3-B-A1-REVISAO-ESCOPO.md": "9d6fdcb89d1dc84b4bd15c7705b7aab3cca2fba0372a9d004628c7fa6b2af3d7",
+    "docs/ORG-03-E3-B-A1-COMPARATIVO-BACKUP.md": "a6103b7fef8a14f6403f75e992855acbc3fcebe77d55e3ce3f464a3c955016e4",
+    "docs/ORG-03-E3-B-A1-CONTRATO-S0-S1-R.md": "0e62e55d5458261aef81c2bec0b4f588052fa8284e0b271bb51a218a5b403ce9",
+    "docs/ORG-03-E3-B-A1-ALTERNATIVAS-D33.md": "c5436e4c11d2b1263e491067f6ac78282ebb5172e4d43bb88237d1696558c768",
+    "docs/ORG-03-E3-B-A1-FASES-E-CENARIOS.md": "8228b8b35f0dc47d4cd6e1c96fbc1f38d6221b4206ee1620b1516cd1b902d5dc",
+    "docs/ORG-03-E3-B-A1-DECISOES-PENDENTES.md": "cb15ca12f3d7741fa79427f33b10f58878808bd17f175b34c525d564f16205ec",
+    "docs/ORG-03-E3-B-A1-RELATORIO-FINAL.md": "fa5ec943b54cf3cc560971aab71212c3170c70ef7ce259ab1c9ee6a777898966"
+  },
+  "limites": "Sem prova nova de PostgreSQL, backup/restore, failover, D33 ou capacidade; metas e estimativas sao propostas."
+}

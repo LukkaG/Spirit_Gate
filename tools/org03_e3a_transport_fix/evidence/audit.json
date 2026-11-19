@@ -1,0 +1,13 @@
+{
+  "branch": "beco",
+  "head": "c3d484e76f17c2d93bf0c68ad3ff54280ee8ad39",
+  "events_reviewed": 49,
+  "prior_manifests_verified": {
+    "R2_artifacts": 57,
+    "R2_preservation": 4023,
+    "R1_artifacts": 16,
+    "E2_artifacts": 250
+  },
+  "prior_manifest_errors": [],
+  "postgresql_execution": false
+}

@@ -21,7 +21,7 @@ class SkillLifecycleGuiTest {
     void lifecycleRendersOnBothClientsAndExpiresWithoutReplaying(String skill)throws Exception{
         Assumptions.assumeFalse(GraphicsEnvironment.isHeadless());
         var root=Path.of("..").toAbsolutePath().normalize();
-        var evidence=Files.createDirectories(root.resolve("docs/skills-preview-v5/runtime"));
+        var evidence=Files.createDirectories(root.resolve("docs/skills-preview-rea/runtime/SkillLifecycleGuiTest"));
         var sprites=RpgPlayerSprites.load(root.resolve("assets/dev/player-base"),250,.5);
         var visuals=new RpgNetworkClientLauncher.Presentation(new NetworkPlayerVisuals(root.resolve("assets/dev/reaper"),sprites),null);
         var world=new RpgSessionWorld(List.of("reaper","human"),null,true,20);
@@ -65,7 +65,7 @@ class SkillLifecycleGuiTest {
         }
     }
 
-    private static boolean loaded(JFrame frame,String skill){var clip=view(frame).clip(skill);return clip!=null&&clip.frames()==12&&clip.columns()==4;}
+    private static boolean loaded(JFrame frame,String skill){var clip=view(frame).clip(skill);return clip!=null&&clip.animation()!=null;}
     private static NetworkSkillPresentation view(JFrame frame){return (NetworkSkillPresentation)frame.getRootPane().getClientProperty("networkSkillPresentation");}
     private static boolean ready(LocalClient client){return client.playerSheet()!=null&&client.skills()!=null&&!client.revisions().blocked();}
     private static LocalClient connect(LocalSimulationServer server,String name,String race)throws Exception{return LocalClient.skillGame(InetAddress.getLoopbackAddress(),server.port(),new SessionCharacterSelection(name,race,"none","none"),false,false,null,Task201CharacterSessionTest.EMPTY);}

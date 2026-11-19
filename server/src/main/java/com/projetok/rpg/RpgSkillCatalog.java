@@ -144,8 +144,9 @@ public final class RpgSkillCatalog {
                 Targeting.TARGET, new Mechanics(Pattern.CHAIN, 4, 8, 24, "", 0, 750), List.of(), 240, 130, 25, 150, 20, 0, DamageScope.ENEMIES),
         skill("thunder", 4, "Investida relâmpago", "Investida frontal que corta e atordoa inimigos atravessados, sem exigir alvo.",
                 Targeting.LINE, timed(Pattern.DASH, 1, 0, 8), List.of(stun(30)), 240, 20, 25, 150, 30, 0, DamageScope.ENEMIES),
-        skill("thunder", 5, "Quatro relâmpagos", "Fica invisível, sem colisão e imune a dano por cerca de 1,07 segundo. Ao reaparecer, quatro cortes atingem toda a área de conjuração.",
-                Targeting.SELF, timed(Pattern.CIRCULAR_DASH, 4, 8, 32), List.of(stun(30)), 0, 110, 40, 270, 14, 0, DamageScope.ENEMIES),
+        // O controle pertence à janela da área, sem STUN residual depois dos quatro impactos.
+        skill("thunder", 5, "Quatro relâmpagos", "Permanece imóvel e com colisão normal, oculto e imune por cerca de 1,07 segundo. Paralisa inimigos elegíveis na área durante a execução e termina com quatro cortes.",
+                Targeting.SELF, timed(Pattern.CIRCULAR_DASH, 4, 8, 32), List.of(), 0, 110, 40, 270, 14, 0, DamageScope.ENEMIES),
 
         // Fogo: dano periódico e fissuras permanecem separados dos impactos iniciais.
         skill("fire", 1, "Corte de fogo", "Corte de fogo que viaja até o inimigo selecionado.",

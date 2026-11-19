@@ -1,0 +1,80 @@
+--- original/lab_runtime.py
++++ R1/lab_runtime.py
+@@ -9,6 +9,7 @@
+ import threading
+ import time
+ from pathlib import Path
++from lifecycle import OwnedProcess, StderrCapture
+ from runtime import Cluster, Session, RUN, ROOT, BIN, EVIDENCE, PREFIX, ADMIN, WRITER, DB, HIDDEN, command, save, safe_path
+ 
+ 
+@@ -114,6 +115,10 @@
+             self.workers_created+=1
+             assert self.workers_created<=32, 'WORKER_INSTANCE_QUOTA'
+         item={'kind':kind,'identity':record,'proc':proc}
++        item['lifecycle']=OwnedProcess(proc,record,process_info,self.event,
++            barrier=lambda: getattr(self.relay,'last_barrier',None),
++            stderr=lambda: self.relay.stderr.snapshot() if self.relay and self.relay.proc is proc else {},
++            controller_pid=os.getpid())
+         self.registry.append(item)
+         save('process-manifest.json',[{'kind':v['kind'],'identity':v['identity']} for v in self.registry])
+         self.event('PROCESS_CREATED',process=record,role=kind)
+@@ -122,12 +127,7 @@
+     def terminate_own(self,proc):
+         """Encerra pelo handle/PID próprio, somente após identidade atual coincidir."""
+         item=next(v for v in self.registry if v['proc'] is proc)
+-        if proc.poll() is None:
+-            assert process_info(proc.pid)==item['identity'],'WORKER_IDENTITY_MISMATCH'
+-            self.event('CLIENT_TERMINATE',process=item['identity'],role=item['kind'])
+-            proc.terminate()
+-            proc.wait(timeout=5)
+-        self.event('CLIENT_EXIT',pid=proc.pid,exit_code=proc.returncode)
++        return item['lifecycle'].stop(timeout=5)
+ 
+     def profile(self,label):
+         """Registra parâmetros efetivos e relações logged, sem prometer hardware."""
+@@ -252,10 +252,24 @@
+         assert lab.relay is None
+         self.lab=lab
+         self.proc=subprocess.Popen([sys.executable,str(RUN/'scripts/relay.py'),RUN.name],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,encoding='utf8',bufsize=1,creationflags=HIDDEN)
++        self.closed=False
++        self.last_barrier=None
++        self.stderr=StderrCapture(self.proc.stderr,lab.event)
++        self.stderr_thread=threading.Thread(target=self.stderr.drain,daemon=True)
++        self.stderr_thread.start()
+         lab.register(self.proc,'relay')
+         self.lines=queue.Queue()
+         def read():
+-            for line in self.proc.stdout: self.lines.put(json.loads(line))
++            for line in self.proc.stdout:
++                try:
++                    value=json.loads(line)
++                except ValueError as exc:
++                    lab.event('RELAY_PROTOCOL_ERROR',error=type(exc).__name__)
++                    self.lines.put({'event':'RELAY_PROTOCOL_ERROR'})
++                    return
++                self.last_barrier=value
++                lab.event('RELAY_WIRE_EVENT',metadata=value)
++                self.lines.put(value)
+         threading.Thread(target=read,daemon=True).start()
+         x=self.lines.get(timeout=5)
+         assert x['event']=='LISTENING'
+@@ -271,6 +285,17 @@
+         return x
+ 
+     def close(self):
+-        self.lab.terminate_own(self.proc)
++        if self.closed: return
++        record=self.lab.terminate_own(self.proc)
++        self.stderr_thread.join(timeout=2)
++        if self.stderr_thread.is_alive(): raise RuntimeError('STDERR_CAPTURE_TIMEOUT')
++        self.lab.event('RELAY_FINAL_DIAGNOSTIC',process=record,last_tcp_barrier=self.last_barrier,**self.stderr.snapshot())
++        if record['exit_code'] not in (0,None) and not record.get('terminated_by_controller'):
++            raise RuntimeError('RELAY_NONZERO_EXIT_REQUIRES_DIAGNOSIS')
++        if not record.get('terminated_by_controller') and not (
++                self.last_barrier and self.last_barrier.get('event')=='EOF' and
++                self.last_barrier.get('source')=='client'):
++            raise RuntimeError('RELAY_UNEXPECTED_EXIT')
+         assert not listeners(55434)
++        self.closed=True
+         self.lab.relay=None

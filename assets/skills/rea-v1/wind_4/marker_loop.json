@@ -1,0 +1,176 @@
+{
+  "id": "WIND_4_marker_loop",
+  "name": "Sigilo persistente para retorno",
+  "cell": 64,
+  "frames": 6,
+  "directional": false,
+  "loop": true,
+  "durations_ms": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+  ],
+  "attachment": "target_mark_socket",
+  "source_file": "marker_lifecycle.png",
+  "source_grid": [
+    6,
+    3
+  ],
+  "source_start_index": 6,
+  "registration": "mass_all",
+  "marker_design_id": "SPIRIT_GATE_WIND_MARK_V1",
+  "source_scale": 0.7,
+  "alpha_threshold": 0.2,
+  "phase": "marker_loop",
+  "ability": "WIND_4",
+  "ability_name": "Vendaval de repulsão",
+  "phase_name": "Sigilo persistente para retorno",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/marker_loop.png",
+  "sheet_size": [
+    384,
+    64
+  ],
+  "pivot_px": [
+    32,
+    32
+  ],
+  "duration_ms": 600,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        22,
+        22,
+        43,
+        43
+      ],
+      "opaque_px": 132,
+      "alpha_threshold": 0.2,
+      "registration_shift_px": [
+        1,
+        -1
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "efbfa7fe0597ade4a37a2860bec39042737286490f568798771abebc73ae7b67"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        20,
+        21,
+        43,
+        43
+      ],
+      "opaque_px": 129,
+      "alpha_threshold": 0.2,
+      "registration_shift_px": [
+        0,
+        -1
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "69eb5c41e699a733258b2badbe79c6c592b48b8eb684edf636e9fd4ac1affdcb"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        21,
+        21,
+        43,
+        43
+      ],
+      "opaque_px": 132,
+      "alpha_threshold": 0.2,
+      "registration_shift_px": [
+        0,
+        -1
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "60cbfb1d9f209c72be54069b1a830f03b13991857d5222692f829aff400a1fe3"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        21,
+        21,
+        43,
+        43
+      ],
+      "opaque_px": 130,
+      "alpha_threshold": 0.2,
+      "registration_shift_px": [
+        0,
+        -1
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "a2d94013fd42d331b93eb58eb2f458fc48ece95c0772e9382302bfcc33cb78ed"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        21,
+        21,
+        42,
+        43
+      ],
+      "opaque_px": 122,
+      "alpha_threshold": 0.2,
+      "registration_shift_px": [
+        0,
+        -1
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "e2674b713329685ee0678e9f3594622cf698f44eb13d6d436f43686f3223e91c"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        20,
+        21,
+        43,
+        42
+      ],
+      "opaque_px": 132,
+      "alpha_threshold": 0.2,
+      "registration_shift_px": [
+        0,
+        -1
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "39185b5c353cb2b3d8698c5f0d11abfc56f40a3add72dfaa80cae141ecdf040a"
+    }
+  ],
+  "source": "Sources/marker_lifecycle.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "visual_markers": [],
+  "depth_layers": null,
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

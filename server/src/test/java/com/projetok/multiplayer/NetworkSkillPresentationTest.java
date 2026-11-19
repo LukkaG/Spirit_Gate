@@ -162,7 +162,7 @@ class NetworkSkillPresentationTest {
     }
     @ParameterizedTest @ValueSource(strings={"fire_4","fire_3","water_4"})
     void shippedLifecycleStartsSmallPeaksAndDissipatesOnTheGround(String skill)throws Exception{
-        var root=Path.of("..").toAbsolutePath().normalize();var clips=NetworkSkillPresentation.load(root);var clip=clips.get(skill);
+        var root=Path.of("..").toAbsolutePath().normalize();var clips=NetworkSkillPresentation.loadLegacy(root);var clip=clips.get(skill);
         assertEquals(12,clip.frames());assertEquals(4,clip.columns());
         int duration=skill.equals("fire_4")?clip.frames()*clip.frameMillis():1333;
         var time=new AtomicLong();var view=new NetworkSkillPresentation(time::get);view.clips(clips);
@@ -193,7 +193,7 @@ class NetworkSkillPresentationTest {
     @Test void fireRainGrowsAndDissipatesEachCrossBeforeTheNextWave(){
         var root=Path.of("..").toAbsolutePath().normalize();
         Map<String,NetworkSkillPresentation.Clip> clips;
-        try{clips=NetworkSkillPresentation.load(root);}catch(IOException error){throw new AssertionError(error);}
+        try{clips=NetworkSkillPresentation.loadLegacy(root);}catch(IOException error){throw new AssertionError(error);}
         var time=new AtomicLong();var view=new NetworkSkillPresentation(time::get);view.clips(clips);view.update(state(HASH,0,event(1,0,"fire_5")));
         int first=visible(paint(view));time.set(180);int peak=visible(paint(view));assertTrue(peak>first*5);
         time.set(390);assertEquals(0,visible(paint(view)),"As cinco dissipações terminam antes da próxima onda");
@@ -208,7 +208,7 @@ class NetworkSkillPresentationTest {
         assertEquals(0xff00ffff,paint(view).getRGB(100,13));assertEquals(0,paint(view).getRGB(105,18));
     }
     @Test void waterSpinLeavesTheBodyCenterClearAndSeismicDoesNotFillTheGround()throws Exception{
-        var clips=NetworkSkillPresentation.load(Path.of("..").toAbsolutePath().normalize());
+        var clips=NetworkSkillPresentation.loadLegacy(Path.of("..").toAbsolutePath().normalize());
         var water=clips.get("water_2");assertEquals(12,water.frames());
         int sx=5%water.columns()*water.frameWidth()+water.pivotX(),sy=5/water.columns()*water.frameHeight()+water.pivotY();
         assertTrue((water.image().getRGB(sx,sy)>>>24)<16,"O centro do giro deve deixar o corpo legível");
@@ -264,7 +264,7 @@ class NetworkSkillPresentationTest {
     }
     @Test void allLightningPhasesUseWarmColorsAndHotbarIconsStillLoad()throws Exception{
         var clips=NetworkSkillPresentation.load(Path.of("..").toAbsolutePath().normalize());
-        for(String name:List.of("thunder_1","thunder_2","thunder_3","thunder_4","thunder_5","thunder_1.impact","thunder_2.impact","thunder_3.impact","thunder_5.travel")){
+        for(String name:List.of("thunder_1","thunder_2","thunder_3","thunder_4","thunder_5","thunder_1.impact","thunder_2.impact","thunder_3.impact","thunder_5.rea.intangible_disturbance")){
             var clip=clips.get(name);assertNotNull(clip,name);assertNotNull(clip.icon());int warm=0,cold=0;
             for(int y=0;y<clip.image().getHeight();y+=2)for(int x=0;x<clip.image().getWidth();x+=2){int pixel=clip.image().getRGB(x,y);if((pixel>>>24)<128)continue;int r=pixel>>16&255,g=pixel>>8&255,b=pixel&255;
                 if(r>b+30)warm++;if(b>r+12&&b>g)cold++;
@@ -280,7 +280,7 @@ class NetworkSkillPresentationTest {
         for(int step=1;step<=6;step++){time.set(step*30);view.actors(actorState(step,100+step*15,100));}
         var image=paint(view);assertTrue(visible(image)>30,"Fragmentos reais precisam permanecer legíveis entre snapshots: "+skill);
         assertEquals(0,image.getRGB(300,72));
-        var folder=Files.createDirectories(root.resolve("docs/skills-preview-v8/runtime"));javax.imageio.ImageIO.write(image,"png",folder.resolve(skill+"-fragmentos.png").toFile());
+        var folder=Files.createDirectories(root.resolve("docs/skills-preview-rea/runtime/dashes"));javax.imageio.ImageIO.write(image,"png",folder.resolve(skill+"-fragmentos.png").toFile());
     }
     private Protocol.State actorState(long tick,float x,float y){return new Protocol.State(tick,List.of(new Protocol.Actor(1,"Jogador",x,y,100,100,1000,0,false)));}
     /** Conta cobertura visível, independente da identidade dos frames escolhidos. */

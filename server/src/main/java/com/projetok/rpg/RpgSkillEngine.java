@@ -215,7 +215,7 @@ public final class RpgSkillEngine {
                 }
                 session.checkpoints.clear();session.checkpointUntil=0;
             }
-            case CIRCULAR_DASH -> { world.skillDashing(true);world.skillIntangible(true);pending.add(new LightningField(player,world,skill,origin)); }
+            case CIRCULAR_DASH -> pending.add(new LightningField(player,world,skill,origin));
             case SENTRY -> { session.sentryShots = 1; session.sentryUntil = now + skill.mechanics().durationTicks(); session.sentryReady = now; world.skillSentry(true); }
             case CONE_VOLLEY -> {
                 var heading = direction(origin, aim); var sharedHits = new HashSet<String>();
@@ -328,6 +328,7 @@ public final class RpgSkillEngine {
 
     /** Cancela ações pendentes e eventos do lançador em viagem, morte ou desconexão. */
     public void remove(int player) {
+        for(var task:pending)if(task.player==player)task.cancel();
         var removed = sessions.remove(player);
         if (removed != null) { removed.world.skillDashing(false); stopSentry(removed); }
         pending.removeIf(p -> p.player == player);
@@ -337,6 +338,7 @@ public final class RpgSkillEngine {
 
     /** Cancela o executor antes de ativar uma revisão; não retrocede o contador de eventos. */
     public void clear() {
+        for(var task:pending)task.cancel();
         for (var s : sessions.values()) { s.world.skillClearControls(); s.world.skillDashing(false); stopSentry(s); for (var enemy : s.world.skillEnemies()) enemy.clearSkillEffects(); }
         sessions.clear(); pending.clear(); dots.clear(); events.clear();
     }
@@ -371,8 +373,14 @@ public final class RpgSkillEngine {
 
     /** Seleciona inimigos por geometria real, incluindo tangência e linha de visão. */
     private void area(int player, RpgWorld world, Definition skill, Position point, int radius, boolean damage) {
-        for (var enemy : live(world)) if (distance(point, enemy.getPosition()) <= radius + 19
-                && world.skillVisible(point, enemy.getPosition())) hit(player, world, skill, enemy, 1000, damage);
+        for (var enemy : live(world)) if (areaContains(world,enemy,point,radius))
+            hit(player, world, skill, enemy, 1000, damage);
+    }
+
+    /** Mantém seleção, tangência e visibilidade idênticas para dano e controle de área. */
+    private static boolean areaContains(RpgWorld world,EnemyService.Enemy enemy,Position point,int radius){
+        return world.skillTargetable(enemy)&&distance(point,enemy.getPosition())<=radius+19
+                &&world.skillVisible(point,enemy.getPosition());
     }
 
     /** Cone frontal com largura proporcional à distância, sem atingir vítimas atrás do lançador. */
@@ -405,6 +413,8 @@ public final class RpgSkillEngine {
         Pending(int player, RpgWorld world, Definition skill) { this.player = player; this.world = world; this.skill = skill; region = world.networkState().region(); }
         /** Retorna verdadeiro enquanto a ação ainda precisa de outro tick. */
         abstract boolean advance();
+        /** Libera somente recursos pertencentes à execução cancelada, quando houver. */
+        void cancel(){ }
     }
 
     /** Projétil que percorre segmentos reais até o alvo exato; um respawn não herda o acerto antigo. */
@@ -661,24 +671,25 @@ public final class RpgSkillEngine {
         }
     }
 
-    /** Fase oculta/intangível seguida de quatro cortes sobre todo o círculo de conjuração. */
+    /** Corpo fixo e invulnerável por duração finita; os quatro dashes são somente apresentação. */
     private final class LightningField extends Pending {
         final Position center;final long start;boolean resolved;
         LightningField(int player,RpgWorld world,Definition skill,Position origin){
             super(player,world,skill);center=origin;start=world.skillTick();
+            world.skillBeginLightning(this,start+skill.mechanics().durationTicks(),
+                    enemy->areaContains(world,enemy,center,skill.radius()));
             // Marcador de fase, sem deslocamento: precisa ser distinto mesmo olhando para fora na borda.
             var phase=new Position(center.x()+(center.x()<world.skillSpace().width()/2?1:-1),center.y());
             emit(player,world,skill,center,phase);
         }
         boolean advance(){
+            if(!world.skillOwnsLightning(this)){cancel();return false;}
             if(world.skillTick()-start<skill.mechanics().durationTicks())return true;
             if(!resolved){for(int cut=0;cut<skill.mechanics().hits();cut++)area(player,world,skill,center,skill.radius(),true);resolved=true;}
-            // Se todos os apoios estiverem ocupados, mantém a fase apenas até haver saída segura.
-            if(!world.skillReappear()){
-                world.skillNotice("Aguardando espaço livre para reaparecer.");return true;
-            }
-            world.skillDashing(false);emit(player,world,skill,center,center);return false;
+            cancel();emit(player,world,skill,center,center);return false;
         }
+        /** O token por instância impede que um cancelamento atrasado afete outra conjuração. */
+        @Override void cancel(){world.skillEndLightning(this);}
     }
 
     // --- Consultas geométricas e auxiliares sem estado externo ---

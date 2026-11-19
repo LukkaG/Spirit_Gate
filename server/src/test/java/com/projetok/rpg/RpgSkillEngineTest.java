@@ -405,24 +405,26 @@ class RpgSkillEngineTest {
     /** O especial reserva a área sem mover o corpo e só causa dano no encerramento. */
     @Test void lightningFieldIsImmuneUntilFourAreaHitsAndThenRestoresDamage(){
         var f=new Fixture("thunder");Position start=f.world.skillPosition();assertTrue(f.cast(5));
-        assertTrue(f.world.skillIntangible());int hp=f.world.networkState().hp();
+        assertTrue(f.world.skillFixedExecution());int hp=f.world.networkState().hp();
         f.world.receiveDamage(100);assertEquals(hp,f.world.networkState().hp());
         f.advance(31);assertEquals(start,f.world.skillPosition());assertEquals(1000,f.enemy.hp);
         f.advance(1);assertEquals(944,f.enemy.hp);assertFalse(f.world.skillIntangible());
-        f.world.receiveDamage(10);assertEquals(hp-10,f.world.networkState().hp());
+        int afterEnd=f.world.networkState().hp();f.world.receiveDamage(10);assertEquals(afterEnd-10,f.world.networkState().hp());
         var events=f.engine.events().stream().filter(e->e.skill().equals("thunder_5")).toList();
         assertEquals(1,events.stream().filter(e->e.fromX()!=e.x()||e.fromY()!=e.y()).count());
         assertEquals(1,events.stream().filter(e->e.fromX()==e.x()&&e.fromY()==e.y()).count());
         assertTrue(f.world.skillReady());
     }
-    @Test void lightningFieldReappearsBesideAnAllyWhoOccupiedItsOriginAndClearRestoresState(){
+    @Test void lightningFieldKeepsItsOccupiedOriginAndClearRestoresState(){
         var f=new Fixture("thunder");var ally=f.ally();assertTrue(f.cast(5));
-        ally.setSyntheticBodies(List.of());assertTrue(ally.skillMove(f.world.skillPosition()));
+        Position origin=f.world.skillPosition();f.refreshBodies();
+        ally.skillMove(origin);assertNotEquals(origin,ally.skillPosition());
         f.advance(32);assertFalse(f.world.skillIntangible());
+        assertEquals(origin,f.world.skillPosition());
         assertTrue(Math.abs(f.world.skillPosition().x()-ally.skillPosition().x())>=f.world.physicalRadius()+ally.physicalRadius()-.001
                 ||Math.abs(f.world.skillPosition().y()-ally.skillPosition().y())>=f.world.physicalRadius()+ally.physicalRadius()-.001);
         var cancel=new Fixture("thunder");assertTrue(cancel.cast(5));cancel.engine.clear();
-        assertFalse(cancel.world.skillIntangible());assertTrue(cancel.world.skillReady());
+        assertFalse(cancel.world.skillIntangible());assertFalse(cancel.world.skillFixedExecution());assertTrue(cancel.world.skillReady());
     }
     @Test void frontalDashNeedsNoTargetAndCutsTwoCrossedEnemiesOnlyOnce(){
         var f=new Fixture("thunder",List.of(),Map.of("a_target","slime|forest|185|300","b_target","slime|forest|275|300"));
@@ -435,7 +437,7 @@ class RpgSkillEngineTest {
         var f=new Fixture("thunder");assertTrue(f.world.skillMove(new Position(18,300)));
         f.world.faceSyntheticDirection(-1,0);assertTrue(f.cast(5));
         var start=f.engine.events().get(0);assertNotEquals(start.fromX(),start.x());
-        assertEquals(new Position(18,300),f.world.skillPosition());assertTrue(f.world.skillIntangible());
+        assertEquals(new Position(18,300),f.world.skillPosition());assertTrue(f.world.skillFixedExecution());
         f.advance(32);assertFalse(f.world.skillIntangible());assertTrue(f.world.skillReady());
     }
     @Test void bodySlamPublishesGripAndTheCollisionResolvedLandingWithoutChangingDamage(){
@@ -647,7 +649,8 @@ class RpgSkillEngineTest {
     @Test void circularLightningAcceptsNearbyBodiesAndHitsThroughActualContact() {
         var f = new Fixture("thunder"); f.refreshBodies();
         assertTrue(f.cast(5)); assertEquals(600, f.world.networkState().stamina());
-        f.advance(1); assertEquals(1000,f.enemy.hp); assertTrue(f.world.skillIntangible());
+        f.advance(1); assertEquals(1000,f.enemy.hp); assertTrue(f.world.skillFixedExecution());
+        assertFalse(f.world.skillIntangible());
         f.advance(31); assertEquals(944,f.enemy.hp);
         assertTrue(f.engine.events().stream().filter(e -> e.skill().equals("thunder_5")).count() == 2);
         assertTrue(f.world.skillReady());
@@ -672,7 +675,7 @@ class RpgSkillEngineTest {
             f.world.faceSyntheticDirection(forward?-1:1,0);f.refreshBodies();
             assertTrue(f.cast(5));f.advance(32);
             assertEquals(944,f.enemy.hp,"O rastro deve atingir a distância 46 na direção "+target);
-            assertTrue(f.enemy.skillStunUntil>f.tick);
+            assertEquals(0,f.enemy.skillStunUntil,"O controle da área não deixa STUN após o fim");
             assertEquals(target,f.enemy.getPosition());
             f.advance(31);assertTrue(f.world.skillReady());
         }

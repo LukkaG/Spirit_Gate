@@ -1,0 +1,83 @@
+{
+  "skills": 40,
+  "clips": 219,
+  "verified_frames": 5766,
+  "source_transparent_frames": 260,
+  "tests": 75,
+  "failures": 0,
+  "skipped": 0,
+  "results": [
+    {
+      "name": "com.projetok.multiplayer.ReaSkillAssetsTest",
+      "tests": "12",
+      "errors": "0",
+      "skipped": "0",
+      "failures": "0",
+      "time": "3.026"
+    },
+    {
+      "name": "com.projetok.multiplayer.NetworkSkillPresentationTest",
+      "tests": "40",
+      "errors": "0",
+      "skipped": "0",
+      "failures": "0",
+      "time": "11.784"
+    },
+    {
+      "name": "com.projetok.multiplayer.SkillTargetPresentationTest",
+      "tests": "3",
+      "errors": "0",
+      "skipped": "0",
+      "failures": "0",
+      "time": "0.002"
+    },
+    {
+      "name": "com.projetok.multiplayer.SkillProtocolTest",
+      "tests": "6",
+      "errors": "0",
+      "skipped": "0",
+      "failures": "0",
+      "time": "1.911"
+    },
+    {
+      "name": "com.projetok.multiplayer.SkillDisplacementServerTest",
+      "tests": "1",
+      "errors": "0",
+      "skipped": "0",
+      "failures": "0",
+      "time": "1.727"
+    },
+    {
+      "name": "com.projetok.multiplayer.NetworkSkillGuiTest",
+      "tests": "1",
+      "errors": "0",
+      "skipped": "0",
+      "failures": "0",
+      "time": "5.357"
+    },
+    {
+      "name": "com.projetok.multiplayer.SkillImpactRefinementGuiTest",
+      "tests": "5",
+      "errors": "0",
+      "skipped": "0",
+      "failures": "0",
+      "time": "13.515"
+    },
+    {
+      "name": "com.projetok.multiplayer.SkillLifecycleGuiTest",
+      "tests": "3",
+      "errors": "0",
+      "skipped": "0",
+      "failures": "0",
+      "time": "14.006"
+    },
+    {
+      "name": "com.projetok.multiplayer.SkillSlashRefinementGuiTest",
+      "tests": "4",
+      "errors": "0",
+      "skipped": "0",
+      "failures": "0",
+      "time": "10.183"
+    }
+  ]
+}

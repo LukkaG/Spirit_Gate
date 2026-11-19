@@ -207,7 +207,8 @@ public final class RpgSessionWorld implements SessionSimulation {
         s.world.setSyntheticBodies(bodies(id));skills.clock(tick);
         boolean accepted=skills.cast(id,s.world,new RpgSkillEngine.Cast(request.slot(),request.targetId(),
                 generation,request.x(),request.y()),skillPlayers());
-        if(accepted){var v=s.world.networkState();s.proxy.setPosition(new Position(v.x(),v.y()));
+        if(accepted){if(s.world.skillFixedExecution()){s.x=s.y=0;s.inputTick=tick-16;}
+            var v=s.world.networkState();s.proxy.setPosition(new Position(v.x(),v.y()));
             var facing=s.world.combatFacing();s.fx=facing.x();s.fy=facing.y();}
         return accepted;
     }
@@ -230,6 +231,9 @@ public final class RpgSessionWorld implements SessionSimulation {
         var s=sessions.get(id);if(frozen||s==null||!Protocol.supportsGameplayApplication(s.application)||request.sequence()<=s.sequence)return false;
         if(s.commandTick!=tick){s.commandTick=tick;s.commands=0;}if(++s.commands>8)return false;
         s.sequence=request.sequence();
+        if(s.world.skillFixedExecution()&&request.operation()!=GameplayProtocol.Operation.QUERY_ATTRIBUTES
+                &&request.operation()!=GameplayProtocol.Operation.QUERY_ENERGY
+                &&request.operation()!=GameplayProtocol.Operation.SELECT_TARGET)return false;
         try{return switch(request.operation()){
             case EQUIP->s.world.equip(request.target());case UNEQUIP->s.world.unequip(request.target());
             case USE->s.world.use(request.target());case CHOOSE_DOMAIN->{boolean chosen=s.world.chooseDomain(request.target());if(chosen)skills.remove(id);yield chosen;}case COLLECT->{if(!request.target().equals("pending")||s.world.networkState().hp()==0)yield false;s.world.collectLoot();yield true;}
@@ -307,6 +311,7 @@ public final class RpgSessionWorld implements SessionSimulation {
     public boolean request(int id,Protocol.WorldRequest request){
         var s=sessions.get(id);if(frozen||encounter==null||s==null||request.sequence()<=s.sequence)return false;
         if(s.commandTick!=tick){s.commandTick=tick;s.commands=0;}if(++s.commands>8)return false;s.sequence=request.sequence();
+        if(s.world.skillFixedExecution())return false;
         final String target=content!=null&&s.application<4&&request.action()==Protocol.WorldAction.TRAVEL?com.projetok.studio.StudioExport.key("portal_",(request.target().equals("to_village")?"forest/":"village/")+request.target()):request.target();
         s.world.setSyntheticBodies(bodies(id));boolean accepted;
         try{accepted=switch(request.action()){
@@ -323,6 +328,8 @@ public final class RpgSessionWorld implements SessionSimulation {
         var session=sessions.get(id);if(frozen||session==null||intent.sequence()<=session.sequence)return false;
         if(session.commandTick!=tick){session.commandTick=tick;session.commands=0;}if(++session.commands>8)return false;
         session.sequence=intent.sequence();
+        // A sequência é consumida também na recusa: não guardar caminhada para depois da janela.
+        if(session.world.skillFixedExecution()){session.x=session.y=0;session.inputTick=tick-16;return false;}
         if(encounter!=null&&intent.action()!=Protocol.Action.MOVE){
             if(intent.x()!=0||intent.y()!=0)return false;
             session.world.setSyntheticBodies(bodies(id));

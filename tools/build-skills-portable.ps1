@@ -39,7 +39,7 @@ $image = Join-Path $destination 'SpiritGateSkills'
 
 # Conserva os manifests originais, copiando apenas imagens do conjunto efetivo.
 $properties = @{}
-foreach ($suffix in @('','/refined-v2','/refined-v3','/refined-v4','/refined-v5','/refined-v6','/refined-v7','/refined-v8')) {
+foreach ($suffix in @('','/refined-v2','/refined-v3','/refined-v4','/refined-v5','/refined-v6','/refined-v7','/refined-v8','/rea-v1')) {
     $relative = 'assets/skills' + $suffix + '/manifest.properties'
     $source = Join-Path $project $relative
     if (-not (Test-Path -LiteralPath $source -PathType Leaf)) { throw "Manifesto ausente: $relative" }

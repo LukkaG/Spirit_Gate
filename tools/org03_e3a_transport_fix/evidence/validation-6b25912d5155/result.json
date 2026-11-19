@@ -1,0 +1,141 @@
+{
+  "date": "2026-11-15",
+  "units": [
+    {
+      "suite": "legacy",
+      "tests": 23,
+      "exit_code": 0,
+      "status": "PASSOU"
+    },
+    {
+      "suite": "p1",
+      "tests": 47,
+      "exit_code": 0,
+      "status": "PASSOU"
+    }
+  ],
+  "total_tests": 70,
+  "fixture": {
+    "status": "PASSOU",
+    "exit_code": 0,
+    "trials": [
+      {
+        "path": "evidence/fixture-20261115-c0897ddb063a",
+        "status": "PASSOU",
+        "case": "EXPECTED_RESET",
+        "ports": [
+          65347,
+          65348
+        ],
+        "elapsed_s": 2.628
+      },
+      {
+        "path": "evidence/fixture-20261115-cd7d1c597fd0",
+        "status": "PASSOU",
+        "case": "UNEXPECTED_RESET",
+        "ports": [
+          65358,
+          65359
+        ],
+        "elapsed_s": 2.562
+      }
+    ]
+  },
+  "fixture_history": [
+    {
+      "path": "evidence/fixture-20261115-074fe6bdc92b/result.json",
+      "status": "PASSOU",
+      "case": "UNEXPECTED_RESET",
+      "ports": [
+        65260,
+        65261
+      ],
+      "cleanup_errors": [],
+      "listeners_after": [],
+      "own_handles_exited": true
+    },
+    {
+      "path": "evidence/fixture-20261115-68f936908ee9/result.json",
+      "status": "PASSOU",
+      "case": "EXPECTED_RESET",
+      "ports": [
+        65116,
+        65117
+      ],
+      "cleanup_errors": [],
+      "listeners_after": [],
+      "own_handles_exited": true
+    },
+    {
+      "path": "evidence/fixture-20261115-af4bf39919a7/result.json",
+      "status": "FALHOU",
+      "case": "EXPECTED_RESET",
+      "ports": [
+        65087,
+        65088
+      ],
+      "cleanup_errors": [],
+      "listeners_after": [],
+      "own_handles_exited": true
+    },
+    {
+      "path": "evidence/fixture-20261115-be45633546b9/result.json",
+      "status": "PASSOU",
+      "case": "EXPECTED_RESET",
+      "ports": [
+        65252,
+        65253
+      ],
+      "cleanup_errors": [],
+      "listeners_after": [],
+      "own_handles_exited": true
+    },
+    {
+      "path": "evidence/fixture-20261115-c0897ddb063a/result.json",
+      "status": "PASSOU",
+      "case": "EXPECTED_RESET",
+      "ports": [
+        65347,
+        65348
+      ],
+      "cleanup_errors": [],
+      "listeners_after": [],
+      "own_handles_exited": true
+    },
+    {
+      "path": "evidence/fixture-20261115-cd7d1c597fd0/result.json",
+      "status": "PASSOU",
+      "case": "UNEXPECTED_RESET",
+      "ports": [
+        65358,
+        65359
+      ],
+      "cleanup_errors": [],
+      "listeners_after": [],
+      "own_handles_exited": true
+    },
+    {
+      "path": "evidence/fixture-20261115-fffb76e8c941/result.json",
+      "status": "PASSOU",
+      "case": "UNEXPECTED_RESET",
+      "ports": [
+        65121,
+        65122
+      ],
+      "cleanup_errors": [],
+      "listeners_after": [],
+      "own_handles_exited": true
+    }
+  ],
+  "preservation": {
+    "files": 4081,
+    "changed": [],
+    "passed": true
+  },
+  "postgresql": false,
+  "sql": false,
+  "cluster_created": false,
+  "crashes": 0,
+  "e3_gate_approved": false,
+  "passed": true
+}

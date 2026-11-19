@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Ferramentas de teste isoladas: nenhuma dependencia adicionada ao runtime do jogo. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.projetok.tools</groupId>
+  <artifactId>server-quality</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <properties>
+    <maven.compiler.release>17</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- A execucao util exige a copia temporaria preparada por run_quality.py. -->
+    <game.root>${project.basedir}/isolated-project-required</game.root>
+    <quality.output>${project.basedir}/target</quality.output>
+    <quality.reports>${quality.output}/surefire-reports</quality.reports>
+    <quality.tests>ServerHandshakeDeadlineTest,ProtocolPropertiesTest,NettyFrameCompatibilityTest,ProtocolFuzzTest,ProtocolTest,ProtocolBoundaryTest,SkillProtocolTest,LocalServerTest,NetworkRobustnessTest,FinalNetworkIsolationTest,Task225ProjectileTcpTest,RpgReconnectIsolationTest,Task208ProgressionTest,Task210QuestJourneyTest</quality.tests>
+    <quality.fuzz>false</quality.fuzz>
+  </properties>
+  <!-- Mantem o launcher/commons trazido pelo Jazzer alinhado ao JUnit do projeto. -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency><groupId>org.junit</groupId><artifactId>junit-bom</artifactId><version>5.11.4</version><type>pom</type><scope>import</scope></dependency>
+    </dependencies>
+  </dependencyManagement>
+  <dependencies>
+    <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><version>5.11.4</version><scope>test</scope></dependency>
+    <dependency><groupId>com.code-intelligence</groupId><artifactId>jazzer-junit</artifactId><version>0.30.0</version><scope>test</scope></dependency>
+    <dependency><groupId>io.netty</groupId><artifactId>netty-codec</artifactId><version>4.1.141.Final</version><scope>test</scope></dependency>
+  </dependencies>
+  <build>
+    <directory>${quality.output}</directory>
+    <sourceDirectory>${game.root}/server/src/main/java</sourceDirectory>
+    <testSourceDirectory>${game.root}/server/src/test/java</testSourceDirectory>
+    <resources><resource><directory>${game.root}/server/src/main/resources</directory></resource></resources>
+    <testResources><testResource><directory>${game.root}/server/src/test/resources</directory></testResource></testResources>
+    <plugins>
+      <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>3.14.1</version></plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId><version>3.5.2</version>
+        <configuration>
+          <includes><include>${quality.tests}</include></includes>
+          <reportsDirectory>${quality.reports}</reportsDirectory>
+          <workingDirectory>${game.root}/server</workingDirectory>
+          <failIfNoTests>true</failIfNoTests>
+          <forkedProcessTimeoutInSeconds>120</forkedProcessTimeoutInSeconds>
+          <systemPropertyVariables>
+            <java.awt.headless>true</java.awt.headless>
+            <user.home>${game.root}/test-home</user.home>
+            <spiritgate.logs.dir>${game.root}/test-logs</spiritgate.logs.dir>
+            <JAZZER_FUZZ>${quality.fuzz}</JAZZER_FUZZ>
+            <jazzer.instrumentation_includes>com.projetok.multiplayer.**</jazzer.instrumentation_includes>
+            <jazzer.valueprofile>true</jazzer.valueprofile>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+

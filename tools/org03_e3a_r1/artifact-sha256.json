@@ -1,0 +1,18 @@
+{
+  "tools/org03_e3a_r1/lab_runtime.py": "7bb5230cb9a082346a93363f0cacf1a236de623d581d972d53c4829e38c2176f",
+  "tools/org03_e3a_r1/lab_runtime.py.diff": "325263313e6bb0cb7d91b3f98176e994bbdf093718e580cb8929d8d4306590a6",
+  "tools/org03_e3a_r1/lifecycle.py": "0a5f9363919a2c5324baff1a3ab06d1a47d365081f7b630c226586f5333b6608",
+  "tools/org03_e3a_r1/preservation-after.json": "9f60b40177913c1ab50f679da3c615250061d4c94996f15ec18d7fcb931af8b4",
+  "tools/org03_e3a_r1/preservation-before.json": "9f60b40177913c1ab50f679da3c615250061d4c94996f15ec18d7fcb931af8b4",
+  "tools/org03_e3a_r1/relay.py": "7584d6a97e10021291423e84985bc54c4fdba04d54c76d1e6f0c3915b16a6274",
+  "tools/org03_e3a_r1/relay.py.diff": "3b84f491d1927b62c1895b3e1f8ed7609e1427d70c62fe34efd5c9e6914edf00",
+  "tools/org03_e3a_r1/test-output.txt": "3163a99a1f34ebd2b7e780192deef2376a554913064c57b58fd36fc2bfeb9d57",
+  "tools/org03_e3a_r1/test_harness.py": "6e735175c91fc58c549e9ef176bc3a010890f3a6bbda8962f784a0e77b7e72d8",
+  "tools/org03_e3a_r1/validate.py": "30c81d90b732bc228bee92a3f3178fe9b7bf50f6788f2fe3da3ecb8e2391ad9f",
+  "tools/org03_e3a_r1/validation.json": "d98c3a893978c087e6223c23db0fae838f4fe94f14b053247d277ce0d35e9f26",
+  "docs/ORG-03-E3-A-R1-ANALISE-RELAY.md": "2fdc26c051dfb507595175149280d5919f0ccf6e2d1041159dfc5e4cc5bfb3cb",
+  "docs/ORG-03-E3-A-R1-PROPOSTA-REEXECUCAO.md": "bfa73b768355e832a60ebd230825b5dadee039a2fd98a7bcc121679a2d9efaf1",
+  "docs/ORG-03-E3-A-R1-RELATORIO-FINAL.md": "8598d5ed4b5ea8cb75a717e6dd36fbdc0a735298c8d8e17254f60bce10b2977a",
+  "docs/ORG-03-E3-A-R1-TESTES-HARNESS.md": "cd5a80d5cde9db27201c0c2120bbfde4b2e745e1856c6e8f30c0db355db553a0",
+  "docs/ORG-03-E3-A-R1.md": "09914b7f3188048387c5c7803509e8ef16e1822fac00327880b9b2b4fe45c7d2"
+}

@@ -1,0 +1,28 @@
+test_adapter_exited_client_eof_twice (test_harness.AdapterTests.test_adapter_exited_client_eof_twice) ... ok
+test_adapter_nonzero_is_not_success (test_harness.AdapterTests.test_adapter_nonzero_is_not_success) ... ok
+test_adapter_zero_unexpected_exit (test_harness.AdapterTests.test_adapter_zero_unexpected_exit) ... ok
+test_01_running_match (test_harness.ProcessTests.test_01_running_match) ... ok
+test_02_exited_before_inspection (test_harness.ProcessTests.test_02_exited_before_inspection) ... ok
+test_03_exit_between_observations (test_harness.ProcessTests.test_03_exit_between_observations) ... ok
+test_04_reused_pid (test_harness.ProcessTests.test_04_reused_pid) ... ok
+test_05_divergent_command (test_harness.ProcessTests.test_05_divergent_command) ... ok
+test_06_cim_absent (test_harness.ProcessTests.test_06_cim_absent) ... ok
+test_07_original_handle_exit (test_harness.ProcessTests.test_07_original_handle_exit) ... ok
+test_08_handle_inconclusive (test_harness.ProcessTests.test_08_handle_inconclusive) ... ok
+test_09_metadata_error (test_harness.ProcessTests.test_09_metadata_error) ... ok
+test_13_two_stop_requests (test_harness.ProcessTests.test_13_two_stop_requests) ... ok
+test_15_mismatch_latched (test_harness.ProcessTests.test_15_mismatch_latched) ... ok
+test_exit_just_before_terminate (test_harness.ProcessTests.test_exit_just_before_terminate) ... ok
+test_mismatch_even_if_handle_exits (test_harness.ProcessTests.test_mismatch_even_if_handle_exits) ... ok
+test_timeout_no_fallback (test_harness.ProcessTests.test_timeout_no_fallback) ... ok
+test_unlinked_original (test_harness.ProcessTests.test_unlinked_original) ... ok
+test_10_socket_error (test_harness.RelayTests.test_10_socket_error) ... ok
+test_11_client_eof (test_harness.RelayTests.test_11_client_eof) ... ok
+test_12_client_exits_while_response_held (test_harness.RelayTests.test_12_client_exits_while_response_held) ... ok
+test_14_stderr_preserved_sanitized (test_harness.RelayTests.test_14_stderr_preserved_sanitized) ... ok
+test_unknown_error_not_masked (test_harness.RelayTests.test_unknown_error_not_masked) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 0.046s
+
+OK

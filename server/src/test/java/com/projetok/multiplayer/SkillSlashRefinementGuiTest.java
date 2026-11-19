@@ -20,7 +20,7 @@ class SkillSlashRefinementGuiTest {
     @ParameterizedTest @ValueSource(strings={"fire","water","martial","wind"})
     void slashesRenderOnCasterAndObserverAndWindRequiresActualContact(String kit)throws Exception{
         Assumptions.assumeFalse(GraphicsEnvironment.isHeadless());
-        var root=Path.of("..").toAbsolutePath().normalize();var evidence=Files.createDirectories(root.resolve("docs/skills-preview-v6/runtime"));
+        var root=Path.of("..").toAbsolutePath().normalize();var evidence=Files.createDirectories(root.resolve("docs/skills-preview-rea/runtime/SkillSlashRefinementGuiTest"));
         var sprites=RpgPlayerSprites.load(root.resolve("assets/dev/player-base"),250,.5);
         var visuals=new RpgNetworkClientLauncher.Presentation(new NetworkPlayerVisuals(root.resolve("assets/dev/reaper"),sprites),null);
         var base=WorldContent.baseline();var maps=new TreeMap<>(base.bundle().maps());var forest=maps.get("forest");
@@ -37,7 +37,7 @@ class SkillSlashRefinementGuiTest {
                 });
                 waitFor(()->ready(caster)&&ready(observer),caster,observer);assertTrue(caster.gameplay(GameplayProtocol.Operation.CHOOSE_DOMAIN,kit));
                 waitFor(()->caster.playerSheet().progress().domain().equals(kit),caster,observer);
-                waitFor(()->GamePanelsIntegrationTest.onEdt(()->view(frames[0]).clip("fire_5")!=null&&view(frames[0]).clip("fire_5").frames()==12&&view(frames[1]).clip("wind_4.impact")!=null),caster,observer);
+                waitFor(()->GamePanelsIntegrationTest.onEdt(()->view(frames[0]).clip("fire_5")!=null&&view(frames[0]).clip("fire_5.rea.wave_1").frames()==8&&view(frames[1]).clip("wind_4.impact")!=null),caster,observer);
                 if(kit.equals("wind")){
                     assertFalse(caster.skills().windCheckpoint());assertTrue(caster.castSkill(4,0,0,0,0));
                     waitFor(()->caster.skills().events().stream().anyMatch(e->e.skill().equals("wind_4")),caster,observer);

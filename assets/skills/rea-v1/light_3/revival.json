@@ -1,0 +1,186 @@
+{
+  "id": "LIGHT_3_revival",
+  "name": "Único retorno — clarão e halo",
+  "cell": 128,
+  "frames": 6,
+  "directional": false,
+  "loop": false,
+  "durations_ms": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80
+  ],
+  "attachment": "existing_fallen_ally_feet",
+  "pivot_px": [
+    64,
+    96
+  ],
+  "show_character": true,
+  "depth_split": true,
+  "depth_split_y": 96,
+  "source_file": "revive_lifecycle.png",
+  "source_grid": [
+    6,
+    4
+  ],
+  "source_start_index": 12,
+  "alpha_threshold": 0.5,
+  "monotonic_end": false,
+  "visual_markers": [
+    {
+      "frame": 3,
+      "label": "Única leitura de retorno — estado real do motor"
+    }
+  ],
+  "phase": "revival",
+  "ability": "LIGHT_3",
+  "ability_name": "Reviver",
+  "phase_name": "Único retorno — clarão e halo",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/revival.png",
+  "sheet_size": [
+    768,
+    128
+  ],
+  "duration_ms": 480,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        26,
+        15,
+        103,
+        104
+      ],
+      "opaque_px": 2475,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "840df04ca8afe8906815a1bdd1d91a28c2839e8c627fb0291b32aed5b4e557e9"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        25,
+        15,
+        103,
+        104
+      ],
+      "opaque_px": 2597,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "abee2b08857be5d531605444f665bd53201f9e8b27bd1dfd67313879ce909949"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        25,
+        15,
+        103,
+        104
+      ],
+      "opaque_px": 3108,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "a2f306ffd14ec8dc3c6dd9db50d01d4ad0678d68805b354ba30fd69d137bffa5"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        26,
+        17,
+        103,
+        104
+      ],
+      "opaque_px": 1530,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "8a87e810dcd334c3835e2a56869c5029e79d5836affca36297e58ea1ddab9b7d"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        28,
+        17,
+        102,
+        104
+      ],
+      "opaque_px": 647,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "f108566011765aa96c56f3c3c75dcd752ceb82c71d18acc8e272ae1f771d99e7"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        27,
+        18,
+        99,
+        104
+      ],
+      "opaque_px": 278,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "e77e858e3bba080cd402d69831a8391ac28a1a7329c5d33ff27f97821298673f"
+    }
+  ],
+  "source": "Sources/revive_lifecycle.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "depth_layers": {
+    "rear": "Layers/revival_rear.png",
+    "front": "Layers/revival_front.png",
+    "screen_split_y": 96
+  },
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

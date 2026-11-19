@@ -1,0 +1,876 @@
+{
+  "id": "WIND_1_impact",
+  "name": "Primeiro contato",
+  "cell": 64,
+  "frames": 6,
+  "directional": true,
+  "loop": false,
+  "durations_ms": [
+    30,
+    40,
+    40,
+    40,
+    30,
+    30
+  ],
+  "attachment": "first_valid_contact",
+  "visual_gust_count": 3,
+  "phase": "impact",
+  "ability": "WIND_1",
+  "ability_name": "Corte de vento",
+  "phase_name": "Primeiro contato",
+  "rows": [
+    "N",
+    "NE",
+    "E",
+    "SE",
+    "S",
+    "SW",
+    "W",
+    "NW"
+  ],
+  "sheet": "Sheets/impact.png",
+  "sheet_size": [
+    384,
+    512
+  ],
+  "pivot_px": [
+    32,
+    32
+  ],
+  "duration_ms": 210,
+  "frames_info": [
+    {
+      "direction": "N",
+      "index": 0,
+      "bbox": [
+        32,
+        32,
+        34,
+        40
+      ],
+      "opaque_px": 15,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "ee8de746dbba0d95e627fed360d7ef7c003d017adfbfd13396b0585758b5fbaf"
+    },
+    {
+      "direction": "N",
+      "index": 1,
+      "bbox": [
+        26,
+        28,
+        38,
+        43
+      ],
+      "opaque_px": 92,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "dbe17159c70de430e878d93ee03ce0edeeb1f7840490bd783b27d4b26341b037"
+    },
+    {
+      "direction": "N",
+      "index": 2,
+      "bbox": [
+        22,
+        25,
+        41,
+        41
+      ],
+      "opaque_px": 113,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "2cc849d720853b7aebc15970830dd91eb5869ecf6108b63708cec7cb2b3cc8ad"
+    },
+    {
+      "direction": "N",
+      "index": 3,
+      "bbox": [
+        23,
+        29,
+        42,
+        41
+      ],
+      "opaque_px": 100,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "2b608cfc2d65b20cfe31c80ab03a6c0792ec03a72864d3dba25bbb1a6d8aa982"
+    },
+    {
+      "direction": "N",
+      "index": 4,
+      "bbox": [
+        25,
+        31,
+        41,
+        42
+      ],
+      "opaque_px": 58,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "c03e2db6715f2825f11561fd0de34b1ad6134dbeebe25b2ab204edddd2fe3aa8"
+    },
+    {
+      "direction": "N",
+      "index": 5,
+      "bbox": [
+        30,
+        31,
+        40,
+        42
+      ],
+      "opaque_px": 20,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "b3f0186c38a262bd3d81968465539926a0793ced863ff6942801687f2a891b96"
+    },
+    {
+      "direction": "NE",
+      "index": 0,
+      "bbox": [
+        30,
+        27,
+        38,
+        34
+      ],
+      "opaque_px": 23,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "8e47c0190a1785405c647ff436e3353937972d751e4db2a62854235192e45d40"
+    },
+    {
+      "direction": "NE",
+      "index": 1,
+      "bbox": [
+        26,
+        23,
+        40,
+        37
+      ],
+      "opaque_px": 110,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "040a9e7af25320733e1462486fc01809ee15185905409dea7c509102f3d6bad2"
+    },
+    {
+      "direction": "NE",
+      "index": 2,
+      "bbox": [
+        24,
+        21,
+        41,
+        37
+      ],
+      "opaque_px": 115,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "8285e276184bd2947f9ee495fa30ec2b89015541567703f64e99dab0b7ea8929"
+    },
+    {
+      "direction": "NE",
+      "index": 3,
+      "bbox": [
+        25,
+        23,
+        45,
+        36
+      ],
+      "opaque_px": 90,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "67b42c7b374f363217a75f3e979157beeb9d6a04b4c2ee817674d24494f3e9b6"
+    },
+    {
+      "direction": "NE",
+      "index": 4,
+      "bbox": [
+        27,
+        26,
+        43,
+        37
+      ],
+      "opaque_px": 57,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "d6847de8a1840fd58d207f0cb1ab1cad00f52825dd5f7b7d0bef476c193e5cee"
+    },
+    {
+      "direction": "NE",
+      "index": 5,
+      "bbox": [
+        30,
+        26,
+        42,
+        35
+      ],
+      "opaque_px": 18,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "93f91f54c8fc69d565a91fbbf13dd5544d68bb1f04676de3e46c5ba4b37854d7"
+    },
+    {
+      "direction": "E",
+      "index": 0,
+      "bbox": [
+        30,
+        30,
+        40,
+        34
+      ],
+      "opaque_px": 27,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "752c83fd4aa5d826e905d4d9cb791c659003f51e7f38762f7b59134366ec1a44"
+    },
+    {
+      "direction": "E",
+      "index": 1,
+      "bbox": [
+        27,
+        24,
+        42,
+        37
+      ],
+      "opaque_px": 103,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "e9c5ec5d187d9dc851e3adb63f67af2e28367a746d51f351d29814e4d41b563b"
+    },
+    {
+      "direction": "E",
+      "index": 2,
+      "bbox": [
+        25,
+        22,
+        42,
+        40
+      ],
+      "opaque_px": 133,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "47a1747c834b18144c82d3d7a4a7ec66947503fff27276bfc9be62d8c3497572"
+    },
+    {
+      "direction": "E",
+      "index": 3,
+      "bbox": [
+        25,
+        25,
+        46,
+        38
+      ],
+      "opaque_px": 104,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "180f34cffb374a312c3374e18be67db5d3fbc4a317a6e34855cc48501955b9f0"
+    },
+    {
+      "direction": "E",
+      "index": 4,
+      "bbox": [
+        25,
+        27,
+        45,
+        39
+      ],
+      "opaque_px": 66,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "8ca123cb57a7bb059d6b8eb2d7be4a9c560150a5c495f41b5ff8ff1d31e1542c"
+    },
+    {
+      "direction": "E",
+      "index": 5,
+      "bbox": [
+        28,
+        30,
+        43,
+        38
+      ],
+      "opaque_px": 20,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "b25fb39c3e9dce1c47784f47a85d90ddc00d31eb478abfe39009bdefef08e46e"
+    },
+    {
+      "direction": "SE",
+      "index": 0,
+      "bbox": [
+        30,
+        29,
+        38,
+        37
+      ],
+      "opaque_px": 26,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "1d208b94f78895a59e65ed54b6efff9bc2b39fb450cf7eb3594af07f757af69c"
+    },
+    {
+      "direction": "SE",
+      "index": 1,
+      "bbox": [
+        27,
+        25,
+        41,
+        39
+      ],
+      "opaque_px": 119,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "f4d57161cf1a3e89cf1981f343ea0c9fc4e76a013dc6b48b28ebea6d53cefbdf"
+    },
+    {
+      "direction": "SE",
+      "index": 2,
+      "bbox": [
+        24,
+        25,
+        41,
+        40
+      ],
+      "opaque_px": 109,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "5db6ce9831325c08bd0363369fde30e8b4eb374fef762d0c1a55d1bab4e0a30e"
+    },
+    {
+      "direction": "SE",
+      "index": 3,
+      "bbox": [
+        25,
+        25,
+        40,
+        43
+      ],
+      "opaque_px": 109,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "369d951a90ba526526fff122f89f0c0e3c3b0555829fabf7e26aefc3c2cbdfce"
+    },
+    {
+      "direction": "SE",
+      "index": 4,
+      "bbox": [
+        26,
+        26,
+        39,
+        41
+      ],
+      "opaque_px": 72,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "eb67f266cff49da3e52642707767d090654e74e53a1c91c1356aa2af61051229"
+    },
+    {
+      "direction": "SE",
+      "index": 5,
+      "bbox": [
+        30,
+        30,
+        41,
+        41
+      ],
+      "opaque_px": 15,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "7b7399827278dffc7969dbb6a9f7f48bb19c8daf84b15df8aaad60a743160768"
+    },
+    {
+      "direction": "S",
+      "index": 0,
+      "bbox": [
+        31,
+        29,
+        35,
+        38
+      ],
+      "opaque_px": 25,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "a74aa1cac6fb8497bb56b0adc0dc06ba9423bfb251c3b35d098db76acd07db47"
+    },
+    {
+      "direction": "S",
+      "index": 1,
+      "bbox": [
+        26,
+        24,
+        39,
+        40
+      ],
+      "opaque_px": 101,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "8d4becba65016fc739c8a136410f690c0a73b56456492a9b1124ab1917d6fd16"
+    },
+    {
+      "direction": "S",
+      "index": 2,
+      "bbox": [
+        23,
+        26,
+        40,
+        41
+      ],
+      "opaque_px": 100,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "0fecf85de0ac9d208a6daa6fa16f3d8332a7dd0e280d4c9a84362667e0c392eb"
+    },
+    {
+      "direction": "S",
+      "index": 3,
+      "bbox": [
+        24,
+        26,
+        39,
+        42
+      ],
+      "opaque_px": 93,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "9902878ccc1c9ab5d0254bd6116a115f1e8f598ff7cab15b26df9b47eee4d2c5"
+    },
+    {
+      "direction": "S",
+      "index": 4,
+      "bbox": [
+        24,
+        26,
+        39,
+        40
+      ],
+      "opaque_px": 51,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "552d17f52eb40f38cc1a7e42746ce5f147ce1fc9875cc9fcdcee60d4716f0c85"
+    },
+    {
+      "direction": "S",
+      "index": 5,
+      "bbox": [
+        25,
+        28,
+        38,
+        40
+      ],
+      "opaque_px": 26,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "be0b4e6a2d6055d3a2662dcb9cb2f1912f45a6ae0f81ccd87824f91bc9a98c3b"
+    },
+    {
+      "direction": "SW",
+      "index": 0,
+      "bbox": [
+        27,
+        27,
+        35,
+        35
+      ],
+      "opaque_px": 27,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "5544964e19aee5f9dbe98be9b1ef7f4abf6d393cd6488a9443dd0605b1c63a4d"
+    },
+    {
+      "direction": "SW",
+      "index": 1,
+      "bbox": [
+        24,
+        25,
+        39,
+        39
+      ],
+      "opaque_px": 118,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "13359c4a073721a687de672cd7d4350db3d0efbe8da92874eb8df29d4ab45655"
+    },
+    {
+      "direction": "SW",
+      "index": 2,
+      "bbox": [
+        22,
+        24,
+        39,
+        40
+      ],
+      "opaque_px": 123,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "005378197d9ef01b917540c7bedd130e9008abafeb6717e0091224ba6bf1f7e2"
+    },
+    {
+      "direction": "SW",
+      "index": 3,
+      "bbox": [
+        20,
+        24,
+        38,
+        39
+      ],
+      "opaque_px": 100,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "cf466fd9542c7da7257887ea52bd2d2773cf182c7abcb42cfe9f2e9c5339ea5a"
+    },
+    {
+      "direction": "SW",
+      "index": 4,
+      "bbox": [
+        22,
+        26,
+        36,
+        39
+      ],
+      "opaque_px": 26,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "474eccb72d74b2bc99ec77d5c1635cc442c48c3a6989e9ab410346d80b91dc0f"
+    },
+    {
+      "direction": "SW",
+      "index": 5,
+      "bbox": [
+        24,
+        27,
+        34,
+        38
+      ],
+      "opaque_px": 19,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "7660f9ebb3ca57868a112e8245e2934e95df036459df53a6ce86ed3d14e8ec42"
+    },
+    {
+      "direction": "W",
+      "index": 0,
+      "bbox": [
+        28,
+        29,
+        38,
+        32
+      ],
+      "opaque_px": 23,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "7f667e85a66332bc6a34b08163281641060317a0e119934e6d7abc5ad1c543d2"
+    },
+    {
+      "direction": "W",
+      "index": 1,
+      "bbox": [
+        23,
+        24,
+        39,
+        37
+      ],
+      "opaque_px": 111,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "68868f32c2aff7e4773e07597951d6a69434c5849e3bdca5e3a9187a97a6cc58"
+    },
+    {
+      "direction": "W",
+      "index": 2,
+      "bbox": [
+        21,
+        21,
+        39,
+        40
+      ],
+      "opaque_px": 140,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "ceedefcd36195800385e092023070715623e42753f299f2dbc2d59fadbb353f3"
+    },
+    {
+      "direction": "W",
+      "index": 3,
+      "bbox": [
+        17,
+        24,
+        36,
+        37
+      ],
+      "opaque_px": 98,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "a8ac5d679441b77b3f6c86138a5af72f0f1712e72de9114369d5436c74561ede"
+    },
+    {
+      "direction": "W",
+      "index": 4,
+      "bbox": [
+        19,
+        25,
+        36,
+        36
+      ],
+      "opaque_px": 50,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "6c8b0af56fa68ff91914682e401cb38dd67c3820e7b2cc1f30119fee1d668653"
+    },
+    {
+      "direction": "W",
+      "index": 5,
+      "bbox": [
+        24,
+        28,
+        36,
+        36
+      ],
+      "opaque_px": 23,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "80d75ece2064671d04fe4007e86cf506ca302d316676cb30bd54c3278bb253ec"
+    },
+    {
+      "direction": "NW",
+      "index": 0,
+      "bbox": [
+        28,
+        25,
+        36,
+        32
+      ],
+      "opaque_px": 23,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "2434311d1d3860e7ac6d00999802fc88277c5d94616460fd2d703b26c64c4ac9"
+    },
+    {
+      "direction": "NW",
+      "index": 1,
+      "bbox": [
+        23,
+        22,
+        38,
+        36
+      ],
+      "opaque_px": 114,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "7bb1e42edfba9f048928e69039dc64ef088fb9c17ea1715d9e5414342c8a6495"
+    },
+    {
+      "direction": "NW",
+      "index": 2,
+      "bbox": [
+        22,
+        19,
+        38,
+        36
+      ],
+      "opaque_px": 137,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "703df1378b4b9027e675b63f801d886eda678d45992315fce0fc4d549d526eb9"
+    },
+    {
+      "direction": "NW",
+      "index": 3,
+      "bbox": [
+        20,
+        21,
+        38,
+        35
+      ],
+      "opaque_px": 96,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "396bd5cf9fe5bc338b2db5956b736ee8f57ebf42112998402dd732f3923c7b31"
+    },
+    {
+      "direction": "NW",
+      "index": 4,
+      "bbox": [
+        22,
+        23,
+        36,
+        34
+      ],
+      "opaque_px": 34,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "0a5f64d36c8d9f0c55d0b811ffe8d39b76d49349151067770be4d4e67172d1de"
+    },
+    {
+      "direction": "NW",
+      "index": 5,
+      "bbox": [
+        24,
+        23,
+        34,
+        31
+      ],
+      "opaque_px": 14,
+      "alpha_threshold": 0.75,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "sha256_rgba": "07b1ece67f07d1003c4de686db565bab5dcac9fb25ca1119b40a2e58b4110998"
+    }
+  ],
+  "source": "Sources/impact.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 1,
+    "E": 2,
+    "SE": 3,
+    "S": 4,
+    "SW": 5,
+    "W": 6,
+    "NW": 7
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "visual_markers": [],
+  "depth_layers": null,
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

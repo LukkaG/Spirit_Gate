@@ -101,6 +101,32 @@ public final class RpgWorld {
     private long skillRootUntil,skillStunUntil,skillSlowUntil;
     private float skillSlowScale=1;
     private boolean skillDashing,skillSentry,skillIntangible;
+    /** Execução local identificada; não representa intangibilidade física nem estado persistente. */
+    private record FixedLightning(Object token, String region, String domain, long until,
+            java.util.function.Predicate<EnemyService.Enemy> contains) { }
+    private FixedLightning fixedLightning;
+
+    /** Janela autoritativa finita, independente da ocultação visual e da ocupação do corpo. */
+    public boolean skillFixedExecution(){
+        var execution=fixedLightning;
+        return isSynthetic()&&execution!=null&&hp>0&&!transitioning&&ticks<execution.until()
+                &&region.equals(execution.region())&&domain.domain().equals(execution.domain());
+    }
+    /** Vincula o controle ao executor original, usando a mesma seleção da área de dano. */
+    void skillBeginLightning(Object token,long until,java.util.function.Predicate<EnemyService.Enemy> contains){
+        fixedLightning=new FixedLightning(token,region,domain.domain(),until,contains);
+    }
+    /** Cancelamento idempotente: uma execução antiga não limpa a execução substituta. */
+    void skillEndLightning(Object token){if(fixedLightning!=null&&fixedLightning.token()==token)fixedLightning=null;}
+    /** Valida propriedade mesmo no tick terminal, quando a imunidade já expirou. */
+    boolean skillOwnsLightning(Object token){
+        return fixedLightning!=null&&fixedLightning.token()==token&&hp>0&&!transitioning
+                &&region.equals(fixedLightning.region())&&domain.domain().equals(fixedLightning.domain());
+    }
+    /** Consulta por tick, sem sobrescrever STUN/ROOT independentes ou transferir flags entre gerações. */
+    boolean skillLightningControls(EnemyService.Enemy enemy){
+        return skillFixedExecution()&&fixedLightning.contains().test(enemy);
+    }
     /** Estado efêmero de combate; nunca é salvo ou aceito de um cliente. */
     public boolean skillIntangible(){return isSynthetic()&&skillIntangible;}
     /** Permite à população retirar somente o contato com mobs durante a investida frontal. */
@@ -209,6 +235,7 @@ public final class RpgWorld {
     }
     public void receiveDamage(int amount) { if(amount<0||amount>10000) throw new IllegalArgumentException("Dano invalido");
         if(skillIntangible()){message="Intangível: golpe evitado.";return;}
+        if(skillFixedExecution()){message="Invulnerável: golpe evitado.";return;}
         if(amount>0&&hp>0&&ticks<evadeUntilTick){message="Shunpo: esquiva!";return;}
         int before=hp;hp=Math.max(0,hp-amount);
         if(hp==0&&isSynthetic()){skillClearControls();skillDashing(false);}
@@ -499,9 +526,9 @@ public final class RpgWorld {
     // --- Ponte restrita para o executor autoritativo de técnicas de sessão ---
 
     /** Atordoamento impede ataques e habilidades; prisão mantém essas ações disponíveis. */
-    boolean skillActionsBlocked(){return isSynthetic()&&ticks<skillStunUntil;}
+    boolean skillActionsBlocked(){return isSynthetic()&&(ticks<skillStunUntil||skillFixedExecution());}
     /** Controles são efêmeros e não afetam a campanha comum nem seu formato de save. */
-    boolean skillMovementBlocked(){return isSynthetic()&&(skillSentry||ticks<skillRootUntil||ticks<skillStunUntil);}
+    boolean skillMovementBlocked(){return isSynthetic()&&(skillSentry||ticks<skillRootUntil||ticks<skillStunUntil||skillFixedExecution());}
     /** Imobilidade voluntária da Sentinela; não bloqueia o lançamento das flechas. */
     void skillSentry(boolean active){skillSentry=active;}
     /** Agilidade autoritativa da ficha; o cliente nunca fornece a cadência de disparos. */

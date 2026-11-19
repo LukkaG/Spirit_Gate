@@ -18,9 +18,16 @@ public final class NetworkSkillPresentation {
     private static final int DASH_FADE_MILLIS=220;
     /** Recorte e pivô do efeito, independentes do atlas de personagens. */
     public record Clip(BufferedImage image,int frameWidth,int frameHeight,int columns,int frames,
-                       int frameMillis,int drawWidth,int drawHeight,int pivotX,int pivotY) {
+                       int frameMillis,int drawWidth,int drawHeight,int pivotX,int pivotY,
+                       ReaSkillAssets.Animation animation) {
+        /** Conserva os recortes anteriores e os clientes de teste sem metadados REA. */
+        public Clip(BufferedImage image,int frameWidth,int frameHeight,int columns,int frames,
+                    int frameMillis,int drawWidth,int drawHeight,int pivotX,int pivotY){
+            this(image,frameWidth,frameHeight,columns,frames,frameMillis,drawWidth,drawHeight,pivotX,pivotY,null);
+        }
         /** Desenha um frame com alfa e amostragem por vizinho mais próximo. */
         void draw(Graphics2D original,int frame,float x,float y) {
+            if(animation!=null){animation.draw(original,Math.min(frames-1,frame),x,y,0);return;}
             var g=(Graphics2D)original.create();
             try {
                 g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
@@ -37,16 +44,19 @@ public final class NetworkSkillPresentation {
                 public void paintIcon(Component component,Graphics graphics,int x,int y){
                     var g=(Graphics2D)graphics.create();
                     try {g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-                        int frame=Math.min(frames-1,frames/2),sx=frame%columns*frameWidth,sy=frame/columns*frameHeight;
+                        int frame=Math.min(frames-1,frames/2),sx=frame%columns*frameWidth,sy=(animation!=null&&animation.rows()==8?2:frame/columns)*frameHeight;
                         g.drawImage(image,x,y,x+24,y+24,sx,sy,sx+frameWidth,sy+frameHeight,null);
                     } finally {g.dispose();}
                 }
             };
         }
     }
-    private record Active(SkillProtocol.Event event,long began,int duration,double fallbackAngle) {
+    private record Active(SkillProtocol.Event event,long began,int duration,double fallbackAngle,int variant) {
+        Active(SkillProtocol.Event event,long began,int duration,double fallbackAngle){this(event,began,duration,fallbackAngle,1);}
         Active(SkillProtocol.Event event,long began,int duration){this(event,began,duration,Double.NaN);}
     }
+    private record VisualProgress(long tick,int index){}
+    private final Map<String,VisualProgress> visualProgress=new HashMap<>();
     private final LongSupplier clock;
     private final List<Active> active=new ArrayList<>();
     private final Map<String,DashTrail> dashes=new LinkedHashMap<>();
@@ -78,7 +88,7 @@ public final class NetworkSkillPresentation {
     NetworkSkillPresentation(LongSupplier clock){this.clock=Objects.requireNonNull(clock);}
     public void reducedMotion(boolean value){reducedMotion=value;}
     /** Portais descartam animações antigas mesmo se as duas regiões usam a mesma revisão. */
-    public void region(String value){if(!region.equals(value)){active.clear();dashes.clear();lightningFields.clear();region=value;}}
+    public void region(String value){if(!region.equals(value)){active.clear();dashes.clear();lightningFields.clear();visualProgress.clear();region=value;}}
     /**
      * Posições recebidas mantêm os efeitos self cast presos ao próprio personagem.
      * Morte ou saída confirmada descarta os efeitos cancelados pelo executor; um snapshot
@@ -123,8 +133,8 @@ public final class NetworkSkillPresentation {
 
     /** Deduplica sequências e abandona efeitos da revisão anterior. */
     public void update(SkillProtocol.State state) {
-        if(state==null){active.clear();dashes.clear();lightningFields.clear();revision="";sequence=0;return;}
-        if(!revision.equals(state.hash())){active.clear();dashes.clear();lightningFields.clear();revision=state.hash();sequence=0;}
+        if(state==null){active.clear();dashes.clear();lightningFields.clear();visualProgress.clear();revision="";sequence=0;return;}
+        if(!revision.equals(state.hash())){active.clear();dashes.clear();lightningFields.clear();visualProgress.clear();revision=state.hash();sequence=0;}
         long now=clock.getAsLong();expire();
         for(var event:state.events())if(event.sequence()>sequence){
             sequence=event.sequence();
@@ -132,6 +142,7 @@ public final class NetworkSkillPresentation {
             var clip=clips.get(event.skill());
             int duration=clip==null?700:Math.max(400,clip.frames()*clip.frameMillis());
             var definition=com.projetok.rpg.RpgSkillCatalog.get(event.skill());
+            int variant=visualVariant(event,definition);
             if(event.skill().equals("thunder_5")){
                 long age=Math.max(0,(state.tick()-event.tick())*1000/30);
                 if(moving(event)){if(age<5000)lightningFields.put(event.player(),new Active(event,now-age,5000));}
@@ -145,7 +156,8 @@ public final class NetworkSkillPresentation {
                 int matched=matchingLaunch(event,definition);
                 if(matched>=0){
                     var previous=active.get(matched).event();
-                    if(directionalImpactFallback(definition))fallbackAngle=Math.atan2(previous.y()-previous.fromY(),previous.x()-previous.fromX());
+                    variant=active.get(matched).variant();
+                    if(directionalImpactFallback(definition)||clip!=null&&clip.animation()!=null)fallbackAngle=Math.atan2(previous.y()-previous.fromY(),previous.x()-previous.fromX());
                     if(Set.of("fire_2","fire_4").contains(event.skill())){
                         // A área nasce no fim real do percurso e conserva o chão entre o caster e esse ponto.
                         var ended=new SkillProtocol.Event(previous.sequence(),previous.tick(),previous.player(),previous.skill(),previous.fromX(),previous.fromY(),event.x(),event.y());
@@ -171,10 +183,24 @@ public final class NetworkSkillPresentation {
                 var impact=clips.get(event.skill()+".impact");
                 duration=moving(event)?BODY_SLAM_GRIP_MILLIS:BODY_SLAM_GRIP_MILLIS+(impact==null?350:impact.frames()*impact.frameMillis());
             }
+            if(clip!=null&&clip.animation()!=null&&!moving(event)&&clips.containsKey(event.skill()+".impact"))
+                duration=Math.max(duration,ReaSkillAssets.impactDuration(clips,event.skill()));
+            if(clip!=null&&clip.animation()!=null)duration=ReaSkillAssets.duration(clips,event,duration,travels(definition));
             long age=Math.max(0,(state.tick()-event.tick())*1000/30);
-            if(age<duration)active.add(new Active(event,now-age,duration,fallbackAngle));
+            if(age<duration)active.add(new Active(event,now-age,duration,fallbackAngle,variant));
         }
         while(active.size()>48)active.remove(0);
+    }
+    /** Numera ondas e contatos por lançador/habilidade; sequências de outros jogadores não pulam fases. */
+    private int visualVariant(SkillProtocol.Event event,com.projetok.rpg.RpgSkillCatalog.Definition definition){
+        int count=switch(event.skill()){case "aetheri_3"->5;case "aetheri_5"->7;case "wind_2"->3;case "martial_2"->4;default->1;};
+        if(count==1)return 1;
+        String key=event.player()+":"+event.skill();var previous=visualProgress.get(key);
+        if(!moving(event))return previous==null?1:previous.index();
+        int gap=Math.max(6,definition.mechanics().intervalTicks()*2+1);
+        int index=previous==null||event.tick()-previous.tick()>gap?1:previous.index()%count+1;
+        if(visualProgress.size()>=128)visualProgress.clear();
+        visualProgress.put(key,new VisualProgress(event.tick(),index));return index;
     }
     private void expire(){
         long now=clock.getAsLong();active.removeIf(effect->now-effect.began()>=effect.duration());
@@ -207,6 +233,8 @@ public final class NetworkSkillPresentation {
         expire();long now=clock.getAsLong();drawLightningFields(original,now);drawDashes(original,now);
         for(var effect:active){
             var event=effect.event();var definition=com.projetok.rpg.RpgSkillCatalog.get(event.skill());
+            if(ReaSkillAssets.draw(clips,original,event,Math.max(0,now-effect.began()),effect.duration(),actors,
+                    effect.fallbackAngle(),reducedMotion,travels(definition),effect.variant()))continue;
             boolean traveling=travels(definition)&&moving(event);
             boolean rain=event.skill().equals("aetheri_3");
             var clip=clips.get(traveling||rain&&moving(event)?event.skill()+".travel":event.skill()+".impact");
@@ -271,6 +299,20 @@ public final class NetworkSkillPresentation {
         for(var trail:dashes.values()){
             var clip=clips.get(trail.skill+".travel");if(clip==null)clip=clips.get(trail.skill);if(clip==null)continue;
             var actor=actors.get(trail.player);if(actor==null||actor.hp()==0)continue;
+            if(clip.animation()!=null){
+                for(int index=1;index<trail.points.size();index++){
+                    var from=trail.points.get(index-1);var to=trail.points.get(index);long age=now-to.at();
+                    if(age<DASH_FADE_MILLIS)ReaSkillAssets.dash(clips,original,trail.skill,"trail",age,
+                            to.x(),to.y()-PROJECTILE_CENTER_OFFSET,Math.atan2(to.y()-from.y(),to.x()-from.x()),reducedMotion);
+                }
+                if(!trail.points.isEmpty()){
+                    var first=trail.points.get(0);var last=trail.points.get(trail.points.size()-1);
+                    double angle=Math.atan2(last.y()-first.y(),last.x()-first.x());
+                    ReaSkillAssets.dash(clips,original,trail.skill,trail.closed?"finish":"dash",trail.closed?now-last.at():now-trail.began,
+                            actor.x(),actor.y()-PROJECTILE_CENTER_OFFSET,angle,reducedMotion);
+                }
+                continue;
+            }
             if(echoRenderer!=null){
                 double lastDistance=0;int count=0;
                 for(int i=trail.points.size()-1;i>=0&&count<3;i--){var p=trail.points.get(i);long age=now-p.at();double distance=Math.hypot(actor.x()-p.x(),actor.y()-p.y());
@@ -312,6 +354,7 @@ public final class NetworkSkillPresentation {
     /** Delimita a área durante a fase invisível, sem revelar sprite, nome ou sombra do lançador. */
     private void drawLightningFields(Graphics2D original,long now){
         for(var field:lightningFields.values()){
+            if(ReaSkillAssets.lightning(clips,original,field.event(),now-field.began(),reducedMotion))continue;
             float x=field.event().fromX(),y=field.event().fromY();int radius=com.projetok.rpg.RpgSkillCatalog.get("thunder_5").radius();
             var g=(Graphics2D)original.create();try{
                 g.setColor(new Color(255,190,45,20));g.fill(new java.awt.geom.Ellipse2D.Float(x-radius,y-radius,radius*2,radius*2));
@@ -413,6 +456,12 @@ public final class NetworkSkillPresentation {
 
     /** Carrega os 40 recortes locais, recusando caminhos externos e geometrias inválidas. */
     public static Map<String,Clip> load(Path root) throws IOException {
+        return load(root,true);
+    }
+    /** Permite validar o fallback histórico sem depender da presença do pacote opcional REA. */
+    static Map<String,Clip> loadLegacy(Path root)throws IOException{return load(root,false);}
+    /** Aplica o overlay somente após validar os recortes históricos e seus caminhos. */
+    private static Map<String,Clip> load(Path root,boolean includeRea)throws IOException {
         Path absolute=root.toAbsolutePath().normalize(),folder=absolute.resolve("assets/skills");
         Path manifest=folder.resolve("manifest.properties");
         if(Files.size(manifest)>256_000)throw new IOException("Manifesto de habilidades excessivo");
@@ -457,6 +506,13 @@ public final class NetworkSkillPresentation {
                 loaded.put(id,new Clip(bitmap,width,height,columns,frames,millis,drawWidth,drawHeight,pivotX,pivotY));
             }
         } catch(IllegalArgumentException error){throw new IOException("Metadados de efeito inválidos",error);}
+        if(includeRea){
+            var rea=ReaSkillAssets.load(absolute);
+            // Um papel ausente no REA não pode herdar a fase de outra revisão por acidente.
+            for(var definition:com.projetok.rpg.RpgSkillCatalog.all())if(rea.containsKey(definition.id()))
+                for(String role:List.of("travel","impact","ground"))loaded.remove(definition.id()+"."+role);
+            loaded.putAll(rea);
+        }
         return Map.copyOf(loaded);
     }
     /** Cada manifesto recusa duplicação; o V2 pode substituir explicitamente metadados do V1. */

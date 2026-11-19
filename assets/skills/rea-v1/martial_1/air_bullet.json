@@ -1,0 +1,981 @@
+{
+  "id": "MARTIAL_1_air_bullet",
+  "name": "Bala de ar — loop centrado",
+  "cell": 64,
+  "frames": 6,
+  "directional": true,
+  "loop": true,
+  "durations_ms": [
+    40,
+    40,
+    40,
+    40,
+    40,
+    40
+  ],
+  "attachment": "cosmetic_air_only",
+  "pivot_px": [
+    32,
+    32
+  ],
+  "source_file": "air_bullet.png",
+  "source_grid": [
+    6,
+    8
+  ],
+  "source_start_index": 0,
+  "alpha_threshold": 0.5,
+  "registration": "none",
+  "art_role": "vfx",
+  "gameplay_events": [],
+  "visual_only_no_collision_or_damage": true,
+  "phase": "air_bullet",
+  "ability": "MARTIAL_1",
+  "ability_name": "Soco preciso",
+  "phase_name": "Bala de ar — loop centrado",
+  "rows": [
+    "N",
+    "NE",
+    "E",
+    "SE",
+    "S",
+    "SW",
+    "W",
+    "NW"
+  ],
+  "sheet": "Sheets/air_bullet.png",
+  "sheet_size": [
+    384,
+    512
+  ],
+  "duration_ms": 240,
+  "frames_info": [
+    {
+      "direction": "N",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        20,
+        17,
+        43,
+        50
+      ],
+      "opaque_px": 540,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "067bcf4997f0985731df4deca4afb8e224a930117f30d5544ab14076daed9b45"
+    },
+    {
+      "direction": "N",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        20,
+        17,
+        43,
+        54
+      ],
+      "opaque_px": 538,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "358fb8a9be1156e1d18198eb59f969d8dcf3904ad804ea13f54b688b6354b7ab"
+    },
+    {
+      "direction": "N",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        20,
+        17,
+        43,
+        52
+      ],
+      "opaque_px": 538,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "00e2ab82d22597d58aed78fdf1af8d8c0131523deba0aef60f93b6df3d1def3f"
+    },
+    {
+      "direction": "N",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        20,
+        17,
+        43,
+        51
+      ],
+      "opaque_px": 544,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "dee4197df80d538ac35e765095d5bf05c2a9a2b41574b6f170c233162747f09e"
+    },
+    {
+      "direction": "N",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        20,
+        17,
+        43,
+        53
+      ],
+      "opaque_px": 544,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "67cb2c4b89f7a9c9a7fb1cb7431d5bac0374afb42d83b0051e60e224b6ab0dc5"
+    },
+    {
+      "direction": "N",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        20,
+        17,
+        43,
+        51
+      ],
+      "opaque_px": 536,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "6fed94248fa25ee0ed5cdbd7de2c9348eca23b5f22f724242812b68403acbbdf"
+    },
+    {
+      "direction": "NE",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        15,
+        20,
+        45,
+        48
+      ],
+      "opaque_px": 486,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "e6726baca8920a1c3be44b4f1b4d594a77d2c26bfeae1050440fdbfbc74701e3"
+    },
+    {
+      "direction": "NE",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        16,
+        20,
+        45,
+        45
+      ],
+      "opaque_px": 478,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "36419464b693e3ea563ca1e6ad5f432338e4c256f9f73a16e348d0332b3a504e"
+    },
+    {
+      "direction": "NE",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        16,
+        20,
+        45,
+        48
+      ],
+      "opaque_px": 486,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "c73912908b534c3fb643086ca7cc411376402a6433fe50429011fc4ed0a927db"
+    },
+    {
+      "direction": "NE",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        15,
+        20,
+        45,
+        49
+      ],
+      "opaque_px": 481,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "015b487dc0230ebedddadf7fa9f0063538dd61de42b1385ed0e8985d700d6297"
+    },
+    {
+      "direction": "NE",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        16,
+        20,
+        45,
+        47
+      ],
+      "opaque_px": 481,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "70e8c5c760471e591b4eb11b8415ef9b3ecd3b37810087d2d3809d5fbf0b834e"
+    },
+    {
+      "direction": "NE",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        16,
+        20,
+        45,
+        48
+      ],
+      "opaque_px": 485,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "3669485ddc5c9c2bc5e5f244d21adcba2d86b3beaa67ddbe8175f1380dcd4ecc"
+    },
+    {
+      "direction": "E",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        10,
+        20,
+        46,
+        44
+      ],
+      "opaque_px": 511,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "6603c4b821aabbba808ceb61555f77f3c09a47a1cd15e3956c769cbbe81701fb"
+    },
+    {
+      "direction": "E",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        12,
+        20,
+        46,
+        44
+      ],
+      "opaque_px": 503,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "c30948b758796c9221550330be70c053a3e0ba3fc0efd7dcb26bda21df5a5a08"
+    },
+    {
+      "direction": "E",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        13,
+        20,
+        46,
+        44
+      ],
+      "opaque_px": 506,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "6da5e78d575b45ded56840315f88badb3add0c5affee73a1ea213474754c3e46"
+    },
+    {
+      "direction": "E",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        12,
+        20,
+        46,
+        44
+      ],
+      "opaque_px": 506,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "bfeb3ef70e0295f840fa778e0871b757a55394ee3656e4d0114bb69a926012fa"
+    },
+    {
+      "direction": "E",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        16,
+        20,
+        46,
+        44
+      ],
+      "opaque_px": 505,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "72f34080de9e0de33b0510503b7c1d3234f2b1d547dbbbea26253d45717c658c"
+    },
+    {
+      "direction": "E",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        11,
+        20,
+        46,
+        44
+      ],
+      "opaque_px": 508,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "2fd8089ee0fd45f5cb7f99513398a1996c46b8d86bf55dc162faa20d718eb93a"
+    },
+    {
+      "direction": "SE",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        18,
+        15,
+        45,
+        44
+      ],
+      "opaque_px": 510,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "f95f36bbd267b1b9fec31492b0d74758761c36f58040beeeca213c30d930cb12"
+    },
+    {
+      "direction": "SE",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        15,
+        16,
+        45,
+        44
+      ],
+      "opaque_px": 511,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "5b96e449fe797481ba211febcef0f78f2a61658c73d6c58f8b4654afef54349f"
+    },
+    {
+      "direction": "SE",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        18,
+        18,
+        45,
+        44
+      ],
+      "opaque_px": 507,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "48fff5a85e024643a541a0877f1b8652a41e059e81d576ed98e6edafbca0dc23"
+    },
+    {
+      "direction": "SE",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        17,
+        14,
+        45,
+        44
+      ],
+      "opaque_px": 514,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "4820363bbb77caf3ae5220af93c061d759b5d02330e8fa86a8c25f69ad3b5935"
+    },
+    {
+      "direction": "SE",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        16,
+        15,
+        45,
+        44
+      ],
+      "opaque_px": 511,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "bcf45a9121b0e6f647e05800fec6470477ddb35f9089f837d863241bfa3d904b"
+    },
+    {
+      "direction": "SE",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        18,
+        18,
+        45,
+        44
+      ],
+      "opaque_px": 507,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "48fff5a85e024643a541a0877f1b8652a41e059e81d576ed98e6edafbca0dc23"
+    },
+    {
+      "direction": "S",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        21,
+        11,
+        44,
+        46
+      ],
+      "opaque_px": 520,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "0f00f11a9e5382970f35195737565c6cbbe2d9ad4a957e7d51c382a1ff3a1371"
+    },
+    {
+      "direction": "S",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        21,
+        14,
+        44,
+        46
+      ],
+      "opaque_px": 516,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "c90e855bd1beef4ab10982e5047230c1ec4510fd7cb1e096465f83f6a73fb91f"
+    },
+    {
+      "direction": "S",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        21,
+        12,
+        44,
+        46
+      ],
+      "opaque_px": 519,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "981e5db341492d7f5c3ada4a866ccf50ee5bfc9103a49df96ff9e875276ed4ed"
+    },
+    {
+      "direction": "S",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        21,
+        10,
+        44,
+        46
+      ],
+      "opaque_px": 517,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "b685336d2782b40ba5ba5832f825bb3a1b918289c4c9510f15e8470be041fbf5"
+    },
+    {
+      "direction": "S",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        21,
+        11,
+        44,
+        46
+      ],
+      "opaque_px": 518,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "9ce5c14abb799e0561e8770095eecd574860a66d153603d2c704492a144f91c6"
+    },
+    {
+      "direction": "S",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        21,
+        14,
+        44,
+        46
+      ],
+      "opaque_px": 515,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "0c6c2639317190d75313771cd771dff398f0d4cc456d748d99f047b6de430649"
+    },
+    {
+      "direction": "SW",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        18,
+        17,
+        50,
+        44
+      ],
+      "opaque_px": 541,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "56bece5bbf5454fa14520ec4b3ab6b30292d60daa0614949c294f05ccad5503e"
+    },
+    {
+      "direction": "SW",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        18,
+        16,
+        49,
+        44
+      ],
+      "opaque_px": 540,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "282900381098b859ae6cf88fc6da9adf8b720517ecd6992dce67ba13a51d4257"
+    },
+    {
+      "direction": "SW",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        18,
+        17,
+        50,
+        44
+      ],
+      "opaque_px": 539,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "68cd72f1223b700f7eb19e8eaee997387b43de53da4340a99c0563f6a2ba8b08"
+    },
+    {
+      "direction": "SW",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        18,
+        17,
+        51,
+        44
+      ],
+      "opaque_px": 538,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "fa7da7334b4b1b2745cb8b2b1ff64fafb159c224d50b2002da1d0503c85e502b"
+    },
+    {
+      "direction": "SW",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        18,
+        18,
+        49,
+        44
+      ],
+      "opaque_px": 536,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "486fd2f976757fced583923baf1c2437f8f603b9bfe1bbe48ca7d284a9712c3f"
+    },
+    {
+      "direction": "SW",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        18,
+        16,
+        50,
+        44
+      ],
+      "opaque_px": 541,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "0e3a3d035c0dc929fd416a88a5355b088533a0ed734cfdd2518fc205f0be237d"
+    },
+    {
+      "direction": "W",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        16,
+        21,
+        52,
+        44
+      ],
+      "opaque_px": 552,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "c4b3cf3fcb7e1a3145a3dde514ebab44fda3b5d9706993156b823d18a48eb731"
+    },
+    {
+      "direction": "W",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        16,
+        21,
+        51,
+        44
+      ],
+      "opaque_px": 553,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "1aa7f5de4598ccde14cf63d443e896747cf4267eb28c6d71d76d536074e63ad3"
+    },
+    {
+      "direction": "W",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        16,
+        21,
+        51,
+        44
+      ],
+      "opaque_px": 553,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "326f7f9460e571f5b17da7357f90140023c81b3f9aedbc57d5c2a08868ef0260"
+    },
+    {
+      "direction": "W",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        16,
+        21,
+        55,
+        44
+      ],
+      "opaque_px": 553,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "6a1dc118f7d24cc75bcfce9122f53238f133b4148f46ade52039644f52068365"
+    },
+    {
+      "direction": "W",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        16,
+        21,
+        55,
+        44
+      ],
+      "opaque_px": 555,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "ac7cf61da9eb14e78dea168f30c6ec77c270e657204805b5c34338b76dd9cfb2"
+    },
+    {
+      "direction": "W",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        16,
+        21,
+        51,
+        44
+      ],
+      "opaque_px": 554,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "7e1ea745c9962c16882737a51f4d94f2e153c8954292943385fd3dfd26e5ad40"
+    },
+    {
+      "direction": "NW",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        19,
+        19,
+        49,
+        49
+      ],
+      "opaque_px": 547,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "368ce8c73bfc52fecd2a24b4f0a94dcf178756b8d36cbda899c89b73c61ab76e"
+    },
+    {
+      "direction": "NW",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        19,
+        19,
+        49,
+        46
+      ],
+      "opaque_px": 544,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "a3387fbb94be8f4882768c2fcff4a31fb781370b6f1edfd24d11e7427136cb39"
+    },
+    {
+      "direction": "NW",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        19,
+        19,
+        47,
+        46
+      ],
+      "opaque_px": 535,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "e73e1fc8d491272fe66f40a10fe8840f8d5a12019db2a924407d5d6eb247acdb"
+    },
+    {
+      "direction": "NW",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        19,
+        19,
+        47,
+        46
+      ],
+      "opaque_px": 534,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "a887214c3c5e865d3f3398790eec231d784eb857a3c0a45646167515fa370c65"
+    },
+    {
+      "direction": "NW",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        19,
+        19,
+        48,
+        46
+      ],
+      "opaque_px": 537,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "fb3570077feb9e925378695ef433a541388b76c95c7058e855038ee4f1fdbfe9"
+    },
+    {
+      "direction": "NW",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        19,
+        19,
+        50,
+        48
+      ],
+      "opaque_px": 538,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "4be6b03fd321934cfb3ebc1c3969d6b9045539e1fcd9033b344351dc694b6f25"
+    }
+  ],
+  "source": "Sources/air_bullet.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 1,
+    "E": 2,
+    "SE": 3,
+    "S": 4,
+    "SW": 5,
+    "W": 6,
+    "NW": 7
+  },
+  "world_translation_baked": false,
+  "visual_markers": [],
+  "depth_layers": null,
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

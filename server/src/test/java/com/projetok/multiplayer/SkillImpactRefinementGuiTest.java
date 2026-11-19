@@ -19,7 +19,7 @@ class SkillImpactRefinementGuiTest {
     @ParameterizedTest @ValueSource(strings={"fire","water","martial","aetheri","wind"})
     void confirmedPhasesRenderOnCasterAndObserver(String kit)throws Exception{
         Assumptions.assumeFalse(GraphicsEnvironment.isHeadless());
-        var root=Path.of("..").toAbsolutePath().normalize();var evidence=Files.createDirectories(root.resolve("docs/skills-preview-v4/runtime"));
+        var root=Path.of("..").toAbsolutePath().normalize();var evidence=Files.createDirectories(root.resolve("docs/skills-preview-rea/runtime/SkillImpactRefinementGuiTest"));
         String race=switch(kit){case "fire","water","wind"->"reaper";case "aetheri"->"aetheri";default->"human";};
         String domain=kit.equals("aetheri")?"bow_long":kit;
         var sprites=RpgPlayerSprites.load(root.resolve("assets/dev/player-base"),250,.5);

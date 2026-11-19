@@ -1,0 +1,181 @@
+{
+  "id": "SPIRIT_5_slow_loop",
+  "name": "Resistência ao movimento",
+  "cell": 128,
+  "frames": 6,
+  "directional": false,
+  "loop": true,
+  "durations_ms": [
+    90,
+    90,
+    90,
+    90,
+    90,
+    90
+  ],
+  "attachment": "target_feet",
+  "pivot_px": [
+    64,
+    96
+  ],
+  "show_character": true,
+  "depth_split": true,
+  "depth_split_y": 96,
+  "source_file": "slow_loop.png",
+  "source_grid": [
+    6,
+    1
+  ],
+  "alpha_threshold": 0.5,
+  "monotonic_end": false,
+  "registration": "none",
+  "phase": "slow_loop",
+  "ability": "SPIRIT_5",
+  "ability_name": "Areia movediça",
+  "phase_name": "Resistência ao movimento",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/slow_loop.png",
+  "sheet_size": [
+    768,
+    128
+  ],
+  "duration_ms": 540,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        22,
+        92,
+        107,
+        110
+      ],
+      "opaque_px": 519,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "e6fb8ef21bd85a42b73273c2ba768a4ea4093ab1d2db0e1b35a5a492b51717b9"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        22,
+        92,
+        107,
+        110
+      ],
+      "opaque_px": 519,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "4cb036c3405a5590d84a55d1c37305d357dfa57d6665c46f6e6e7954cc6bb3a6"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        22,
+        92,
+        107,
+        110
+      ],
+      "opaque_px": 519,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "3424e60adecf7a05a3f8bf255c0f9c2fd85b1aef70cd8a80c532dde6fb62f86f"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        22,
+        92,
+        107,
+        110
+      ],
+      "opaque_px": 519,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "b95cdf09413012710d97bba78db98139bf0107a9a67ed12ee0fe9b25ae742173"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        22,
+        92,
+        107,
+        110
+      ],
+      "opaque_px": 519,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "feb7253b50edbffaeda2502ab70fb7e571416c94226f3e7f58f4bfafeb9e08d9"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        22,
+        92,
+        107,
+        110
+      ],
+      "opaque_px": 519,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "e6fb8ef21bd85a42b73273c2ba768a4ea4093ab1d2db0e1b35a5a492b51717b9"
+    }
+  ],
+  "source": "Sources/slow_loop.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "visual_markers": [],
+  "depth_layers": {
+    "rear": "Layers/slow_loop_rear.png",
+    "front": "Layers/slow_loop_front.png",
+    "screen_split_y": 96
+  },
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}

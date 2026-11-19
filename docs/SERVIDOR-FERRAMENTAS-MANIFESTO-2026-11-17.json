@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-17",
+  "head": "c3d484e76f17c2d93bf0c68ad3ff54280ee8ad39",
+  "tools": [
+    {
+      "name": "spotbugs",
+      "version": "4.10.5",
+      "archive": "spotbugs-4.10.5.zip",
+      "url": "https://github.com/spotbugs/spotbugs/releases/download/4.10.5/spotbugs-4.10.5.zip",
+      "sha256": "f8eb9cf4ac8e1b29b3e29567541eef3f30b3bf49ff3880670a7963092cd8a859",
+      "format": "zip",
+      "installedAt": "C:\\Users\\lucas\\AppData\\Local\\SpiritGate\\quality-tools\\spotbugs-4.10.5"
+    },
+    {
+      "name": "jazzer",
+      "version": "0.30.0",
+      "archive": "jazzer-windows.tar.gz",
+      "url": "https://github.com/CodeIntelligenceTesting/jazzer/releases/download/v0.30.0/jazzer-windows.tar.gz",
+      "sha256": "959b04d6b773c901aa2a2e367b06841a346111eb76d3437dfb8b16b574091f61",
+      "format": "tar",
+      "installedAt": "C:\\Users\\lucas\\AppData\\Local\\SpiritGate\\quality-tools\\jazzer-0.30.0"
+    },
+    {
+      "name": "findsecbugs",
+      "version": "1.14.0",
+      "archive": "findsecbugs-cli-1.14.0.zip",
+      "url": "https://github.com/find-sec-bugs/find-sec-bugs/releases/download/version-1.14.0/findsecbugs-cli-1.14.0.zip",
+      "sha256": "ff546e16e596ade5b6534a6da87881e569429bf46dfd8faed63ca63cdd69b4f8",
+      "format": "zip",
+      "installedAt": "C:\\Users\\lucas\\AppData\\Local\\SpiritGate\\quality-tools\\findsecbugs-1.14.0"
+    },
+    {
+      "name": "codeql",
+      "version": "2.27.4",
+      "archive": "codeql-win64.zip",
+      "url": "https://github.com/github/codeql-cli-binaries/releases/download/v2.27.4/codeql-win64.zip",
+      "sha256": "a7ab5f73a8f440c3269f6660deb1d34f76005e756ccdf58c84c5ff88355453db",
+      "format": "zip",
+      "installedAt": "C:\\Users\\lucas\\AppData\\Local\\SpiritGate\\quality-tools\\codeql-2.27.4"
+    }
+  ],
+  "skills": [
+    {
+      "name": "audit-context-building",
+      "repository": "trailofbits/skills",
+      "ref": "149d7b21f4067765b82e67029730b42d228ef4b4",
+      "path": "C:\\Users\\lucas\\.codex\\skills\\audit-context-building",
+      "skillSha256": "33fa693dc6e166cfa4919e4373cb6578c009d296234c2ae7cb3cd4e79b443765"
+    },
+    {
+      "name": "property-based-testing",
+      "repository": "trailofbits/skills",
+      "ref": "149d7b21f4067765b82e67029730b42d228ef4b4",
+      "path": "C:\\Users\\lucas\\.codex\\skills\\property-based-testing",
+      "skillSha256": "9448cacb65c6237a7c22dc59602667177ecae405524079ae9ff92240590b995a"
+    },
+    {
+      "name": "variant-analysis",
+      "repository": "trailofbits/skills",
+      "ref": "149d7b21f4067765b82e67029730b42d228ef4b4",
+      "path": "C:\\Users\\lucas\\.codex\\skills\\variant-analysis",
+      "skillSha256": "7b6b78e499bcb88d05c68254ffc91ebc28edabf4e9808adcc40e2628ebb9407e"
+    },
+    {
+      "name": "codeql",
+      "repository": "trailofbits/skills",
+      "ref": "149d7b21f4067765b82e67029730b42d228ef4b4",
+      "path": "C:\\Users\\lucas\\.codex\\skills\\codeql",
+      "skillSha256": "1a6d919ff80f83b262daf650552af6eb6d2c32b19d0c529b70efe0c116b675cf"
+    }
+  ],
+  "codeqlAnalysisExecuted": false
+}

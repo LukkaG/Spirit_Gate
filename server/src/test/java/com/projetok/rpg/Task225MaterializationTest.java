@@ -80,7 +80,8 @@ class Task225MaterializationTest {
         /** O especial é SELF e não precisa inventar um alvo para iniciar a fase. */
         void cast() {
             assertTrue(engine.cast(1, world, new RpgSkillEngine.Cast(5, 0, 0, 0, 0), players));
-            assertTrue(world.skillIntangible());
+            assertTrue(world.skillFixedExecution());
+            assertFalse(world.skillIntangible());
         }
     }
 
@@ -96,7 +97,7 @@ class Task225MaterializationTest {
                     var f = new Fixture(scenario.obstacles(), scenario.spawn(), false);
                     f.cast();
                     f.advance(31);
-                    assertTrue(f.world.skillIntangible());
+                    assertTrue(f.world.skillFixedExecution());
                     f.advance(1);
                     assertFalse(f.world.skillIntangible());
                     assertFalse(f.world.skillInDash());
@@ -107,50 +108,43 @@ class Task225MaterializationTest {
                 }));
     }
 
-    /** Um aliado na origem provoca busca local sem empurrão, passagem de parede ou apoio inválido. */
-    @Test void allyOnTheOriginMaterializesCasterAtAnotherValidSupport() {
+    /** Mesmo uma sobreposição injetada pelo fixture não autoriza deslocar o lançador. */
+    @Test void allyInjectedOnTheOriginDoesNotRelocateCaster() {
         var f = new Fixture(List.of(new CollisionService.Obstacle(165, 240, 1, 120)), ORIGIN, false);
         f.cast();
         var ally = f.occupyOrigin();
         f.advance(32);
         assertFalse(f.world.skillIntangible());
-        assertNotEquals(ORIGIN, f.world.skillPosition());
+        assertEquals(ORIGIN, f.world.skillPosition());
         assertEquals(ORIGIN, ally.skillPosition());
-        assertTrue(f.world.skillPosition().x() <= 143.001f, "Não atravessar a parede para materializar");
-        assertTrue(Math.abs(f.world.skillPosition().x() - ally.skillPosition().x()) >= 24
-                || Math.abs(f.world.skillPosition().y() - ally.skillPosition().y()) >= 24);
-        assertTrue(f.world.skillReappear());
+        assertFalse(f.world.skillFixedExecution());
     }
 
-    /** Reproduz a espera sem limite por seis segundos simulados, com quatro danos somente uma vez. */
-    @Test void noArtificialSupportKeepsImmunityBeyondVisualFuseButReentersWhenSpaceReturns() {
+    /** Regressão ALPHA-002: a antiga câmara A-04 termina em 32 ticks sem procurar apoio. */
+    @Test void noArtificialSupportEndsAtConfiguredDurationWithoutReentryOrRelocation() {
         var f = new Fixture(chamber(), ORIGIN, true);
         f.cast();
-        var ally = f.occupyOrigin();
+        f.occupyOrigin();
         int hp = f.world.networkState().hp();
-        f.advance(180);
-        assertTrue(f.world.skillIntangible(), "A-04: o servidor continua intangível após seis segundos");
-        assertTrue(f.world.skillInDash());
-        assertFalse(f.world.skillReady());
-        assertEquals("Aguardando espaço livre para reaparecer.", f.world.networkMessage());
-        f.world.receiveDamage(100);
-        assertEquals(hp, f.world.networkState().hp());
+        f.advance(31);
+        assertTrue(f.world.skillFixedExecution());
+        f.world.receiveDamage(1);
+        assertEquals(hp,f.world.networkState().hp());
+        f.advance(1);
+        assertFalse(f.world.skillFixedExecution());
+        assertFalse(f.world.skillIntangible());
+        assertFalse(f.world.skillInDash());
+        assertTrue(f.world.skillReady());
+        assertEquals(ORIGIN,f.world.skillPosition());
         assertEquals(944, f.world.skillEnemies().get(0).hp, "Quatro cortes de 14, sem repetição na espera");
         assertEquals(4, f.encounter.events().stream().filter(event -> event.kind().equals("HIT")).count());
-        assertEquals(1, f.engine.events().size(), "Ainda não há evento terminal autoritativo");
-
-        // A fixture libera ocupantes; não altera a regra de materialização nem o mapa em execução.
-        f.encounter.leave(ally);
-        f.players.remove(2);
-        var victim = f.world.skillEnemies().get(0);
-        assertEquals(944, f.world.skillDamage(victim, victim.generation, victim.hp));
-        f.advance(1);
-        assertFalse(f.world.skillIntangible());
-        assertTrue(f.world.skillReady());
-        assertEquals(ORIGIN, f.world.skillPosition());
         assertEquals(2, f.engine.events().size());
+        hp=f.world.networkState().hp();
         f.world.receiveDamage(1);
         assertEquals(hp - 1, f.world.networkState().hp());
+        f.advance(148);
+        assertEquals(ORIGIN,f.world.skillPosition());
+        assertEquals(4,f.encounter.events().stream().filter(event->event.kind().equals("HIT")).count());
     }
 
     /** Mede a busca completa do pior caso sintético sem impor limiar de desempenho dependente da máquina. */
@@ -212,6 +206,7 @@ class Task225MaterializationTest {
                         default -> fail(action);
                     }
                     assertFalse(f.world.skillIntangible());
+                    assertFalse(f.world.skillFixedExecution());
                     assertFalse(f.world.skillInDash());
                     assertEquals(List.of(), f.engine.events());
                     assertEquals(List.of(0, 0, 0, 0, 0), f.engine.state(1).cooldowns());

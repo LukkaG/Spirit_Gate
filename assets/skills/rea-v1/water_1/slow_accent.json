@@ -1,0 +1,152 @@
+{
+  "ability": "WATER_1",
+  "phase": "slow_accent",
+  "cell": 64,
+  "frames": 6,
+  "directional": false,
+  "loop": false,
+  "optional": true,
+  "sheet": "Sheets/slow_accent.png",
+  "sheet_size": [
+    384,
+    64
+  ],
+  "rows": [
+    "RADIAL"
+  ],
+  "pivot_px": [
+    32,
+    32
+  ],
+  "palette": [
+    [
+      124,
+      162,
+      196
+    ],
+    [
+      153,
+      191,
+      218
+    ],
+    [
+      190,
+      220,
+      240
+    ],
+    [
+      222,
+      244,
+      255
+    ],
+    [
+      241,
+      253,
+      255
+    ]
+  ],
+  "source": "Existing WATER_1 impact/dissipation geometry; pale-blue palette variant only",
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "bbox": [
+        15,
+        23,
+        48,
+        52
+      ],
+      "opaque_px": 193,
+      "derived_from": "WATER_1\\Frames\\impact\\N\\04.png"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "bbox": [
+        16,
+        28,
+        47,
+        48
+      ],
+      "opaque_px": 50,
+      "derived_from": "WATER_1\\Frames\\impact\\N\\05.png"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "bbox": [
+        21,
+        29,
+        47,
+        48
+      ],
+      "opaque_px": 149,
+      "derived_from": "WATER_1\\Frames\\dissipation\\N\\01.png"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "bbox": [
+        24,
+        32,
+        45,
+        46
+      ],
+      "opaque_px": 51,
+      "derived_from": "WATER_1\\Frames\\dissipation\\N\\03.png"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "bbox": [
+        31,
+        34,
+        42,
+        47
+      ],
+      "opaque_px": 26,
+      "derived_from": "WATER_1\\Frames\\dissipation\\N\\04.png"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "bbox": [
+        31,
+        40,
+        32,
+        41
+      ],
+      "opaque_px": 1,
+      "derived_from": "WATER_1\\Frames\\dissipation\\N\\06.png"
+    }
+  ],
+  "id": "WATER_1_slow_accent",
+  "ability_name": "Corte de água",
+  "phase_name": "Acento opcional de lentidão",
+  "durations_ms": [
+    80,
+    80,
+    80,
+    80,
+    80,
+    80
+  ],
+  "duration_ms": 480,
+  "timing_policy": "Suggested art preview only. Bind playback and lifetime to existing authoritative gameplay; these durations do not define attacks, pulse intervals, speed, slow duration, collisions or damage.",
+  "attachment": "engine_effect_origin",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "visual_markers": [],
+  "render_only_when_game_applies_slow": true,
+  "depth_layers": null
+}

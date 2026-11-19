@@ -1,0 +1,122 @@
+{
+  "trials": [
+    {
+      "path": "evidence/fixture-20261115-f60abf5473dc",
+      "report": {
+        "status": "PASSOU",
+        "case": "EXPECTED_RESET",
+        "terminal": {
+          "event": "EXPECTED_CLIENT_DISCONNECT",
+          "paused": true,
+          "forwarded_server_bytes": 8,
+          "received_server_bytes": 18,
+          "held_bytes": 10,
+          "received_client_bytes": 13,
+          "forwarded_client_bytes": 13,
+          "termination_requested": true,
+          "permit_sha256": "fbd63662990a713f6c0a0bcb12acc20cfcfaf731a319ab860c1a56c08d63d494",
+          "transport_result": "TRANSPORT_EXPECTED_DISCONNECT",
+          "source": "client",
+          "operation": "recv_client",
+          "error": "ConnectionResetError",
+          "errno": 10054
+        },
+        "completion": {
+          "transport_result": "TRANSPORT_EXPECTED_DISCONNECT",
+          "process_result": "RELAY_EXITED_CONFIRMED",
+          "scenario": "FIXTURE_EXPECTED",
+          "operation_id": "fixture-20261115-f60abf5473dc",
+          "client_identity_sha256": "201159f5fe6f94159e69cf53d2aa0a800d919cc7bdc980da92267307b2ba25be",
+          "process": {
+            "state": "EXITED_CONFIRMED",
+            "expected": {
+              "ProcessId": 38560,
+              "ParentProcessId": 12336,
+              "ExecutablePath": "C:\\Python314\\python.exe",
+              "CommandLine": "C:\\Python314\\python.exe -B C:\\Users\\lucas\\Documents\\GitHub\\Projeto-K\\tools\\org03_e3a_transport_fix\\fixture_peer.py relay C:\\Users\\lucas\\Documents\\GitHub\\Projeto-K\\tools\\org03_e3a_transport_fix\\evidence\\fixture-20261115-f60abf5473dc",
+              "Created": "2026-11-15T08:47:20.0005030Z"
+            },
+            "observed": null,
+            "poll_before": 0,
+            "poll_after": 0,
+            "exit_code": 0,
+            "error": null,
+            "last_tcp_barrier": null
+          },
+          "stderr": {
+            "stderr": "",
+            "bytes_read": 0,
+            "retained_bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "hash_scope": "ALL_OBSERVED_BYTES",
+            "invalid_utf8_bytes": 0,
+            "decode_replacements": 0,
+            "text_lossy": false,
+            "truncated": false,
+            "text_truncated": false,
+            "text_fragment_omitted": false,
+            "stream_complete": true,
+            "capture_complete": true,
+            "read_error": null,
+            "raw_bytes_persisted": false
+          },
+          "sql_result": "ECONOMIC_UNCERTAIN",
+          "economic_test": "NOT_EVALUATED"
+        }
+      },
+      "ports": [
+        65526,
+        65527
+      ],
+      "cleanup_errors": [],
+      "listeners_after": [],
+      "own_handles_exited": true,
+      "elapsed_s": 2.645,
+      "postgresql": false,
+      "sql": false,
+      "relay_terminate_count": 0
+    },
+    {
+      "path": "evidence/fixture-20261115-eb8f50904bd6",
+      "report": {
+        "status": "PASSOU",
+        "case": "UNEXPECTED_RESET",
+        "terminal": {
+          "event": "RELAY_ERROR",
+          "paused": true,
+          "forwarded_server_bytes": 8,
+          "received_server_bytes": 18,
+          "held_bytes": 10,
+          "received_client_bytes": 13,
+          "forwarded_client_bytes": 13,
+          "termination_requested": false,
+          "permit_sha256": null,
+          "transport_result": "UNEXPECTED_CONNECTION_RESET",
+          "source": "client",
+          "operation": "recv_client",
+          "error": "ConnectionResetError",
+          "errno": 10054
+        },
+        "completion": {
+          "transport_result": "UNEXPECTED_CONNECTION_RESET",
+          "process_result": "RELAY_EXITED_CONFIRMED",
+          "economic_test": "NOT_EVALUATED",
+          "exit_code": 1
+        }
+      },
+      "ports": [
+        65531,
+        65532
+      ],
+      "cleanup_errors": [],
+      "listeners_after": [],
+      "own_handles_exited": true,
+      "elapsed_s": 2.594,
+      "postgresql": false,
+      "sql": false,
+      "relay_terminate_count": 0
+    }
+  ],
+  "postgresql": false,
+  "sql": false
+}

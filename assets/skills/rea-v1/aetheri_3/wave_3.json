@@ -1,0 +1,187 @@
+{
+  "id": "AETHERI_3_wave_3",
+  "name": "Onda de flechas 3/5",
+  "cell": 256,
+  "frames": 6,
+  "directional": false,
+  "loop": false,
+  "durations_ms": [
+    90,
+    100,
+    60,
+    80,
+    60,
+    90
+  ],
+  "attachment": "selected_fixed_ground_feet",
+  "pivot_px": [
+    128,
+    176
+  ],
+  "show_character": true,
+  "depth_split": true,
+  "depth_split_y": 176,
+  "source_file": "five_waves.png",
+  "source_grid": [
+    6,
+    5
+  ],
+  "source_start_index": 12,
+  "alpha_threshold": 0.5,
+  "authoritative_pulse_slot": 3,
+  "layer_role": "full composite replaces target_hold; do not stack with individual decorative arrow modules",
+  "visual_markers": [
+    {
+      "frame": 3,
+      "label": "Único pulso de área 3/5 — evento do motor"
+    }
+  ],
+  "phase": "wave_3",
+  "ability": "AETHERI_3",
+  "ability_name": "Chuva de flechas",
+  "phase_name": "Onda de flechas 3/5",
+  "rows": [
+    "RADIAL"
+  ],
+  "sheet": "Sheets/wave_3.png",
+  "sheet_size": [
+    1536,
+    256
+  ],
+  "duration_ms": 480,
+  "frames_info": [
+    {
+      "direction": "RADIAL",
+      "index": 0,
+      "source_frame_index": 0,
+      "bbox": [
+        28,
+        143,
+        228,
+        211
+      ],
+      "opaque_px": 1052,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "35ba98cd72e45f38ca6468c393c62c123a9204dceaa8a310f7da234041b4a7de"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 1,
+      "source_frame_index": 1,
+      "bbox": [
+        5,
+        108,
+        228,
+        211
+      ],
+      "opaque_px": 1894,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "5178433dd7426b34f5a6905ccd602d13d6c45a0095641e2e50345e9fb2b57684"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 2,
+      "source_frame_index": 2,
+      "bbox": [
+        28,
+        143,
+        228,
+        211
+      ],
+      "opaque_px": 1389,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "5fc8e27ffae846680ce427fc8e10eeb97447599b0e6ca7b59ffa4a262e6d601b"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 3,
+      "source_frame_index": 3,
+      "bbox": [
+        28,
+        143,
+        228,
+        211
+      ],
+      "opaque_px": 1149,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "34a8a781711598fcc828681c2b0ed7a29e6423ccae8a0fa623e719925c6f1458"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 4,
+      "source_frame_index": 4,
+      "bbox": [
+        28,
+        143,
+        228,
+        211
+      ],
+      "opaque_px": 1080,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "37fbeb612da532267fb6c780cefeeae1bfc285cab293909731efea92bab4d0f4"
+    },
+    {
+      "direction": "RADIAL",
+      "index": 5,
+      "source_frame_index": 5,
+      "bbox": [
+        28,
+        143,
+        228,
+        211
+      ],
+      "opaque_px": 1052,
+      "alpha_threshold": 0.5,
+      "registration_shift_px": [
+        0,
+        0
+      ],
+      "color_layer_shift_px": null,
+      "sha256_rgba": "35ba98cd72e45f38ca6468c393c62c123a9204dceaa8a310f7da234041b4a7de"
+    }
+  ],
+  "source": "Sources/five_waves.png",
+  "direction_mapping": {
+    "N": 0,
+    "NE": 0,
+    "E": 0,
+    "SE": 0,
+    "S": 0,
+    "SW": 0,
+    "W": 0,
+    "NW": 0
+  },
+  "world_translation_baked": false,
+  "gameplay_events": [],
+  "depth_layers": {
+    "rear": "Layers/wave_3_rear.png",
+    "front": "Layers/wave_3_front.png",
+    "screen_split_y": 176
+  },
+  "timing_policy": "Preview suggestion only, except explicitly supplied gameplay timing. Game remains authoritative."
+}
